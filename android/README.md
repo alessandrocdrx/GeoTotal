@@ -42,6 +42,13 @@ Ou abra a pasta `android/` no Android Studio e use **Run ▶** com o celular con
 4. Faça commit e push; o workflow gera o APK novo (com `[release]` na mensagem, ele também
    publica em Releases).
 
+## Ícone
+
+O ícone (globo com anel orbital, alfinete da capital e céu estrelado) é gerado por
+`scripts/gerar-icone.py`, que escreve os três arquivos `ic_launcher_*.xml` em
+`app/src/main/res/drawable/`. Para mudar cores ou formas, edite o script e rode
+`python3 scripts/gerar-icone.py`.
+
 ## O que muda em relação ao artefato no navegador
 
 O script de preparação injeta `scripts/android-shim.js` no HTML, que liga a página ao Android:
