@@ -23,6 +23,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.window.OnBackInvokedDispatcher;
 import android.widget.FrameLayout;
 
 import org.json.JSONObject;
@@ -80,6 +81,12 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null || web.restoreState(savedInstanceState) == null) {
             web.loadUrl(START_URL);
         }
+
+        // A partir do Android 16 (targetSdk 36) o sistema não chama mais onBackPressed().
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                    OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::handleBack);
+        }
     }
 
     /** Desenha atrás das barras do sistema e empurra o conteúdo para fora delas (e do teclado). */
@@ -131,10 +138,14 @@ public class MainActivity extends Activity {
         super.onDestroy();
     }
 
-    /** Voltar fecha o painel aberto na página (filtros, treino, cartão...) antes de sair do app. */
     @Override
     @SuppressWarnings("deprecation")
     public void onBackPressed() {
+        handleBack();
+    }
+
+    /** Voltar fecha o painel aberto na página (filtros, treino, cartão...) antes de sair do app. */
+    private void handleBack() {
         web.evaluateJavascript("window.__androidBack ? window.__androidBack() : false", result -> {
             if (!"true".equals(result)) {
                 finish();
