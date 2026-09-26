@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Globo com meridianos e paralelos, dentro da zona segura de 66dp do ícone adaptativo. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#1e6fd9"
+        android:pathData="M54,28a26,26 0,1 1,0 52a26,26 0,1 1,0 -52z" />
+    <path
+        android:fillColor="#2fd67f"
+        android:pathData="M40,38c6,-3 12,-2 14,3c1,4 -4,6 -2,10c2,4 8,3 9,8c1,5 -4,9 -9,9c-4,0 -5,-5 -9,-6c-4,-1 -8,-4 -8,-9c0,-6 1,-12 5,-15z" />
+    <path
+        android:fillColor="#2fd67f"
+        android:pathData="M63,35c5,1 10,5 12,10c1,4 -3,5 -6,4c-3,-1 -5,-4 -8,-5c-3,-2 -2,-8 2,-9z" />
+    <path
+        android:strokeColor="#eef1f7"
+        android:strokeWidth="1.6"
+        android:fillColor="#00000000"
+        android:pathData="M54,28a26,26 0,1 1,0 52a26,26 0,1 1,0 -52zM54,28a11,26 0,1 1,0 52a11,26 0,1 1,0 -52zM54,28v52M28,54h52M31.5,41h45M31.5,67h45" />
+</vector>

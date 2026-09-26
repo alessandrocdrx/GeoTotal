@@ -1,0 +1,15 @@
+geoTotal
+Copyright 2026 alessandrocdrx (https://github.com/alessandrocdrx)
+
+Criado por alessandrocdrx. Licenciado sob a Apache License, Version 2.0
+(arquivo LICENSE). Quem redistribuir este software, modificado ou não,
+deve manter este aviso de autoria.
+
+Este produto inclui software de terceiros, cada um sob a sua própria licença
+(cópias em android/app/src/main/assets/www/lib/):
+
+- D3 3.5.17 — Copyright Mike Bostock — licença BSD de 3 cláusulas
+- TopoJSON 1.6.9 — Copyright Mike Bostock — licença BSD de 3 cláusulas
+- Datamaps 0.5.9 — Copyright Mark DiMarco — licença MIT
+- amCharts 5 Geodata 5.1.4 (contornos dos estados do Brasil) — Copyright
+  Antanas Marcelionis — licença "Free amCharts license" (linkware)
