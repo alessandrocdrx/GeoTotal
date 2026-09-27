@@ -31,7 +31,7 @@
   window.print=function(){B.print();};
 
   /* Botão voltar: fecha o que estiver aberto, do painel mais alto para o mais baixo. */
-  var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['statsheet','statsclose'],['scopesheet','scopeclose'],
+  var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['statsheet','statsclose'],['badgesheet','badgesclose'],['scopesheet','scopeclose'],
     ['msheet','mclose'],['sheet','sclose'],['quiz','qclose'],['card','close'],['stbar','stexit']];
   window.__androidBack=function(){
     for(var i=0;i<CLOSERS.length;i++){
@@ -46,6 +46,12 @@
 <!-- geoTotal — Copyright 2026 alessandrocdrx — Licenciado sob a Apache License 2.0 (ver LICENSE e NOTICE). -->
 <meta name="author" content="alessandrocdrx">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1017">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Globo Terrestre">
+<meta name="description" content="Aprenda os países, capitais, bandeiras e estados do Brasil brincando, com treino adaptativo e conquistas.">
 <title>Globo Terrestre: Países e Capitais</title>
 <style>
 :root{
@@ -133,7 +139,7 @@ canvas:active{cursor:grabbing}
 .dotc{width:10px;height:10px;border-radius:50%;flex:none}
 .flag{font-size:34px;line-height:1;flex:none;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
 #gl{pointer-events:none}
-#status{position:absolute;left:12px;right:12px;bottom:12px;text-align:center;font-size:12.5px;color:var(--fg);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 12px;display:none;z-index:6;pointer-events:none}
+#status{position:absolute;left:12px;right:12px;bottom:78px;text-align:center;font-size:12.5px;color:var(--fg);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 12px;display:none;z-index:6;pointer-events:none}
 .opts{display:flex;flex-direction:column;gap:2px;margin:6px 0 4px}
 .opts label{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14.5px}
 .opts input{width:20px;height:20px;accent-color:#5b9dff;flex:none}
@@ -274,6 +280,32 @@ select,option{font-family:inherit}
 .cmprow .cmpl{color:var(--muted);font-size:11px;text-align:center;font-weight:600}
 .cmprow .cmpv{text-align:center;font-weight:700}
 #qtimer{font-size:13px;font-weight:700;color:#ffe066;margin-left:6px}
+.streakpill{display:flex;align-items:center;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:999px;padding:0 12px;height:38px;font-weight:700;font-size:14px}
+.qprog{display:flex;align-items:center;gap:10px;margin:6px 0}
+.qlvbox{flex:1;min-width:0}
+#qlevel{font-weight:800;font-size:14px;margin-bottom:3px}
+.qxpwrap{height:8px;border-radius:5px;background:var(--border);overflow:hidden}
+.qxpbar{height:100%;width:0%;background:linear-gradient(90deg,#f6c800,#ff8a3d);border-radius:5px;transition:width .3s}
+.qgoalbtn{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:0;cursor:pointer;font-family:inherit;color:var(--fg)}
+.qgoalbtn svg{width:44px;height:44px;transform:rotate(-90deg)}
+.qgoalbg{fill:none;stroke:var(--border);stroke-width:3}
+.qgoalfg{fill:none;stroke:#2fd67f;stroke-width:3;stroke-linecap:round;stroke-dasharray:0 100;transition:stroke-dasharray .4s}
+.qgoalbtn span{font-size:10.5px;color:var(--muted);font-weight:600}
+.qtoast{background:linear-gradient(90deg,#f6c800,#ff8a3d);color:#1a1200;font-weight:800;font-size:14.5px;text-align:center;border-radius:12px;padding:11px 14px;margin-bottom:10px;opacity:0;transform:translateY(-8px);transition:opacity .25s,transform .25s}
+.qtoast.show{opacity:1;transform:translateY(0)}
+#stage .qtoast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
+.badgerow{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--border)}
+.badgerow.locked{opacity:.45}
+.badgeicon{font-size:26px;flex:none;width:38px;text-align:center}
+.badgetitle{font-weight:700;font-size:14.5px}
+.badgedesc{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.35}
+details.adv{border:1px dashed var(--border);border-radius:12px;padding:8px 10px;margin-top:6px}
+details.adv summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--muted)}
+details.adv>div{margin-top:8px}
+#chips{display:none}
+body.states #chips{display:flex}
+.hint.tip{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 14px;margin:0 auto;display:inline-block;left:0;right:0;width:max-content;max-width:88%;bottom:78px;box-shadow:0 6px 16px rgba(0,0,0,.2);opacity:1;transition:opacity .6s}
+.hint.tip.out{opacity:0}
 
 /* ===== UX geoTotal: seletor de modo, cartão agrupado, botões de fechar ===== */
 .modesw{display:flex;border:1px solid var(--border);border-radius:999px;background:var(--chip);padding:3px;gap:2px;flex:none}
@@ -323,7 +355,11 @@ header .modesw button{padding:0 10px!important}
 .htop{gap:6px}
 .htop{flex-wrap:nowrap}
 .qtop .qtools button{white-space:nowrap}
+.qtop .qtools button{min-width:36px;padding:7px 9px!important}
+.qtop{min-width:0}
+.qpanel{overflow-x:hidden}
 #quiz.map .qtop .modesw button{height:30px!important;padding:0 10px!important;font-size:12.5px!important}
+.streakpill{height:32px;padding:0 10px;font-size:13px}
 </style>
 </head>
 <body>
@@ -331,15 +367,14 @@ header .modesw button{padding:0 10px!important}
   <header>
     <div class="htop">
       <h1>Globo Terrestre</h1>
-      <div class="hbtns"><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><span id="streakpill" class="streakpill" style="display:none"></span><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
-    <div class="sub">Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
+    <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
   <div class="chips" id="chips"></div>
   <div class="searchrow">
-    <input id="q" type="search" placeholder="Buscar" autocomplete="off" aria-label="Buscar país ou capital">
-    <button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶</button>
-    <button id="fbtn">Filtros</button>
+    <input id="q" type="search" placeholder="Buscar país ou capital" autocomplete="off" aria-label="Buscar país ou capital">
+    <button id="fbtn">🌍 Filtrar</button>
     <div id="results"></div>
   </div>
   <div id="stage">
@@ -363,7 +398,7 @@ header .modesw button{padding:0 10px!important}
       <button id="tour" aria-label="Passeio pela rota">▶</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
     </div>
-    <div class="hint" id="hint">Arraste para girar · toque num ponto · use Filtros para escolher o que mostrar</div>
+    <div class="hint" id="hint">Arraste para girar · toque num ponto · use Filtrar para escolher o que mostrar</div>
     <div id="card" role="dialog" aria-live="polite">
       <div class="chead">
         <span id="cflag" class="flag"></span>
@@ -392,6 +427,8 @@ header .modesw button{padding:0 10px!important}
 
 <div id="sheet"><div class="box">
   <div class="shead"><b>Filtros</b><button id="sclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="inote" id="sheetcount" style="margin-top:-4px"></div>
+  <div class="row2"><button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶ Desfazer o último filtro</button></div>
   <div class="opts">
     <label><input type="checkbox" id="oTex" checked disabled><span>Textura de satélite (estilizada)</span></label>
     <label><input type="checkbox" id="oBor" checked disabled><span>Fronteiras dos países</span></label>
@@ -450,9 +487,11 @@ header .modesw button{padding:0 10px!important}
   <div class="sec">
     <div class="lab">Mapa e textura</div>
     <div id="minfo" class="inote"></div>
+    <details class="adv"><summary>⚙️ Avançado (importar textura e fronteiras)</summary><div>
     <div class="row2"><label class="filebtn">Importar textura (imagem)<input id="impTex" type="file" accept="image/*" hidden></label><button id="resetTex">Voltar à textura gerada</button></div>
     <div class="row2"><label class="filebtn">Importar fronteiras (GeoJSON)<input id="impBor" type="file" accept=".json,.geojson,application/json,application/geo+json" hidden></label><button id="clearData">Apagar dados de mapa salvos</button></div>
     <div class="inote">Imagem: mapa-múndi em projeção equirretangular (proporção 2:1), como o "Blue Marble" da NASA. Fronteiras: GeoJSON de países com códigos ISO (por exemplo, o Natural Earth).</div>
+    </div></details>
   </div>
   <div class="sec">
     <div class="lab">Treino</div>
@@ -461,7 +500,14 @@ header .modesw button{padding:0 10px!important}
 </div></div>
 
 <div id="quiz"><div class="qpanel">
-  <div class="qtop"><div class="modesw" role="group" aria-label="Modo"><button aria-pressed="true">🎯 Treino</button><button id="qclose">🌍 Livre</button></div><span id="qtimer"></span><span class="qtools"><button id="qstats" title="Estatísticas por região" aria-label="Estatísticas por região">📊</button><button id="qoptb" aria-expanded="false">⚙️ Opções</button></span></div>
+  <div class="qtop"><div class="modesw" role="group" aria-label="Modo"><button aria-pressed="true">🎯 Treino</button><button id="qclose">🌍 Livre</button></div><span id="qtimer"></span><span class="qtools"><button id="qbadges" title="Conquistas" aria-label="Conquistas">🏆</button><button id="qstats" title="Estatísticas por região" aria-label="Estatísticas por região">📊</button><button id="qoptb" aria-expanded="false" aria-label="Opções do treino" title="Opções do treino">⚙️</button></span></div>
+  <div class="qprog">
+    <div class="qlvbox"><div id="qlevel">Nível 1</div><div class="qxpwrap"><div id="qxpbar" class="qxpbar"></div></div><div id="qxptxt" class="inote">0/100 XP</div></div>
+    <button id="goalgo" class="qgoalbtn" title="Toque para mudar a meta diária">
+      <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9155" class="qgoalbg"/><circle cx="18" cy="18" r="15.9155" id="qgoalring" class="qgoalfg"/></svg>
+      <span id="qgoaltxt">0/10 hoje</span>
+    </button>
+  </div>
   <div id="qscore" class="qscore"></div>
   <div class="qseg" id="qmodes"></div>
   <div class="qscoperow"><button id="qscopeback" style="visibility:hidden;flex:0 0 auto;width:40px">↩</button><button id="qscopeb">📍 Mundo ▾</button><button id="qfocusb">Foco: tudo</button></div>
@@ -490,6 +536,11 @@ header .modesw button{padding:0 10px!important}
 <div id="statsheet" class="ov" style="z-index:85"><div class="box">
   <div class="shead"><b>Estatísticas por região</b><button id="statsclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <div id="statsbody"></div>
+</div></div>
+
+<div id="badgesheet" class="ov" style="z-index:85"><div class="box">
+  <div class="shead"><b id="badgeshead">Conquistas</b><button id="badgesclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div id="badgesbody"></div>
 </div></div>
 
 <div id="study" class="ov"><div class="box">
@@ -2047,7 +2098,7 @@ function select(d,fly,group){
   renderFacts(x?[['👥 População',fmtPop(x.pop)],['📐 Área',fmtArea(x.area)],['🗣️ Idioma',x.lang],['💰 Moeda',x.cur]]:[]);
   renderChips('Fronteiras por terra',NB[d.i].map(function(i){return {t:dflag(D[i])+' '+short(D[i]),f:function(){select(D[i],true);}};}),
     'Não faz fronteira terrestre com outro país.');
-  card.style.display='block';
+  card.style.display='block';syncFab();
   updateNbBtn();updateStBtn();
   renderNear(group,d,function(x){select(x,false,group);},function(x){return x.flag+' '+short(x);});
   document.getElementById('cncty').hidden=true;
@@ -2056,7 +2107,7 @@ function select(d,fly,group){
   if(fly===false)flyTo(d.lat,d.lng,Math.max(zoom,1.5));
   else{var cv2=countryView(d.i);flyTo(cv2.lat,cv2.lng,zoomFor(cv2.r,5.5));}
 }
-function closeCard(){selected=null;selSt=null;card.style.display='none';cardH=0;tourStop();}
+function closeCard(){selected=null;selSt=null;card.style.display='none';cardH=0;tourStop();syncFab();}
 document.getElementById('close').onclick=closeCard;
 function step(dir){
   if(statesMode){stepSt(dir);return;}
@@ -2102,7 +2153,8 @@ function afterFilter(){
   if(statesMode){buildChips();updateNbBtn();return;}
   buildChips();refreshTree();
   var n=on.reduce(function(a,b){return a+b;},0);
-  document.getElementById('fbtn').textContent='Filtros · '+n+'/'+D.length;
+  document.getElementById('fbtn').textContent='🌍 '+(n===D.length?'Todas':n===0?'Nenhum':n+'/'+D.length)+(n>0&&n<D.length?' países':'');
+  $('sheetcount').textContent=D.length+' países e territórios no total.';
   updateNbBtn();
   if(selected&&!on[selected.i])closeCard();
   saveLastView();
@@ -3178,6 +3230,7 @@ function makeOptions(i){
   return out;
 }
 function renderScore(){
+  updateProgUI();
   var box=$('qscore'),c=tierCounts();box.innerHTML='';
   var a=document.createElement('div');a.textContent='Acertos '+quiz.ok+'/'+quiz.total+' · sequência '+quiz.streak+' · recorde '+QS.best;
   var b=document.createElement('div');b.textContent='Neste treino: '+c.n+' novos · '+c.w+' a rever · '+c.o+' já acertados';
@@ -3214,6 +3267,7 @@ function sessionRecord(ok){
 }
 function finishQ(ok,extra){
   quiz.answered=true;quiz.lastOk=ok;record(quiz.cur,ok,quiz.hinted);
+  recordProgress(ok,quiz.hinted);
   try{if(navigator.vibrate)navigator.vibrate(ok?30:[40,60,40]);}catch(e){}
   showTarget(quiz.cur);
   if(quizDomain==='world'){qFlash={i:quiz.cur,kind:ok?'ok':'reveal'};}
@@ -3593,7 +3647,7 @@ function quizSetMode(m){
 function quizOpen(){
   if(statesMode)exitStates(false);
   tourStop();closeCard();hidePick();
-  quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;
+  quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncFab();
   document.body.classList.add('quizing');$('quiz').classList.add('map');
   $('quiz').style.display='block';
   applyDomainForScope();
@@ -3603,6 +3657,7 @@ function quizOpen(){
   renderScore();quizSetMode(quiz.mode);
 }
 function quizClose(){
+  setTimeout(syncFab,0);
   quiz.open=false;qMap=false;qPanelH=0;qFlash=null;qBadge=null;
   stopTimerTick();
   if(quizDomain==='br'){statesMode=false;selSt=null;}
@@ -3852,6 +3907,7 @@ var statesMode=false,selSt=null,onS=BRS.map(function(){return 1;}),stSaved=null,
 /* ---------- entrar e sair ---------- */
 function updateStBtn(){$('stbtn').style.display=(!statesMode&&selected&&selected.cc==='BR')?'block':'none';}
 function enterStates(st){
+  syncFab();
   if(flat2D)setFlat2D(false);
   if(quiz.open)quizClose();
   tourStop();hidePick();
@@ -3864,6 +3920,7 @@ function enterStates(st){
   ensureStateShapes();
 }
 function exitStates(goBrazil){
+  setTimeout(syncFab,0);
   statesMode=false;document.body.classList.remove('states');
   selSt=null;stSaved=null;stNbC=[];card.style.display='none';cardH=0;hidePick();
   buildChips();afterFilter();
@@ -3920,7 +3977,7 @@ function selectSt(st,fly,group){
   var dens=st.pop/st.area;
   renderFacts([['👥 População',fmtPop(st.pop/1000)],['📐 Área',fmtArea(st.area)],['🏙️ Densidade',(dens<10?dens.toFixed(1):Math.round(dens)).toString().replace('.',',')+' hab./km²'],['🧭 Região',BRREG[st.reg].n]]);
   renderChips('Estados vizinhos',st.nb.map(function(k){return {t:BRS[k].sigla+' · '+BRS[k].name,f:function(){selectSt(BRS[k],true);}};}),'Não faz fronteira com outro estado.');
-  card.style.display='block';updateNbBtn();updateStBtn();
+  card.style.display='block';syncFab();updateNbBtn();updateStBtn();
   renderNear(group,st,function(x){selectSt(x,false,group);},function(x){return x.sigla+' '+x.name;});
   renderStCountries(st);
   fillInfoSt(st);setTimeout(measureCard,40);
@@ -4441,6 +4498,149 @@ function setFlat2D(v){
 $('flat2d').onclick=function(){setFlat2D(!flat2D);};
 setFlat2D(flat2D);
 
+/* =====================================================================
+   PROGRESSÃO: XP, níveis, sequência de dias, meta diária, conquistas
+   ===================================================================== */
+function syncFab(){var f=$('fabtrain');if(!f)return;f.style.display=(card.style.display==='block'||quiz.open||statesMode)?'none':'block';}
+function pad2(n){return (n<10?'0':'')+n;}
+function dateStr(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
+function todayStr(){return dateStr(new Date());}
+function yestStr(){var d=new Date();d.setDate(d.getDate()-1);return dateStr(d);}
+var PROG=lsGet('globo.prog.v1',{xp:0,totalCorrect:0,streak:0,lastStreakDate:null,dailyGoal:10,dailyDate:null,dailyCount:0,goalDoneDate:null,badges:[]});
+function saveProg(){lsSet('globo.prog.v1',PROG);}
+function levelOf(xp){return Math.floor(xp/100)+1;}
+function displayStreak(){
+  var t=todayStr(),y=yestStr();
+  return (PROG.lastStreakDate===t||PROG.lastStreakDate===y)?PROG.streak:0;
+}
+function ensureDay(){
+  var t=todayStr();
+  if(PROG.dailyDate!==t){PROG.dailyDate=t;PROG.dailyCount=0;}
+}
+function updateStreakPill(){
+  var el=$('streakpill'),n=displayStreak();
+  if(n>0){el.style.display='flex';el.textContent='🔥 '+n;}
+  else el.style.display='none';
+}
+function updateProgUI(){
+  ensureDay();
+  var lv=levelOf(PROG.xp),into=PROG.xp%100;
+  var lvEl=$('qlevel');if(lvEl)lvEl.textContent='Nível '+lv;
+  var bar=$('qxpbar');if(bar)bar.style.width=into+'%';
+  var xt=$('qxptxt');if(xt)xt.textContent=into+'/100 XP';
+  var ring=$('qgoalring');
+  if(ring){
+    var pct=Math.max(0,Math.min(1,PROG.dailyCount/PROG.dailyGoal));
+    var C=2*Math.PI*15.9155;
+    ring.style.strokeDasharray=(pct*C).toFixed(1)+' '+C.toFixed(1);
+  }
+  var gt=$('qgoaltxt');if(gt)gt.textContent=Math.min(PROG.dailyCount,PROG.dailyGoal)+'/'+PROG.dailyGoal+' hoje';
+  updateStreakPill();
+}
+var toastQ=[];
+function celebrate(msg){
+  toastQ.push(msg);
+  if(toastQ.length>1)return;
+  showNextToast();
+}
+function showNextToast(){
+  if(!toastQ.length)return;
+  var msg=toastQ[0];
+  var host=quiz.open?$('quiz').querySelector('.qpanel'):$('stage');
+  if(!host)return;
+  var el=document.createElement('div');el.className='qtoast';el.textContent=msg;
+  host.insertBefore(el,host.firstChild);
+  requestAnimationFrame(function(){el.classList.add('show');});
+  setTimeout(function(){
+    el.classList.remove('show');
+    setTimeout(function(){el.remove();toastQ.shift();showNextToast();},250);
+  },2200);
+}
+function badgeDefs(){
+  var arr=[];
+  REG.forEach(function(rg,ri){
+    arr.push({id:'reg'+ri,title:'Domina '+rg.n,icon:'🌎',desc:'Chegue a 3 acertos seguidos em todos os países de '+rg.n+' (País → Capital).',need:function(){
+      var st=QS.m.cap||{},list=D.filter(function(d){return d.r===ri;});
+      return list.length>0&&list.every(function(d){var e=st[d.cc];return e&&e.s>=3;});
+    }});
+  });
+  arr.push({id:'world',title:'Mestre do Mundo',icon:'👑',desc:'Domine os 204 países e territórios em País → Capital.',need:function(){
+    var st=QS.m.cap||{};return D.every(function(d){var e=st[d.cc];return e&&e.s>=3;});
+  }});
+  arr.push({id:'br27',title:'De Norte a Sul',icon:'🇧🇷',desc:'Domine os 27 estados do Brasil em Estado → Capital.',need:function(){
+    var st=QS.m.cap||{};return BRS.every(function(s){var e=st['BR-'+s.sigla];return e&&e.s>=3;});
+  }});
+  [3,7,30].forEach(function(n){arr.push({id:'streak'+n,title:'Sequência de '+n+' dia'+(n===1?'':'s'),icon:'🔥',desc:'Bata a meta diária '+n+' dias seguidos.',need:function(){return PROG.streak>=n;}});});
+  [10,100,500,1000].forEach(function(n){arr.push({id:'xp'+n,title:n+' acertos',icon:'⭐',desc:'Acerte '+n+' perguntas no total, em qualquer modo.',need:function(){return PROG.totalCorrect>=n;}});});
+  return arr;
+}
+function checkBadges(){
+  var defs=badgeDefs(),known={};PROG.badges.forEach(function(id){known[id]=1;});
+  var any=false;
+  defs.forEach(function(b){
+    if(known[b.id])return;
+    if(b.need()){PROG.badges.push(b.id);any=true;celebrate('🏆 Nova conquista: '+b.title);}
+  });
+  if(any)saveProg();
+}
+function addXP(n){
+  var before=levelOf(PROG.xp);
+  PROG.xp+=n;
+  var after=levelOf(PROG.xp);
+  if(after>before)celebrate('⬆️ Subiu para o nível '+after+'!');
+  saveProg();
+}
+function recordProgress(ok,hinted){
+  ensureDay();
+  PROG.dailyCount++;
+  if(ok){
+    PROG.totalCorrect++;
+    addXP(hinted?5:10);
+  }
+  if(PROG.dailyCount>=PROG.dailyGoal&&PROG.goalDoneDate!==PROG.dailyDate){
+    PROG.goalDoneDate=PROG.dailyDate;
+    var y=yestStr();
+    if(PROG.lastStreakDate===y)PROG.streak++;
+    else if(PROG.lastStreakDate!==PROG.dailyDate)PROG.streak=1;
+    PROG.lastStreakDate=PROG.dailyDate;
+    celebrate('🔥 Meta do dia batida! Sequência: '+PROG.streak+' dia'+(PROG.streak===1?'':'s'));
+  }
+  saveProg();
+  checkBadges();
+  updateProgUI();
+}
+function openBadges(){
+  var box=$('badgesbody');box.innerHTML='';
+  var defs=badgeDefs(),known={};PROG.badges.forEach(function(id){known[id]=1;});
+  defs.forEach(function(b){
+    var got=!!known[b.id];
+    var row=document.createElement('div');row.className='badgerow'+(got?'':' locked');
+    var ic=document.createElement('div');ic.className='badgeicon';ic.textContent=got?b.icon:'🔒';
+    var tx=document.createElement('div');
+    var t=document.createElement('div');t.className='badgetitle';t.textContent=b.title;
+    var d2=document.createElement('div');d2.className='badgedesc';d2.textContent=b.desc;
+    tx.appendChild(t);tx.appendChild(d2);
+    row.appendChild(ic);row.appendChild(tx);box.appendChild(row);
+  });
+  var n=PROG.badges.length,tot=defs.length;
+  $('badgeshead').textContent='Conquistas ('+n+'/'+tot+')';
+  $('badgesheet').style.display='block';
+}
+$('qbadges').onclick=openBadges;
+$('badgesclose').onclick=function(){$('badgesheet').style.display='none';};
+$('goalgo').onclick=function(){
+  var opts=[5,10,20,30],idx=opts.indexOf(PROG.dailyGoal);
+  PROG.dailyGoal=opts[(idx+1)%opts.length];saveProg();updateProgUI();
+};
+ensureDay();saveProg();updateProgUI();
+(function firstTip(){
+  if(lsGet('globo.seenhint',false)){$('hint').style.display='none';return;}
+  var h=$('hint');h.classList.add('tip');
+  setTimeout(function(){h.classList.add('out');lsSet('globo.seenhint',true);setTimeout(function(){h.style.display='none';},650);},4200);
+})();
+syncFab();
+
+updateStreakPill();
 buildTree();afterFilter();resize();
 requestAnimationFrame(frame);
 startMap();
