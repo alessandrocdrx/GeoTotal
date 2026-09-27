@@ -360,6 +360,11 @@ header .modesw button{padding:0 10px!important}
 .qpanel{overflow-x:hidden}
 #quiz.map .qtop .modesw button{height:30px!important;padding:0 10px!important;font-size:12.5px!important}
 .streakpill{height:32px;padding:0 10px;font-size:13px}
+.runrow{display:flex;align-items:center;gap:8px;margin-top:3px;font-weight:700;color:var(--fg)}
+.runbar{flex:1;height:6px;border-radius:4px;background:var(--border);overflow:hidden;min-width:40px}
+.runbar i{display:block;height:100%;background:#2fd67f;border-radius:4px;transition:width .3s}
+.rundone{text-align:center;padding:4px 0 8px}
+.rundone .qrow{margin-top:14px}
 </style>
 </head>
 <body>
@@ -515,6 +520,7 @@ header .modesw button{padding:0 10px!important}
   <div class="qseg" id="qtypes"></div>
   <div class="qscoperow"><button id="qsessionb">🧮 Sessão: livre</button><button id="qorderb">🔀 Ordem: aleatória</button></div>
   <div class="qscoperow"><button id="qtimerb">⏱️ Cronômetro: desligado</button><button id="qsurvb">💀 Sobrevivência: desligada</button></div>
+  <div class="qscoperow"><button id="qrunreset">🔁 Recomeçar a partida</button></div>
   </div>
   <div id="qpool" class="inote"></div>
   <div id="qbody"></div>
@@ -3146,8 +3152,48 @@ function mstats(){return QS.m[quiz.mode]||(QS.m[quiz.mode]={});}
 function gapOf(e){if(e.s===0)return 3;var g=Math.min(120,12+12*e.s);return e.w>0?Math.round(g*.6):g;}
 function tierOf(i){var e=mstats()[qcc(QD()[i])];return !e?'new':(e.s===0?'wrong':'ok');}
 function tierCounts(){var c={n:0,w:0,o:0};poolIdx().forEach(function(i){var t=tierOf(i);if(t==='new')c.n++;else if(t==='wrong')c.w++;else c.o++;});return c;}
+/* ---------- partida: cada acerto tira o item da rodada; ao acertar todos, a região está zerada ---------- */
+var RUNS=lsGet('globo.runs.v1',{});
+function runKey(){return quizDomain+'|'+JSON.stringify(quizScope)+'|'+quiz.mode;}
+function curRun(){var k=runKey();return RUNS[k]||(RUNS[k]={d:{},e:0,t0:Date.now(),fin:0});}
+function saveRuns(){lsSet('globo.runs.v1',RUNS);}
+function runPool(){var arr=QD(),r=curRun();return poolIdx().filter(function(i){return !r.d[qcc(arr[i])];});}
+function runRecord(i,ok){
+  var r=curRun(),cc=qcc(QD()[i]);
+  if(ok)r.d[cc]=1;else r.e++;
+  if(ok&&!r.fin&&poolIdx().length&&!runPool().length){
+    r.fin=Date.now();
+    celebrate('🏁 Você zerou '+scopeLabel()+'!');addXP(50);
+  }
+  saveRuns();
+}
+function runRestart(){delete RUNS[runKey()];saveRuns();resetSession();quiz.last=-1;nextQ();renderScore();}
+function fmtDur(ms){var m=Math.round(ms/60000);if(m<1)return 'menos de 1 min';if(m<60)return m+' min';var h=Math.floor(m/60);return h+' h '+(m%60)+' min';}
+function showRunDone(){
+  stopTimerTick();
+  var r=curRun(),n=poolIdx().length,body=$('qbody'),fb=$('qfb');
+  fb.textContent='';fb.className='';$('qnext').style.display='none';$('qpool').textContent='';
+  body.innerHTML='';
+  var box=document.createElement('div');box.className='rundone';
+  var h=document.createElement('div');h.className='qq';h.textContent='🏆 Você zerou '+scopeLabel()+'!';
+  var sub=document.createElement('div');sub.className='qhint';
+  sub.textContent='Acertou os '+n+' '+unitWord(n)+' em '+modeName(quiz.mode)+' · '+r.e+' '+(r.e===1?'erro':'erros')+' no caminho · '+fmtDur((r.fin||Date.now())-r.t0)+'.';
+  box.appendChild(h);box.appendChild(sub);
+  var row=document.createElement('div');row.className='qrow';
+  var again=document.createElement('button');again.textContent='🔁 Jogar de novo';again.onclick=runRestart;
+  var other=document.createElement('button');other.textContent='📍 Outra região';other.onclick=function(){$('qscopeb').click();};
+  row.appendChild(again);row.appendChild(other);box.appendChild(row);
+  var tip=document.createElement('div');tip.className='inote';tip.textContent='Dá para trocar o tipo de pergunta nos botões acima: cada tipo tem a sua própria partida.';
+  box.appendChild(tip);
+  body.appendChild(box);measureQ();
+}
 function pickQ(){
-  var arr=QD(),pool=poolIdx();if(!pool.length)return -1;
+  var pool=runPool();if(!pool.length)return -1;
+  var i=pickQFrom(pool);
+  return i>=0?i:pool[Math.floor(Math.random()*pool.length)];
+}
+function pickQFrom(pool){
+  var arr=QD();
   if(quiz.order==='seq'){
     if(quiz.last<0)return pool[0];
     var pos=pool.indexOf(quiz.last);
@@ -3235,6 +3281,15 @@ function renderScore(){
   var a=document.createElement('div');a.textContent='Acertos '+quiz.ok+'/'+quiz.total+' · sequência '+quiz.streak+' · recorde '+QS.best;
   var b=document.createElement('div');b.textContent='Neste treino: '+c.n+' novos · '+c.w+' a rever · '+c.o+' já acertados';
   box.appendChild(a);box.appendChild(b);
+  var n=poolIdx().length;
+  if(n){
+    var r=curRun(),done=n-runPool().length;
+    var row=document.createElement('div');row.className='runrow';
+    var t=document.createElement('span');t.textContent='🏁 Partida: '+done+'/'+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'');
+    var bar=document.createElement('span');bar.className='runbar';
+    var fill=document.createElement('i');fill.style.width=Math.round(100*done/n)+'%';bar.appendChild(fill);
+    row.appendChild(t);row.appendChild(bar);box.appendChild(row);
+  }
 }
 function record(i,ok,hinted){
   var o=QD()[i],cc=qcc(o),stt=mstats(),s=stt[cc]||(stt[cc]={r:0,w:0,s:0,l:0});
@@ -3266,7 +3321,7 @@ function sessionRecord(ok){
   var s=quiz;s.sessionLog.push({label:qflag(QD()[s.cur])+' '+short(QD()[s.cur]),ok:ok});
 }
 function finishQ(ok,extra){
-  quiz.answered=true;quiz.lastOk=ok;record(quiz.cur,ok,quiz.hinted);
+  quiz.answered=true;quiz.lastOk=ok;record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
   recordProgress(ok,quiz.hinted);
   try{if(navigator.vibrate)navigator.vibrate(ok?30:[40,60,40]);}catch(e){}
   showTarget(quiz.cur);
@@ -3520,7 +3575,7 @@ function nextQ(){
   var body=$('qbody'),fb=$('qfb');body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
   var isMap=quiz.mode==='map',isNeighbor=quiz.mode==='neighbor';
   $('qtypes').style.display=(isMap||isNeighbor)?'none':'flex';measureQ();
-  if(i<0){body.textContent=emptyMsg();$('qpool').textContent='';updateScopeBtn();return;}
+  if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){showRunDone();return;}body.textContent=emptyMsg();$('qpool').textContent='';return;}
   quiz.cur=i;quiz.last=i;quiz.answered=false;quiz.sessionAsked++;QS.q[quiz.mode]=(QS.q[quiz.mode]||0)+1;lsSet('globo.quiz.v1',QS);
   var d=arr[i];
   var n=poolIdx().length;updateScopeBtn();
@@ -3672,6 +3727,7 @@ function quizClose(){
   document.body.classList.remove('quizing');$('quiz').style.display='none';setTimeout(resize,60);
 }
 $('qbtn').onclick=quizOpen;$('qclose').onclick=quizClose;
+confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
 $('qoptb').onclick=function(){var o=$('qopts');o.hidden=!o.hidden;this.setAttribute('aria-expanded',o.hidden?'false':'true');measureQ();};
 $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
 confirmTap($('qreset'),'Toque de novo para zerar',function(){QS=freshQS();lsSet('globo.quiz.v1',QS);quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
