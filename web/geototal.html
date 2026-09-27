@@ -233,6 +233,56 @@ select,option{font-family:inherit}
 .cmprow .cmpl{color:var(--muted);font-size:11px;text-align:center;font-weight:600}
 .cmprow .cmpv{text-align:center;font-weight:700}
 #qtimer{font-size:13px;font-weight:700;color:#ffe066;margin-left:6px}
+
+/* ===== UX geoTotal: seletor de modo, cartão agrupado, botões de fechar ===== */
+.modesw{display:flex;border:1px solid var(--border);border-radius:999px;background:var(--chip);padding:3px;gap:2px;flex:none}
+.modesw button{border:0!important;background:transparent!important;color:var(--fg)!important;border-radius:999px!important;height:32px!important;padding:0 12px!important;font-size:13.5px!important;font-weight:700!important;font-family:inherit;cursor:pointer;white-space:nowrap;box-shadow:none!important}
+.modesw button[aria-pressed="true"]{background:var(--chip-on)!important;color:var(--chip-on-fg)!important}
+.hbtns{align-items:center}
+.closeb{background:var(--chip-on)!important;color:var(--chip-on-fg)!important;border:1px solid var(--chip-on)!important;border-radius:999px!important;padding:9px 15px!important;font-weight:800!important;font-size:14px!important}
+#card{padding:12px 14px 0}
+#card .chead{display:flex;align-items:center;gap:10px}
+#card .chead .flag{font-size:42px}
+#card .chead .flag.sig{font-size:18px;padding:8px 10px}
+#card .ctitle{flex:1;min-width:0}
+#card .ctitle .reg{margin:0}
+#card h2{display:block;margin:2px 0 0;padding:0;font-size:21px;line-height:1.15;overflow-wrap:anywhere}
+#card .x,#card .x2{position:static;flex:none;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+#card .x{background:var(--chip-on);color:var(--chip-on-fg);border:0;font-size:17px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#card .x2{background:var(--chip);color:var(--fg);border:1px solid var(--border);font-size:18px}
+#card .distag{margin:4px 0 0}
+#card .capbox{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--chip);border:1px solid var(--border)}
+#card .capbox .lab{display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+#card .capbox b{display:block;font-size:18px;line-height:1.25;margin-top:2px}
+#card .capnote{font-size:12.5px;color:var(--muted);line-height:1.4;margin-top:4px}
+#card .capnote:empty{display:none}
+#card .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+#card .facts:empty{display:none}
+#card .fact{border:1px solid var(--border);border-radius:12px;padding:8px 10px;min-width:0}
+#card .fact span{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+#card .fact b{display:block;font-size:14px;line-height:1.3;margin-top:1px;overflow-wrap:anywhere}
+#card .obs{margin-top:10px;font-size:13.5px;color:var(--fg);line-height:1.45;padding:9px 12px;border-radius:12px;background:rgba(246,200,0,.12);border:1px solid rgba(246,200,0,.4)}
+#card .obs::before{content:"💡 ";}
+#card .sect{margin-top:12px}
+#card .sect:empty{display:none}
+#card .sect .st{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+#card .sect .chipsx{display:flex;flex-wrap:wrap;gap:6px}
+#card .sect .chipsx button{border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:999px;padding:6px 10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
+#card .sect .none{font-size:13px;color:var(--muted)}
+#card .near .nt{text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
+#card .rowx{margin-top:10px}
+#card .stbtn{margin-top:12px}
+#card .info{margin-top:4px}
+.qtop{gap:8px}
+.qtop .qtools{display:flex;gap:6px;margin-left:auto}
+.qtop .qtools button{padding:7px 11px!important;font-size:13px!important}
+#qoptb[aria-expanded="true"]{background:var(--chip-on)!important;color:var(--chip-on-fg)!important}
+h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;font-size:16.5px}
+header .modesw button{padding:0 10px!important}
+.htop{gap:6px}
+.htop{flex-wrap:nowrap}
+.qtop .qtools button{white-space:nowrap}
+#quiz.map .qtop .modesw button{height:30px!important;padding:0 10px!important;font-size:12.5px!important}
 </style>
 </head>
 <body>
@@ -240,13 +290,13 @@ select,option{font-family:inherit}
   <header>
     <div class="htop">
       <h1>Globo Terrestre</h1>
-      <div class="hbtns"><button id="qbtn">🎯 Treino</button><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub">Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
   <div class="chips" id="chips"></div>
   <div class="searchrow">
-    <input id="q" type="search" placeholder="Buscar país ou capital…" autocomplete="off" aria-label="Buscar país ou capital">
+    <input id="q" type="search" placeholder="Buscar" autocomplete="off" aria-label="Buscar país ou capital">
     <button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶</button>
     <button id="fbtn">Filtros</button>
     <div id="results"></div>
@@ -274,18 +324,24 @@ select,option{font-family:inherit}
     </div>
     <div class="hint" id="hint">Arraste para girar · toque num ponto · use Filtros para escolher o que mostrar</div>
     <div id="card" role="dialog" aria-live="polite">
-      <button class="x" id="close" aria-label="Fechar">×</button>
-      <button class="x2" id="fold" aria-label="Recolher ou expandir">⌄</button>
-      <div class="reg"><span class="dot" id="cdot"></span><span id="creg"></span></div>
-      <h2><span id="cflag" class="flag"></span><span id="cname"></span></h2>
-      <div class="cap">Capital: <b id="ccap"></b></div>
+      <div class="chead">
+        <span id="cflag" class="flag"></span>
+        <div class="ctitle">
+          <div class="reg"><span class="dot" id="cdot"></span><span id="creg"></span></div>
+          <h2 id="cname"></h2>
+        </div>
+        <button class="x2" id="fold" aria-label="Recolher ou expandir">⌄</button>
+        <button class="x" id="close" aria-label="Fechar">✕</button>
+      </div>
+      <div class="capbox"><span class="lab">🏛️ Capital</span><b id="ccap"></b><div class="capnote" id="ccapnote"></div></div>
       <div id="cbody">
+      <div class="facts" id="cfacts"></div>
       <div class="obs" id="cobs"></div>
-      <div class="nb" id="cnb"></div>
-      <div class="near" id="cnear" hidden></div>
+      <div class="sect" id="cnb"></div>
       <div class="near" id="cncty" hidden></div>
-      <div class="rowx"><button class="more" id="moreb">Mais dados ▾</button><button class="pill" id="nbtn">Só vizinhos</button></div>
+      <div class="near" id="cnear" hidden></div>
       <button class="stbtn" id="stbtn">🇧🇷 Ver os 27 estados e capitais →</button>
+      <div class="rowx"><button class="pill" id="nbtn">Só vizinhos</button><button class="more" id="moreb">Mais dados ▾</button></div>
       <div class="info" id="cinfo" hidden></div>
       </div>
       <div class="nav"><button id="prev">← Anterior</button><button id="next">Próximo →</button></div>
@@ -294,7 +350,7 @@ select,option{font-family:inherit}
 </div>
 
 <div id="sheet"><div class="box">
-  <div class="shead"><b>Filtros</b><button id="sclose">Fechar</button></div>
+  <div class="shead"><b>Filtros</b><button id="sclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <div class="opts">
     <label><input type="checkbox" id="oTex" checked disabled><span>Textura de satélite (estilizada)</span></label>
     <label><input type="checkbox" id="oBor" checked disabled><span>Fronteiras dos países</span></label>
@@ -319,7 +375,7 @@ select,option{font-family:inherit}
 </div></div>
 
 <div id="msheet" class="ov"><div class="box">
-  <div class="shead"><b>Mais</b><button id="mclose">Fechar</button></div>
+  <div class="shead"><b>Mais</b><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <div class="sec">
     <div class="lab">Aparência</div>
     <div class="row2"><button id="themeb">🌗 Tema: automático</button></div>
@@ -364,13 +420,15 @@ select,option{font-family:inherit}
 </div></div>
 
 <div id="quiz"><div class="qpanel">
-  <div class="qtop"><b>🎯 Treino <span id="qtimer"></span></b><span><button id="qstats" title="Estatísticas por região">📊</button> <button id="qclose">Fechar</button></span></div>
+  <div class="qtop"><div class="modesw" role="group" aria-label="Modo"><button aria-pressed="true">🎯 Treino</button><button id="qclose">🌍 Livre</button></div><span id="qtimer"></span><span class="qtools"><button id="qstats" title="Estatísticas por região" aria-label="Estatísticas por região">📊</button><button id="qoptb" aria-expanded="false">⚙️ Opções</button></span></div>
   <div id="qscore" class="qscore"></div>
   <div class="qseg" id="qmodes"></div>
-  <div class="qseg" id="qtypes"></div>
   <div class="qscoperow"><button id="qscopeback" style="visibility:hidden;flex:0 0 auto;width:40px">↩</button><button id="qscopeb">📍 Mundo ▾</button><button id="qfocusb">Foco: tudo</button></div>
+  <div id="qopts" hidden>
+  <div class="qseg" id="qtypes"></div>
   <div class="qscoperow"><button id="qsessionb">🧮 Sessão: livre</button><button id="qorderb">🔀 Ordem: aleatória</button></div>
   <div class="qscoperow"><button id="qtimerb">⏱️ Cronômetro: desligado</button><button id="qsurvb">💀 Sobrevivência: desligada</button></div>
+  </div>
   <div id="qpool" class="inote"></div>
   <div id="qbody"></div>
   <div id="qfb"></div>
@@ -378,7 +436,7 @@ select,option{font-family:inherit}
 </div></div>
 
 <div id="scopesheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><b>Onde você quer treinar?</b><button id="scopeclose">Fechar</button></div>
+  <div class="shead"><b>Onde você quer treinar?</b><button id="scopeclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <div class="inote" style="margin:0 0 6px">Vale para todos os tipos de treino. As distâncias entre as opções de resposta também vêm do escopo escolhido.</div>
   <div class="row2"><button id="scopeMulti" aria-pressed="false">➕ Combinar regiões</button></div>
   <label class="toglab"><input type="checkbox" id="oDisputedQ" checked><span>Incluir territórios não reconhecidos pela ONU (6)</span></label>
@@ -389,17 +447,17 @@ select,option{font-family:inherit}
 </div></div>
 
 <div id="statsheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><b>Estatísticas por região</b><button id="statsclose">Fechar</button></div>
+  <div class="shead"><b>Estatísticas por região</b><button id="statsclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <div id="statsbody"></div>
 </div></div>
 
 <div id="study" class="ov"><div class="box">
-  <div class="shead"><b>Folha de estudo</b><span><button id="studyprint">Imprimir</button> <button id="studyclose">Fechar</button></span></div>
+  <div class="shead"><b>Folha de estudo</b><span><button id="studyprint">Imprimir</button> <button id="studyclose" class="closeb" aria-label="Fechar">✕ Fechar</button></span></div>
   <div id="studybody"></div>
 </div></div>
 
 <div id="txtd" class="ov"><div class="box">
-  <div class="shead"><b id="txtname">Arquivo</b><button id="txtclose">Fechar</button></div>
+  <div class="shead"><b id="txtname">Arquivo</b><button id="txtclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <div class="inote">O download direto não está disponível aqui. Copie o texto abaixo e cole em um arquivo .csv.</div>
   <textarea id="txta" readonly></textarea>
   <div class="row2"><button id="txtcopy">Copiar tudo</button></div>
@@ -429,31 +487,31 @@ var REG=[
  {n:'Oceania',c:'#22d3ee',lat:-10,lng:160,z:1.15}
 ];
 var RAW=`
-Brasil|Brasília|-15.79|-47.88|0|América do Sul|Ponto de partida da rota|BR
+Brasil|Brasília|-15.79|-47.88|0|América do Sul||BR
 Guiana Francesa|Caiena (Cayenne)|4.94|-52.33|0|América do Sul|Território ultramarino da França — não é país soberano nem membro da ONU|GF
-Suriname|Paramaribo|5.85|-55.20|0|América do Sul|Vizinho da Guiana Francesa|SR
-Guiana|Georgetown|6.80|-58.16|0|América do Sul|Vizinho do Suriname|GY
-Venezuela|Caracas|10.48|-66.90|0|América do Sul|Vizinha da Guiana|VE
-Colômbia|Bogotá|4.71|-74.07|0|América do Sul|Vizinha da Venezuela|CO
-Equador|Quito|-0.18|-78.47|0|América do Sul|Vizinho da Colômbia|EC
-Peru|Lima|-12.05|-77.04|0|América do Sul|Vizinho do Equador|PE
+Suriname|Paramaribo|5.85|-55.20|0|América do Sul||SR
+Guiana|Georgetown|6.80|-58.16|0|América do Sul||GY
+Venezuela|Caracas|10.48|-66.90|0|América do Sul||VE
+Colômbia|Bogotá|4.71|-74.07|0|América do Sul||CO
+Equador|Quito|-0.18|-78.47|0|América do Sul||EC
+Peru|Lima|-12.05|-77.04|0|América do Sul||PE
 Bolívia|Sucre / La Paz|-19.03|-65.26|0|América do Sul|Sucre é a capital constitucional; La Paz é a sede do governo — caso raro de duas capitais|BO
-Chile|Santiago|-33.45|-70.67|0|América do Sul|Vizinho da Bolívia|CL
-Argentina|Buenos Aires|-34.60|-58.38|0|América do Sul|Vizinha do Chile|AR
-Paraguai|Assunção (Asunción)|-25.26|-57.58|0|América do Sul|Vizinho da Argentina|PY
-Uruguai|Montevidéu|-34.90|-56.16|0|América do Sul|Fecha a rota sul-americana|UY
-Panamá|Cidade do Panamá|8.98|-79.52|1|Istmo (América Central)|Ponto de partida do istmo|PA
-Costa Rica|San José|9.93|-84.08|1|Istmo (América Central)|Vizinha do Panamá|CR
-Nicarágua|Manágua|12.11|-86.24|1|Istmo (América Central)|Vizinha da Costa Rica|NI
-Honduras|Tegucigalpa|14.07|-87.19|1|Istmo (América Central)|Vizinha da Nicarágua|HN
-El Salvador|San Salvador|13.69|-89.19|1|Istmo (América Central)|Vizinho de Honduras|SV
-Guatemala|Cidade da Guatemala|14.63|-90.51|1|Istmo (América Central)|Vizinha de Honduras e El Salvador|GT
-Belize|Belmopan|17.25|-88.77|1|Istmo (América Central)|Vizinho da Guatemala, fecha o istmo|BZ
-Cuba|Havana|23.11|-82.37|1|Caribe|Ilha mais próxima do México e da Flórida|CU
-Jamaica|Kingston|18.00|-76.79|1|Caribe|Vizinha de Cuba|JM
-Bahamas|Nassau|25.05|-77.35|1|Caribe|Arquipélago ao norte de Cuba, próximo da Flórida|BS
-Haiti|Porto Príncipe|18.54|-72.34|1|Caribe|Grandes Antilhas, a sudeste de Cuba|HT
-República Dominicana|Santo Domingo|18.49|-69.93|1|Caribe|Vizinha do Haiti|DO
+Chile|Santiago|-33.45|-70.67|0|América do Sul||CL
+Argentina|Buenos Aires|-34.60|-58.38|0|América do Sul||AR
+Paraguai|Assunção (Asunción)|-25.26|-57.58|0|América do Sul||PY
+Uruguai|Montevidéu|-34.90|-56.16|0|América do Sul||UY
+Panamá|Cidade do Panamá|8.98|-79.52|1|Istmo (América Central)||PA
+Costa Rica|San José|9.93|-84.08|1|Istmo (América Central)||CR
+Nicarágua|Manágua|12.11|-86.24|1|Istmo (América Central)||NI
+Honduras|Tegucigalpa|14.07|-87.19|1|Istmo (América Central)||HN
+El Salvador|San Salvador|13.69|-89.19|1|Istmo (América Central)||SV
+Guatemala|Cidade da Guatemala|14.63|-90.51|1|Istmo (América Central)||GT
+Belize|Belmopan|17.25|-88.77|1|Istmo (América Central)||BZ
+Cuba|Havana|23.11|-82.37|1|Caribe|Maior ilha do Caribe, a cerca de 150 km da Flórida (EUA)|CU
+Jamaica|Kingston|18.00|-76.79|1|Caribe||JM
+Bahamas|Nassau|25.05|-77.35|1|Caribe|Arquipélago com cerca de 700 ilhas, ao norte de Cuba|BS
+Haiti|Porto Príncipe|18.54|-72.34|1|Caribe|Divide a ilha de Hispaniola com a República Dominicana|HT
+República Dominicana|Santo Domingo|18.49|-69.93|1|Caribe||DO
 São Cristóvão e Nevis|Basseterre|17.30|-62.72|1|Caribe|Pequenas Antilhas — a menor nação da ONU|KN
 Antígua e Barbuda|St. John's|17.12|-61.85|1|Caribe|Pequenas Antilhas|AG
 Dominica|Roseau|15.30|-61.39|1|Caribe|Pequenas Antilhas|DM
@@ -461,17 +519,17 @@ Santa Lúcia|Castries|14.01|-60.99|1|Caribe|Pequenas Antilhas|LC
 São Vicente e Granadinas|Kingstown|13.16|-61.22|1|Caribe|Pequenas Antilhas|VC
 Barbados|Bridgetown|13.10|-59.61|1|Caribe|Pequenas Antilhas|BB
 Granada|St. George's|12.05|-61.75|1|Caribe|Pequenas Antilhas|GD
-Trinidad e Tobago|Port of Spain|10.66|-61.51|1|Caribe|A mais próxima da Venezuela — fecha a rota caribenha|TT
-México|Cidade do México|19.43|-99.13|2|América do Norte|Sobe-se ao México, depois EUA e Canadá|MX
+Trinidad e Tobago|Port of Spain|10.66|-61.51|1|Caribe|É a ilha do Caribe mais próxima da Venezuela|TT
+México|Cidade do México|19.43|-99.13|2|América do Norte||MX
 Estados Unidos|Washington, D.C.|38.90|-77.04|2|América do Norte||US
 Canadá|Ottawa|45.42|-75.70|2|América do Norte||CA
 África do Sul|Pretória · Cidade do Cabo · Bloemfontein|-25.75|28.19|3|África Austral|Único país com 3 capitais: administrativa, legislativa e judiciária|ZA
 Lesoto|Maseru|-29.31|27.48|3|África Austral|Enclave dentro da África do Sul|LS
 Essuatíni (Eswatini)|Mbabane · Lobamba|-26.32|31.14|3|África Austral|Mbabane é a capital administrativa; Lobamba, a real/legislativa|SZ
 Botsuana|Gaborone|-24.65|25.91|3|África Austral||BW
-Namíbia|Windhoek|-22.56|17.08|3|África Austral|Fecha a África Austral|NA
-Zâmbia|Lusaka|-15.39|28.32|3|África Oriental|Vizinha da Namíbia|ZM
-Zimbábue|Harare|-17.83|31.05|3|África Oriental|Vizinho da Zâmbia|ZW
+Namíbia|Windhoek|-22.56|17.08|3|África Austral||NA
+Zâmbia|Lusaka|-15.39|28.32|3|África Oriental||ZM
+Zimbábue|Harare|-17.83|31.05|3|África Oriental||ZW
 Moçambique|Maputo|-25.97|32.57|3|África Oriental||MZ
 Madagascar|Antananarivo|-18.88|47.51|3|África Oriental|Ilha em frente a Moçambique|MG
 Maurício|Port Louis|-20.16|57.50|3|África Oriental|Ilha a leste de Madagascar|MU
@@ -488,7 +546,7 @@ Somalilândia|Hargeisa|9.56|44.065|3|África Oriental|Não reconhecida pela ONU 
 Djibuti|Djibuti|11.59|43.15|3|África Oriental|Chifre da África|DJ
 Eritreia|Asmara|15.32|38.93|3|África Oriental|Litoral do Mar Vermelho|ER
 Etiópia|Adis Abeba|9.03|38.74|3|África Oriental||ET
-Sudão do Sul|Juba|4.85|31.58|3|África Oriental|Fecha esta divisão, na fronteira com a RD Congo|SS
+Sudão do Sul|Juba|4.85|31.58|3|África Oriental||SS
 Angola|Luanda|-8.84|13.23|3|África Central|Litoral atlântico, ao sul da RD Congo|AO
 República Democrática do Congo|Quinxassa (Kinshasa)|-4.44|15.27|3|África Central||CD
 República do Congo|Brazzaville|-4.27|15.28|3|África Central|As duas capitais do Congo ficam frente a frente no rio Congo|CG
@@ -497,7 +555,7 @@ São Tomé e Príncipe|São Tomé|0.34|6.73|3|África Central|Ilha próxima ao G
 Guiné Equatorial|Malabo|3.75|8.78|3|África Central||GQ
 Camarões|Iaundé (Yaoundé)|3.85|11.50|3|África Central||CM
 República Centro-Africana|Bangui|4.36|18.56|3|África Central||CF
-Chade|N'Djamena|12.13|15.05|3|África Central|Na fronteira com o Níger e a Líbia|TD
+Chade|N'Djamena|12.13|15.05|3|África Central||TD
 Níger|Niamey|13.51|2.11|3|África Ocidental||NE
 Nigéria|Abuja|9.06|7.49|3|África Ocidental||NG
 Benim|Porto Novo|6.50|2.63|3|África Ocidental||BJ
@@ -509,28 +567,28 @@ Libéria|Monróvia|6.30|-10.80|3|África Ocidental||LR
 Serra Leoa|Freetown|8.48|-13.23|3|África Ocidental||SL
 Guiné|Conacri|9.64|-13.58|3|África Ocidental||GN
 Guiné-Bissau|Bissau|11.86|-15.60|3|África Ocidental||GW
-Gâmbia|Banjul|13.45|-16.58|3|África Ocidental|Encravada dentro do Senegal|GM
-Senegal|Dacar (Dakar)|14.72|-17.47|3|África Ocidental|Envolve a Gâmbia|SN
+Gâmbia|Banjul|13.45|-16.58|3|África Ocidental|Menor país da África continental, encravado dentro do Senegal|GM
+Senegal|Dacar (Dakar)|14.72|-17.47|3|África Ocidental|Seu território envolve quase toda a Gâmbia|SN
 Cabo Verde|Praia|14.93|-23.51|3|África Ocidental|Arquipélago no Atlântico, em frente ao Senegal|CV
 Mauritânia|Nuaquechote (Nouakchott)|18.09|-15.98|3|África Ocidental||MR
-Mali|Bamaco|12.64|-8.00|3|África Ocidental|Fecha a África Ocidental, na fronteira com a Argélia|ML
+Mali|Bamaco|12.64|-8.00|3|África Ocidental||ML
 Saara Ocidental|El Aaiún (capital proclamada pela RASD)|27.15|-13.20|3|África Setentrional|Território disputado, administrado majoritariamente por Marrocos; não é membro da ONU|EH
 Marrocos|Rabat|34.02|-6.84|3|África Setentrional||MA
 Argélia|Argel|36.75|3.06|3|África Setentrional||DZ
 Tunísia|Túnis|36.81|10.18|3|África Setentrional||TN
 Líbia|Trípoli|32.89|13.19|3|África Setentrional||LY
 Egito|Cairo|30.04|31.24|3|África Setentrional||EG
-Sudão|Cartum|15.50|32.56|3|África Setentrional|Fecha a rota pelo continente africano|SD
+Sudão|Cartum|15.50|32.56|3|África Setentrional||SD
 Portugal|Lisboa|38.72|-9.14|4|Europa Meridional||PT
 Espanha|Madri|40.42|-3.70|4|Europa Meridional||ES
 Andorra|Andorra-a-Velha|42.51|1.52|4|Europa Meridional||AD
 Mônaco|Mônaco|43.74|7.42|4|Europa Meridional||MC
 San Marino|San Marino|43.94|12.45|4|Europa Meridional||SM
 Itália|Roma|41.90|12.50|4|Europa Meridional||IT
-Vaticano|Cidade do Vaticano|41.90|12.45|4|Europa Meridional|Estado observador da ONU|VA
+Vaticano|Cidade do Vaticano|41.90|12.45|4|Europa Meridional|Menor país do mundo; é Estado observador da ONU, não membro|VA
 Malta|Valeta|35.90|14.51|4|Europa Meridional||MT
 Grécia|Atenas|37.98|23.73|4|Europa Meridional||GR
-Turquia (Türkiye)|Ancara|39.93|32.86|4|Europa Meridional|Transcontinental — também no capítulo Ásia|TR
+Turquia (Türkiye)|Ancara|39.93|32.86|4|Europa Meridional|País transcontinental: parte na Europa, parte na Ásia|TR
 França|Paris|48.86|2.35|4|Europa Ocidental||FR
 Irlanda|Dublin|53.35|-6.26|4|Europa Ocidental||IE
 Reino Unido|Londres|51.51|-0.13|4|Europa Ocidental||GB
@@ -549,7 +607,7 @@ Finlândia|Helsinque|60.17|24.94|4|Europa Setentrional||FI
 Estônia|Tallinn|59.44|24.75|4|Europa Setentrional||EE
 Letônia|Riga|56.95|24.11|4|Europa Setentrional||LV
 Lituânia|Vílnius|54.69|25.28|4|Europa Setentrional||LT
-Rússia|Moscou|55.76|37.62|4|Europa Centro-Oriental|Transcontinental — também no capítulo Ásia|RU
+Rússia|Moscou|55.76|37.62|4|Europa Centro-Oriental|Maior país do mundo e transcontinental: parte na Europa, parte na Ásia|RU
 Bielorrússia (Belarus)|Minsk|53.90|27.57|4|Europa Centro-Oriental||BY
 Polônia|Varsóvia|52.23|21.01|4|Europa Centro-Oriental||PL
 Tchéquia|Praga|50.08|14.44|4|Europa Centro-Oriental||CZ
@@ -561,7 +619,7 @@ Bósnia e Herzegovina|Sarajevo|43.86|18.41|4|Europa Centro-Oriental||BA
 Montenegro|Podgorica|42.44|19.26|4|Europa Centro-Oriental||ME
 Kosovo|Pristina|42.6629|21.1655|4|Europa Centro-Oriental|Reconhecido por cerca de 100 países da ONU; a Sérvia considera o território parte de si|XK
 Albânia|Tirana|41.33|19.82|4|Europa Centro-Oriental||AL
-Chipre|Nicósia|35.17|33.36|4|Europa Centro-Oriental|Transcontinental — também no capítulo Ásia|CY
+Chipre|Nicósia|35.17|33.36|4|Europa Centro-Oriental|Ilha no Mediterrâneo oriental, geograficamente na Ásia, mas membro da União Europeia|CY
 Chipre do Norte|Nicósia (Norte)|35.1856|33.3823|4|Europa Centro-Oriental|Reconhecido apenas pela Turquia; ocupa o norte da ilha de Chipre desde 1974|XN
 Macedônia do Norte|Escópia (Skopje)|42.00|21.43|4|Europa Centro-Oriental||MK
 Sérvia|Belgrado|44.79|20.45|4|Europa Centro-Oriental||RS
@@ -572,9 +630,9 @@ Transnístria|Tiraspol|46.8403|29.6433|4|Europa Centro-Oriental|Não reconhecida
 Ucrânia|Kiev|50.45|30.52|4|Europa Centro-Oriental||UA
 Abecásia|Sukhumi|43.0034|41.0219|4|Europa Centro-Oriental|Separou-se da Geórgia nos anos 1990; reconhecida pela Rússia e poucos outros países|XA
 Ossétia do Sul|Tskhinvali|42.2410|43.9668|4|Europa Centro-Oriental|Separou-se da Geórgia nos anos 1990; reconhecida pela Rússia e poucos outros países|XO
-Geórgia|Tbilisi|41.72|44.79|4|Europa Centro-Oriental|Transcontinental — também no capítulo Ásia|GE
-Armênia|Erevã|40.18|44.51|4|Europa Centro-Oriental|Transcontinental — também no capítulo Ásia|AM
-Azerbaijão|Baku|40.41|49.87|4|Europa Centro-Oriental|Transcontinental — fecha a Europa|AZ
+Geórgia|Tbilisi|41.72|44.79|4|Europa Centro-Oriental|País transcontinental, entre a Europa e a Ásia, no Cáucaso|GE
+Armênia|Erevã|40.18|44.51|4|Europa Centro-Oriental|País transcontinental, entre a Europa e a Ásia, no Cáucaso|AM
+Azerbaijão|Baku|40.41|49.87|4|Europa Centro-Oriental|País transcontinental, entre a Europa e a Ásia, no Cáucaso|AZ
 Síria|Damasco|33.51|36.29|5|Oriente Médio||SY
 Líbano|Beirute|33.89|35.50|5|Oriente Médio||LB
 Palestina|Ramallah|31.90|35.20|5|Oriente Médio|Sede administrativa; Jerusalém Oriental é a capital proclamada, mas não exercida de fato|PS
@@ -618,8 +676,8 @@ Singapura|Singapura|1.35|103.82|5|Sudeste Asiático||SG
 Indonésia|Jacarta|-6.21|106.85|5|Sudeste Asiático||ID
 Brunei|Bandar Seri Begawan|4.89|114.94|5|Sudeste Asiático||BN
 Filipinas|Manila|14.60|120.98|5|Sudeste Asiático||PH
-Timor-Leste|Díli|-8.56|125.57|5|Sudeste Asiático|Fecha a rota asiática|TL
-Austrália|Camberra|-35.28|149.13|6|Austrália e Nova Zelândia|Ponto de partida da Oceania|AU
+Timor-Leste|Díli|-8.56|125.57|5|Sudeste Asiático||TL
+Austrália|Camberra|-35.28|149.13|6|Austrália e Nova Zelândia||AU
 Nova Zelândia|Wellington|-41.29|174.78|6|Austrália e Nova Zelândia||NZ
 Papua-Nova Guiné|Port Moresby|-9.44|147.18|6|Melanésia||PG
 Ilhas Salomão|Honiara|-9.43|159.95|6|Melanésia||SB
@@ -632,7 +690,7 @@ Nauru|Sem capital oficial (Yaren é o distrito de fato)|-0.55|166.92|6|Micronés
 Kiribati|Tarawa Sul|1.33|172.98|6|Micronésia||KI
 Tuvalu|Funafuti|-8.52|179.19|6|Polinésia||TV
 Samoa|Apia|-13.83|-171.76|6|Polinésia||WS
-Tonga|Nuku'alofa|-21.14|-175.20|6|Polinésia|Fecha a Oceania|TO
+Tonga|Nuku'alofa|-21.14|-175.20|6|Polinésia||TO
 `;
 var D=RAW.trim().split('\n').map(function(l,i){
   var p=l.split('|'); var lat=+p[2]*Math.PI/180, lng=+p[3]*Math.PI/180;
@@ -1904,9 +1962,27 @@ function renderNear(group,cur,pick,label){
   var box=document.getElementById('cnear');box.innerHTML='';
   var others=(group||[]).filter(function(x){return x!==cur;}).slice(0,5);
   if(!others.length){box.hidden=true;return;}
-  var t=document.createElement('span');t.className='nt';t.textContent='Também perto do seu toque:';box.appendChild(t);
+  var t=document.createElement('span');t.className='nt';t.textContent='Também perto do seu toque';box.appendChild(t);
   others.forEach(function(o){var b=document.createElement('button');b.textContent=label(o);b.onclick=function(){tourStop();pick(o);};box.appendChild(b);});
   box.hidden=false;
+}
+function renderFacts(rows){
+  var box=document.getElementById('cfacts');box.innerHTML='';
+  rows.forEach(function(r){
+    if(!r[1])return;
+    var f=document.createElement('div');f.className='fact';
+    var a=document.createElement('span');a.textContent=r[0];
+    var b=document.createElement('b');b.textContent=r[1];
+    f.appendChild(a);f.appendChild(b);box.appendChild(f);
+  });
+}
+function renderChips(title,items,empty){
+  var box=document.getElementById('cnb');box.innerHTML='';
+  var t=document.createElement('div');t.className='st';t.textContent=title+(items.length?' ('+items.length+')':'');box.appendChild(t);
+  if(!items.length){var e=document.createElement('div');e.className='none';e.textContent=empty;box.appendChild(e);return;}
+  var w=document.createElement('div');w.className='chipsx';
+  items.forEach(function(it){var b=document.createElement('button');b.textContent=it.t;b.onclick=function(){tourStop();it.f();};w.appendChild(b);});
+  box.appendChild(w);
 }
 function select(d,fly,group){
   if(quiz.open)return;
@@ -1922,11 +1998,14 @@ function select(d,fly,group){
   if(!dtag){dtag=document.createElement('span');dtag.id='cdis';dtag.className='distag';document.getElementById('cname').insertAdjacentElement('afterend',dtag);}
   dtag.textContent=d.dis?'Não reconhecido pela ONU':'';dtag.style.display=d.dis?'inline-block':'none';
   document.getElementById('ccap').textContent=d.cap;
-  var ob=document.getElementById('cobs');ob.textContent=d.obs;ob.style.display=d.obs?'block':'none';
-  var nb=document.getElementById('cnb'),ns=NB[d.i].map(function(i){return dflag(D[i])+' '+short(D[i]);});
-  nb.innerHTML='';
-  var bl=document.createElement('b');bl.textContent='Vizinhos por terra: ';nb.appendChild(bl);
-  nb.appendChild(document.createTextNode(ns.length?ns.join(', '):'nenhum (sem fronteira terrestre)'));
+  /* observação sobre a capital fica junto dela; o resto vira "Saiba mais" */
+  var capNote=/capital|sede|Putrajaya/i.test(d.obs);
+  document.getElementById('ccapnote').textContent=capNote?d.obs:'';
+  var ob=document.getElementById('cobs');ob.textContent=capNote?'':d.obs;ob.style.display=(d.obs&&!capNote)?'block':'none';
+  var x=d.info;
+  renderFacts(x?[['👥 População',fmtPop(x.pop)],['📐 Área',fmtArea(x.area)],['🗣️ Idioma',x.lang],['💰 Moeda',x.cur]]:[]);
+  renderChips('Fronteiras por terra',NB[d.i].map(function(i){return {t:dflag(D[i])+' '+short(D[i]),f:function(){select(D[i],true);}};}),
+    'Não faz fronteira terrestre com outro país.');
   card.style.display='block';
   updateNbBtn();updateStBtn();
   renderNear(group,d,function(x){select(x,false,group);},function(x){return x.flag+' '+short(x);});
@@ -2437,7 +2516,7 @@ function fillInfo(d){
   var box=$('cinfo');box.innerHTML='';
   var x=d.info;
   if(!x){box.textContent='Sem dados adicionais para este território.';return;}
-  [['População',fmtPop(x.pop)],['Área',fmtArea(x.area)],['Idioma(s) oficial(is)',x.lang],['Moeda',x.cur],['Fuso horário',x.tz],['Telefone (DDI)',x.dial],['Domínio',x.tld]].forEach(function(r){
+  [['Fuso horário',x.tz],['Telefone (DDI)',x.dial],['Domínio de internet',x.tld]].forEach(function(r){
     var row=document.createElement('div');row.className='irow';
     var a=document.createElement('span');a.textContent=r[0];
     var b=document.createElement('b');b.textContent=r[1];
@@ -3489,6 +3568,7 @@ function quizClose(){
   document.body.classList.remove('quizing');$('quiz').style.display='none';setTimeout(resize,60);
 }
 $('qbtn').onclick=quizOpen;$('qclose').onclick=quizClose;
+$('qoptb').onclick=function(){var o=$('qopts');o.hidden=!o.hidden;this.setAttribute('aria-expanded',o.hidden?'false':'true');measureQ();};
 $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
 confirmTap($('qreset'),'Toque de novo para zerar',function(){QS=freshQS();lsSet('globo.quiz.v1',QS);quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
 
@@ -3760,7 +3840,7 @@ function stateView(st){
 function fillInfoSt(st){
   var box=$('cinfo');box.innerHTML='';
   var dens=st.pop/st.area;
-  [['Sigla',st.sigla],['Região',BRREG[st.reg].n],['Capital',st.cap],['Área',fmtArea(st.area)],['População (Censo 2022)',fmtPop(st.pop/1000)],['Densidade',(dens<10?dens.toFixed(1):Math.round(dens)).toString().replace('.',',')+' hab./km²'],['Código IBGE',st.ibge]].forEach(function(r){
+  [['Sigla',st.sigla],['Código IBGE',st.ibge]].forEach(function(r){
     var row=document.createElement('div');row.className='irow';
     var a=document.createElement('span');a.textContent=r[0];
     var b=document.createElement('b');b.textContent=r[1];
@@ -3776,7 +3856,7 @@ function refreshNbC(){
 function renderStCountries(st){
   var box=document.getElementById('cncty');box.innerHTML='';
   var t=document.createElement('span');t.className='nt';
-  t.textContent=st.cn.length?'Países vizinhos deste estado:':'Este estado não faz fronteira com outro país.';
+  t.textContent=st.cn.length?'Países na fronteira':'Não faz fronteira com outro país';
   box.appendChild(t);
   st.cn.forEach(function(k){
     var b=document.createElement('button');b.textContent=D[k].flag+' '+short(D[k]);
@@ -3794,10 +3874,11 @@ function selectSt(st,fly,group){
   var fl=$('cflag');fl.textContent=st.sigla;fl.className='flag sig';
   $('cname').textContent=st.name;
   $('ccap').textContent=st.cap;
+  $('ccapnote').textContent='';
   var ob=$('cobs');ob.textContent=st.note;ob.style.display=st.note?'block':'none';
-  var nb=$('cnb');nb.innerHTML='';
-  var bl=document.createElement('b');bl.textContent='Estados vizinhos: ';nb.appendChild(bl);
-  nb.appendChild(document.createTextNode(st.nb.map(function(k){return BRS[k].sigla+' ('+BRS[k].name+')';}).join(', ')));
+  var dens=st.pop/st.area;
+  renderFacts([['👥 População',fmtPop(st.pop/1000)],['📐 Área',fmtArea(st.area)],['🏙️ Densidade',(dens<10?dens.toFixed(1):Math.round(dens)).toString().replace('.',',')+' hab./km²'],['🧭 Região',BRREG[st.reg].n]]);
+  renderChips('Estados vizinhos',st.nb.map(function(k){return {t:BRS[k].sigla+' · '+BRS[k].name,f:function(){selectSt(BRS[k],true);}};}),'Não faz fronteira com outro estado.');
   card.style.display='block';updateNbBtn();updateStBtn();
   renderNear(group,st,function(x){selectSt(x,false,group);},function(x){return x.sigla+' '+x.name;});
   renderStCountries(st);
@@ -4322,6 +4403,8 @@ setFlat2D(flat2D);
 buildTree();afterFilter();resize();
 requestAnimationFrame(frame);
 startMap();
+/* o app abre no modo Treino; o botão "🌍 Livre" leva ao globo livre */
+quizOpen();
 </script>
 </body>
 </html>

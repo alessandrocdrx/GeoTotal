@@ -6,7 +6,7 @@ Tudo o que o Play Console pede, pronto para copiar. Imagens nesta pasta:
 | --- | --- |
 | Ícone do app (512×512, PNG 32 bits) | `icone-512.png` |
 | Gráfico de recursos (1024×500) | `destaque-1024x500.png` |
-| Capturas de tela do telefone (2 a 8) | `capturas/1-globo.png` … `capturas/5-europa-escuro.png` |
+| Capturas de tela do telefone (2 a 8) | `capturas/1-treino.png` … `capturas/5-europa-escuro.png` |
 
 Para baixar pelo celular: abra o arquivo no GitHub e toque em **Download raw** (ícone ⬇).
 
