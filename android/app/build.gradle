@@ -15,11 +15,19 @@ android {
         applicationId 'io.github.alessandrocdrx.geototal'
         minSdk 26
         targetSdk 36
-        versionCode 5
-        versionName '1.4'
+        versionCode 6
+        versionName '1.4.1'
     }
 
     signingConfigs {
+        // Chave de debug fixa, guardada no repositório: sem ela, cada build do GitHub Actions
+        // sairia com uma chave nova e o Android não aceitaria instalar uma versão por cima da outra.
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
         if (hasReleaseKey) {
             release {
                 storeFile file(keystorePath)
