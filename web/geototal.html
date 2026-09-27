@@ -3233,6 +3233,14 @@ function finishQ(ok,extra){
   var fb=$('qfb');fb.textContent=fbText(QD()[quiz.cur],ok,extra);fb.className=ok?'ok':'bad';
   $('qnext').style.display='block';measureQ();
   sessionRecord(ok);
+  /* acertou: passa sozinho para a próxima; errou: espera o toque em "Próxima" */
+  clearTimeout(quiz.autoT);
+  if(ok){
+    var asked=quiz.sessionAsked;
+    quiz.autoT=setTimeout(function(){
+      if(quiz.open&&quiz.answered&&quiz.sessionAsked===asked)$('qnext').click();
+    },1200);
+  }
   setTimeout(function(){
     try{var qp=$('quiz').querySelector('.qpanel');if(qp)qp.scrollTo({top:qp.scrollHeight,behavior:'smooth'});}catch(e){}
   },30);
