@@ -166,7 +166,7 @@ canvas:active{cursor:grabbing}
 #quiz.map .qtop{font-size:15px}#quiz.map .qtop button{padding:6px 12px;font-size:13px}
 #qmodes{display:grid;grid-template-columns:1fr 1fr}
 #qmodes button{min-width:0}
-#quiz.map #qmodes{display:flex}
+#quiz.map #qmodes{display:grid;grid-template-columns:1fr 1fr;overflow:visible}#quiz.map #qmodes button{padding:9px 8px;font-size:13px}
 @media print{
   html,body{height:auto!important;overflow:visible!important;background:#fff!important}
   body>*:not(#study){display:none!important}
@@ -246,6 +246,19 @@ select,option{font-family:inherit}
 .cmprow .cmpv{text-align:center;font-weight:700}
 #qtimer{font-size:13px;font-weight:700;color:#ffe066;margin-left:6px}
 .streakpill{display:flex;align-items:center;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:999px;padding:0 12px;height:38px;font-weight:700;font-size:14px}
+.qhead2{display:flex;gap:8px;margin:2px 0 6px}
+.qpick{flex:1;min-width:0;display:flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;padding:9px 12px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;text-align:left}
+.qpick span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.qpick i{font-style:normal;color:var(--muted);flex:none}
+.qpick[aria-expanded="true"]{border-color:var(--fg)}
+.qbackrow{display:block;width:100%;margin:0 0 8px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:9px 12px;font-size:13.5px;font-weight:700;font-family:inherit;text-align:left;cursor:pointer}.qbackrow[hidden]{display:none}
+#qmodeb{flex:0 1 auto;max-width:48%}
+.qgoalmini span{font-size:inherit!important;font-weight:inherit!important;color:inherit!important}
+.qbackmini{flex:none;width:40px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;font-size:15px;cursor:pointer}
+.qbackmini[hidden],#qmodes[hidden]{display:none!important}
+.qstrip{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--muted)}
+.qstrip #qruntxt{flex:1;min-width:0;color:var(--fg)}
+.qgoalmini{background:none;border:0;padding:2px 0;color:var(--muted);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
+.qscore .runbar{display:block;height:4px;margin-top:5px}
 .qprog{display:flex;align-items:center;gap:10px;margin:6px 0}
 .qlvbox{flex:1;min-width:0}
 #qlevel{font-weight:800;font-size:14px;margin-bottom:3px}
@@ -554,16 +567,13 @@ header .modesw button{padding:0 10px!important}
 </div></div>
 
 <div id="quiz"><div class="qpanel">
-  <div class="qprog">
-    <div class="qlvbox"><div class="qlvrow"><span id="qlevel">Nível 1</span><span id="qtimer"></span></div><div class="qxpwrap"><div id="qxpbar" class="qxpbar"></div></div><div id="qxptxt" class="inote">0/100 XP</div></div>
-    <button id="goalgo" class="qgoalbtn" title="Toque para mudar a meta diária">
-      <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9155" class="qgoalbg"/><circle cx="18" cy="18" r="15.9155" id="qgoalring" class="qgoalfg"/></svg>
-      <span id="qgoaltxt">0/10 hoje</span>
-    </button>
+  <div class="qhead2">
+    <button id="qmodeb" class="qpick" aria-expanded="false"><span id="qmodev">País → Capital</span><i>▾</i></button>
+    <button id="qscopeb" class="qpick"><span id="qscopev">📍 Mundo</span><i>▾</i></button>
   </div>
-  <div id="qscore" class="qscore"></div>
-  <div class="qseg" id="qmodes"></div>
-  <div class="qscoperow"><button id="qscopeback" style="visibility:hidden;flex:0 0 auto;width:40px">↩</button><button id="qscopeb">📍 Mundo ▾</button></div>
+  <div class="qseg" id="qmodes" hidden></div>
+  <div id="qscore" class="qscore"><div class="qstrip"><span id="qruntxt"></span><span id="qtimer"></span><button id="goalgo" class="qgoalmini" title="Toque para mudar a meta diária"><span id="qlevel">Nível 1</span> · <span id="qgoaltxt">0/10 hoje</span></button></div><span class="runbar" id="qrunbar"><i id="qrunfill"></i></span></div>
+  <div hidden><div id="qxpbar"></div><div id="qxptxt"></div><svg><circle id="qgoalring"/></svg></div>
   <div id="qpool" class="inote"></div>
   <div id="qbody"></div>
   <div id="qfb"></div>
@@ -572,7 +582,7 @@ header .modesw button{padding:0 10px!important}
 
 <div id="scopesheet" class="ov" style="z-index:85"><div class="box">
   <div class="shead"><b>Onde você quer treinar?</b><button id="scopeclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
-  <div class="inote" style="margin:0 0 6px">Vale para todos os tipos de treino. As distâncias entre as opções de resposta também vêm do escopo escolhido.</div>
+  <button id="qscopeback" class="qbackrow" hidden></button>
   <div class="row2"><button id="scopeMulti" aria-pressed="false">➕ Combinar regiões</button></div>
   <div class="tgrow"><span class="tglab">Incluir:</span><label class="tgchip"><input type="checkbox" id="oDisputedQ" checked><span>⚠ Não reconhecidos</span></label><label class="tgchip"><input type="checkbox" id="oDepQ"><span>◇ Dependentes</span></label><label class="tgchip"><input type="checkbox" id="oUniQ"><span>❄ Desabitados</span></label></div>
   <input id="scopeq" type="search" placeholder="Buscar continente, sub-região ou Brasil…" autocomplete="off">
@@ -3354,15 +3364,15 @@ function applyDomainForScope(){
   }
 }
 function updateScopeBtn(){
-  $('qscopeb').textContent='📍 '+scopeLabel()+' · '+poolIdx().length+' ▾';
+  $('qscopev').textContent='📍 '+scopeLabel();
   $('qfocusb').textContent='Foco: '+({mix:'tudo','new':'só novos',wrong:'só errados'})[quizFocus];updateTrainRow();
 }
 function updateScopeBackBtn(){
   var btn=$('qscopeback');
   if(quizScopePrev){
-    btn.style.visibility='visible';
-    var save=quizScope;quizScope=quizScopePrev;btn.title='Voltar para: '+scopeLabel();quizScope=save;
-  }else btn.style.visibility='hidden';
+    btn.hidden=false;
+    var save=quizScope;quizScope=quizScopePrev;btn.textContent='↩ Voltar para: '+scopeLabel();quizScope=save;
+  }else btn.hidden=true;
 }
 function fitScopeView(pl){
   if(quizDomain==='br')fitStates(pl,[]);
@@ -3615,18 +3625,10 @@ function makeOptions(i){
 }
 function renderScore(){
   updateProgUI();
-  var box=$('qscore'),c=tierCounts();box.innerHTML='';
-  var a=document.createElement('div');a.textContent='Nesta sessão: ✔ '+quiz.ok+' · ✖ '+(quiz.total-quiz.ok)+' · sequência '+quiz.streak+' (recorde '+QS.best+')';
-  box.appendChild(a);
-  var n=poolIdx().length;
-  if(n){
-    var r=curRun(),done=n-runPool().length;
-    var row=document.createElement('div');row.className='runrow';
-    var t=document.createElement('span');t.textContent='🏁 Partida: '+done+'/'+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'');
-    var bar=document.createElement('span');bar.className='runbar';
-    var fill=document.createElement('i');fill.style.width=Math.round(100*done/n)+'%';bar.appendChild(fill);
-    row.appendChild(t);row.appendChild(bar);box.appendChild(row);
-  }
+  var n=poolIdx().length,r=curRun(),done=n?n-runPool().length:0;
+  $('qruntxt').textContent=n?(done+' de '+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'')):'';
+  $('qrunbar').style.display=n?'block':'none';
+  $('qrunfill').style.width=(n?Math.round(100*done/n):0)+'%';
 }
 function record(i,ok,hinted){
   var o=QD()[i],cc=qcc(o),stt=mstats(),s=stt[cc]||(stt[cc]={r:0,w:0,s:0,l:0});
@@ -4039,7 +4041,7 @@ function pickStateNear(x,y){
   return stateAt(x,y);
 }
 function buildModeButtons(){
-  var box=$('qmodes');box.innerHTML='';
+  var box=$('qmodes');box.innerHTML='';$('qmodev').textContent=modeName(quiz.mode);
   var defs=quizDomain==='br'?[['cap','Estado → Capital'],['pais','Capital → Estado'],['neighbor','Estado → Vizinho'],['code','Estado → Sigla'],['map','Achar no mapa']]:[['cap','País → Capital'],['pais','Capital → País'],['flag','Bandeira → País'],['neighbor','País → Vizinho'],['code','País → Sigla'],['map','Achar no mapa']];
   defs.forEach(function(m){
     var b=document.createElement('button');b.textContent=m[1];b.setAttribute('aria-pressed',quiz.mode===m[0]?'true':'false');
@@ -4051,7 +4053,9 @@ function buildModeButtons(){
     b.onclick=function(){quiz.type=m[0];buildModeButtons();resetSession();nextQ();};t.appendChild(b);
   });
 }
+$('qmodeb').onclick=function(){var o=$('qmodes').hidden;$('qmodes').hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');};
 function quizSetMode(m){
+  $('qmodes').hidden=true;$('qmodeb').setAttribute('aria-expanded','false');
   quiz.mode=m;qMap=(m==='map'&&quiz.open);
   if(m==='neighbor')quiz.type='choice';
   buildModeButtons();resetSession();nextQ();measureQ();renderScore();
@@ -4235,7 +4239,7 @@ function applyScopeChange(newScope){
   updateScopeBackBtn();
   firePulseForScope();
 }
-$('qscopeback').onclick=function(){if(quizScopePrev)applyScopeChange(quizScopePrev);};
+$('qscopeback').onclick=function(){if(quizScopePrev){applyScopeChange(quizScopePrev);$('scopesheet').style.display='none';}};
 var scopeMultiMode=false,multiSel=[];
 /* revisão do dia: os países que você mais erra neste tipo de pergunta (até 10) */
 function reviewList(){
@@ -4318,7 +4322,7 @@ function buildScopeList(filterStr){
   $('scopeempty').style.display=any?'none':'block';
   updateMultiApplyBtn();
 }
-$('qscopeb').onclick=function(){$('scopeq').value='';buildScopeList();$('scopesheet').style.display='block';setTimeout(function(){try{$('scopeq').focus();}catch(e){}},60);};
+$('qscopeb').onclick=function(){$('scopeq').value='';buildScopeList();$('scopesheet').style.display='block';};
 $('scopeq').addEventListener('input',function(){buildScopeList(this.value);});
 $('scopeclose').onclick=function(){$('scopesheet').style.display='none';};
 $('scopesheet').addEventListener('pointerdown',function(e){if(e.target===$('scopesheet'))$('scopesheet').style.display='none';});
