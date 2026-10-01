@@ -39,7 +39,7 @@ Os 27 estados e suas capitais, com contornos no mapa, estados vizinhos e países
 📴 FUNCIONA SEM INTERNET
 Mapas e dados vão dentro do app. Sem cadastro, sem anúncios e sem coleta de dados.
 
-204 países e territórios, incluindo territórios de reconhecimento limitado (que podem ser ocultados nos filtros).
+204 países e territórios, incluindo territórios de reconhecimento limitado (que podem ser ocultados nos filtros), e mais 44 territórios dependentes opcionais, como Porto Rico, Groenlândia, Hong Kong e Polinésia Francesa.
 
 Código aberto (Apache 2.0), criado por alessandrocdrx: github.com/alessandrocdrx/GeoTotal
 ```
