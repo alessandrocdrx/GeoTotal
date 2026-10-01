@@ -273,6 +273,12 @@ select,option{font-family:inherit}
 #scopelist .sh{font-size:12px;color:var(--muted);font-weight:700;margin:10px 0 2px}
 #scopeMulti[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg)}
 .toglab{display:flex;align-items:flex-start;gap:10px;padding:2px 0;font-size:13.5px;line-height:1.4}
+.toglab small.tgn{color:var(--muted);font-weight:600;margin-left:4px}.toglab small.tgd{display:block;color:var(--muted);font-size:12px;margin-top:1px}
+.tgrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 8px}.tgrow .tglab{font-size:12.5px;color:var(--muted);font-weight:700}
+.tgchip{position:relative}.tgchip input{position:absolute;opacity:0;pointer-events:none}
+.tgchip span{display:inline-block;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:700;cursor:pointer;user-select:none}
+.tgchip input:checked+span{background:var(--chip-on);color:var(--chip-on-fg);border-color:transparent}
+.tgchip input:focus-visible+span{outline:2px solid #4da3ff}
 .toglab input{width:20px;height:20px;accent-color:#4da3ff;flex:none;margin-top:1px}
 .distag{display:none;margin-left:8px;vertical-align:middle;font-size:11px;font-weight:700;color:#b45309;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);border-radius:999px;padding:3px 8px}
 .cmphead{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;font-weight:700;font-size:13px;margin-top:10px;padding-bottom:6px;border-bottom:2px solid var(--border);text-align:center}
@@ -501,8 +507,10 @@ header .modesw button{padding:0 10px!important}
     <div class="row2"><button id="nbsolo">Só o país e vizinhos</button><button id="nbadd">Somar vizinhos</button></div>
   </div>
   <div class="sec">
-    <label class="toglab"><input type="checkbox" id="oDisputed" checked><span>Incluir territórios não reconhecidos pela ONU (6): Kosovo, Chipre do Norte, Somalilândia, Transnístria, Abecásia e Ossétia do Sul</span></label>
-    <label class="toglab" style="margin-top:8px"><input type="checkbox" id="oDep"><span>Incluir territórios dependentes ou administrados por outros países (44): Porto Rico, Groenlândia, Hong Kong, Macau, Gibraltar, Aruba, Polinésia Francesa e outros. Marcados com ◇ na lista.</span></label>
+    <div class="lab">Incluir também</div>
+    <label class="toglab"><input type="checkbox" id="oDisputed" checked><span>Não reconhecidos pela ONU <small class="tgn" id="nDis"></small><small class="tgd">Kosovo, Somalilândia, Transnístria… · ⚠</small></span></label>
+    <label class="toglab"><input type="checkbox" id="oDep"><span>Territórios dependentes <small class="tgn" id="nDep"></small><small class="tgd">Porto Rico, Groenlândia, Hong Kong, Guiana Francesa… · ◇</small></span></label>
+    <label class="toglab"><input type="checkbox" id="oUni"><span>Desabitados e Antártida <small class="tgn" id="nUni"></small><small class="tgd">Ilhas remotas e bases antárticas; no treino, só em "Achar no mapa" · ❄</small></span></label>
   </div>
   <div class="sec">
     <div class="lab">Filtros favoritos</div>
@@ -607,8 +615,7 @@ header .modesw button{padding:0 10px!important}
   <div class="shead"><b>Onde você quer treinar?</b><button id="scopeclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <div class="inote" style="margin:0 0 6px">Vale para todos os tipos de treino. As distâncias entre as opções de resposta também vêm do escopo escolhido.</div>
   <div class="row2"><button id="scopeMulti" aria-pressed="false">➕ Combinar regiões</button></div>
-  <label class="toglab"><input type="checkbox" id="oDisputedQ" checked><span>Incluir territórios não reconhecidos pela ONU (6)</span></label>
-  <label class="toglab"><input type="checkbox" id="oDepQ"><span>Incluir territórios dependentes (44)</span></label>
+  <div class="tgrow"><span class="tglab">Incluir:</span><label class="tgchip"><input type="checkbox" id="oDisputedQ" checked><span>⚠ Não reconhecidos</span></label><label class="tgchip"><input type="checkbox" id="oDepQ"><span>◇ Dependentes</span></label><label class="tgchip"><input type="checkbox" id="oUniQ"><span>❄ Desabitados</span></label></div>
   <input id="scopeq" type="search" placeholder="Buscar continente, sub-região ou Brasil…" autocomplete="off">
   <div id="scopelist"></div>
   <div id="scopeempty" class="inote" style="display:none">Nada encontrado.</div>
@@ -667,11 +674,12 @@ var REG=[
  {n:'África',c:'#ff6b2c',lat:3,lng:20,z:1.05},
  {n:'Europa',c:'#4da3ff',lat:50,lng:15,z:1.7},
  {n:'Ásia',c:'#b57cff',lat:32,lng:88,z:1.05},
- {n:'Oceania',c:'#22d3ee',lat:-10,lng:160,z:1.15}
+ {n:'Oceania',c:'#22d3ee',lat:-10,lng:160,z:1.15},
+ {n:'Antártida',c:'#cbd5e1',lat:-72,lng:30,z:1.2}
 ];
 var RAW=`
 Brasil|Brasília|-15.79|-47.88|0|América do Sul||BR
-Guiana Francesa|Caiena (Cayenne)|4.94|-52.33|0|América do Sul|Território ultramarino da França — não é país soberano nem membro da ONU|GF
+Guiana Francesa|Caiena (Cayenne)|4.94|-52.33|0|América do Sul|Território ultramarino da França — não é país soberano nem membro da ONU|GF|dep
 Suriname|Paramaribo|5.85|-55.20|0|América do Sul||SR
 Guiana|Georgetown|6.80|-58.16|0|América do Sul||GY
 Venezuela|Caracas|10.48|-66.90|0|América do Sul||VE
@@ -921,25 +929,45 @@ Ilha Norfolk|Kingston|-29.06|167.96|6|Austrália e Nova Zelândia|Território ex
 Ilhas Pitcairn|Adamstown|-25.07|-130.10|6|Polinésia|Território ultramarino do Reino Unido; descendentes dos amotinados do Bounty|PN|dep
 Ilha Christmas|Flying Fish Cove|-10.42|105.68|6|Austrália e Nova Zelândia|Território externo da Austrália, no Oceano Índico|CX|dep
 Ilhas Cocos|West Island|-12.19|96.83|6|Austrália e Nova Zelândia|Território externo da Austrália, no Oceano Índico|CC|dep
+Acrotíri e Deceleia|Episkopi|34.67|32.85|4|Europa Centro-Oriental|Bases militares soberanas do Reino Unido na ilha de Chipre|QU|dep|GB
+`;
+/* desabitados ou só com bases/cientistas, e reivindicações na Antártida: desligados por padrão (campo |uni). Sem capital: entram só em "Achar no mapa" */
+var RAW_UNI=`
+Território Britânico do Oceano Índico|Sem capital (base militar de Diego Garcia)|-7.31|72.41|5|Ásia do Sul|Território do Reino Unido sem população nativa (os chagossianos foram expulsos nos anos 1960–70); um acordo de 2025 prevê a soberania das Maurícias, mantendo a base|IO|uni
+Ilha de Clipperton|Sem capital (desabitada)|10.30|-109.22|2|América do Norte|Atol da França no Pacífico, a cerca de 1.000 km do México|CP|uni
+Ilhas Menores Distantes dos EUA|Sem capital (desabitadas)|19.29|166.62|6|Micronésia|Wake, Midway, Johnston, Baker, Howland, Jarvis, Kingman, Palmyra e Navassa: só bases e reservas naturais dos EUA|UM|uni
+Ilhas Ashmore e Cartier|Sem capital (desabitadas)|-12.26|123.04|6|Austrália e Nova Zelândia|Território externo da Austrália no mar de Timor; reserva natural|QR|uni|AU
+Ilhas do Mar de Coral|Sem capital (estação meteorológica na Ilha Willis)|-16.29|149.96|6|Austrália e Nova Zelândia|Território externo da Austrália, recifes e ilhotas espalhados pelo mar de Coral|QS|uni|AU
+Jan Mayen|Sem capital (estação de Olonkinbyen)|70.98|-8.50|4|Europa Setentrional|Ilha vulcânica da Noruega no Atlântico Norte; só militares e meteorologistas|QT|uni|NO
+Geórgia do Sul e Ilhas Sandwich do Sul|Sem capital (base de King Edward Point)|-54.28|-36.49|7|Ilhas subantárticas|Território ultramarino do Reino Unido; só cientistas e funcionários, sem população fixa|GS|uni
+Ilha Bouvet|Sem capital (desabitada)|-54.42|3.36|7|Ilhas subantárticas|Dependência da Noruega; a ilha mais isolada do mundo, quase toda coberta de gelo|BV|uni
+Ilhas Heard e McDonald|Sem capital (desabitadas)|-53.08|73.51|7|Ilhas subantárticas|Território externo da Austrália, com o vulcão ativo Big Ben; patrimônio mundial da UNESCO|HM|uni
+Terras Austrais e Antárticas Francesas|Sem capital (base de Port-aux-Français)|-49.35|70.22|7|Ilhas subantárticas|Território da França: Kerguelen, Crozet, São Paulo e Amsterdã, Ilhas Esparsas e Terra Adélia|TF|uni
+Território Antártico Britânico|Sem capital (base de Rothera)|-67.57|-68.13|7|Antártida|Reivindicação do Reino Unido, sobreposta às da Argentina e do Chile; congelada pelo Tratado da Antártida|QN|uni|GB
+Terra da Rainha Maud|Sem capital (base de Troll)|-72.01|2.53|7|Antártida|Reivindicação da Noruega; congelada pelo Tratado da Antártida|QO|uni|NO
+Território Antártico Australiano|Sem capital (base de Davis)|-68.58|77.97|7|Antártida|Reivindicação da Austrália, a maior da Antártida (cerca de 42% do continente); congelada pelo Tratado da Antártida|QM|uni|AU
+Dependência de Ross|Sem capital (Scott Base)|-77.85|166.76|7|Antártida|Reivindicação da Nova Zelândia; congelada pelo Tratado da Antártida|QQ|uni|NZ
+Ilha Pedro I|Sem capital (desabitada)|-68.78|-90.58|7|Antártida|Reivindicação da Noruega no mar de Bellingshausen, coberta de gelo|QP|uni|NO
 `;
 /* cada território entra na rota logo após o país-âncora mais próximo, continuando a sequência atual */
-var DEP_AFTER={DO:'PR VI VG AI SX MF BL',AG:'MS GP',DM:'MQ',TT:'AW CW BQ',JM:'KY',BS:'TC',US:'BM',CA:'PM GL',UY:'FK',MU:'RE',KM:'YT',CV:'SH',ES:'GI',IS:'FO',GB:'IM JE GG',FI:'AX',NO:'SJ',CN:'HK MO',AU:'CX CC NF',VU:'NC',PW:'GU MP',TV:'WF TK',WS:'AS',TO:'NU CK PF PN'};
+var DEP_AFTER={DO:'PR VI VG AI SX MF BL',AG:'MS GP',DM:'MQ',TT:'AW CW BQ',JM:'KY',BS:'TC',US:'BM',CA:'PM GL',UY:'FK',MU:'RE',KM:'YT',CV:'SH',ES:'GI',IS:'FO',GB:'IM JE GG',FI:'AX',NO:'SJ QT',CN:'HK MO',AU:'CX CC NF QR QS',VU:'NC',PW:'GU MP UM',TV:'WF TK',WS:'AS',TO:'NU CK PF PN',MX:'CP',CY:'QU',MV:'IO'};
 var D=(function(){
   var base=RAW.trim().split('\n'),dep={},used={},out=[];
-  RAW_DEP.trim().split('\n').forEach(function(l){dep[l.split('|')[7]]=l;});
+  (RAW_DEP.trim()+'\n'+RAW_UNI.trim()).split('\n').forEach(function(l){dep[l.split('|')[7]]=l;});
   base.forEach(function(l){out.push(l);var a=DEP_AFTER[l.split('|')[7]];
     if(a)a.split(' ').forEach(function(c){if(dep[c]){out.push(dep[c]);used[c]=1;}});});
   Object.keys(dep).forEach(function(c){if(!used[c])out.push(dep[c]);});
   return out;
 })().map(function(l,i){
   var p=l.split('|'); var lat=+p[2]*Math.PI/180, lng=+p[3]*Math.PI/180;
-  return {i:i,name:p[0],cap:p[1],lat:+p[2],lng:+p[3],r:+p[4],sub:p[5],obs:p[6]||'',cc:p[7],flag:String.fromCodePoint(0x1F1E6+p[7].charCodeAt(0)-65,0x1F1E6+p[7].charCodeAt(1)-65),
+  return {i:i,name:p[0],cap:p[1],lat:+p[2],lng:+p[3],r:+p[4],sub:p[5],obs:p[6]||'',cc:p[7],flag:(function(c){return String.fromCodePoint(0x1F1E6+c.charCodeAt(0)-65,0x1F1E6+c.charCodeAt(1)-65);})(p[9]||p[7]),
     x:Math.cos(lat)*Math.sin(lng),y:Math.sin(lat),z:Math.cos(lat)*Math.cos(lng),
-    dis:p[7].charAt(0)==='X'&&p[7].length===2,dep:p[8]==='dep',
+    dis:p[7].charAt(0)==='X'&&p[7].length===2,dep:p[8]==='dep',uni:p[8]==='uni',pseudo:!!p[9],
     key:norm(p[0]+' '+p[1])};
 });
 function norm(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
-document.getElementById('count').textContent=D.filter(function(d){return !d.dep;}).length;
+var N_BASE=D.filter(function(d){return !d.dep&&!d.uni;}).length,N_DEP=D.filter(function(d){return d.dep;}).length,N_UNI=D.filter(function(d){return d.uni;}).length;
+document.getElementById('count').textContent=N_BASE;
 /* ---------- Dados extras (aproximados, ~2024) ----------
    código|população (milhares)|área km²|idioma(s)|moeda|fuso|DDI */
 var INFO_RAW=`
@@ -1185,6 +1213,22 @@ NF|2.2|36|Inglês e norfuk|Dólar australiano (AUD)|UTC+11|+672 3
 PN|0.05|47|Inglês e pitkern|Dólar neozelandês (NZD)|UTC−8|+64
 CX|1.7|135|Inglês|Dólar australiano (AUD)|UTC+7|+61 8 9164
 CC|0.6|14|Inglês e malaio de Cocos|Dólar australiano (AUD)|UTC+6:30|+61 8 9162
+IO|0|60|Inglês|Dólar americano (USD)|UTC+6|+246
+CP|0|6||Euro (EUR)|UTC−8|
+UM|0|34|Inglês|Dólar americano (USD)|vários fusos|
+QR|0|5|||UTC+8|
+QS|0|3|Inglês|Dólar australiano (AUD)|UTC+10|
+QT|0|377|Norueguês|Coroa norueguesa (NOK)|UTC+1|
+QU|18|254|Grego e inglês|Euro (EUR)|UTC+2|+357
+GS|0|3903|Inglês|Libra esterlina (GBP)|UTC−2|+500
+BV|0|49|||UTC+1|
+HM|0|372|||UTC+5|
+TF|0|7747|Francês|Euro (EUR)|UTC+5|+262
+QN|0|1709400|||UTC−3|
+QO|0|2700000|||UTC+0|
+QM|0|5896500|||vários fusos|
+QQ|0|450000|||UTC+12|
+QP|0|154|||UTC−6|
 XK|1776|10887|Albanês e sérvio|Euro (EUR, uso não oficial)|UTC+1|+383
 XN|380|3355|Turco|Lira turca (TRY)|UTC+2|+90 392
 XS|5700|176120|Somali e árabe|Xelim somalilandês (não conversível)|UTC+3|+252
@@ -1196,7 +1240,7 @@ var INFO={};
 INFO_RAW.trim().split('\n').forEach(function(l){
   var p=l.split('|');
   INFO[p[0]]={pop:+p[1],area:+p[2],lang:p[3],cur:p[4],tz:p[5],dial:p[6],
-    tld:p[0]==='GB'?'.uk':p[0]==='EH'?'— (reservado)':(p[0].charAt(0)==='X'&&p[0].length===2)?'— (sem domínio próprio)':'.'+p[0].toLowerCase()};
+    tld:p[0]==='GB'?'.uk':p[0]==='EH'?'— (reservado)':(/^(X.|Q[M-Z]|UM|CP)$/.test(p[0]))?'— (sem domínio próprio)':'.'+p[0].toLowerCase()};
 });
 D.forEach(function(d){d.info=INFO[d.cc]||null;});
 /* ---------- Religiões (estimativas aproximadas; % da população) ----------
@@ -1971,8 +2015,9 @@ var lam=-0.9,phi=0.25,zoom=1,cyFrac=.5;
 var target=null,selected=null,auto=true,labelMode='p',lastInteract=0;
 var includeDisputed=lsGet('globo.includeDisputed',true);
 var includeDep=lsGet('globo.includeDep',false);
+var includeUni=lsGet('globo.includeUni',false);
 /* item disponível = não está escondido por "não reconhecidos" nem por "territórios dependentes" */
-function avail(d){return (!d.dis||includeDisputed)&&(!d.dep||includeDep);}
+function avail(d){return (!d.dis||includeDisputed)&&(!d.dep||includeDep)&&(!d.uni||includeUni);}
 function availCount(){return D.filter(avail).length;}
 var on=D.map(function(d){return avail(d)?1:0;});
 var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2121,7 +2166,7 @@ function draw(){
       d=order[i];
       if(d===selected||zoom<1.9)continue;
       ctx.font='500 10.5px '+FONT;ctx.textBaseline='middle';ctx.lineWidth=3;
-      var t=d.flag+' '+(labelMode==='p'?short(d):capShort(d));
+      var t=d.flag+' '+(labelMode==='p'||d.uni?short(d):capShort(d));
       var w=ctx.measureText(t).width;
       var rx=d.sx+mr+5,rct={x:rx-2,y:d.sy-8,w:w+4,h:16};
       if(rx+w>W-4){rct.x=d.sx-mr-5-w-2;rx=rct.x+2;}
@@ -2230,7 +2275,18 @@ function tap(px,py){
     }
     cand.sort(function(a,b){return a.dd-b.dd;});
   }
-  if(qMap){quizMapAnswer(cand.length?cand[0].d:countryAt(x,y));return;}
+  if(qMap){
+    var tg=D[quiz.cur];
+    if(tg&&!FEAT[tg.i]&&!quiz.answered){
+      var tp=rot(tg.x,tg.y,tg.z),tsx=W/2+R*tp[0],tsy=H*cyFrac-R*tp[1];
+      if(tp[2]>0.05&&(tsx-x)*(tsx-x)+(tsy-y)*(tsy-y)<44*44){quizMapAnswer(tg);return;}
+      var hit=cand.length?cand[0].d:countryAt(x,y);
+      if(!hit){projCfg(R0*zoom,W/2,H*cyFrac);var ll=proj.invert([x,y]);
+        if(ll&&!isNaN(ll[0])){var km0=Math.round(haversine({lat:ll[1],lng:ll[0]},tg));finishQ(false,'Você tocou a '+km0.toLocaleString('pt-BR')+' km do lugar certo.');return;}}
+      quizMapAnswer(hit);return;
+    }
+    quizMapAnswer(cand.length?cand[0].d:countryAt(x,y));return;
+  }
   hidePick();
   /* toque preciso no ponto vence; senão vale o país sob o dedo; senão, o ponto mais próximo */
   var precise=cand.length&&cand[0].dd<14*14;
@@ -2314,7 +2370,7 @@ function select(d,fly,group){
   document.getElementById('cname').textContent=d.name;
   var dtag=document.getElementById('cdis');
   if(!dtag){dtag=document.createElement('span');dtag.id='cdis';dtag.className='distag';document.getElementById('cname').insertAdjacentElement('afterend',dtag);}
-  dtag.textContent=d.dis?'Não reconhecido pela ONU':(d.dep?'Território dependente':'');dtag.style.display=(d.dis||d.dep)?'inline-block':'none';dtag.classList.toggle('dep',!!d.dep);
+  dtag.textContent=d.dis?'Não reconhecido pela ONU':(d.dep?'Território dependente':(d.uni?(d.r===7?'Antártida e ilhas remotas':'Território desabitado'):''));dtag.style.display=(d.dis||d.dep||d.uni)?'inline-block':'none';dtag.classList.toggle('dep',!!(d.dep||d.uni));
   document.getElementById('ccap').textContent=d.cap;
   /* observação sobre a capital fica junto dela; o resto vira "Saiba mais" */
   renderCardStat(d.cc,false);
@@ -2382,7 +2438,7 @@ function afterFilter(){
   var n=on.reduce(function(a,b){return a+b;},0);
   var nA=availCount(),nOn=D.filter(function(d){return on[d.i]&&avail(d);}).length;
   document.getElementById('fbtn').textContent='🌍 '+(nOn>=nA?'Todas':nOn===0?'Nenhum':nOn+'/'+nA)+(nOn>0&&nOn<nA?' países':'');
-  $('sheetcount').textContent=nA+' países e territórios disponíveis'+(includeDep?'.':' (os 44 territórios dependentes estão desligados).');
+  $('sheetcount').textContent=nA+' países e territórios disponíveis.';
   updateNbBtn();
   if(selected&&!on[selected.i])closeCard();
   saveLastView();
@@ -2415,7 +2471,7 @@ function buildChips(){
   if(statesMode){buildChipsSt();return;}
   chips.innerHTML='';
   chips.appendChild(mkChip('Todas',null,-1,availCount()));
-  for(var r=0;r<REG.length;r++)chips.appendChild(mkChip(REG[r].n,REG[r].c,r,D.filter(function(d){return d.r===r&&avail(d);}).length));
+  for(var r=0;r<REG.length;r++){var nr=D.filter(function(d){return d.r===r&&avail(d);}).length;if(nr)chips.appendChild(mkChip(REG[r].n,REG[r].c,r,nr));}
 }
 
 /* painel de filtros: continente > sub-região > país */
@@ -2428,6 +2484,7 @@ function mkBox(idx){
 function buildTree(){
   var tree=document.getElementById('tree');tree.innerHTML='';boxes=[];
   REG.forEach(function(rg,ri){
+    if(!D.some(function(d){return d.r===ri&&avail(d);}))return;
     var subs=[];
     D.forEach(function(d){
       if(d.r!==ri)return;
@@ -2453,7 +2510,7 @@ function buildTree(){
       s.idx.forEach(function(i){
         var lb=document.createElement('label');
         lb.appendChild(mkBox([i]));
-        var t=document.createElement('span');t.textContent=dflag(D[i])+' '+short(D[i])+' — '+capShort(D[i])+(D[i].dis?' ⚠':'')+(D[i].dep?' ◇':'');lb.appendChild(t);
+        var t=document.createElement('span');t.textContent=dflag(D[i])+' '+short(D[i])+' — '+capShort(D[i])+(D[i].dis?' ⚠':'')+(D[i].dep?' ◇':'')+(D[i].uni?' ❄':'');lb.appendChild(t);
         cl.appendChild(lb);
       });
       d2.appendChild(cl);det.appendChild(d2);
@@ -2524,7 +2581,7 @@ lc.onclick=function(){labelMode='c';lc.setAttribute('aria-pressed','true');lp.se
 var glc=document.getElementById('gl'),gl=null,glProg=null,glTex=null,glU={},glBuf=null;
 var useTex=false,optTex=true,optBor=true,optFill=false;
 var feats=null,FEAT=D.map(function(){return null;}),EXTRA=[],proj=null,gpath=null;
-var A3={PR:'PRI',VI:'VIR',VG:'VGB',AI:'AIA',MS:'MSR',KY:'CYM',TC:'TCA',AW:'ABW',CW:'CUW',SX:'SXM',BQ:'BES',GP:'GLP',MQ:'MTQ',MF:'MAF',BL:'BLM',BM:'BMU',GL:'GRL',PM:'SPM',FK:'FLK',RE:'REU',YT:'MYT',SH:'SHN',GI:'GIB',FO:'FRO',IM:'IMN',JE:'JEY',GG:'GGY',AX:'ALA',SJ:'SJM',HK:'HKG',MO:'MAC',GU:'GUM',MP:'MNP',AS:'ASM',PF:'PYF',NC:'NCL',WF:'WLF',CK:'COK',NU:'NIU',TK:'TKL',NF:'NFK',PN:'PCN',CX:'CXR',CC:'CCK',BR:'BRA',GF:'GUF',SR:'SUR',GY:'GUY',VE:'VEN',CO:'COL',EC:'ECU',PE:'PER',BO:'BOL',CL:'CHL',AR:'ARG',PY:'PRY',UY:'URY',
+var A3={TF:'ATF',HM:'HMD',GS:'SGS',IO:'IOT',BV:'BVT',UM:'UMI',PR:'PRI',VI:'VIR',VG:'VGB',AI:'AIA',MS:'MSR',KY:'CYM',TC:'TCA',AW:'ABW',CW:'CUW',SX:'SXM',BQ:'BES',GP:'GLP',MQ:'MTQ',MF:'MAF',BL:'BLM',BM:'BMU',GL:'GRL',PM:'SPM',FK:'FLK',RE:'REU',YT:'MYT',SH:'SHN',GI:'GIB',FO:'FRO',IM:'IMN',JE:'JEY',GG:'GGY',AX:'ALA',SJ:'SJM',HK:'HKG',MO:'MAC',GU:'GUM',MP:'MNP',AS:'ASM',PF:'PYF',NC:'NCL',WF:'WLF',CK:'COK',NU:'NIU',TK:'TKL',NF:'NFK',PN:'PCN',CX:'CXR',CC:'CCK',BR:'BRA',GF:'GUF',SR:'SUR',GY:'GUY',VE:'VEN',CO:'COL',EC:'ECU',PE:'PER',BO:'BOL',CL:'CHL',AR:'ARG',PY:'PRY',UY:'URY',
 PA:'PAN',CR:'CRI',NI:'NIC',HN:'HND',SV:'SLV',GT:'GTM',BZ:'BLZ',CU:'CUB',JM:'JAM',BS:'BHS',HT:'HTI',DO:'DOM',KN:'KNA',AG:'ATG',DM:'DMA',LC:'LCA',VC:'VCT',BB:'BRB',GD:'GRD',TT:'TTO',
 MX:'MEX',US:'USA',CA:'CAN',ZA:'ZAF',LS:'LSO',SZ:'SWZ',BW:'BWA',NA:'NAM',ZM:'ZMB',ZW:'ZWE',MZ:'MOZ',MG:'MDG',MU:'MUS',SC:'SYC',KM:'COM',MW:'MWI',TZ:'TZA',BI:'BDI',RW:'RWA',UG:'UGA',KE:'KEN',SO:'SOM',DJ:'DJI',ER:'ERI',ET:'ETH',SS:'SSD',
 AO:'AGO',CD:'COD',CG:'COG',GA:'GAB',ST:'STP',GQ:'GNQ',CM:'CMR',CF:'CAF',TD:'TCD',NE:'NER',NG:'NGA',BJ:'BEN',TG:'TGO',BF:'BFA',GH:'GHA',CI:'CIV',LR:'LBR',SL:'SLE',GN:'GIN',GW:'GNB',GM:'GMB',SN:'SEN',CV:'CPV',MR:'MRT',ML:'MLI',
@@ -2801,6 +2858,17 @@ function setIncludeDep(v){
   afterFilter();
   if(quiz.open){updateScopeBtn();renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}
 }
+function setIncludeUni(v){
+  includeUni=v;lsSet('globo.includeUni',v);
+  $('oUni').checked=v;$('oUniQ').checked=v;
+  if(v)D.forEach(function(d){if(d.uni)on[d.i]=1;});
+  buildTree();afterFilter();
+  if(quiz.open){updateScopeBtn();renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}
+}
+$('oUni').checked=includeUni;$('oUniQ').checked=includeUni;
+$('oUni').onclick=function(){setIncludeUni(this.checked);};
+$('oUniQ').onclick=function(){setIncludeUni(this.checked);buildScopeList($('scopeq').value);};
+$('nDis').textContent='('+D.filter(function(d){return d.dis;}).length+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
 $('oDep').checked=includeDep;$('oDepQ').checked=includeDep;
 $('oDep').onclick=function(){setIncludeDep(this.checked);};
 $('oDepQ').onclick=function(){setIncludeDep(this.checked);buildScopeList($('scopeq').value);};
@@ -2837,6 +2905,7 @@ function shapePath(x,y,r,sh){
 
 /* ---------- cartão: dados extras, recolher, deslizar ---------- */
 function fmtPop(p){
+  if(!p)return 'Sem população permanente';
   if(p>=1e6)return (p/1e6).toFixed(2).replace('.',',')+' bilhões';
   if(p>=1000){var m=p/1000;return (m<100?m.toFixed(1).replace('.',','):Math.round(m))+' milhões';}
   if(p>=1)return Math.round(p).toLocaleString('pt-BR')+' mil';
@@ -3366,11 +3435,13 @@ function poolIdx(){
     if(!inScopeActive(arr[i]))continue;
     if(arr[i].dis&&!includeDisputed)continue;
     if(arr[i].dep&&!includeDep)continue;
+    if(arr[i].uni&&(!includeUni||quiz.mode!=='map'))continue;
+    if(arr[i].pseudo&&(quiz.mode==='flag'||quiz.mode==='code'))continue;
     if(quiz.mode==='flag'&&arr[i].dis)continue;
     if(quiz.mode==='neighbor'){var nbz=quizDomain==='br'?arr[i].nb:NB[i];if(!nbz||!nbz.length)continue;}
     if(quiz.mode==='map'){
       if(quizDomain==='br'){if(STFEAT.some(function(f){return f;})&&!STFEAT[i])continue;}
-      else{if(feats&&!FEAT[i])continue;}
+      else{if(feats&&!FEAT[i]&&!arr[i].uni)continue;}
     }
     p.push(i);
   }
@@ -3559,7 +3630,7 @@ function makeNeighborOptions(qIdx,ansIdx){
   var guard2=0;
   while(out.length<4&&guard2++<400){
     var c2=Math.floor(Math.random()*arr.length),l2=optLabel(c2);
-    if(c2===qIdx||nbSet[c2]||labels[l2])continue;labels[l2]=1;out.push(c2);
+    if(c2===qIdx||nbSet[c2]||labels[l2]||arr[c2].uni)continue;labels[l2]=1;out.push(c2);
   }
   for(var q2=out.length-1;q2>0;q2--){var z=Math.floor(Math.random()*(q2+1)),t=out[q2];out[q2]=out[z];out[z]=t;}
   return out;
@@ -3567,7 +3638,7 @@ function makeNeighborOptions(qIdx,ansIdx){
 function makeOptions(i){
   var arr=QD(),label=optLabel(i),labels={},out=[i];labels[label]=1;
   var sc=poolIdx().filter(function(k){return k!==i;}),wd=[],k,guard;
-  for(k=0;k<arr.length;k++)if(k!==i)wd.push(k);
+  for(k=0;k<arr.length;k++)if(k!==i&&!arr[k].uni)wd.push(k);
   var same=sc.filter(function(x){return arr[x].r===arr[i].r;});
   guard=0;
   while(out.length<4&&guard++<400&&sc.length){
@@ -3616,7 +3687,7 @@ function fbText(d,ok,extra){
   }else if(quiz.mode==='code'){
     ans='A sigla de '+fl+' '+nm+' é '+(quizDomain==='br'?d.sigla:d.cc)+'.';
   }else{
-    ans=quiz.mode==='cap'?('A capital de '+fl+' '+nm+' é '+cp+'.'):(quiz.mode==='map'?(fl+' '+nm+' fica aqui (capital: '+cp+').'):('É '+fl+' '+nm+' (capital: '+cp+').'));
+    ans=quiz.mode==='cap'?('A capital de '+fl+' '+nm+' é '+cp+'.'):(quiz.mode==='map'?(fl+' '+nm+' fica aqui'+(d.uni?'.':' (capital: '+cp+').')):('É '+fl+' '+nm+' (capital: '+cp+').'));
   }
   return base+ans+(quiz.hinted?' (com dica)':'')+(extra?' '+extra:'');
 }
@@ -3630,7 +3701,6 @@ function sessionRecord(ok){
 function finishQ(ok,extra){
   quiz.answered=true;quiz.lastOk=ok;record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
   recordProgress(ok,quiz.hinted);
-  try{if(navigator.vibrate)navigator.vibrate(ok?30:[40,60,40]);}catch(e){}
   showTarget(quiz.cur);
   if(quizDomain==='world'){qFlash={i:quiz.cur,kind:ok?'ok':'reveal'};}
   var fb=$('qfb');fb.textContent=fbText(QD()[quiz.cur],ok,extra);fb.className=ok?'ok':'bad';
@@ -3694,7 +3764,7 @@ function zoomFor(r,cap){
 function showCountry(i){var v=countryView(i);flyTo(v.lat,v.lng,zoomFor(v.r,3.4));}
 function resetView(){flyTo(phi*180/PI,lam*180/PI,1);}
 function selBadgeMetrics(d){
-  var t1=labelMode==='p'?short(d):capShort(d),t2=labelMode==='p'?('Capital: '+qcapDisp(d)):('País: '+short(d));
+  var t1=labelMode==='p'||d.uni?short(d):capShort(d),t2=d.uni?d.cap:labelMode==='p'?('Capital: '+qcapDisp(d)):('País: '+short(d));
   var fs=16,maxw=W-72-56,w1;
   ctx.font='700 '+fs+'px '+FONT;w1=ctx.measureText(t1).width;
   while(w1>maxw&&fs>10){fs--;ctx.font='700 '+fs+'px '+FONT;w1=ctx.measureText(t1).width;}
@@ -4274,6 +4344,7 @@ function buildScopeList(filterStr){
   REG.forEach(function(rg,ri){
     if(AMERICAS_R.indexOf(ri)>=0)return;
     var list=D.filter(function(d){return d.r===ri&&avail(d);});
+    if(!list.length)return;
     header(rg.n.toUpperCase());
     item(rg.n+' (todo o continente)',list.length,{t:'reg',r:ri},0);
     var subs=[];
@@ -4931,7 +5002,7 @@ function draw2D(){
       d=vis[i];
       if(d===selected||zoom<1.4)continue;
       ctx.font='500 10.5px '+FONT;ctx.textBaseline='middle';ctx.lineWidth=3;
-      var t=d.flag+' '+(labelMode==='p'?short(d):capShort(d));
+      var t=d.flag+' '+(labelMode==='p'||d.uni?short(d):capShort(d));
       var w=ctx.measureText(t).width;
       var rx=d.sx+mr+5,rct={x:rx-2,y:d.sy-8,w:w+4,h:16};
       if(rx+w>W-4){rct.x=d.sx-mr-5-w-2;rx=rct.x+2;}
@@ -4959,8 +5030,13 @@ function tap2D(px,py){
       }
       cand.sort(function(a,b){return a.dd-b.dd;});
     }
-    var ll=inv2D(x,y,R2,cx,cy),poly=null;
+    var ll=inv2D(x,y,R2,cx,cy),poly=null,tg=D[quiz.cur];
+    if(tg&&!FEAT[tg.i]&&!quiz.answered){
+      var tq=proj2D(tg.lng,tg.lat,R2,cx,cy);
+      if((tq.x-x)*(tq.x-x)+(tq.y-y)*(tq.y-y)<44*44){quizMapAnswer(tg);return;}
+    }
     if(feats)for(i=0;i<D.length;i++){if(on[i]&&FEAT[i]&&inFeat(FEAT[i],ll[0],ll[1])){poly=D[i];break;}}
+    if(tg&&!FEAT[tg.i]&&!quiz.answered&&!cand.length&&!poly&&ll&&!isNaN(ll[0])){finishQ(false,'Você tocou a '+Math.round(haversine({lat:ll[1],lng:ll[0]},tg)).toLocaleString('pt-BR')+' km do lugar certo.');return;}
     quizMapAnswer(cand.length?cand[0].d:poly);
     return;
   }
@@ -5055,13 +5131,14 @@ function showNextToast(){
 function badgeDefs(){
   var arr=[];
   REG.forEach(function(rg,ri){
+    if(!D.some(function(d){return d.r===ri&&!d.dep&&!d.uni;}))return;
     arr.push({id:'reg'+ri,title:'Domina '+rg.n,icon:'🌎',desc:'Chegue a 3 acertos seguidos em todos os países de '+rg.n+' (País → Capital).',need:function(){
-      var st=QS.m.cap||{},list=D.filter(function(d){return d.r===ri&&!d.dep;});
+      var st=QS.m.cap||{},list=D.filter(function(d){return d.r===ri&&!d.dep&&!d.uni;});
       return list.length>0&&list.every(function(d){var e=st[d.cc];return e&&e.s>=3;});
     }});
   });
-  arr.push({id:'world',title:'Mestre do Mundo',icon:'👑',desc:'Domine os 204 países e territórios em País → Capital.',need:function(){
-    var st=QS.m.cap||{};return D.every(function(d){if(d.dep)return true;var e=st[d.cc];return e&&e.s>=3;});
+  arr.push({id:'world',title:'Mestre do Mundo',icon:'👑',desc:'Domine os '+N_BASE+' países e territórios em País → Capital.',need:function(){
+    var st=QS.m.cap||{};return D.every(function(d){if(d.dep||d.uni)return true;var e=st[d.cc];return e&&e.s>=3;});
   }});
   arr.push({id:'br27',title:'De Norte a Sul',icon:'🇧🇷',desc:'Domine os 27 estados do Brasil em Estado → Capital.',need:function(){
     var st=QS.m.cap||{};return BRS.every(function(s){var e=st['BR-'+s.sigla];return e&&e.s>=3;});
