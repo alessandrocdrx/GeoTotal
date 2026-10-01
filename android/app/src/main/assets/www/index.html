@@ -32,11 +32,11 @@
 
   /* Botão voltar: fecha o que estiver aberto, do painel mais alto para o mais baixo. */
   var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['sharesheet','shareclose'],['statsheet','statsclose'],['badgesheet','badgesclose'],['scopesheet','scopeclose'],
-    ['msheet','mclose'],['sheet','sclose'],['quiz','qclose'],['card','close'],['stbar','stexit']];
+    ['mback','mback'],['msheet','mclose'],['sheet','sclose'],['quiz','qclose'],['card','close'],['stbar','stexit']];
   window.__androidBack=function(){
     for(var i=0;i<CLOSERS.length;i++){
       var el=document.getElementById(CLOSERS[i][0]),b=document.getElementById(CLOSERS[i][1]);
-      if(el&&b&&getComputedStyle(el).display!=='none'){b.click();return true;}
+      if(el&&b&&el.getClientRects().length){b.click();return true;}
     }
     return false;
   };
@@ -367,7 +367,7 @@ header .modesw button{padding:0 10px!important}
 .rundone .qrow{margin-top:14px}
 .medal{font-size:64px;line-height:1;margin-bottom:2px;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
 .recline{margin-top:8px;font-size:13.5px;font-weight:600;line-height:1.45}
-.sharebtn{margin-top:8px;width:100%;border:0;border-radius:12px;padding:12px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;color:#1a1200;background:linear-gradient(90deg,#ffd166,#ff9f43)}
+.rundone .qrow .qshare{flex:0 0 52px;padding:0;font-size:20px}
 .htabs{display:flex;gap:6px;margin:4px 0 10px}
 .htabs button{flex:1;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:9px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
 .htabs button[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg);border-color:var(--chip-on)}
@@ -381,6 +381,33 @@ header .modesw button{padding:0 10px!important}
 .hbar{grid-column:1/-1;height:5px;border-radius:3px;background:var(--border);overflow:hidden}
 .hbar i{display:block;height:100%;border-radius:3px}
 @media (max-width:420px){.htop .streakpill{display:none!important}}
+.mhead{display:flex;align-items:center;gap:8px;min-width:0}
+.mback{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;width:38px;height:38px;font-size:18px;font-weight:800;cursor:pointer;font-family:inherit;flex:none}
+.mlist{display:flex;flex-direction:column;margin-top:4px}
+.mlist button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--border);color:var(--fg);padding:13px 4px;cursor:pointer;font-family:inherit}
+.mlist button:first-child{border-top:0}
+.mlist .mi{font-size:22px;width:30px;text-align:center;flex:none;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
+.mlist .mt{flex:1;min-width:0;display:flex;flex-direction:column}
+.mlist .mt b{font-size:15px}
+.mlist .mt small{font-size:12.5px;color:var(--muted);margin-top:1px}
+.mlist .mc{color:var(--muted);font-size:20px;flex:none}
+.mlist .mdanger b{color:#d64545}
+.mpage{padding-top:4px}
+.mpage select{width:100%;padding:11px 10px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:16px;margin-bottom:8px;font-family:inherit}
+.mpage .row2{margin:6px 0 8px}
+.closeb{white-space:nowrap;flex:none}
+.mhead b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.shead{gap:10px}
+.mpage>.row2:first-child{margin-top:0}
+.mdangerbtn{background:#d64545!important;color:#fff!important;border-color:#d64545!important}
+.cstat{margin-top:10px;padding:9px 12px;border:1px solid var(--border);border-radius:12px}
+.cstat.empty{font-size:13px;color:var(--muted)}
+.cstop{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted);font-weight:600}
+.cstop b{font-size:15px;color:var(--fg)}
+.csbar{display:flex;height:8px;border-radius:5px;overflow:hidden;margin:6px 0 4px;background:var(--border)}
+.csbar i{display:block;height:100%}
+.csbar .ok{background:#1f9d55}.csbar .bad{background:#d64545}
+.cslg{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -431,6 +458,7 @@ header .modesw button{padding:0 10px!important}
         <button class="x" id="close" aria-label="Fechar">✕</button>
       </div>
       <div class="capbox"><span class="lab">🏛️ Capital</span><b id="ccap"></b><div class="capnote" id="ccapnote"></div></div>
+      <div class="cstat" id="cstat"></div>
       <div id="cbody">
       <div class="facts" id="cfacts"></div>
       <div class="obs" id="cobs"></div>
@@ -454,7 +482,6 @@ header .modesw button{padding:0 10px!important}
     <label><input type="checkbox" id="oTex" checked disabled><span>Textura de satélite (estilizada)</span></label>
     <label><input type="checkbox" id="oBor" checked disabled><span>Fronteiras dos países</span></label>
     <label><input type="checkbox" id="oFill" disabled><span>Colorir países por região</span></label>
-    <label><input type="checkbox" id="oConq"><span>🏆 Pintar de dourado as regiões que você zerou no treino</span></label>
     <label><input type="checkbox" id="oNight" disabled><span>Dia e noite (sombra da noite, agora)</span></label>
   </div>
   <div class="row2"><button id="allon">Ligar todos</button><button id="alloff">Desligar todos</button></div>
@@ -475,39 +502,43 @@ header .modesw button{padding:0 10px!important}
 </div></div>
 
 <div id="msheet" class="ov"><div class="box">
-  <div class="shead"><b>Mais</b><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
-  <div class="sec">
-    <div class="lab">Aparência</div>
+  <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Mais</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <nav id="mlist" class="mlist">
+    <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
+    <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Dois países lado a lado</small></span><span class="mc">›</span></button>
+    <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Calcula e mostra no globo</small></span><span class="mc">›</span></button>
+    <button data-p="mp-exp"><span class="mi">📄</span><span class="mt"><b>Estudar e exportar</b><small>Folha de estudo, CSV e Anki</small></span><span class="mc">›</span></button>
+    <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
+    <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Mapa</b><small>Textura e fronteiras</small></span><span class="mc">›</span></button>
+    <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
+  </nav>
+  <div class="mpage" id="mp-theme" data-t="Tema" hidden>
     <div class="row2"><button id="themeb">🌗 Tema: automático</button></div>
   </div>
-  <div class="sec">
-    <div class="lab">Comparar dois países</div>
+  <div class="mpage" id="mp-cmp" data-t="Comparar países" hidden>
     <select id="cmpA" aria-label="Primeiro país"></select>
     <select id="cmpB" aria-label="Segundo país"></select>
     <div class="row2"><button id="cmpGo">Comparar</button></div>
     <div id="cmpres"></div>
   </div>
-  <div class="sec">
-    <div class="lab">Distância entre capitais</div>
+  <div class="mpage" id="mp-dist" data-t="Distância entre capitais" hidden>
     <select id="dA" aria-label="País de origem"></select>
     <select id="dB" aria-label="País de destino"></select>
     <div class="row2"><button id="dgo">Calcular e mostrar no globo</button><button id="dclear">Limpar</button></div>
     <div id="dres" class="inote"></div>
   </div>
-  <div class="sec">
-    <div class="lab">Brasil: estados e capitais</div>
+  <div class="mpage" id="mp-br" data-t="Estados do Brasil" hidden>
     <select id="stSel" aria-label="Estado"></select>
     <div class="row2"><button id="stGo">Ir para o estado</button><button id="stAll">Ver todos os estados</button></div>
     <div class="row2"><button id="expBR">CSV dos estados</button><label class="filebtn">Importar contornos (GeoJSON)<input id="impSt" type="file" accept=".json,.geojson,application/json,application/geo+json" hidden></label></div>
     <div class="inote">O app tenta carregar os limites dos estados sozinho ao entrar no modo estados (dados amCharts geodata / Natural Earth). Se não conseguir, importe um GeoJSON dos estados, por exemplo a malha do IBGE.</div>
   </div>
-  <div class="sec">
-    <div class="lab">Exportar (usa os países ligados nos filtros)</div>
+  <div class="mpage" id="mp-exp" data-t="Estudar e exportar" hidden>
+    <div class="inote">Usa os países ligados em Filtros.</div>
     <div class="row2"><button id="expCsv">CSV completo</button><button id="expAnki">CSV para Anki</button></div>
     <div class="row2"><button id="expStudy">Folha de estudo</button></div>
   </div>
-  <div class="sec">
-    <div class="lab">Mapa e textura</div>
+  <div class="mpage" id="mp-map" data-t="Mapa" hidden>
     <div id="minfo" class="inote"></div>
     <details class="adv"><summary>⚙️ Avançado (importar textura e fronteiras)</summary><div>
     <div class="row2"><label class="filebtn">Importar textura (imagem)<input id="impTex" type="file" accept="image/*" hidden></label><button id="resetTex">Voltar à textura gerada</button></div>
@@ -515,9 +546,9 @@ header .modesw button{padding:0 10px!important}
     <div class="inote">Imagem: mapa-múndi em projeção equirretangular (proporção 2:1), como o "Blue Marble" da NASA. Fronteiras: GeoJSON de países com códigos ISO (por exemplo, o Natural Earth).</div>
     </div></details>
   </div>
-  <div class="sec">
-    <div class="lab">Treino</div>
-    <div class="row2"><button id="qreset">Zerar histórico, partidas e medalhas do treino</button></div>
+  <div class="mpage" id="mp-reset" data-t="Zerar progresso do treino" hidden>
+    <div class="inote">Apaga o histórico de acertos e erros de cada país, as partidas em andamento, os recordes e as medalhas. Níveis, XP e conquistas continuam.</div>
+    <div class="row2"><button id="qreset" class="mdangerbtn">Zerar progresso do treino</button></div>
   </div>
 </div></div>
 
@@ -2090,6 +2121,26 @@ function renderNear(group,cur,pick,label){
   others.forEach(function(o){var b=document.createElement('button');b.textContent=label(o);b.onclick=function(){tourStop();pick(o);};box.appendChild(b);});
   box.hidden=false;
 }
+/* desempenho no treino (todos os tipos de pergunta, desde o último "zerar progresso") */
+function renderCardStat(key,isState){
+  var r=0,w=0;
+  Object.keys(QS.m).forEach(function(m){var e=QS.m[m][key];if(e){r+=e.r||0;w+=e.w||0;}});
+  var box=$('cstat');box.innerHTML='';
+  if(!(r+w)){box.className='cstat empty';box.textContent='🎯 Você ainda não treinou '+(isState?'este estado':'este país')+'.';return;}
+  var pct=Math.round(100*r/(r+w));
+  box.className='cstat';
+  var top=document.createElement('div');top.className='cstop';
+  var t=document.createElement('span');t.textContent='🎯 Seu treino';
+  var v=document.createElement('b');v.textContent=pct+'% de acerto';
+  top.appendChild(t);top.appendChild(v);
+  var bar=document.createElement('div');bar.className='csbar';
+  var ok=document.createElement('i');ok.className='ok';ok.style.width=pct+'%';
+  var bad=document.createElement('i');bad.className='bad';bad.style.width=(100-pct)+'%';
+  bar.appendChild(ok);bar.appendChild(bad);
+  var lg=document.createElement('div');lg.className='cslg';
+  lg.textContent='✔ '+r+' '+(r===1?'acerto':'acertos')+' · ✖ '+w+' '+(w===1?'erro':'erros');
+  box.appendChild(top);box.appendChild(bar);box.appendChild(lg);
+}
 function renderFacts(rows){
   var box=document.getElementById('cfacts');box.innerHTML='';
   rows.forEach(function(r){
@@ -2123,6 +2174,7 @@ function select(d,fly,group){
   dtag.textContent=d.dis?'Não reconhecido pela ONU':'';dtag.style.display=d.dis?'inline-block':'none';
   document.getElementById('ccap').textContent=d.cap;
   /* observação sobre a capital fica junto dela; o resto vira "Saiba mais" */
+  renderCardStat(d.cc,false);
   var capNote=/capital|sede|Putrajaya/i.test(d.obs);
   document.getElementById('ccapnote').textContent=capNote?d.obs:'';
   var ob=document.getElementById('cobs');ob.textContent=capNote?'':d.obs;ob.style.display=(d.obs&&!capNote)?'block':'none';
@@ -2388,10 +2440,6 @@ function drawGeo(R,cx,cy){
       ctx.fillStyle=hexA(REG[r].c,.32);ctx.fill();
     }
   }
-  if(optConq&&!quiz.open){
-    var cq=conqSet();
-    if(cq.length){ctx.beginPath();cq.forEach(function(k){if(on[k]&&FEAT[k])gpath(FEAT[k]);});ctx.fillStyle='rgba(255,196,40,.5)';ctx.fill();ctx.lineWidth=1.6;ctx.strokeStyle='#ffd166';ctx.stroke();}
-  }
   if(!allon){
     ctx.beginPath();
     for(i=0;i<D.length;i++)if(!on[i]&&FEAT[i])gpath(FEAT[i]);
@@ -2607,7 +2655,6 @@ function updateOpts(){$('oNight').disabled=!useTex;oTex.disabled=!useTex;oTex.ch
 oTex.onchange=function(){optTex=oTex.checked;};
 oBor.onchange=function(){optBor=oBor.checked;};
 oFill.onchange=function(){optFill=oFill.checked;};
-$('oConq').checked=optConq;$('oConq').onchange=function(){optConq=this.checked;lsSet('globo.conq',optConq);};
 
 /* =====================================================================
    MÓDULOS NOVOS
@@ -3092,27 +3139,6 @@ function inScope(d){
   if(sc.t==='reg')return d.r===sc.r;
   return d.r===sc.r&&d.sub===sc.s;
 }
-function inScopeSc(sc,d){
-  if(sc.t==='world')return true;
-  if(sc.t==='super')return AMERICAS_R.indexOf(d.r)>=0;
-  if(sc.t==='multi')return (sc.items||[]).some(function(it){return it.s?(d.r===it.r&&d.sub===it.s):d.r===it.r;});
-  if(sc.t==='reg')return d.r===sc.r;
-  if(sc.t==='sub')return d.r===sc.r&&d.sub===sc.s;
-  return false;
-}
-/* países de regiões zeradas (qualquer tipo de pergunta), para pintar de dourado no mapa */
-function conqSet(){
-  if(conqCache)return conqCache;
-  var mark=D.map(function(){return 0;});
-  Object.keys(RECS).forEach(function(k){
-    if(k.indexOf('world|')!==0||!RECS[k].medal)return;
-    var sc;try{sc=JSON.parse(k.slice(6,k.lastIndexOf('|')));}catch(e){return;}
-    D.forEach(function(d){if(inScopeSc(sc,d))mark[d.i]=1;});
-  });
-  conqCache=[];mark.forEach(function(v,i){if(v)conqCache.push(i);});
-  return conqCache;
-}
-var optConq=lsGet('globo.conq',true);
 function scopeLabel(){
   var sc=quizScope;
   if(sc.t==='world')return 'Mundo';
@@ -3223,7 +3249,7 @@ function recFinish(r){
   var res={medal:m,t:t,first:!old.n,newMedal:!old.medal||m<old.medal,newT:old.bestT==null||Math.round(t/1000)<Math.round(old.bestT/1000),newE:old.bestE==null||r.e<old.bestE,prevT:old.bestT,prevE:old.bestE};
   if(recordable(quizScope)){
     RECS[k]={medal:Math.min(m,old.medal||9),bestT:Math.min(t,old.bestT==null?t:old.bestT),bestE:Math.min(r.e,old.bestE==null?r.e:old.bestE),n:(old.n||0)+1};
-    saveRecs();conqCache=null;
+    saveRecs();
   }
   return res;
 }
@@ -3244,7 +3270,6 @@ function runRecord(i,ok){
   saveRuns();
 }
 function runRestart(){delete RUNS[runKey()];saveRuns();resetSession();quiz.last=-1;nextQ();renderScore();}
-var conqCache=null;
 function fmtDur(ms){var m=Math.round(ms/60000);if(m<1)return 'menos de 1 min';if(m<60)return m+' min';var h=Math.floor(m/60);return h+' h '+(m%60)+' min';}
 function showRunDone(){
   stopTimerTick();
@@ -3273,10 +3298,9 @@ function showRunDone(){
   var row=document.createElement('div');row.className='qrow';
   var again=document.createElement('button');again.textContent='🔁 Jogar de novo';again.onclick=runRestart;
   var other=document.createElement('button');other.textContent='📍 Outra região';other.onclick=function(){$('qscopeb').click();};
-  row.appendChild(again);row.appendChild(other);box.appendChild(row);
-  var sh=document.createElement('button');sh.className='sharebtn';sh.textContent='📤 Compartilhar resultado';
+  var sh=document.createElement('button');sh.className='qshare';sh.textContent='📤';sh.title='Compartilhar resultado';sh.setAttribute('aria-label','Compartilhar resultado');
   sh.onclick=function(){shareRun(n,r,res);};
-  box.appendChild(sh);
+  row.appendChild(again);row.appendChild(other);row.appendChild(sh);box.appendChild(row);
   var tip=document.createElement('div');tip.className='inote';tip.textContent='Cada tipo de pergunta tem a sua própria partida e a sua medalha.';
   box.appendChild(tip);
   body.appendChild(box);measureQ();
@@ -3410,9 +3434,8 @@ function makeOptions(i){
 function renderScore(){
   updateProgUI();
   var box=$('qscore'),c=tierCounts();box.innerHTML='';
-  var a=document.createElement('div');a.textContent='Acertos '+quiz.ok+'/'+quiz.total+' · sequência '+quiz.streak+' · recorde '+QS.best;
-  var b=document.createElement('div');b.textContent='Neste treino: '+c.n+' novos · '+c.w+' a rever · '+c.o+' já acertados';
-  box.appendChild(a);box.appendChild(b);
+  var a=document.createElement('div');a.textContent='Nesta sessão: ✔ '+quiz.ok+' · ✖ '+(quiz.total-quiz.ok)+' · sequência '+quiz.streak+' (recorde '+QS.best+')';
+  box.appendChild(a);
   var n=poolIdx().length;
   if(n){
     var r=curRun(),done=n-runPool().length;
@@ -3873,7 +3896,7 @@ $('qbtn').onclick=quizOpen;$('qclose').onclick=quizClose;
 confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
 $('qoptb').onclick=function(){var o=$('qopts');o.hidden=!o.hidden;this.setAttribute('aria-expanded',o.hidden?'false':'true');measureQ();};
 $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
-confirmTap($('qreset'),'Toque de novo para zerar',function(){QS=freshQS();lsSet('globo.quiz.v1',QS);RUNS={};saveRuns();RECS={};saveRecs();conqCache=null;quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
+confirmTap($('qreset'),'Toque de novo para zerar',function(){QS=freshQS();lsSet('globo.quiz.v1',QS);RUNS={};saveRuns();RECS={};saveRecs();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
 
 /* ---------- estatísticas por região ---------- */
 function modeName(m){
@@ -4136,13 +4159,23 @@ function applyTheme(){
   if(themeMode==='light')document.documentElement.setAttribute('data-theme','light');
   else if(themeMode==='dark')document.documentElement.setAttribute('data-theme','dark');
   $('themeb').textContent='🌗 Tema: '+({auto:'automático',light:'claro',dark:'escuro'})[themeMode];
+  var tv=$('mthemev');if(tv)tv.textContent=({auto:'Automático (segue o celular)',light:'Claro',dark:'Escuro'})[themeMode];
 }
 $('themeb').onclick=function(){
   themeMode=themeMode==='auto'?'light':(themeMode==='light'?'dark':'auto');
   lsSet('globo.theme',themeMode);applyTheme();
 };
 applyTheme();
-$('mbtn').onclick=function(){updateMapInfo();$('msheet').style.display='block';};
+function mShow(id){
+  $('mlist').hidden=!!id;
+  Array.prototype.forEach.call(document.querySelectorAll('#msheet .mpage'),function(pg){pg.hidden=pg.id!==id;});
+  $('mback').hidden=!id;$('mtitle').textContent=id?$(id).getAttribute('data-t'):'Mais';
+  var bx=$('msheet').querySelector('.box');if(bx)bx.scrollTop=0;
+}
+Array.prototype.forEach.call(document.querySelectorAll('#mlist [data-p]'),function(b){b.onclick=function(){mShow(b.getAttribute('data-p'));};});
+$('mback').onclick=function(){mShow(null);};
+$('mthemerow').onclick=function(){$('themeb').click();};
+$('mbtn').onclick=function(){updateMapInfo();mShow(null);$('msheet').style.display='block';};
 $('mclose').onclick=function(){$('msheet').style.display='none';};
 $('msheet').addEventListener('pointerdown',function(e){if(e.target===$('msheet'))$('msheet').style.display='none';});
 $('txtd').addEventListener('pointerdown',function(e){if(e.target===$('txtd'))$('txtd').style.display='none';});
@@ -4265,7 +4298,7 @@ function selectSt(st,fly,group){
   var fl=$('cflag');fl.textContent=st.sigla;fl.className='flag sig';
   $('cname').textContent=st.name;
   $('ccap').textContent=st.cap;
-  $('ccapnote').textContent='';
+  $('ccapnote').textContent='';renderCardStat('BR-'+st.sigla,true);
   var ob=$('cobs');ob.textContent=st.note;ob.style.display=st.note?'block':'none';
   var dens=st.pop/st.area;
   renderFacts([['👥 População',fmtPop(st.pop/1000)],['📐 Área',fmtArea(st.area)],['🏙️ Densidade',(dens<10?dens.toFixed(1):Math.round(dens)).toString().replace('.',',')+' hab./km²'],['🧭 Região',BRREG[st.reg].n]]);
@@ -4699,10 +4732,6 @@ function draw2D(){
 
   /* fronteiras dos países ligados (quando carregadas) */
   if(feats){
-    if(optConq&&!quiz.open){
-      var cq2=conqSet();
-      if(cq2.length){ctx.beginPath();cq2.forEach(function(k2){if(on[k2]&&FEAT[k2])walkFeat2D(FEAT[k2],R2,cx,cy);});ctx.fillStyle='rgba(255,196,40,.5)';ctx.fill();ctx.lineWidth=1.6;ctx.strokeStyle='#ffd166';ctx.stroke();}
-    }
     ctx.beginPath();
     for(i=0;i<D.length;i++)if(on[i]&&FEAT[i])walkFeat2D(FEAT[i],R2,cx,cy);
     ctx.lineJoin='round';ctx.lineWidth=Math.max(.6,Math.min(1.6,.5+.15*zoom));ctx.strokeStyle='rgba(255,255,255,.72)';ctx.stroke();

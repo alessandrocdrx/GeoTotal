@@ -28,11 +28,11 @@
 
   /* Botão voltar: fecha o que estiver aberto, do painel mais alto para o mais baixo. */
   var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['sharesheet','shareclose'],['statsheet','statsclose'],['badgesheet','badgesclose'],['scopesheet','scopeclose'],
-    ['msheet','mclose'],['sheet','sclose'],['quiz','qclose'],['card','close'],['stbar','stexit']];
+    ['mback','mback'],['msheet','mclose'],['sheet','sclose'],['quiz','qclose'],['card','close'],['stbar','stexit']];
   window.__androidBack=function(){
     for(var i=0;i<CLOSERS.length;i++){
       var el=document.getElementById(CLOSERS[i][0]),b=document.getElementById(CLOSERS[i][1]);
-      if(el&&b&&getComputedStyle(el).display!=='none'){b.click();return true;}
+      if(el&&b&&el.getClientRects().length){b.click();return true;}
     }
     return false;
   };
