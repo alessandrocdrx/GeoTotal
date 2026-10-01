@@ -3325,7 +3325,7 @@ if(quizFocus!=='new'&&quizFocus!=='wrong')quizFocus='mix';
 var quizDomain='world';
 var quiz={open:false,mode:'cap',type:'choice',cur:-1,answered:false,ok:0,total:0,streak:0,last:-1,hinted:false,
   sessionLen:lsGet('globo.quiz.sesslen',0),sessionAsked:0,sessionLog:[],
-  order:lsGet('globo.quiz.order','random'),
+  order:lsGet('globo.quiz.order2','random'),
   timerLen:lsGet('globo.quiz.timerlen',0),timerStart:0,timerInt:null,
   survivalMode:lsGet('globo.quiz.survival',false),lastOk:null,nbAnswer:-1};
 var qMap=false,qFlash=null,qBadge=null,qPanelH=0;
@@ -3494,6 +3494,9 @@ function runRecord(i,ok){
   /* tempo de jogo: soma o tempo entre respostas, com pausas longas limitadas a 1 minuto */
   r.at=(r.at||0)+Math.min(60000,Math.max(0,now-(r.la||now)));r.la=now;
   if(ok)r.d[cc]=1;else r.e++;
+  /* tira a pergunta do baralho; se errou, ela volta mais adiante, numa posição sorteada */
+  if(r.deck){var di=r.deck.indexOf(cc);if(di>=0)r.deck.splice(di,1);
+    if(!ok){var lo=Math.min(3,r.deck.length);r.deck.splice(lo+rndInt(r.deck.length-lo+1),0,cc);}}
   if(ok&&!r.fin&&poolIdx().length&&!runPool().length){
     r.fin=now;
     r.res=recFinish(r);
@@ -3568,18 +3571,28 @@ function shareRun(n,r,res){
   if(window.AndroidBridge&&AndroidBridge.shareImage){try{AndroidBridge.shareImage(url.split(',')[1],text);return;}catch(e){}}
   $('shareimg').src=url;$('sharetxt').value=text;$('sharesheet').style.display='block';
 }
+function rndInt(n){
+  if(n<=1)return 0;
+  try{var u=new Uint32Array(1);crypto.getRandomValues(u);return u[0]%n;}catch(e){return Math.floor(Math.random()*n);}
+}
+function shuffled(a){a=a.slice();for(var k=a.length-1;k>0;k--){var z=rndInt(k+1),t=a[k];a[k]=a[z];a[z]=t;}return a;}
 function pickQ(){
   var pool=runPool();if(!pool.length)return -1;
   if(quiz.order==='seq')return pickQFrom(pool);
-  /* sorteio de verdade entre os que faltam na partida: a ordem muda a cada partida.
-     (A revisão espaçada de pickQFrom fazia a ordem repetir a da última partida.) */
-  var cand=pool;
+  var arr=QD(),cand=pool;
   if(quizFocus!=='mix'){
     var f=pool.filter(function(i){var t=tierOf(i);return quizFocus==='new'?t==='new':t==='wrong';});
-    if(f.length)cand=f;
+    if(f.length){if(f.length>1)f=f.filter(function(i){return i!==quiz.last;});return f[rndInt(f.length)];}
   }
-  if(cand.length>1)cand=cand.filter(function(i){return i!==quiz.last;});
-  return cand[Math.floor(Math.random()*cand.length)];
+  /* baralho da partida: embaralhado de novo a cada partida; cada país sai uma vez e os errados voltam depois */
+  var r=curRun(),byCc={};cand.forEach(function(i){byCc[qcc(arr[i])]=i;});
+  var deck=(r.deck||[]).filter(function(c){return byCc[c]!==undefined;}),inDeck={};
+  deck.forEach(function(c){inDeck[c]=1;});
+  var miss=shuffled(Object.keys(byCc).filter(function(c){return !inDeck[c];}));
+  if(!deck.length)deck=miss;else miss.forEach(function(c){deck.splice(rndInt(deck.length+1),0,c);});
+  if(deck.length>1&&quiz.last>=0&&deck[0]===qcc(arr[quiz.last])){var z=1+rndInt(deck.length-1),t=deck[0];deck[0]=deck[z];deck[z]=t;}
+  r.deck=deck;saveRuns();
+  return byCc[deck[0]];
 }
 function pickQFrom(pool){
   var arr=QD();
@@ -3941,7 +3954,7 @@ function updateOrderBtn(){
 }
 $('qorderb').onclick=function(){
   quiz.order=quiz.order==='seq'?'random':'seq';
-  lsSet('globo.quiz.order',quiz.order);
+  lsSet('globo.quiz.order2',quiz.order);
   updateOrderBtn();quiz.last=-1;resetSession();nextQ();
 };
 $('qsessionb').onclick=function(){
