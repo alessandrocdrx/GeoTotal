@@ -27,7 +27,7 @@
   window.print=function(){B.print();};
 
   /* Botão voltar: fecha o que estiver aberto, do painel mais alto para o mais baixo. */
-  var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['statsheet','statsclose'],['badgesheet','badgesclose'],['scopesheet','scopeclose'],
+  var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['sharesheet','shareclose'],['statsheet','statsclose'],['badgesheet','badgesclose'],['scopesheet','scopeclose'],
     ['msheet','mclose'],['sheet','sclose'],['quiz','qclose'],['card','close'],['stbar','stexit']];
   window.__androidBack=function(){
     for(var i=0;i<CLOSERS.length;i++){

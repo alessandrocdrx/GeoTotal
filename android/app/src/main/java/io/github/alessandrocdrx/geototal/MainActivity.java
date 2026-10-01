@@ -6,6 +6,7 @@ package io.github.alessandrocdrx.geototal;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Insets;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintManager;
+import android.util.Base64;
 import android.view.View;
 import android.view.WindowInsets;
 import android.webkit.JavascriptInterface;
@@ -29,6 +31,8 @@ import android.widget.FrameLayout;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -215,6 +219,31 @@ public class MainActivity extends Activity {
                     startActivityForResult(i, REQ_SAVE_FILE);
                 } catch (ActivityNotFoundException e) {
                     finishSave("error");
+                }
+            });
+        }
+
+        /** Compartilha a imagem do resultado (PNG em base64) com o texto, pelo menu do Android. */
+        @JavascriptInterface
+        public void shareImage(String base64Png, String text) {
+            runOnUiThread(() -> {
+                try {
+                    File dir = ShareProvider.dir(MainActivity.this);
+                    if (!dir.exists() && !dir.mkdirs()) throw new IOException("sem pasta");
+                    File f = new File(dir, "geototal-resultado.png");
+                    try (FileOutputStream out = new FileOutputStream(f)) {
+                        out.write(Base64.decode(base64Png, Base64.DEFAULT));
+                    }
+                    Uri uri = Uri.parse("content://" + ShareProvider.AUTHORITY + "/" + f.getName());
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("image/png");
+                    i.putExtra(Intent.EXTRA_STREAM, uri);
+                    i.putExtra(Intent.EXTRA_TEXT, text);
+                    i.setClipData(ClipData.newRawUri("", uri));
+                    i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(Intent.createChooser(i, "Compartilhar resultado"));
+                } catch (IOException | IllegalArgumentException | ActivityNotFoundException e) {
+                    web.evaluateJavascript("window.setStatus && setStatus('Não consegui abrir o compartilhamento.',4000)", null);
                 }
             });
         }

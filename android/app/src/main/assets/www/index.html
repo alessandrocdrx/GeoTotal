@@ -31,7 +31,7 @@
   window.print=function(){B.print();};
 
   /* Botão voltar: fecha o que estiver aberto, do painel mais alto para o mais baixo. */
-  var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['statsheet','statsclose'],['badgesheet','badgesclose'],['scopesheet','scopeclose'],
+  var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['sharesheet','shareclose'],['statsheet','statsclose'],['badgesheet','badgesclose'],['scopesheet','scopeclose'],
     ['msheet','mclose'],['sheet','sclose'],['quiz','qclose'],['card','close'],['stbar','stexit']];
   window.__androidBack=function(){
     for(var i=0;i<CLOSERS.length;i++){
@@ -365,6 +365,22 @@ header .modesw button{padding:0 10px!important}
 .runbar i{display:block;height:100%;background:#2fd67f;border-radius:4px;transition:width .3s}
 .rundone{text-align:center;padding:4px 0 8px}
 .rundone .qrow{margin-top:14px}
+.medal{font-size:64px;line-height:1;margin-bottom:2px;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
+.recline{margin-top:8px;font-size:13.5px;font-weight:600;line-height:1.45}
+.sharebtn{margin-top:8px;width:100%;border:0;border-radius:12px;padding:12px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;color:#1a1200;background:linear-gradient(90deg,#ffd166,#ff9f43)}
+.htabs{display:flex;gap:6px;margin:4px 0 10px}
+.htabs button{flex:1;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:9px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+.htabs button[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg);border-color:var(--chip-on)}
+.hctl{display:flex;flex-direction:column;gap:6px}
+.hctl select,.hctl input[type=search]{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:15px;font-family:inherit}
+.hsum{margin:10px 0 4px;font-size:13px;font-weight:700}
+.hrow{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:9px 0;border-top:1px solid var(--border);align-items:center}
+.hname{font-size:14px;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.hscore{display:flex;gap:10px;font-variant-numeric:tabular-nums;font-size:13.5px}
+.hok{color:#1f9d55}.hbad{color:#d64545}
+.hbar{grid-column:1/-1;height:5px;border-radius:3px;background:var(--border);overflow:hidden}
+.hbar i{display:block;height:100%;border-radius:3px}
+@media (max-width:420px){.htop .streakpill{display:none!important}}
 </style>
 </head>
 <body>
@@ -438,6 +454,7 @@ header .modesw button{padding:0 10px!important}
     <label><input type="checkbox" id="oTex" checked disabled><span>Textura de satélite (estilizada)</span></label>
     <label><input type="checkbox" id="oBor" checked disabled><span>Fronteiras dos países</span></label>
     <label><input type="checkbox" id="oFill" disabled><span>Colorir países por região</span></label>
+    <label><input type="checkbox" id="oConq"><span>🏆 Pintar de dourado as regiões que você zerou no treino</span></label>
     <label><input type="checkbox" id="oNight" disabled><span>Dia e noite (sombra da noite, agora)</span></label>
   </div>
   <div class="row2"><button id="allon">Ligar todos</button><button id="alloff">Desligar todos</button></div>
@@ -500,7 +517,7 @@ header .modesw button{padding:0 10px!important}
   </div>
   <div class="sec">
     <div class="lab">Treino</div>
-    <div class="row2"><button id="qreset">Zerar progresso do treino</button></div>
+    <div class="row2"><button id="qreset">Zerar histórico, partidas e medalhas do treino</button></div>
   </div>
 </div></div>
 
@@ -540,8 +557,17 @@ header .modesw button{padding:0 10px!important}
 </div></div>
 
 <div id="statsheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><b>Estatísticas por região</b><button id="statsclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><b>📊 Seu histórico</b><button id="statsclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="htabs" role="tablist"><button id="htabC" aria-pressed="true">Por país</button><button id="htabR" aria-pressed="false">Por região</button></div>
   <div id="statsbody"></div>
+</div></div>
+
+<div id="sharesheet" class="ov" style="z-index:90"><div class="box">
+  <div class="shead"><b>Compartilhar resultado</b><button id="shareclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <img id="shareimg" alt="Imagem do resultado" style="width:100%;border-radius:14px;display:block">
+  <div class="inote">Para salvar a imagem, toque e segure nela. O texto abaixo pode ser colado em qualquer conversa.</div>
+  <textarea id="sharetxt" readonly style="width:100%;height:84px;margin-top:8px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;padding:8px;font-family:inherit"></textarea>
+  <div class="row2"><button id="sharecopy">Copiar texto</button></div>
 </div></div>
 
 <div id="badgesheet" class="ov" style="z-index:85"><div class="box">
@@ -2362,6 +2388,10 @@ function drawGeo(R,cx,cy){
       ctx.fillStyle=hexA(REG[r].c,.32);ctx.fill();
     }
   }
+  if(optConq&&!quiz.open){
+    var cq=conqSet();
+    if(cq.length){ctx.beginPath();cq.forEach(function(k){if(on[k]&&FEAT[k])gpath(FEAT[k]);});ctx.fillStyle='rgba(255,196,40,.5)';ctx.fill();ctx.lineWidth=1.6;ctx.strokeStyle='#ffd166';ctx.stroke();}
+  }
   if(!allon){
     ctx.beginPath();
     for(i=0;i<D.length;i++)if(!on[i]&&FEAT[i])gpath(FEAT[i]);
@@ -2577,6 +2607,7 @@ function updateOpts(){$('oNight').disabled=!useTex;oTex.disabled=!useTex;oTex.ch
 oTex.onchange=function(){optTex=oTex.checked;};
 oBor.onchange=function(){optBor=oBor.checked;};
 oFill.onchange=function(){optFill=oFill.checked;};
+$('oConq').checked=optConq;$('oConq').onchange=function(){optConq=this.checked;lsSet('globo.conq',optConq);};
 
 /* =====================================================================
    MÓDULOS NOVOS
@@ -3008,6 +3039,7 @@ var quizScope=(function(){var v=lsGet('globo.quiz.scope',{t:'world'});
   if((v.t==='reg'||v.t==='sub')&&!REG[v.r])return {t:'world'};
   if(v.t==='multi'){if(!Array.isArray(v.items))return {t:'world'};v.items=v.items.filter(function(it){return it&&REG[it.r];});if(!v.items.length)return {t:'world'};}
   if(v.t==='brreg'&&(v.r<0||v.r>4))return {t:'world'};
+  if(v.t==='review'&&!Array.isArray(v.cc))return {t:'world'};
   return v;
 })();
 var quizScopePrev=null;
@@ -3054,14 +3086,37 @@ function inScope(d){
   var sc=quizScope;
   if(sc.t==='world')return true;
   if(sc.t==='filter')return !!on[d.i];
+  if(sc.t==='review')return (sc.cc||[]).indexOf(d.cc)>=0;
   if(sc.t==='super')return AMERICAS_R.indexOf(d.r)>=0;
   if(sc.t==='multi')return sc.items.some(function(it){return it.s?(d.r===it.r&&d.sub===it.s):d.r===it.r;});
   if(sc.t==='reg')return d.r===sc.r;
   return d.r===sc.r&&d.sub===sc.s;
 }
+function inScopeSc(sc,d){
+  if(sc.t==='world')return true;
+  if(sc.t==='super')return AMERICAS_R.indexOf(d.r)>=0;
+  if(sc.t==='multi')return (sc.items||[]).some(function(it){return it.s?(d.r===it.r&&d.sub===it.s):d.r===it.r;});
+  if(sc.t==='reg')return d.r===sc.r;
+  if(sc.t==='sub')return d.r===sc.r&&d.sub===sc.s;
+  return false;
+}
+/* países de regiões zeradas (qualquer tipo de pergunta), para pintar de dourado no mapa */
+function conqSet(){
+  if(conqCache)return conqCache;
+  var mark=D.map(function(){return 0;});
+  Object.keys(RECS).forEach(function(k){
+    if(k.indexOf('world|')!==0||!RECS[k].medal)return;
+    var sc;try{sc=JSON.parse(k.slice(6,k.lastIndexOf('|')));}catch(e){return;}
+    D.forEach(function(d){if(inScopeSc(sc,d))mark[d.i]=1;});
+  });
+  conqCache=[];mark.forEach(function(v,i){if(v)conqCache.push(i);});
+  return conqCache;
+}
+var optConq=lsGet('globo.conq',true);
 function scopeLabel(){
   var sc=quizScope;
   if(sc.t==='world')return 'Mundo';
+  if(sc.t==='review')return 'Revisão dos erros';
   if(sc.t==='filter')return 'Filtros atuais';
   if(sc.t==='super')return 'Américas';
   if(sc.t==='br')return 'Brasil (todos os estados)';
@@ -3155,37 +3210,106 @@ function tierCounts(){var c={n:0,w:0,o:0};poolIdx().forEach(function(i){var t=ti
 /* ---------- partida: cada acerto tira o item da rodada; ao acertar todos, a região está zerada ---------- */
 var RUNS=lsGet('globo.runs.v1',{});
 function runKey(){return quizDomain+'|'+JSON.stringify(quizScope)+'|'+quiz.mode;}
-function curRun(){var k=runKey();return RUNS[k]||(RUNS[k]={d:{},e:0,t0:Date.now(),fin:0});}
+function curRun(){var k=runKey();return RUNS[k]||(RUNS[k]={d:{},e:0,t0:Date.now(),fin:0,at:0,la:Date.now()});}
+/* recordes e medalhas de cada partida zerada (por região + tipo de pergunta) */
+var RECS=lsGet('globo.recs.v1',{});
+function saveRecs(){lsSet('globo.recs.v1',RECS);}
+var MEDAL={1:{i:'🥇',n:'ouro'},2:{i:'🥈',n:'prata'},3:{i:'🥉',n:'bronze'}};
+function medalFor(e){return e===0?1:(e<=3?2:3);}
+function scopeKeyFor(sc,mode){return ((sc.t==='br'||sc.t==='brreg')?'br':'world')+'|'+JSON.stringify(sc)+'|'+mode;}
+function recordable(sc){return sc.t!=='filter'&&sc.t!=='review';}
+function recFinish(r){
+  var k=runKey(),old=RECS[k]||{},m=medalFor(r.e),t=r.at||((r.fin||Date.now())-r.t0);
+  var res={medal:m,t:t,first:!old.n,newMedal:!old.medal||m<old.medal,newT:old.bestT==null||Math.round(t/1000)<Math.round(old.bestT/1000),newE:old.bestE==null||r.e<old.bestE,prevT:old.bestT,prevE:old.bestE};
+  if(recordable(quizScope)){
+    RECS[k]={medal:Math.min(m,old.medal||9),bestT:Math.min(t,old.bestT==null?t:old.bestT),bestE:Math.min(r.e,old.bestE==null?r.e:old.bestE),n:(old.n||0)+1};
+    saveRecs();conqCache=null;
+  }
+  return res;
+}
+function fmtTime(ms){var s2=Math.max(1,Math.round(ms/1000)),m=Math.floor(s2/60);return m?(m+' min '+(s2%60)+' s'):(s2+' s');}
 function saveRuns(){lsSet('globo.runs.v1',RUNS);}
 function runPool(){var arr=QD(),r=curRun();return poolIdx().filter(function(i){return !r.d[qcc(arr[i])];});}
 function runRecord(i,ok){
-  var r=curRun(),cc=qcc(QD()[i]);
+  var r=curRun(),cc=qcc(QD()[i]),now=Date.now();
+  /* tempo de jogo: soma o tempo entre respostas, com pausas longas limitadas a 1 minuto */
+  r.at=(r.at||0)+Math.min(60000,Math.max(0,now-(r.la||now)));r.la=now;
   if(ok)r.d[cc]=1;else r.e++;
   if(ok&&!r.fin&&poolIdx().length&&!runPool().length){
-    r.fin=Date.now();
+    r.fin=now;
+    r.res=recFinish(r);
     celebrate('🏁 Você zerou '+scopeLabel()+'!');addXP(50);
+    if(recordable(quizScope)&&r.res.newMedal)celebrate(MEDAL[r.res.medal].i+' Medalha de '+MEDAL[r.res.medal].n+'!');
   }
   saveRuns();
 }
 function runRestart(){delete RUNS[runKey()];saveRuns();resetSession();quiz.last=-1;nextQ();renderScore();}
+var conqCache=null;
 function fmtDur(ms){var m=Math.round(ms/60000);if(m<1)return 'menos de 1 min';if(m<60)return m+' min';var h=Math.floor(m/60);return h+' h '+(m%60)+' min';}
 function showRunDone(){
   stopTimerTick();
-  var r=curRun(),n=poolIdx().length,body=$('qbody'),fb=$('qfb');
+  var r=curRun(),n=poolIdx().length,body=$('qbody'),fb=$('qfb'),res=r.res||{medal:medalFor(r.e),t:r.at||0};
   fb.textContent='';fb.className='';$('qnext').style.display='none';$('qpool').textContent='';
   body.innerHTML='';
   var box=document.createElement('div');box.className='rundone';
-  var h=document.createElement('div');h.className='qq';h.textContent='🏆 Você zerou '+scopeLabel()+'!';
+  var rec=recordable(quizScope);
+  if(rec){var md=document.createElement('div');md.className='medal';md.textContent=MEDAL[res.medal].i;box.appendChild(md);}
+  var h=document.createElement('div');h.className='qq';h.textContent='Você zerou '+scopeLabel()+'!';
   var sub=document.createElement('div');sub.className='qhint';
-  sub.textContent='Acertou os '+n+' '+unitWord(n)+' em '+modeName(quiz.mode)+' · '+r.e+' '+(r.e===1?'erro':'erros')+' no caminho · '+fmtDur((r.fin||Date.now())-r.t0)+'.';
+  sub.textContent=n+' '+unitWord(n)+' em '+modeName(quiz.mode)+' · '+r.e+' '+(r.e===1?'erro':'erros')+' · '+fmtTime(res.t)+' de jogo'+(rec?' · medalha de '+MEDAL[res.medal].n:'')+'.';
   box.appendChild(h);box.appendChild(sub);
+  if(rec){
+    var rl=document.createElement('div');rl.className='recline';
+    var bits=[];
+    if(res.first)bits.push('🎉 Primeira vez que você zera esta região neste tipo de pergunta!');
+    else{
+      if(res.newT)bits.push('🎉 Novo recorde de tempo! (antes: '+fmtTime(res.prevT)+')');
+      if(res.newE&&res.prevE!=null&&r.e<res.prevE)bits.push('🎉 Novo recorde de menos erros! (antes: '+res.prevE+')');
+      if(!bits.length){var R2=RECS[runKey()]||{};bits.push('Seus recordes: '+fmtTime(R2.bestT)+' · '+R2.bestE+' '+(R2.bestE===1?'erro':'erros'));}
+    }
+    if(res.medal>1)bits.push(res.medal===2?'Para o ouro: zere sem nenhum erro.':'Para a prata: zere com até 3 erros.');
+    rl.textContent=bits.join(' ');box.appendChild(rl);
+  }
   var row=document.createElement('div');row.className='qrow';
   var again=document.createElement('button');again.textContent='🔁 Jogar de novo';again.onclick=runRestart;
   var other=document.createElement('button');other.textContent='📍 Outra região';other.onclick=function(){$('qscopeb').click();};
   row.appendChild(again);row.appendChild(other);box.appendChild(row);
-  var tip=document.createElement('div');tip.className='inote';tip.textContent='Dá para trocar o tipo de pergunta nos botões acima: cada tipo tem a sua própria partida.';
+  var sh=document.createElement('button');sh.className='sharebtn';sh.textContent='📤 Compartilhar resultado';
+  sh.onclick=function(){shareRun(n,r,res);};
+  box.appendChild(sh);
+  var tip=document.createElement('div');tip.className='inote';tip.textContent='Cada tipo de pergunta tem a sua própria partida e a sua medalha.';
   box.appendChild(tip);
   body.appendChild(box);measureQ();
+}
+/* imagem do resultado para compartilhar */
+function shareRun(n,r,res){
+  var W2=1080,cv2=document.createElement('canvas');cv2.width=W2;cv2.height=W2;
+  var c=cv2.getContext('2d'),g=c.createLinearGradient(0,0,W2,W2);
+  g.addColorStop(0,'#2a2f8f');g.addColorStop(.55,'#141a52');g.addColorStop(1,'#05071a');
+  c.fillStyle=g;c.fillRect(0,0,W2,W2);
+  var gl2=c.createRadialGradient(W2*.78,W2*.2,10,W2*.78,W2*.2,420);gl2.addColorStop(0,'rgba(181,124,255,.35)');gl2.addColorStop(1,'rgba(181,124,255,0)');
+  c.fillStyle=gl2;c.fillRect(0,0,W2,W2);
+  var EM="'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif";
+  c.textAlign='center';c.textBaseline='middle';
+  var rec=recordable(quizScope);
+  c.font='220px '+EM;c.fillText(rec?MEDAL[res.medal].i:'🏆',W2/2,250);
+  c.fillStyle='#ffffff';c.font='800 66px '+FONT;
+  var title='Zerei '+scopeLabel()+'!',fs=66;
+  while(c.measureText(title).width>W2-120&&fs>34){fs-=2;c.font='800 '+fs+'px '+FONT;}
+  c.fillText(title,W2/2,480);
+  c.fillStyle='#dfe7ff';c.font='600 40px '+FONT;
+  c.fillText(n+' '+unitWord(n)+' · '+modeName(quiz.mode),W2/2,570);
+  c.fillText(r.e+' '+(r.e===1?'erro':'erros')+' · '+fmtTime(res.t)+' de jogo',W2/2,635);
+  c.font='800 92px '+FONT;var gx=c.createLinearGradient(W2/2-220,0,W2/2+220,0);
+  gx.addColorStop(0,'#ffd166');gx.addColorStop(.55,'#ff9f43');gx.addColorStop(1,'#ff4f8b');
+  c.fillStyle='#ffffff';c.textAlign='right';c.fillText('geo',W2/2-8,820);
+  c.fillStyle=gx;c.textAlign='left';c.fillText('Total',W2/2-8,820);
+  c.textAlign='center';c.fillStyle='#9fb3ff';c.font='500 34px '+FONT;
+  c.fillText('github.com/alessandrocdrx/GeoTotal',W2/2,920);
+  var text='🏆 Zerei '+scopeLabel()+' no geoTotal: '+n+' '+unitWord(n)+' ('+modeName(quiz.mode)+'), '+r.e+' '+(r.e===1?'erro':'erros')+', '+fmtTime(res.t)+'. https://github.com/alessandrocdrx/GeoTotal';
+  var url=cv2.toDataURL('image/png');
+  if(window.AndroidBridge&&AndroidBridge.shareImage){try{AndroidBridge.shareImage(url.split(',')[1],text);return;}catch(e){}}
+  $('shareimg').src=url;$('sharetxt').value=text;$('sharesheet').style.display='block';
 }
 function pickQ(){
   var pool=runPool();if(!pool.length)return -1;
@@ -3579,6 +3703,7 @@ $('qsessionb').onclick=function(){
 };
 function nextQ(){
   qFlash=null;qBadge=null;selected=null;quiz.hinted=false;quiz.nbAnswer=-1;
+  if(arc&&arc.quiz)arc=null;
   var arr=QD(),i=pickQ();
   var body=$('qbody'),fb=$('qfb');body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
   var isMap=quiz.mode==='map',isNeighbor=quiz.mode==='neighbor';
@@ -3678,12 +3803,21 @@ function nextQ(){
 function quizMapAnswer(cn){
   if(!qMap||quiz.answered)return;
   var i=quiz.cur,d=D[i],ok=!!cn&&cn.i===i;
-  finishQ(ok,ok?'':(cn?('Você tocou em '+cn.flag+' '+short(cn)+'.'):'Você tocou fora de qualquer país.'));
+  if(ok||!cn){finishQ(ok,ok?'':'Você tocou fora de qualquer país.');return;}
+  var km=Math.round(haversine(cn,d)),near=km<800;
+  var pts=[],A=[cn.x,cn.y,cn.z],B=[d.x,d.y,d.z];
+  for(var t=0;t<=1.0001;t+=1/60)pts.push(slerp(A,B,Math.min(1,t)));
+  arc={a:cn.i,b:i,pts:pts,quiz:true};
+  if(near)addXP(3);
+  finishQ(false,'Você tocou em '+dflag(cn)+' '+short(cn)+', a '+km.toLocaleString('pt-BR')+' km (entre as capitais).'+(near?' Quase! +3 XP':''));
 }
 function quizMapAnswerBR(st){
   if(!qMap||quiz.answered)return;
   var i=quiz.cur,d=BRS[i],ok=!!st&&st.i===i;
-  finishQ(ok,ok?'':(st?('Você tocou em '+st.sigla+' '+st.name+'.'):'Você tocou fora de qualquer estado.'));
+  if(ok||!st){finishQ(ok,ok?'':'Você tocou fora de qualquer estado.');return;}
+  var km=Math.round(haversine(st,d)),near=km<300;
+  if(near)addXP(3);
+  finishQ(false,'Você tocou em '+st.sigla+' '+st.name+', a '+km.toLocaleString('pt-BR')+' km (entre as capitais).'+(near?' Quase! +3 XP':''));
 }
 function pickStateNear(x,y){
   var R=R0*zoom,cand=[];
@@ -3730,6 +3864,7 @@ function quizOpen(){
 function quizClose(){
   setTimeout(syncFab,0);
   quiz.open=false;qMap=false;qPanelH=0;qFlash=null;qBadge=null;
+  if(arc&&arc.quiz)arc=null;
   stopTimerTick();
   if(quizDomain==='br'){statesMode=false;selSt=null;}
   document.body.classList.remove('quizing');$('quiz').style.display='none';setTimeout(resize,60);
@@ -3738,7 +3873,7 @@ $('qbtn').onclick=quizOpen;$('qclose').onclick=quizClose;
 confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
 $('qoptb').onclick=function(){var o=$('qopts');o.hidden=!o.hidden;this.setAttribute('aria-expanded',o.hidden?'false':'true');measureQ();};
 $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
-confirmTap($('qreset'),'Toque de novo para zerar',function(){QS=freshQS();lsSet('globo.quiz.v1',QS);quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
+confirmTap($('qreset'),'Toque de novo para zerar',function(){QS=freshQS();lsSet('globo.quiz.v1',QS);RUNS={};saveRuns();RECS={};saveRecs();conqCache=null;quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
 
 /* ---------- estatísticas por região ---------- */
 function modeName(m){
@@ -3758,7 +3893,13 @@ function computeRegionStats(){
     .map(function(g){return {n:g.n,acc:Math.round(100*g.r/(g.r+g.w)),tot:g.r+g.w};})
     .sort(function(a,b){return a.acc-b.acc;});
 }
+var histTab='c',hist={mode:null,sort:'w',scopeOnly:false,showAll:false,q:''};
 function openStats(){
+  $('htabC').setAttribute('aria-pressed',histTab==='c'?'true':'false');
+  $('htabR').setAttribute('aria-pressed',histTab==='r'?'true':'false');
+  if(histTab==='c')openHistCountries();else openRegionStats();
+}
+function openRegionStats(){
   var box=$('statsbody');box.innerHTML='';
   var t=document.createElement('div');t.className='inote';t.style.margin='0 0 10px';
   t.textContent='Treino: '+modeName(quiz.mode)+(quizDomain==='br'?' · Brasil':'')+'.';
@@ -3777,6 +3918,75 @@ function openStats(){
     box.appendChild(row);
   });
 }
+/* histórico de todo o tempo por país (ou estado): acertos e erros, até alguém zerar o progresso */
+function histModes(){return quizDomain==='br'?['cap','pais','neighbor','code','map']:['cap','pais','flag','neighbor','code','map'];}
+function openHistCountries(){
+  var box=$('statsbody');box.innerHTML='';
+  if(!hist.mode||(hist.mode!=='all'&&histModes().indexOf(hist.mode)<0))hist.mode=quiz.mode;
+  var ctl=document.createElement('div');ctl.className='hctl';
+  var sm=document.createElement('select');sm.id='histmode';sm.setAttribute('aria-label','Tipo de pergunta');
+  [['all','Todos os tipos de pergunta']].concat(histModes().map(function(m){return [m,modeName(m)];})).forEach(function(o){
+    var op=document.createElement('option');op.value=o[0];op.textContent=o[1];sm.appendChild(op);});
+  sm.value=hist.mode;sm.onchange=function(){hist.mode=this.value;renderHist();};
+  var so=document.createElement('select');so.id='histsort';so.setAttribute('aria-label','Ordenar');
+  [['w','Mais erros primeiro'],['r','Mais acertos primeiro'],['p','Pior aproveitamento primeiro'],['n','Nome (A–Z)']].forEach(function(o){
+    var op=document.createElement('option');op.value=o[0];op.textContent=o[1];so.appendChild(op);});
+  so.value=hist.sort;so.onchange=function(){hist.sort=this.value;renderHist();};
+  var qi=document.createElement('input');qi.type='search';qi.id='histq';qi.placeholder=quizDomain==='br'?'Buscar estado':'Buscar país';qi.value=hist.q;
+  qi.oninput=function(){hist.q=this.value;renderHist();};
+  ctl.appendChild(sm);ctl.appendChild(so);ctl.appendChild(qi);
+  function chk(id,label,key){
+    var l=document.createElement('label');l.className='toglab';
+    var c=document.createElement('input');c.type='checkbox';c.id=id;c.checked=hist[key];
+    c.onchange=function(){hist[key]=this.checked;renderHist();};
+    var sp=document.createElement('span');sp.textContent=label;l.appendChild(c);l.appendChild(sp);ctl.appendChild(l);
+  }
+  if(quizScope.t!=='world'&&quizScope.t!=='br')chk('histscope','Só '+scopeLabel(),'scopeOnly');
+  chk('histall','Mostrar também os que você ainda não respondeu','showAll');
+  box.appendChild(ctl);
+  var sum=document.createElement('div');sum.id='histsum';sum.className='hsum';box.appendChild(sum);
+  var list=document.createElement('div');list.id='histlist';box.appendChild(list);
+  renderHist();
+}
+function renderHist(){
+  var arr=QD(),modes=hist.mode==='all'?histModes():[hist.mode],qn=norm((hist.q||'').trim()),rows=[],tr=0,tw=0,seen=0;
+  arr.forEach(function(o){
+    if(hist.scopeOnly&&!inScopeActive(o))return;
+    if(qn&&norm(o.name).indexOf(qn)<0)return;
+    var r=0,w=0,key=qcc(o);
+    modes.forEach(function(m){var e=(QS.m[m]||{})[key];if(e){r+=e.r||0;w+=e.w||0;}});
+    if(r+w)seen++;
+    tr+=r;tw+=w;
+    if(!hist.showAll&&!(r+w))return;
+    rows.push({o:o,r:r,w:w,p:(r+w)?r/(r+w):-1});
+  });
+  var by={w:function(a,b){return b.w-a.w||a.r-b.r;},r:function(a,b){return b.r-a.r||a.w-b.w;},p:function(a,b){return (a.p<0?2:a.p)-(b.p<0?2:b.p)||b.w-a.w;},n:function(a,b){return a.o.name.localeCompare(b.o.name,'pt');}}[hist.sort];
+  rows.sort(by);
+  $('histsum').textContent='✔ '+tr+' acertos · ✖ '+tw+' erros · '+seen+' de '+arr.filter(function(o){return !hist.scopeOnly||inScopeActive(o);}).length+' '+unitWord(2)+' já respondidos'+(tr+tw?' · '+Math.round(100*tr/(tr+tw))+'% de acerto':'')+'.';
+  var list=$('histlist');list.innerHTML='';
+  if(!rows.length){var e=document.createElement('div');e.className='inote';e.textContent=tr+tw?'Nada encontrado.':'Ainda não há respostas registradas aqui.';list.appendChild(e);return;}
+  rows.forEach(function(x){
+    var row=document.createElement('div');row.className='hrow';
+    var nm=document.createElement('div');nm.className='hname';
+    nm.textContent=(quizDomain==='br'?x.o.sigla+' · ':dflag(x.o)+' ')+(quizDomain==='br'?x.o.name:short(x.o));
+    var sc=document.createElement('div');sc.className='hscore';
+    var ok=document.createElement('b');ok.className='hok';ok.textContent='✔ '+x.r;
+    var bad=document.createElement('b');bad.className='hbad';bad.textContent='✖ '+x.w;
+    sc.appendChild(ok);sc.appendChild(bad);
+    var bar=document.createElement('div');bar.className='hbar';
+    if(x.p>=0){var f=document.createElement('i');f.style.width=Math.round(x.p*100)+'%';f.style.background=x.p<.5?'#d64545':(x.p<.8?'#f6c800':'#1f9d55');bar.appendChild(f);}
+    row.appendChild(nm);row.appendChild(sc);row.appendChild(bar);list.appendChild(row);
+  });
+}
+$('htabC').onclick=function(){histTab='c';openStats();};
+$('htabR').onclick=function(){histTab='r';openStats();};
+$('shareclose').onclick=function(){$('sharesheet').style.display='none';};
+$('sharecopy').onclick=function(){
+  var ta=$('sharetxt');ta.focus();ta.select();
+  var done=function(){setStatus('Texto copiado.',2000);};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ta.value).then(done,function(){try{document.execCommand('copy');done();}catch(e){}});
+  else{try{document.execCommand('copy');done();}catch(e){}}
+};
 $('qstats').onclick=function(){openStats();$('statsheet').style.display='block';};
 $('statsclose').onclick=function(){$('statsheet').style.display='none';};
 
@@ -3819,6 +4029,13 @@ function applyScopeChange(newScope){
 }
 $('qscopeback').onclick=function(){if(quizScopePrev)applyScopeChange(quizScopePrev);};
 var scopeMultiMode=false,multiSel=[];
+/* revisão do dia: os países que você mais erra neste tipo de pergunta (até 10) */
+function reviewList(){
+  var st=QS.m[quiz.mode]||{},arr=[];
+  D.forEach(function(d){var e=st[d.cc];if(e&&e.w>0)arr.push({cc:d.cc,sc:e.w*2-e.r+(e.s===0?3:0)});});
+  arr.sort(function(a,b){return b.sc-a.sc;});
+  return arr.slice(0,10).map(function(x){return x.cc;});
+}
 function multiHas(sc){return multiSel.some(function(m){return m.r===sc.r&&m.s===sc.s;});}
 function updateMultiApplyBtn(){
   var n=multiSel.length,btn=$('scopeApply');
@@ -3835,8 +4052,10 @@ function buildScopeList(filterStr){
     if(!match(label))return;
     any=true;
     var b=document.createElement('button');b.className='sitem'+(level===1?' sub':level===2?' sub sub2':'');
-    var a=document.createElement('span');a.textContent=label;
-    var c=document.createElement('small');c.textContent=count+(count===1?' país':' países');
+    var a=document.createElement('span');
+    var rc=(recordable(sc)&&sc.t!=='multi')?RECS[scopeKeyFor(sc,quiz.mode)]:null;
+    a.textContent=(rc&&rc.medal?MEDAL[rc.medal].i+' ':'')+label;
+    var c=document.createElement('small');c.textContent=count+(sc.t==='br'||sc.t==='brreg'?(count===1?' estado':' estados'):(count===1?' país':' países'));
     b.appendChild(a);b.appendChild(c);
     var combinable=(sc.t==='reg'||sc.t==='sub'||sc.t==='super');
     if(scopeMultiMode&&combinable){
@@ -3858,6 +4077,8 @@ function buildScopeList(filterStr){
   }
   function header(t){if(q2)return;var h=document.createElement('div');h.className='sh';h.textContent=t;box.appendChild(h);}
   if(!scopeMultiMode){
+    var rv=reviewList();
+    if(rv.length)item('🧠 Revisão do dia: seus '+rv.length+' mais errados',rv.length,{t:'review',cc:rv},0);
     item('🌍 Mundo',D.length,{t:'world'},0);
     item('Só os que estão ligados em Filtros',on.reduce(function(a,b2){return a+b2;},0),{t:'filter'},0);
   }
@@ -4478,6 +4699,10 @@ function draw2D(){
 
   /* fronteiras dos países ligados (quando carregadas) */
   if(feats){
+    if(optConq&&!quiz.open){
+      var cq2=conqSet();
+      if(cq2.length){ctx.beginPath();cq2.forEach(function(k2){if(on[k2]&&FEAT[k2])walkFeat2D(FEAT[k2],R2,cx,cy);});ctx.fillStyle='rgba(255,196,40,.5)';ctx.fill();ctx.lineWidth=1.6;ctx.strokeStyle='#ffd166';ctx.stroke();}
+    }
     ctx.beginPath();
     for(i=0;i<D.length;i++)if(on[i]&&FEAT[i])walkFeat2D(FEAT[i],R2,cx,cy);
     ctx.lineJoin='round';ctx.lineWidth=Math.max(.6,Math.min(1.6,.5+.15*zoom));ctx.strokeStyle='rgba(255,255,255,.72)';ctx.stroke();
@@ -4617,7 +4842,7 @@ function updateProgUI(){
     var C=2*Math.PI*15.9155;
     ring.style.strokeDasharray=(pct*C).toFixed(1)+' '+C.toFixed(1);
   }
-  var gt=$('qgoaltxt');if(gt)gt.textContent=Math.min(PROG.dailyCount,PROG.dailyGoal)+'/'+PROG.dailyGoal+' hoje';
+  var gt=$('qgoaltxt'),stk=displayStreak();if(gt)gt.textContent=Math.min(PROG.dailyCount,PROG.dailyGoal)+'/'+PROG.dailyGoal+' hoje'+(stk>0?' · 🔥'+stk:'');
   updateStreakPill();
 }
 var toastQ=[];
