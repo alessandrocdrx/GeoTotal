@@ -3148,8 +3148,16 @@ function showRunDone(){
 }
 function pickQ(){
   var pool=runPool();if(!pool.length)return -1;
-  var i=pickQFrom(pool);
-  return i>=0?i:pool[Math.floor(Math.random()*pool.length)];
+  if(quiz.order==='seq')return pickQFrom(pool);
+  /* sorteio de verdade entre os que faltam na partida: a ordem muda a cada partida.
+     (A revisão espaçada de pickQFrom fazia a ordem repetir a da última partida.) */
+  var cand=pool;
+  if(quizFocus!=='mix'){
+    var f=pool.filter(function(i){var t=tierOf(i);return quizFocus==='new'?t==='new':t==='wrong';});
+    if(f.length)cand=f;
+  }
+  if(cand.length>1)cand=cand.filter(function(i){return i!==quiz.last;});
+  return cand[Math.floor(Math.random()*cand.length)];
 }
 function pickQFrom(pool){
   var arr=QD();
