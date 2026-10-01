@@ -184,7 +184,7 @@ canvas:active{cursor:grabbing}
 .rrow b{margin-left:auto;font-weight:700}
 .rsub{margin:0 0 4px 18px;font-size:12px;color:var(--muted);line-height:1.35}
 .qhint{font-size:12.5px;font-weight:500;color:var(--muted);margin-top:4px}
-body.quizing header,body.quizing .chips,body.quizing .searchrow,body.quizing .seg,body.quizing .seg2{display:none}
+body.quizing .chips,body.quizing .searchrow,body.quizing .seg,body.quizing .seg2{display:none}
 #quiz.map .qopts{gap:8px}
 #quiz.map .qopts button{padding:11px 6px;min-height:50px;font-size:14.5px}
 #quiz.map .qpanel{max-height:62%;overflow:auto;scroll-padding-bottom:14px}
@@ -212,7 +212,7 @@ body.states #fbtn,body.states #ubtn{opacity:.4;pointer-events:none}
 .near button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:999px;padding:6px 10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
 select,option{font-family:inherit}
 .qscoperow{display:flex;gap:6px;margin:6px 0}
-.qscoperow button{flex:1;min-width:0;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qscoperow button,#mp-train .mcol button{flex:1;min-width:0;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #qfocusb{flex:0 0 auto!important}
 #scopelist .sitem{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-top:1px solid var(--border);background:none;color:var(--fg);padding:12px 4px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer}
 #scopelist .sitem.sub{padding-left:22px;font-size:14px;font-weight:500}
@@ -308,7 +308,6 @@ body.states #chips{display:flex}
 .qtop{gap:8px}
 .qtop .qtools{display:flex;gap:6px;margin-left:auto}
 .qtop .qtools button{padding:7px 11px!important;font-size:13px!important}
-#qoptb[aria-expanded="true"]{background:var(--chip-on)!important;color:var(--chip-on-fg)!important}
 h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;font-size:16.5px}
 header .modesw button{padding:0 10px!important}
 .htop{gap:6px}
@@ -371,6 +370,17 @@ header .modesw button{padding:0 10px!important}
 .qsbar{display:inline-block;width:42px;height:4px;border-radius:3px;background:rgba(214,69,69,.55);overflow:hidden}
 .qsbar i{display:block;height:100%;background:#1f9d55}
 .distag.dep{color:#2563eb;background:rgba(77,163,255,.14);border-color:rgba(77,163,255,.45)}
+#mp-train .mcol{display:flex;flex-direction:column;gap:8px}#mp-train .mcol button,#mp-train #qfocusb{width:100%;text-align:left;white-space:normal}
+.mgrp{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 4px 2px}
+.mgrp:first-child{margin-top:4px}
+.mlist .mgrp+button{border-top:0}
+.mlab{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:12px 2px 4px}
+.mpage .qseg,.mpage .qscoperow{margin:4px 0}
+.mpage .qseg button{flex:1}
+.qlvrow{display:flex;justify-content:space-between;align-items:baseline}
+.morefull{width:100%;margin-top:10px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;padding:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+#card .rowx{justify-content:flex-start;min-height:0}
+#card .rowx .pill[style*="hidden"]{display:none}
 </style>
 </head>
 <body>
@@ -378,7 +388,7 @@ header .modesw button{padding:0 10px!important}
   <header>
     <div class="htop">
       <h1>Globo Terrestre</h1>
-      <div class="hbtns"><span id="streakpill" class="streakpill" style="display:none"></span><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><span id="streakpill" class="streakpill" style="display:none"></span><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -394,13 +404,9 @@ header .modesw button{padding:0 10px!important}
     <div id="status"></div>
     <div id="pick"></div>
     <div id="stbar"><span>🇧🇷 Estados e capitais</span><button id="stexit">← Países</button></div>
-    <div class="seg" role="group" aria-label="Rótulos">
+    <div class="seg" role="group" aria-label="Rótulos" hidden>
       <button id="lp" aria-pressed="true">País</button>
       <button id="lc" aria-pressed="false">Capital</button>
-    </div>
-    <div class="seg2">
-      <button id="pn">▲ Polo Norte</button>
-      <button id="ps">▼ Polo Sul</button>
     </div>
     <div class="tools">
       <button id="zin" aria-label="Aproximar">+</button>
@@ -417,7 +423,6 @@ header .modesw button{padding:0 10px!important}
           <div class="reg"><span class="dot" id="cdot"></span><span id="creg"></span></div>
           <h2 id="cname"></h2>
         </div>
-        <button class="x2" id="fold" aria-label="Recolher ou expandir">⌄</button>
         <button class="x" id="close" aria-label="Fechar">✕</button>
       </div>
       <div class="capbox"><span class="lab">🏛️ Capital</span><b id="ccap"></b><div class="capnote" id="ccapnote"></div></div>
@@ -429,7 +434,8 @@ header .modesw button{padding:0 10px!important}
       <div class="near" id="cncty" hidden></div>
       <div class="near" id="cnear" hidden></div>
       <button class="stbtn" id="stbtn">🇧🇷 Ver os 27 estados e capitais →</button>
-      <div class="rowx"><button class="pill" id="nbtn">Só vizinhos</button><button class="more" id="moreb">Mais dados ▾</button></div>
+      <div class="rowx"><button class="pill" id="nbtn">Só vizinhos no mapa</button></div>
+      <button class="morefull" id="moreb">Ver mais detalhes ▾</button>
       <div class="info" id="cinfo" hidden></div>
       </div>
       <div class="nav"><button id="prev">← Anterior</button><button id="next">Próximo →</button></div>
@@ -465,17 +471,40 @@ header .modesw button{padding:0 10px!important}
   <div id="tree"></div>
 </div></div>
 
-<div id="msheet" class="ov"><div class="box">
+<div id="msheet" class="ov" style="z-index:80"><div class="box">
   <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Mais</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <nav id="mlist" class="mlist">
+    <div class="mgrp">Treino</div>
+    <button data-p="mp-train"><span class="mi">🎯</span><span class="mt"><b>Opções do treino</b><small id="mtrainv">Resposta, foco, sessão, cronômetro</small></span><span class="mc">›</span></button>
+    <button id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos do treino</small></span><span class="mc">›</span></button>
+    <button id="mhist"><span class="mi">📊</span><span class="mt"><b>Seu histórico</b><small>Acertos e erros por país e por região</small></span><span class="mc">›</span></button>
+    <div class="mgrp">Mapa</div>
+    <button id="mlabels"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b><small id="mlabelsv">Países</small></span><span class="mc">↻</span></button>
+    <button data-p="mp-poles"><span class="mi">🧭</span><span class="mt"><b>Ir a um polo</b><small>Polo Norte ou Polo Sul</small></span><span class="mc">›</span></button>
+    <div class="mgrp">Explorar</div>
     <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
     <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Dois países lado a lado</small></span><span class="mc">›</span></button>
     <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Calcula e mostra no globo</small></span><span class="mc">›</span></button>
     <button data-p="mp-exp"><span class="mi">📄</span><span class="mt"><b>Estudar e exportar</b><small>Folha de estudo, CSV e Anki</small></span><span class="mc">›</span></button>
+    <div class="mgrp">App</div>
     <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
-    <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Mapa</b><small>Textura e fronteiras</small></span><span class="mc">›</span></button>
+    <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Textura e fronteiras</b><small>Imagem do globo e contornos</small></span><span class="mc">›</span></button>
     <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
   </nav>
+  <div class="mpage" id="mp-train" data-t="Opções do treino" hidden>
+    <div class="mlab">Resposta</div>
+    <div class="qseg" id="qtypes"></div>
+    <div class="mlab">Quais perguntas</div>
+    <div class="qscoperow"><button id="qfocusb">Foco: tudo</button></div>
+    <div class="mlab">Rodada</div>
+  <div class="mcol"><button id="qsessionb">🧮 Sessão: livre</button><button id="qorderb">🔀 Ordem: aleatória</button>
+  <button id="qtimerb">⏱️ Cronômetro: desligado</button><button id="qsurvb">💀 Sobrevivência: desligada</button>
+  <button id="qrunreset">🔁 Recomeçar a partida</button></div>
+  </div>
+  <div class="mpage" id="mp-poles" data-t="Ir a um polo" hidden>
+    <div class="row2"><button id="pn">▲ Polo Norte</button><button id="ps">▼ Polo Sul</button></div>
+  </div>
+
   <div class="mpage" id="mp-theme" data-t="Tema" hidden>
     <div class="row2"><button id="themeb">🌗 Tema: automático</button></div>
   </div>
@@ -517,9 +546,8 @@ header .modesw button{padding:0 10px!important}
 </div></div>
 
 <div id="quiz"><div class="qpanel">
-  <div class="qtop"><div class="modesw" role="group" aria-label="Modo"><button aria-pressed="true">🎯 Treino</button><button id="qclose">🌍 Livre</button></div><span id="qtimer"></span><span class="qtools"><button id="qbadges" title="Conquistas" aria-label="Conquistas">🏆</button><button id="qstats" title="Estatísticas por região" aria-label="Estatísticas por região">📊</button><button id="qoptb" aria-expanded="false" aria-label="Opções do treino" title="Opções do treino">⚙️</button></span></div>
   <div class="qprog">
-    <div class="qlvbox"><div id="qlevel">Nível 1</div><div class="qxpwrap"><div id="qxpbar" class="qxpbar"></div></div><div id="qxptxt" class="inote">0/100 XP</div></div>
+    <div class="qlvbox"><div class="qlvrow"><span id="qlevel">Nível 1</span><span id="qtimer"></span></div><div class="qxpwrap"><div id="qxpbar" class="qxpbar"></div></div><div id="qxptxt" class="inote">0/100 XP</div></div>
     <button id="goalgo" class="qgoalbtn" title="Toque para mudar a meta diária">
       <svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.9155" class="qgoalbg"/><circle cx="18" cy="18" r="15.9155" id="qgoalring" class="qgoalfg"/></svg>
       <span id="qgoaltxt">0/10 hoje</span>
@@ -527,13 +555,7 @@ header .modesw button{padding:0 10px!important}
   </div>
   <div id="qscore" class="qscore"></div>
   <div class="qseg" id="qmodes"></div>
-  <div class="qscoperow"><button id="qscopeback" style="visibility:hidden;flex:0 0 auto;width:40px">↩</button><button id="qscopeb">📍 Mundo ▾</button><button id="qfocusb">Foco: tudo</button></div>
-  <div id="qopts" hidden>
-  <div class="qseg" id="qtypes"></div>
-  <div class="qscoperow"><button id="qsessionb">🧮 Sessão: livre</button><button id="qorderb">🔀 Ordem: aleatória</button></div>
-  <div class="qscoperow"><button id="qtimerb">⏱️ Cronômetro: desligado</button><button id="qsurvb">💀 Sobrevivência: desligada</button></div>
-  <div class="qscoperow"><button id="qrunreset">🔁 Recomeçar a partida</button></div>
-  </div>
+  <div class="qscoperow"><button id="qscopeback" style="visibility:hidden;flex:0 0 auto;width:40px">↩</button><button id="qscopeb">📍 Mundo ▾</button></div>
   <div id="qpool" class="inote"></div>
   <div id="qbody"></div>
   <div id="qfb"></div>
@@ -859,7 +881,16 @@ Ilhas Pitcairn|Adamstown|-25.07|-130.10|6|Polinésia|Território ultramarino do 
 Ilha Christmas|Flying Fish Cove|-10.42|105.68|6|Austrália e Nova Zelândia|Território externo da Austrália, no Oceano Índico|CX|dep
 Ilhas Cocos|West Island|-12.19|96.83|6|Austrália e Nova Zelândia|Território externo da Austrália, no Oceano Índico|CC|dep
 `;
-var D=(RAW.trim()+'\n'+RAW_DEP.trim()).split('\n').map(function(l,i){
+/* cada território entra na rota logo após o país-âncora mais próximo, continuando a sequência atual */
+var DEP_AFTER={DO:'PR VI VG AI SX MF BL',AG:'MS GP',DM:'MQ',TT:'AW CW BQ',JM:'KY',BS:'TC',US:'BM',CA:'PM GL',UY:'FK',MU:'RE',KM:'YT',CV:'SH',ES:'GI',IS:'FO',GB:'IM JE GG',FI:'AX',NO:'SJ',CN:'HK MO',AU:'CX CC NF',VU:'NC',PW:'GU MP',TV:'WF TK',WS:'AS',TO:'NU CK PF PN'};
+var D=(function(){
+  var base=RAW.trim().split('\n'),dep={},used={},out=[];
+  RAW_DEP.trim().split('\n').forEach(function(l){dep[l.split('|')[7]]=l;});
+  base.forEach(function(l){out.push(l);var a=DEP_AFTER[l.split('|')[7]];
+    if(a)a.split(' ').forEach(function(c){if(dep[c]){out.push(dep[c]);used[c]=1;}});});
+  Object.keys(dep).forEach(function(c){if(!used[c])out.push(dep[c]);});
+  return out;
+})().map(function(l,i){
   var p=l.split('|'); var lat=+p[2]*Math.PI/180, lng=+p[3]*Math.PI/180;
   return {i:i,name:p[0],cap:p[1],lat:+p[2],lng:+p[3],r:+p[4],sub:p[5],obs:p[6]||'',cc:p[7],flag:String.fromCodePoint(0x1F1E6+p[7].charCodeAt(0)-65,0x1F1E6+p[7].charCodeAt(1)-65),
     x:Math.cos(lat)*Math.sin(lng),y:Math.sin(lat),z:Math.cos(lat)*Math.cos(lng),
@@ -2439,8 +2470,8 @@ document.addEventListener('pointerdown',function(e){if(!res.contains(e.target)&&
 /* ---------- Botões ---------- */
 document.getElementById('zin').onclick=function(){target=null;zoom=Math.min(7,zoom*1.35);lastInteract=performance.now();};
 document.getElementById('zout').onclick=function(){target=null;zoom=Math.max(.8,zoom/1.35);lastInteract=performance.now();};
-document.getElementById('pn').onclick=function(){flyTo(90,lam*180/PI,1);};
-document.getElementById('ps').onclick=function(){flyTo(-90,lam*180/PI,1);};
+document.getElementById('pn').onclick=function(){$('msheet').style.display='none';flyTo(90,lam*180/PI,1);};
+document.getElementById('ps').onclick=function(){$('msheet').style.display='none';flyTo(-90,lam*180/PI,1);};
 var spinB=document.getElementById('spin');
 spinB.setAttribute('aria-pressed',auto?'true':'false');spinB.style.opacity=auto?1:.5;
 spinB.onclick=function(){auto=!auto;spinB.setAttribute('aria-pressed',auto?'true':'false');spinB.style.opacity=auto?1:.5;};
@@ -2787,16 +2818,13 @@ function fillInfo(d){
   n.textContent='Valores aproximados (estimativas por volta de 2024). Confira em fonte oficial antes de citar.';
   box.appendChild(n);
 }
-var cardH=0,folded=lsGet('globo.fold',false);
+var cardH=0;
 function measureCard(){cardH=card.style.display==='block'?card.offsetHeight+10:0;}
-function applyFold(){card.classList.toggle('fold',folded);$('fold').textContent=folded?'⌃':'⌄';setTimeout(measureCard,40);}
-$('fold').onclick=function(){folded=!folded;lsSet('globo.fold',folded);applyFold();};
-$('moreb').onclick=function(){var b=$('cinfo');b.hidden=!b.hidden;$('moreb').textContent=b.hidden?'Mais dados ▾':'Menos dados ▴';setTimeout(measureCard,40);};
+$('moreb').onclick=function(){var b=$('cinfo');b.hidden=!b.hidden;$('moreb').textContent=b.hidden?'Ver mais detalhes ▾':'Ver menos ▴';setTimeout(measureCard,40);};
 var sw=null;
 card.addEventListener('pointerdown',function(e){if(e.target.closest('button')){sw=null;return;}sw={x:e.clientX,y:e.clientY};});
 card.addEventListener('pointerup',function(e){if(!sw)return;var dx=e.clientX-sw.x,dy=e.clientY-sw.y;sw=null;if(Math.abs(dx)>60&&Math.abs(dy)<45)step(dx<0?1:-1);});
 window.addEventListener('resize',function(){setTimeout(measureCard,60);});
-applyFold();
 
 /* ---------- desfazer filtros ---------- */
 var hist=[];
@@ -3258,7 +3286,7 @@ function applyDomainForScope(){
 }
 function updateScopeBtn(){
   $('qscopeb').textContent='📍 '+scopeLabel()+' · '+poolIdx().length+' ▾';
-  $('qfocusb').textContent='Foco: '+({mix:'tudo','new':'só novos',wrong:'só errados'})[quizFocus];
+  $('qfocusb').textContent='Foco: '+({mix:'tudo','new':'só novos',wrong:'só errados'})[quizFocus];updateTrainRow();
 }
 function updateScopeBackBtn(){
   var btn=$('qscopeback');
@@ -3768,7 +3796,8 @@ function showRoundSummary(reason){
   }
   body.appendChild(row);
 }
-function updateSessionBtn(){
+function updateTrainRow(){var el=$('mtrainv');if(el)el.textContent=(quiz.type==='type'?'Digitar':'Múltipla escolha')+' · '+({mix:'foco em tudo','new':'só novos',wrong:'só errados'})[quizFocus]+(quiz.timerLen?' · '+quiz.timerLen+'s':'')+(quiz.survivalMode?' · sobrevivência':'');}
+function updateSessionBtn(){updateTrainRow();
   $('qsessionb').textContent='🧮 Sessão: '+(quiz.sessionLen?quiz.sessionLen+' perguntas':'livre');
 }
 function updateTimerBtn(){
@@ -3960,7 +3989,7 @@ function quizSetMode(m){
 function quizOpen(){
   if(statesMode)exitStates(false);
   tourStop();closeCard();hidePick();
-  quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncFab();
+  quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncFab();syncModeSw();
   document.body.classList.add('quizing');$('quiz').classList.add('map');
   $('quiz').style.display='block';
   applyDomainForScope();
@@ -3971,15 +4000,15 @@ function quizOpen(){
 }
 function quizClose(){
   setTimeout(syncFab,0);
-  quiz.open=false;qMap=false;qPanelH=0;qFlash=null;qBadge=null;
+  quiz.open=false;qMap=false;qPanelH=0;qFlash=null;qBadge=null;syncModeSw();
   if(arc&&arc.quiz)arc=null;
   stopTimerTick();
   if(quizDomain==='br'){statesMode=false;selSt=null;}
   document.body.classList.remove('quizing');$('quiz').style.display='none';setTimeout(resize,60);
 }
-$('qbtn').onclick=quizOpen;$('qclose').onclick=quizClose;
+function syncModeSw(){$('qbtn').setAttribute('aria-pressed',quiz.open?'true':'false');$('qclose').setAttribute('aria-pressed',quiz.open?'false':'true');}
+$('qbtn').onclick=function(){if(!quiz.open)quizOpen();};$('qclose').onclick=function(){if(quiz.open)quizClose();};
 confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
-$('qoptb').onclick=function(){var o=$('qopts');o.hidden=!o.hidden;this.setAttribute('aria-expanded',o.hidden?'false':'true');measureQ();};
 $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
 confirmTap($('qreset'),'Toque de novo para zerar',function(){QS=freshQS();lsSet('globo.quiz.v1',QS);RUNS={};saveRuns();RECS={};saveRecs();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
 
@@ -4096,7 +4125,7 @@ $('sharecopy').onclick=function(){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ta.value).then(done,function(){try{document.execCommand('copy');done();}catch(e){}});
   else{try{document.execCommand('copy');done();}catch(e){}}
 };
-$('qstats').onclick=function(){openStats();$('statsheet').style.display='block';};
+function openHistory(){openStats();$('statsheet').style.display='block';}
 $('statsclose').onclick=function(){$('statsheet').style.display='none';};
 
 /* ---------- pulso de destaque do escopo no globo ---------- */
@@ -4261,6 +4290,9 @@ function mShow(id){
 Array.prototype.forEach.call(document.querySelectorAll('#mlist [data-p]'),function(b){b.onclick=function(){mShow(b.getAttribute('data-p'));};});
 $('mback').onclick=function(){mShow(null);};
 $('mthemerow').onclick=function(){$('themeb').click();};
+function updateLabelsRow(){$('mlabelsv').textContent=labelMode==='p'?'Países':'Capitais';}
+$('mlabels').onclick=function(){(labelMode==='p'?$('lc'):$('lp')).click();updateLabelsRow();};
+updateLabelsRow();
 $('mbtn').onclick=function(){updateMapInfo();mShow(null);$('msheet').style.display='block';};
 $('mclose').onclick=function(){$('msheet').style.display='none';};
 $('msheet').addEventListener('pointerdown',function(e){if(e.target===$('msheet'))$('msheet').style.display='none';});
@@ -5049,7 +5081,7 @@ function openBadges(){
   $('badgeshead').textContent='Conquistas ('+n+'/'+tot+')';
   $('badgesheet').style.display='block';
 }
-$('qbadges').onclick=openBadges;
+$('mbadges').onclick=openBadges;$('mhist').onclick=function(){openHistory();};
 $('badgesclose').onclick=function(){$('badgesheet').style.display='none';};
 $('goalgo').onclick=function(){
   var opts=[5,10,20,30],idx=opts.indexOf(PROG.dailyGoal);
