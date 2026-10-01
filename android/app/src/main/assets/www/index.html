@@ -408,6 +408,9 @@ header .modesw button{padding:0 10px!important}
 .csbar i{display:block;height:100%}
 .csbar .ok{background:#1f9d55}.csbar .bad{background:#d64545}
 .cslg{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.qstat{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:5px;font-size:11.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;opacity:.85}
+.qsbar{display:inline-block;width:42px;height:4px;border-radius:3px;background:rgba(214,69,69,.55);overflow:hidden}
+.qsbar i{display:block;height:100%;background:#1f9d55}
 </style>
 </head>
 <body>
@@ -2141,6 +2144,17 @@ function renderCardStat(key,isState){
   lg.textContent='✔ '+r+' '+(r===1?'acerto':'acertos')+' · ✖ '+w+' '+(w===1?'erro':'erros');
   box.appendChild(top);box.appendChild(bar);box.appendChild(lg);
 }
+/* linha discreta no treino: o seu histórico com este país neste tipo de pergunta */
+function fillQStat(el,o){
+  var e=(QS.m[quiz.mode]||{})[qcc(o)],r=e?(e.r||0):0,w=e?(e.w||0):0;
+  el.innerHTML='';
+  if(!(r+w)){el.textContent='Primeira vez neste tipo de pergunta';return;}
+  var pct=Math.round(100*r/(r+w));
+  var bar=document.createElement('span');bar.className='qsbar';
+  var f=document.createElement('i');f.style.width=pct+'%';bar.appendChild(f);
+  var t=document.createElement('span');t.textContent=pct+'% · ✔ '+r+' · ✖ '+w;
+  el.appendChild(bar);el.appendChild(t);
+}
 function renderFacts(rows){
   var box=document.getElementById('cfacts');box.innerHTML='';
   rows.forEach(function(r){
@@ -3482,6 +3496,7 @@ function finishQ(ok,extra){
   showTarget(quiz.cur);
   if(quizDomain==='world'){qFlash={i:quiz.cur,kind:ok?'ok':'reveal'};}
   var fb=$('qfb');fb.textContent=fbText(QD()[quiz.cur],ok,extra);fb.className=ok?'ok':'bad';
+  var qse=$('qstat');if(qse)fillQStat(qse,QD()[quiz.cur]);
   $('qnext').style.display='block';measureQ();
   sessionRecord(ok);
   /* acertou: passa sozinho para a próxima; errou: espera o toque em "Próxima" */
@@ -3755,6 +3770,7 @@ function nextQ(){
     showTarget(i);if(quizDomain==='world')qFlash={i:i,kind:'ask'};
   }
   else{q.textContent='Toque no mapa: onde fica '+qflag(d)+' '+short(d)+'?';}
+  var qs=document.createElement('div');qs.id='qstat';qs.className='qstat';fillQStat(qs,d);q.appendChild(qs);
   body.appendChild(q);
   if(isMap){
     var row=document.createElement('div');row.className='qrow';
