@@ -93,5 +93,8 @@ jobs:
             **geoTotal**, criado por [alessandrocdrx](https://github.com/alessandrocdrx). Código aberto sob a licença Apache 2.0. Funciona sem internet.
 
             Baixe `geototal.apk` abaixo no celular (pelo Chrome), toque nele e permita "Instalar apps desconhecidos".
+            `geototal.aab` é o pacote para enviar ao Google Play Console.
           make_latest: true
-          files: geototal.apk
+          files: |
+            geototal.apk
+            geototal.aab
