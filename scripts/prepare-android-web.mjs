@@ -4,6 +4,8 @@
 // - carrega d3, topojson, datamaps e os estados do Brasil de assets/www/lib (funciona offline),
 //   mantendo os CDNs como reserva;
 // - injeta scripts/android-shim.js (salvar CSV, imprimir e botão voltar no Android);
+// - trava o conteúdo com uma Content-Security-Policy: só roda código do próprio app (nada de
+//   scripts de fora acessando a ponte AndroidBridge); o APK também não tem permissão de internet;
 // - copia LICENSE e NOTICE para dentro do APK, como pede a licença Apache 2.0.
 // Uso: node scripts/prepare-android-web.mjs
 import { copyFileSync, readFileSync, writeFileSync } from 'node:fs';
@@ -29,6 +31,13 @@ for (const [list, file] of local) {
 const shim = readFileSync(root + 'scripts/android-shim.js', 'utf8');
 if (!html.includes('<head>')) throw new Error('Não achei <head> no HTML');
 html = html.replace('<head>', `<head>\n<script>\n${shim}</script>`);
+const csp = [
+  "default-src 'self'", "script-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:", "font-src 'self' data:", "connect-src 'self' data: blob:",
+  "worker-src 'self' blob:", "media-src 'self' data: blob:", "object-src 'none'", "frame-src 'none'",
+  "base-uri 'none'", "form-action 'none'",
+].join('; ');
+html = html.replace('<head>', `<head>\n<meta http-equiv="Content-Security-Policy" content="${csp}">`);
 
 writeFileSync(out, html);
 for (const f of ['LICENSE', 'NOTICE']) copyFileSync(root + f, root + `android/app/src/main/assets/www/${f}`);

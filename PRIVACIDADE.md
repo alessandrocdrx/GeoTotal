@@ -30,16 +30,9 @@ arquivo que você escolher. Nada é enviado para a internet.
 
 ## Conexões com a internet
 
-O app funciona sem internet: mapas e bibliotecas vão dentro dele. A permissão de internet existe
-apenas para dois casos de reserva, sem envio de dados pessoais:
-
-- se algum arquivo interno do app não puder ser lido, ele é baixado das redes públicas
-  cdnjs.cloudflare.com ou cdn.jsdelivr.net;
-- em aparelhos que não exibem bandeiras em emoji, é carregada a fonte Noto Color Emoji do
-  Google Fonts.
-
-Como em qualquer acesso à internet, esses serviços recebem o endereço IP do aparelho, conforme as
-políticas de privacidade deles. Links externos, quando tocados, abrem no seu navegador.
+O app não usa a internet: mapas, bibliotecas e textos vão dentro dele, e o aplicativo Android
+**não pede permissão de internet**, então não consegue enviar nem receber nada pela rede. Links
+externos, quando tocados, abrem no seu navegador, fora do app.
 
 ## Crianças
 
