@@ -44,10 +44,11 @@ Ou abra a pasta `android/` no Android Studio e use **Run ▶** com o celular con
 
 ## Ícone
 
-O ícone (globo com anel orbital, alfinete da capital e céu estrelado) é gerado por
-`scripts/gerar-icone.py`, que escreve os três arquivos `ic_launcher_*.xml` em
-`app/src/main/res/drawable/`. Para mudar cores ou formas, edite o script e rode
-`python3 scripts/gerar-icone.py`.
+O ícone "Monograma G" (um G dourado abraçando o globo, com o Brasil marcado) é desenhado em
+`scripts/icone/icone.html`, com os contornos reais dos continentes. O script
+`node scripts/icone/gerar.cjs` (requer Playwright) gera o ícone adaptativo em
+`app/src/main/res/mipmap-*/ic_launcher_{background,foreground,monochrome}.png` e as imagens da
+Play Store em `playstore/` (ícone 512×512 e destaque 1024×500).
 
 ## O que muda em relação ao artefato no navegador
 

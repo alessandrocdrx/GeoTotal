@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- geoTotal — Copyright 2026 alessandrocdrx · SPDX-License-Identifier: Apache-2.0
+     Desenho do ícone "Monograma G": um G dourado abraçando o globo, com o Brasil marcado.
+     Usado por scripts/icone/gerar.cjs para gerar o ícone do app e as imagens da Play Store. -->
+<html><head><meta charset="utf-8">
+<script src="../../android/app/src/main/assets/www/lib/d3.min.js"></script>
+<script src="../../android/app/src/main/assets/www/lib/topojson.min.js"></script>
+<script src="../../android/app/src/main/assets/www/lib/datamaps.world.min.js"></script>
+<style>html,body{margin:0;background:transparent}svg{display:block}</style></head><body><div id="out"></div>
+<script>
+var topo=Datamap.prototype.worldTopo,key=Object.keys(topo.objects)[0];
+var land=topojson.merge(topo,topo.objects[key].geometries);
+var CX=256,CY=256,RG=132,R=178,SW=38;
+var pr=d3.geo.orthographic().scale(RG).translate([CX,CY]).rotate([50,8]).clipAngle(90).precision(.3);
+var LAND=d3.geo.path().projection(pr)(land),PIN=pr([-47.9,-15.8]);
+function pt(a,r){return [CX+r*Math.cos(a),CY+r*Math.sin(a)];}
+var s=pt(-42*Math.PI/180,R),e=pt(8*Math.PI/180,R);
+var GPATH='M'+s[0]+','+s[1]+' A'+R+','+R+' 0 1,0 '+e[0]+','+e[1]+' L'+(CX+R*0.42)+','+e[1];
+function pin(x,y,k,fill,dot,stroke){return '<g transform="translate('+x+','+y+') scale('+k+')"><path d="M0,0 C-6,-12 -16,-20 -16,-32 A16,16 0 1,1 16,-32 C16,-20 6,-12 0,0Z" fill="'+fill+'"'+(stroke?' stroke="'+stroke+'" stroke-width="3"':'')+'/><circle cx="0" cy="-32" r="6" fill="'+dot+'"/></g>';}
+var DEFS='<defs><radialGradient id="bg" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#1a2a5c"/><stop offset="1" stop-color="#070b1f"/></radialGradient>'+
+ '<linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset=".5" stop-color="#ffb703"/><stop offset="1" stop-color="#fb8500"/></linearGradient>'+
+ '<radialGradient id="oc" cx="38%" cy="32%" r="80%"><stop offset="0" stop-color="#43adff"/><stop offset="1" stop-color="#0d3a9a"/></radialGradient>'+
+ '<radialGradient id="sh" cx="34%" cy="28%" r="45%"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>';
+function bgRect(x,y,w,h){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="url(#bg)"/>';}
+var MARK='<circle cx="'+CX+'" cy="'+CY+'" r="'+RG+'" fill="url(#oc)"/><path d="'+LAND+'" fill="#5ee69a"/><circle cx="'+CX+'" cy="'+CY+'" r="'+RG+'" fill="url(#sh)"/>'+
+ '<path d="'+GPATH+'" fill="none" stroke="url(#gd)" stroke-width="'+SW+'" stroke-linecap="round" stroke-linejoin="round"/>'+pin(PIN[0],PIN[1],1.7,'#ff4d5e','#fff','#fff');
+var MONO='<circle cx="'+CX+'" cy="'+CY+'" r="'+RG+'" fill="none" stroke="#fff" stroke-width="12"/><path d="'+LAND+'" fill="#fff"/>'+
+ '<path d="'+GPATH+'" fill="none" stroke="#fff" stroke-width="'+SW+'" stroke-linecap="round" stroke-linejoin="round"/>';
+/* ícone adaptativo: 108dp; a marca (raio externo do G = R+SW/2) cabe no círculo seguro de 33dp */
+var K=31/(R+SW/2),VW=108/K,VX=CX-VW/2;
+function svg(px,vb,body,w,h){return '<svg xmlns="http://www.w3.org/2000/svg" width="'+(w||px)+'" height="'+(h||px)+'" viewBox="'+vb+'">'+DEFS+body+'</svg>';}
+window.ICON={
+  full:function(px){return svg(px,'0 0 512 512',bgRect(0,0,512,512)+MARK);},
+  bg:function(px){return svg(px,VX+' '+VX+' '+VW+' '+VW,bgRect(VX,VX,VW,VW));},
+  fg:function(px){return svg(px,VX+' '+VX+' '+VW+' '+VW,MARK);},
+  mono:function(px){return svg(px,VX+' '+VX+' '+VW+' '+VW,MONO);},
+  feature:function(){
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">'+DEFS.replace('cx="50%" cy="45%" r="75%"','cx="78%" cy="50%" r="80%"')+
+    '<linearGradient id="tt" x1="0" x2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#fb8500"/></linearGradient>'+
+    '<rect width="1024" height="500" fill="url(#bg)"/>'+
+    '<g transform="translate(604,52) scale(0.78)">'+MARK+'</g>'+
+    '<text x="64" y="205" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-weight="800" font-size="96" fill="#fff">geo<tspan fill="url(#tt)">Total</tspan></text>'+
+    '<text font-family="system-ui,Segoe UI,Roboto,sans-serif" font-weight="700" font-size="32" fill="#dbe4ff"><tspan x="66" y="268">Países, capitais e regiões</tspan><tspan x="66" y="310">num globo 3D interativo</tspan></text>'+
+    '<text x="66" y="362" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="22" fill="#9fb3e8">203 países · treino com medalhas · funciona offline</text></svg>';
+  }
+};
+</script></body></html>
