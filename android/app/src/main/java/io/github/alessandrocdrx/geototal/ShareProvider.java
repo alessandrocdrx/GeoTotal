@@ -22,9 +22,9 @@ import java.io.IOException;
  */
 public class ShareProvider extends ContentProvider {
 
-    static final String AUTHORITY = "io.github.alessandrocdrx.geototal.share";
+    public static final String AUTHORITY = "io.github.alessandrocdrx.geototal.share";
 
-    static File dir(android.content.Context c) {
+    public static File dir(android.content.Context c) {
         return new File(c.getCacheDir(), "share");
     }
 

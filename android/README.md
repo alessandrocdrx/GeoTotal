@@ -24,7 +24,7 @@ uma tag (`git tag v1.1 && git push origin v1.1`).
 Com o Android Studio (ou o Android SDK + JDK 17):
 
 ```bash
-node scripts/prepare-android-web.mjs   # só se você mudou web/geototal.html
+npm run build   # gera o index.html do app a partir de web/src/
 cd android
 ./gradlew assembleDebug
 # APK em android/app/build/outputs/apk/debug/app-debug.apk
@@ -32,15 +32,14 @@ cd android
 
 Ou abra a pasta `android/` no Android Studio e use **Run ▶** com o celular conectado por USB.
 
-## Atualizar o app quando o artefato mudar
+## Atualizar o app
 
-1. Substitua `web/geototal.html` pelo HTML novo do artefato, mantendo no `<head>` o comentário
-   de copyright e o `<meta name="author">`.
-2. Rode `node scripts/prepare-android-web.mjs` (gera `android/app/src/main/assets/www/index.html`).
+1. Edite o código em `web/src/` (veja [`docs/ARQUITETURA.md`](../docs/ARQUITETURA.md)).
+2. Rode `npm run build` e `npm run test:all`.
 3. Aumente `versionCode` / `versionName` em `android/app/build.gradle` para o Android aceitar
    instalar por cima da versão anterior sem perder os dados.
-4. Faça commit e push; o workflow gera o APK novo (com `[release]` na mensagem, ele também
-   publica em Releases).
+4. Faça commit e push; o workflow roda os testes e, se passarem, gera o APK e o AAB (com
+   `[release]` na mensagem, ele também publica em Releases).
 
 ## Ícone
 

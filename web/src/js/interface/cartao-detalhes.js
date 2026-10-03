@@ -1,0 +1,38 @@
+/**
+ * @arquivo js/interface/cartao-detalhes.js
+ * Camada: Interface
+ * Detalhes extras do cartão, recolher e deslizar.
+ */
+/* ---------- cartão: dados extras, recolher, deslizar ---------- */
+function fmtPop(p){
+  if(!p)return 'Sem população permanente';
+  if(p>=1e6)return (p/1e6).toFixed(2).replace('.',',')+' bilhões';
+  if(p>=1000){var m=p/1000;return (m<100?m.toFixed(1).replace('.',','):Math.round(m))+' milhões';}
+  if(p>=1)return Math.round(p).toLocaleString('pt-BR')+' mil';
+  return 'cerca de '+Math.round(p*1000)+' habitantes';
+}
+function fmtArea(a){return (a<10?String(a).replace('.',','):Math.round(a).toLocaleString('pt-BR'))+' km²';}
+function fillInfo(d){
+  var box=$('cinfo');box.innerHTML='';
+  var x=d.info;
+  if(!x){box.textContent='Sem dados adicionais para este território.';return;}
+  [['Fuso horário',x.tz],['Telefone (DDI)',x.dial],['Domínio de internet',x.tld]].forEach(function(r){
+    var row=document.createElement('div');row.className='irow';
+    var a=document.createElement('span');a.textContent=r[0];
+    var b=document.createElement('b');b.textContent=r[1];
+    row.appendChild(a);row.appendChild(b);box.appendChild(row);
+  });
+  appendLang(box,d);
+  appendRel(box,d);
+  var n=document.createElement('div');n.className='inote';
+  n.textContent='Valores aproximados (estimativas por volta de 2024). Confira em fonte oficial antes de citar.';
+  box.appendChild(n);
+}
+var cardH=0;
+function measureCard(){cardH=card.style.display==='block'?card.offsetHeight+10:0;}
+$('moreb').onclick=function(){var b=$('cinfo');b.hidden=!b.hidden;$('moreb').textContent=b.hidden?'Ver mais detalhes ▾':'Ver menos ▴';setTimeout(measureCard,40);};
+var sw=null;
+card.addEventListener('pointerdown',function(e){if(e.target.closest('button')){sw=null;return;}sw={x:e.clientX,y:e.clientY};});
+card.addEventListener('pointerup',function(e){if(!sw)return;var dx=e.clientX-sw.x,dy=e.clientY-sw.y;sw=null;if(Math.abs(dx)>60&&Math.abs(dy)<45)step(dx<0?1:-1);});
+window.addEventListener('resize',function(){setTimeout(measureCard,60);});
+

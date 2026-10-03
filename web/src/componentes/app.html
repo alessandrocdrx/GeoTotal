@@ -1,0 +1,61 @@
+<!-- @arquivo componentes/app.html · Camada: Interface
+     Tela principal: cabeçalho, chips, busca, palco do globo e cartão do país. -->
+<div id="app">
+  <header>
+    <div class="htop">
+      <h1>Globo Terrestre</h1>
+      <div class="hbtns"><span id="streakpill" class="streakpill" style="display:none"></span><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+    </div>
+    <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
+  </header>
+  <div class="chips" id="chips"></div>
+  <div class="searchrow">
+    <input id="q" type="search" placeholder="Buscar país ou capital" autocomplete="off" aria-label="Buscar país ou capital">
+    <button id="fbtn">🌍 Filtrar</button>
+    <div id="results"></div>
+  </div>
+  <div id="stage">
+    <canvas id="gl"></canvas>
+    <canvas id="g" aria-label="Globo terrestre interativo"></canvas>
+    <div id="status"></div>
+    <div id="pick"></div>
+    <div id="stbar"><span>🇧🇷 Estados e capitais</span><button id="stexit">← Países</button></div>
+    <div class="seg" role="group" aria-label="Rótulos" hidden>
+      <button id="lp" aria-pressed="true">País</button>
+      <button id="lc" aria-pressed="false">Capital</button>
+    </div>
+    <div class="tools">
+      <button id="zin" aria-label="Aproximar">+</button>
+      <button id="zout" aria-label="Afastar">−</button>
+      <button id="spin" aria-label="Girar automaticamente" aria-pressed="true">⟳</button>
+      <button id="tour" aria-label="Passeio pela rota">▶</button>
+      <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
+    </div>
+    <div class="hint" id="hint">Arraste para girar · toque num ponto · use Filtrar para escolher o que mostrar</div>
+    <div id="card" role="dialog" aria-live="polite">
+      <div class="chead">
+        <span id="cflag" class="flag"></span>
+        <div class="ctitle">
+          <div class="reg"><span class="dot" id="cdot"></span><span id="creg"></span></div>
+          <h2 id="cname"></h2>
+        </div>
+        <button class="x" id="close" aria-label="Fechar">✕</button>
+      </div>
+      <div class="capbox"><span class="lab">🏛️ Capital</span><b id="ccap"></b><div class="capnote" id="ccapnote"></div></div>
+      <div class="cstat" id="cstat"></div>
+      <div id="cbody">
+      <div class="facts" id="cfacts"></div>
+      <div class="obs" id="cobs"></div>
+      <div class="sect" id="cnb"></div>
+      <div class="near" id="cncty" hidden></div>
+      <div class="near" id="cnear" hidden></div>
+      <button class="stbtn" id="stbtn">🇧🇷 Ver os 27 estados e capitais →</button>
+      <div class="rowx"><button class="pill" id="nbtn">Só vizinhos no mapa</button></div>
+      <button class="morefull" id="moreb">Ver mais detalhes ▾</button>
+      <div class="info" id="cinfo" hidden></div>
+      </div>
+      <div class="nav"><button id="prev">← Anterior</button><button id="next">Próximo →</button></div>
+    </div>
+  </div>
+</div>
+

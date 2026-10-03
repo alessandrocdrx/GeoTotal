@@ -1,0 +1,23 @@
+/**
+ * @arquivo estilos/tema.css
+ * Camada: Tema
+ * Variáveis de cor (claro/escuro), reset e estilo base do <body>.
+ */
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f6f7fb; --fg:#161a23; --muted:#5d6577; --card:#ffffff; --border:#dfe3ec; --chip:#e9edf5; --chip-on:#161a23; --chip-on-fg:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Color Emoji",sans-serif;overflow:hidden;-webkit-text-size-adjust:100%}

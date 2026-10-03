@@ -1,0 +1,25 @@
+# Dependências e saídas de ferramentas
+node_modules/
+test-results/
+playwright-report/
+
+# Build do Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+*.apk
+*.aab
+
+# Chaves de assinatura: a de upload NUNCA vai para o repositório (fica nos Secrets do GitHub).
+# A android/app/debug.keystore é pública de propósito (ver android/README.md).
+*.jks
+upload*.keystore
+release*.keystore
+
+# Editores e sistema
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

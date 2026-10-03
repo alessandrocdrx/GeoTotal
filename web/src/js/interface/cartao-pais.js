@@ -1,0 +1,108 @@
+/**
+ * @arquivo js/interface/cartao-pais.js
+ * Camada: Interface
+ * Cartão do país selecionado: abrir, preencher, navegar (anterior/próximo).
+ */
+/* ---------- Cartão ---------- */
+var card=document.getElementById('card');
+function renderNear(group,cur,pick,label){
+  var box=document.getElementById('cnear');box.innerHTML='';
+  var others=(group||[]).filter(function(x){return x!==cur;}).slice(0,5);
+  if(!others.length){box.hidden=true;return;}
+  var t=document.createElement('span');t.className='nt';t.textContent='Também perto do seu toque';box.appendChild(t);
+  others.forEach(function(o){var b=document.createElement('button');b.textContent=label(o);b.onclick=function(){tourStop();pick(o);};box.appendChild(b);});
+  box.hidden=false;
+}
+/* desempenho no treino (todos os tipos de pergunta, desde o último "zerar progresso") */
+function renderCardStat(key,isState){
+  var r=0,w=0;
+  Object.keys(QS.m).forEach(function(m){var e=QS.m[m][key];if(e){r+=e.r||0;w+=e.w||0;}});
+  var box=$('cstat');box.innerHTML='';
+  if(!(r+w)){box.className='cstat empty';box.textContent='🎯 Você ainda não treinou '+(isState?'este estado':'este país')+'.';return;}
+  var pct=Math.round(100*r/(r+w));
+  box.className='cstat';
+  var top=document.createElement('div');top.className='cstop';
+  var t=document.createElement('span');t.textContent='🎯 Seu treino';
+  var v=document.createElement('b');v.textContent=pct+'% de acerto';
+  top.appendChild(t);top.appendChild(v);
+  var bar=document.createElement('div');bar.className='csbar';
+  var ok=document.createElement('i');ok.className='ok';ok.style.width=pct+'%';
+  var bad=document.createElement('i');bad.className='bad';bad.style.width=(100-pct)+'%';
+  bar.appendChild(ok);bar.appendChild(bad);
+  var lg=document.createElement('div');lg.className='cslg';
+  lg.textContent='✔ '+r+' '+(r===1?'acerto':'acertos')+' · ✖ '+w+' '+(w===1?'erro':'erros');
+  box.appendChild(top);box.appendChild(bar);box.appendChild(lg);
+}
+/* linha discreta no treino: o seu histórico com este país neste tipo de pergunta */
+function fillQStat(el,o){
+  var e=(QS.m[quiz.mode]||{})[qcc(o)],r=e?(e.r||0):0,w=e?(e.w||0):0;
+  el.innerHTML='';
+  if(!(r+w)){el.textContent='Primeira vez neste tipo de pergunta';return;}
+  var pct=Math.round(100*r/(r+w));
+  var bar=document.createElement('span');bar.className='qsbar';
+  var f=document.createElement('i');f.style.width=pct+'%';bar.appendChild(f);
+  var t=document.createElement('span');t.textContent=pct+'% · ✔ '+r+' · ✖ '+w;
+  el.appendChild(bar);el.appendChild(t);
+}
+function renderFacts(rows){
+  var box=document.getElementById('cfacts');box.innerHTML='';
+  rows.forEach(function(r){
+    if(!r[1])return;
+    var f=document.createElement('div');f.className='fact';
+    var a=document.createElement('span');a.textContent=r[0];
+    var b=document.createElement('b');b.textContent=r[1];
+    f.appendChild(a);f.appendChild(b);box.appendChild(f);
+  });
+}
+function renderChips(title,items,empty){
+  var box=document.getElementById('cnb');box.innerHTML='';
+  var t=document.createElement('div');t.className='st';t.textContent=title+(items.length?' ('+items.length+')':'');box.appendChild(t);
+  if(!items.length){var e=document.createElement('div');e.className='none';e.textContent=empty;box.appendChild(e);return;}
+  var w=document.createElement('div');w.className='chipsx';
+  items.forEach(function(it){var b=document.createElement('button');b.textContent=it.t;b.onclick=function(){tourStop();it.f();};w.appendChild(b);});
+  box.appendChild(w);
+}
+function select(d,fly,group){
+  if(quiz.open)return;
+  if(!on[d.i]){on[d.i]=1;afterFilter();}
+  selected=d;
+  document.getElementById('hint').style.display='none';
+  document.getElementById('cdot').style.background=REG[d.r].c;
+  document.getElementById('creg').textContent=(d.sub===REG[d.r].n)?REG[d.r].n:REG[d.r].n+' · '+d.sub;
+  var cfl=document.getElementById('cflag');
+  if(d.dis){cfl.className='flag sig';cfl.textContent=d.cc;}else{cfl.className='flag';cfl.textContent=d.flag;}
+  document.getElementById('cname').textContent=d.name;
+  var dtag=document.getElementById('cdis');
+  if(!dtag){dtag=document.createElement('span');dtag.id='cdis';dtag.className='distag';document.getElementById('cname').insertAdjacentElement('afterend',dtag);}
+  dtag.textContent=d.dis?'Não reconhecido pela ONU':(d.dep?'Território dependente':(d.uni?(d.r===7?'Antártida e ilhas remotas':'Território desabitado'):''));dtag.style.display=(d.dis||d.dep||d.uni)?'inline-block':'none';dtag.classList.toggle('dep',!!(d.dep||d.uni));
+  document.getElementById('ccap').textContent=d.cap;
+  /* observação sobre a capital fica junto dela; o resto vira "Saiba mais" */
+  renderCardStat(d.cc,false);
+  var capNote=/capital|sede|Putrajaya/i.test(d.obs);
+  document.getElementById('ccapnote').textContent=capNote?d.obs:'';
+  var ob=document.getElementById('cobs');ob.textContent=capNote?'':d.obs;ob.style.display=(d.obs&&!capNote)?'block':'none';
+  var x=d.info;
+  renderFacts(x?[['👥 População',fmtPop(x.pop)],['📐 Área',fmtArea(x.area)],['🗣️ Idioma',x.lang],['💰 Moeda',x.cur]]:[]);
+  renderChips('Fronteiras por terra',NB[d.i].map(function(i){return {t:dflag(D[i])+' '+short(D[i]),f:function(){select(D[i],true);}};}),
+    'Não faz fronteira terrestre com outro país.');
+  card.style.display='block';syncFab();
+  updateNbBtn();updateStBtn();
+  renderNear(group,d,function(x){select(x,false,group);},function(x){return x.flag+' '+short(x);});
+  document.getElementById('cncty').hidden=true;
+  fillInfo(d);setTimeout(measureCard,40);
+  saveLastView();
+  if(fly===false)flyTo(d.lat,d.lng,Math.max(zoom,1.5));
+  else{var cv2=countryView(d.i);flyTo(cv2.lat,cv2.lng,zoomFor(cv2.r,5.5));}
+}
+function closeCard(){selected=null;selSt=null;card.style.display='none';cardH=0;tourStop();syncFab();}
+document.getElementById('close').onclick=closeCard;
+function step(dir){
+  if(statesMode){stepSt(dir);return;}
+  if(!selected)return;
+  var i=selected.i,n=D.length;
+  for(var k=0;k<n;k++){i=(i+dir+n)%n;if(on[i]){select(D[i],true);return;}}
+}
+document.getElementById('prev').onclick=function(){step(-1);};
+document.getElementById('next').onclick=function(){step(1);};
+document.getElementById('nbtn').onclick=toggleNb;
+

@@ -1,0 +1,32 @@
+<!-- @arquivo componentes/painel-filtros.html · Camada: Interface
+     Painel de filtros por continente, sub-região e vizinhança. -->
+<div id="sheet"><div class="box">
+  <div class="shead"><b>Filtros</b><button id="sclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="inote" id="sheetcount" style="margin-top:-4px"></div>
+  <div class="row2"><button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶ Desfazer o último filtro</button></div>
+  <div class="opts">
+    <label><input type="checkbox" id="oTex" checked disabled><span>Textura de satélite (estilizada)</span></label>
+    <label><input type="checkbox" id="oBor" checked disabled><span>Fronteiras dos países</span></label>
+    <label><input type="checkbox" id="oFill" disabled><span>Colorir países por região</span></label>
+    <label><input type="checkbox" id="oNight" disabled><span>Dia e noite (sombra da noite, agora)</span></label>
+  </div>
+  <div class="row2"><button id="allon">Ligar todos</button><button id="alloff">Desligar todos</button></div>
+  <div class="nbbox">
+    <div class="lab">Por vizinhança (fronteira terrestre)</div>
+    <select id="nbsel" aria-label="País"></select>
+    <div class="row2"><button id="nbsolo">Só o país e vizinhos</button><button id="nbadd">Somar vizinhos</button></div>
+  </div>
+  <div class="sec">
+    <div class="lab">Incluir também</div>
+    <label class="toglab"><input type="checkbox" id="oDisputed" checked><span>Não reconhecidos pela ONU <small class="tgn" id="nDis"></small><small class="tgd">Kosovo, Somalilândia, Transnístria… · ⚠</small></span></label>
+    <label class="toglab"><input type="checkbox" id="oDep"><span>Territórios dependentes <small class="tgn" id="nDep"></small><small class="tgd">Porto Rico, Groenlândia, Hong Kong, Guiana Francesa… · ◇</small></span></label>
+    <label class="toglab"><input type="checkbox" id="oUni"><span>Desabitados e Antártida <small class="tgn" id="nUni"></small><small class="tgd">Ilhas remotas e bases antárticas; no treino, só em "Achar no mapa" · ❄</small></span></label>
+  </div>
+  <div class="sec">
+    <div class="lab">Filtros favoritos</div>
+    <div class="row2"><input id="favname" placeholder="Nome do favorito" maxlength="40"><button id="favsave">Salvar o filtro atual</button></div>
+    <div id="favs"></div>
+  </div>
+  <div id="tree"></div>
+</div></div>
+

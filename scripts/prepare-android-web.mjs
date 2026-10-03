@@ -1,6 +1,7 @@
 // geoTotal — Copyright 2026 alessandrocdrx
 // SPDX-License-Identifier: Apache-2.0
-// Gera android/app/src/main/assets/www/index.html a partir de web/geototal.html:
+// Gera android/app/src/main/assets/www/index.html a partir de web/geototal.html
+// (que por sua vez é gerado de web/src/ por scripts/build-web.mjs; use `npm run build`):
 // - carrega d3, topojson, datamaps e os estados do Brasil de assets/www/lib (funciona offline),
 //   mantendo os CDNs como reserva;
 // - injeta scripts/android-shim.js (salvar CSV, imprimir e botão voltar no Android);

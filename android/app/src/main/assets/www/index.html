@@ -45,6 +45,7 @@
 </script>
 <meta charset="utf-8">
 <!-- geoTotal — Copyright 2026 alessandrocdrx — Licenciado sob a Apache License 2.0 (ver LICENSE e NOTICE). -->
+<!-- Arquivo GERADO por scripts/build-web.mjs a partir de web/src/. Não edite aqui: edite web/src/ e rode `npm run build`. -->
 <meta name="author" content="alessandrocdrx">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0d1017">
@@ -666,6 +667,7 @@ header .modesw button{padding:0 10px!important}
 <script>
 /* Windows (Chrome, Edge, Brave) não desenha bandeiras em emoji: carrega uma fonte que as tem */
 (function(){
+  if(window.AndroidBridge)return; /* no app Android não há internet; o sistema já tem as bandeiras */
   try{
     var c=document.createElement('canvas').getContext('2d');c.font='32px sans-serif';
     var w2=c.measureText('\uD83C\uDDE7\uD83C\uDDF7').width,w1=c.measureText('\uD83C\uDDE7').width;
@@ -4159,7 +4161,7 @@ function computeRegionStats(){
     .map(function(g){return {n:g.n,acc:Math.round(100*g.r/(g.r+g.w)),tot:g.r+g.w};})
     .sort(function(a,b){return a.acc-b.acc;});
 }
-var histTab='c',hist={mode:null,sort:'w',scopeOnly:false,showAll:false,q:''};
+var histTab='c',histView={mode:null,sort:'w',scopeOnly:false,showAll:false,q:''};
 function openStats(){
   $('htabC').setAttribute('aria-pressed',histTab==='c'?'true':'false');
   $('htabR').setAttribute('aria-pressed',histTab==='r'?'true':'false');
@@ -4188,23 +4190,23 @@ function openRegionStats(){
 function histModes(){return quizDomain==='br'?['cap','pais','neighbor','code','map']:['cap','pais','flag','neighbor','code','map'];}
 function openHistCountries(){
   var box=$('statsbody');box.innerHTML='';
-  if(!hist.mode||(hist.mode!=='all'&&histModes().indexOf(hist.mode)<0))hist.mode=quiz.mode;
+  if(!histView.mode||(histView.mode!=='all'&&histModes().indexOf(histView.mode)<0))histView.mode=quiz.mode;
   var ctl=document.createElement('div');ctl.className='hctl';
   var sm=document.createElement('select');sm.id='histmode';sm.setAttribute('aria-label','Tipo de pergunta');
   [['all','Todos os tipos de pergunta']].concat(histModes().map(function(m){return [m,modeName(m)];})).forEach(function(o){
     var op=document.createElement('option');op.value=o[0];op.textContent=o[1];sm.appendChild(op);});
-  sm.value=hist.mode;sm.onchange=function(){hist.mode=this.value;renderHist();};
+  sm.value=histView.mode;sm.onchange=function(){histView.mode=this.value;renderHist();};
   var so=document.createElement('select');so.id='histsort';so.setAttribute('aria-label','Ordenar');
   [['w','Mais erros primeiro'],['r','Mais acertos primeiro'],['p','Pior aproveitamento primeiro'],['n','Nome (A–Z)']].forEach(function(o){
     var op=document.createElement('option');op.value=o[0];op.textContent=o[1];so.appendChild(op);});
-  so.value=hist.sort;so.onchange=function(){hist.sort=this.value;renderHist();};
-  var qi=document.createElement('input');qi.type='search';qi.id='histq';qi.placeholder=quizDomain==='br'?'Buscar estado':'Buscar país';qi.value=hist.q;
-  qi.oninput=function(){hist.q=this.value;renderHist();};
+  so.value=histView.sort;so.onchange=function(){histView.sort=this.value;renderHist();};
+  var qi=document.createElement('input');qi.type='search';qi.id='histq';qi.placeholder=quizDomain==='br'?'Buscar estado':'Buscar país';qi.value=histView.q;
+  qi.oninput=function(){histView.q=this.value;renderHist();};
   ctl.appendChild(sm);ctl.appendChild(so);ctl.appendChild(qi);
   function chk(id,label,key){
     var l=document.createElement('label');l.className='toglab';
-    var c=document.createElement('input');c.type='checkbox';c.id=id;c.checked=hist[key];
-    c.onchange=function(){hist[key]=this.checked;renderHist();};
+    var c=document.createElement('input');c.type='checkbox';c.id=id;c.checked=histView[key];
+    c.onchange=function(){histView[key]=this.checked;renderHist();};
     var sp=document.createElement('span');sp.textContent=label;l.appendChild(c);l.appendChild(sp);ctl.appendChild(l);
   }
   if(quizScope.t!=='world'&&quizScope.t!=='br')chk('histscope','Só '+scopeLabel(),'scopeOnly');
@@ -4215,21 +4217,21 @@ function openHistCountries(){
   renderHist();
 }
 function renderHist(){
-  var arr=QD(),modes=hist.mode==='all'?histModes():[hist.mode],qn=norm((hist.q||'').trim()),rows=[],tr=0,tw=0,seen=0;
+  var arr=QD(),modes=histView.mode==='all'?histModes():[histView.mode],qn=norm((histView.q||'').trim()),rows=[],tr=0,tw=0,seen=0;
   arr.forEach(function(o){
     if(quizDomain!=='br'&&!avail(o))return;
-    if(hist.scopeOnly&&!inScopeActive(o))return;
+    if(histView.scopeOnly&&!inScopeActive(o))return;
     if(qn&&norm(o.name).indexOf(qn)<0)return;
     var r=0,w=0,key=qcc(o);
     modes.forEach(function(m){var e=(QS.m[m]||{})[key];if(e){r+=e.r||0;w+=e.w||0;}});
     if(r+w)seen++;
     tr+=r;tw+=w;
-    if(!hist.showAll&&!(r+w))return;
+    if(!histView.showAll&&!(r+w))return;
     rows.push({o:o,r:r,w:w,p:(r+w)?r/(r+w):-1});
   });
-  var by={w:function(a,b){return b.w-a.w||a.r-b.r;},r:function(a,b){return b.r-a.r||a.w-b.w;},p:function(a,b){return (a.p<0?2:a.p)-(b.p<0?2:b.p)||b.w-a.w;},n:function(a,b){return a.o.name.localeCompare(b.o.name,'pt');}}[hist.sort];
+  var by={w:function(a,b){return b.w-a.w||a.r-b.r;},r:function(a,b){return b.r-a.r||a.w-b.w;},p:function(a,b){return (a.p<0?2:a.p)-(b.p<0?2:b.p)||b.w-a.w;},n:function(a,b){return a.o.name.localeCompare(b.o.name,'pt');}}[histView.sort];
   rows.sort(by);
-  $('histsum').textContent='✔ '+tr+' acertos · ✖ '+tw+' erros · '+seen+' de '+arr.filter(function(o){return (quizDomain==='br'||avail(o))&&(!hist.scopeOnly||inScopeActive(o));}).length+' '+unitWord(2)+' já respondidos'+(tr+tw?' · '+Math.round(100*tr/(tr+tw))+'% de acerto':'')+'.';
+  $('histsum').textContent='✔ '+tr+' acertos · ✖ '+tw+' erros · '+seen+' de '+arr.filter(function(o){return (quizDomain==='br'||avail(o))&&(!histView.scopeOnly||inScopeActive(o));}).length+' '+unitWord(2)+' já respondidos'+(tr+tw?' · '+Math.round(100*tr/(tr+tw))+'% de acerto':'')+'.';
   var list=$('histlist');list.innerHTML='';
   if(!rows.length){var e=document.createElement('div');e.className='inote';e.textContent=tr+tw?'Nada encontrado.':'Ainda não há respostas registradas aqui.';list.appendChild(e);return;}
   rows.forEach(function(x){

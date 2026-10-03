@@ -10,6 +10,9 @@ on:
       - 'android/**'
       - 'web/**'
       - 'scripts/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/android-apk.yml'
   workflow_dispatch:
 
@@ -17,7 +20,34 @@ permissions:
   contents: write
 
 jobs:
+  # Testes antes de qualquer APK: se algo quebrar, nada é publicado.
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependências de desenvolvimento
+        run: npm ci
+
+      - name: web/geototal.html está em dia com web/src/
+        run: npm run check
+
+      - name: Testes de dados
+        run: npm test
+
+      - name: Navegador para os testes de ponta a ponta
+        run: npx playwright install --with-deps chromium
+
+      - name: Testes de ponta a ponta
+        run: npm run test:e2e
+
   apk:
+    needs: testes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

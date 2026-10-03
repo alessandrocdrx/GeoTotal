@@ -1,0 +1,76 @@
+<!-- @arquivo componentes/menu.html · Camada: Interface
+     Menu "⋯" em lista com páginas internas (opções do treino, mapa, explorar, app). -->
+<div id="msheet" class="ov" style="z-index:80"><div class="box">
+  <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Mais</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <nav id="mlist" class="mlist">
+    <div class="mgrp">Treino</div>
+    <button data-p="mp-train"><span class="mi">🎯</span><span class="mt"><b>Opções do treino</b><small id="mtrainv">Resposta, foco, sessão, cronômetro</small></span><span class="mc">›</span></button>
+    <button id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos do treino</small></span><span class="mc">›</span></button>
+    <button id="mhist"><span class="mi">📊</span><span class="mt"><b>Seu histórico</b><small>Acertos e erros por país e por região</small></span><span class="mc">›</span></button>
+    <div class="mgrp">Mapa</div>
+    <button id="mlabels"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b><small id="mlabelsv">Países</small></span><span class="mc">↻</span></button>
+    <button data-p="mp-poles"><span class="mi">🧭</span><span class="mt"><b>Ir a um polo</b><small>Polo Norte ou Polo Sul</small></span><span class="mc">›</span></button>
+    <div class="mgrp">Explorar</div>
+    <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
+    <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Dois países lado a lado</small></span><span class="mc">›</span></button>
+    <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Calcula e mostra no globo</small></span><span class="mc">›</span></button>
+    <button data-p="mp-exp"><span class="mi">📄</span><span class="mt"><b>Estudar e exportar</b><small>Folha de estudo, CSV e Anki</small></span><span class="mc">›</span></button>
+    <div class="mgrp">App</div>
+    <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
+    <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Textura e fronteiras</b><small>Imagem do globo e contornos</small></span><span class="mc">›</span></button>
+    <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
+  </nav>
+  <div class="mpage" id="mp-train" data-t="Opções do treino" hidden>
+    <div class="mlab">Resposta</div>
+    <div class="qseg" id="qtypes"></div>
+    <div class="mlab">Quais perguntas</div>
+    <div class="qscoperow"><button id="qfocusb">Foco: tudo</button></div>
+    <div class="mlab">Rodada</div>
+  <div class="mcol"><button id="qsessionb">🧮 Sessão: livre</button><button id="qorderb">🔀 Ordem: aleatória</button>
+  <button id="qtimerb">⏱️ Cronômetro: desligado</button><button id="qsurvb">💀 Sobrevivência: desligada</button>
+  <button id="qrunreset">🔁 Recomeçar a partida</button></div>
+  </div>
+  <div class="mpage" id="mp-poles" data-t="Ir a um polo" hidden>
+    <div class="row2"><button id="pn">▲ Polo Norte</button><button id="ps">▼ Polo Sul</button></div>
+  </div>
+
+  <div class="mpage" id="mp-theme" data-t="Tema" hidden>
+    <div class="row2"><button id="themeb">🌗 Tema: automático</button></div>
+  </div>
+  <div class="mpage" id="mp-cmp" data-t="Comparar países" hidden>
+    <select id="cmpA" aria-label="Primeiro país"></select>
+    <select id="cmpB" aria-label="Segundo país"></select>
+    <div class="row2"><button id="cmpGo">Comparar</button></div>
+    <div id="cmpres"></div>
+  </div>
+  <div class="mpage" id="mp-dist" data-t="Distância entre capitais" hidden>
+    <select id="dA" aria-label="País de origem"></select>
+    <select id="dB" aria-label="País de destino"></select>
+    <div class="row2"><button id="dgo">Calcular e mostrar no globo</button><button id="dclear">Limpar</button></div>
+    <div id="dres" class="inote"></div>
+  </div>
+  <div class="mpage" id="mp-br" data-t="Estados do Brasil" hidden>
+    <select id="stSel" aria-label="Estado"></select>
+    <div class="row2"><button id="stGo">Ir para o estado</button><button id="stAll">Ver todos os estados</button></div>
+    <div class="row2"><button id="expBR">CSV dos estados</button><label class="filebtn">Importar contornos (GeoJSON)<input id="impSt" type="file" accept=".json,.geojson,application/json,application/geo+json" hidden></label></div>
+    <div class="inote">O app tenta carregar os limites dos estados sozinho ao entrar no modo estados (dados amCharts geodata / Natural Earth). Se não conseguir, importe um GeoJSON dos estados, por exemplo a malha do IBGE.</div>
+  </div>
+  <div class="mpage" id="mp-exp" data-t="Estudar e exportar" hidden>
+    <div class="inote">Usa os países ligados em Filtros.</div>
+    <div class="row2"><button id="expCsv">CSV completo</button><button id="expAnki">CSV para Anki</button></div>
+    <div class="row2"><button id="expStudy">Folha de estudo</button></div>
+  </div>
+  <div class="mpage" id="mp-map" data-t="Mapa" hidden>
+    <div id="minfo" class="inote"></div>
+    <details class="adv"><summary>⚙️ Avançado (importar textura e fronteiras)</summary><div>
+    <div class="row2"><label class="filebtn">Importar textura (imagem)<input id="impTex" type="file" accept="image/*" hidden></label><button id="resetTex">Voltar à textura gerada</button></div>
+    <div class="row2"><label class="filebtn">Importar fronteiras (GeoJSON)<input id="impBor" type="file" accept=".json,.geojson,application/json,application/geo+json" hidden></label><button id="clearData">Apagar dados de mapa salvos</button></div>
+    <div class="inote">Imagem: mapa-múndi em projeção equirretangular (proporção 2:1), como o "Blue Marble" da NASA. Fronteiras: GeoJSON de países com códigos ISO (por exemplo, o Natural Earth).</div>
+    </div></details>
+  </div>
+  <div class="mpage" id="mp-reset" data-t="Zerar progresso do treino" hidden>
+    <div class="inote">Apaga o histórico de acertos e erros de cada país, as partidas em andamento, os recordes e as medalhas. Níveis, XP e conquistas continuam.</div>
+    <div class="row2"><button id="qreset" class="mdangerbtn">Zerar progresso do treino</button></div>
+  </div>
+</div></div>
+

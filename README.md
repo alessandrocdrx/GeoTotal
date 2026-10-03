@@ -16,6 +16,20 @@ Toque em **Baixar mesmo assim** → **Abrir** → **Instalar** (se o Android ped
 "Permitir desta fonte"). Detalhes de como compilar e publicar versões novas em
 [`android/README.md`](android/README.md).
 
+## Desenvolvimento
+
+O código-fonte fica em [`web/src/`](web/src), organizado por camadas (dados, núcleo,
+visualização, interface, treino, Brasil), e o app Android em [`android/`](android). Como o
+projeto é montado, as regras do código e os comandos estão em
+[`docs/ARQUITETURA.md`](docs/ARQUITETURA.md).
+
+```
+npm install
+npx playwright install chromium
+npm run build       # gera web/geototal.html e o index.html do Android
+npm run test:all    # verificação, testes de dados e testes de ponta a ponta
+```
+
 ## Licença
 
 Copyright 2026 alessandrocdrx.

@@ -1,0 +1,61 @@
+/**
+ * @arquivo estilos/treino.css
+ * Camada: Treino
+ * Painel do treino, opções de resposta, feedback e modo "Achar no mapa"; regras de impressão.
+ */
+#quiz{position:fixed;inset:0;display:none;z-index:70;background:var(--bg);overflow:auto;padding-top:env(safe-area-inset-top,0px)}
+.qpanel{max-width:600px;margin:0 auto;padding:14px 14px calc(20px + env(safe-area-inset-bottom,0px))}
+.qtop{display:flex;align-items:center;justify-content:space-between;font-size:18px}
+.qtop button,.qgo,.qidk,.qrow button,.qfoot button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;padding:10px 14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer}
+.qscore{font-size:12.5px;color:var(--muted);margin:6px 0}
+.qseg{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.qseg button{flex:1;min-width:104px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:9px 8px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer}
+.qseg button[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg);border-color:var(--chip-on)}
+.qq{font-size:22px;font-weight:700;text-align:center;margin:18px 0 14px;line-height:1.25}
+.qflag{font-size:54px;line-height:1.1;margin-bottom:6px;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
+.qflag.big{font-size:110px}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qopts button{padding:16px 8px;font-size:16px;font-weight:600;border-radius:14px;border:1px solid var(--border);background:var(--card);color:var(--fg);cursor:pointer;font-family:inherit;min-height:60px}
+.qopts button.okb{background:#1f9d55;color:#fff;border-color:#1f9d55}
+.qopts button.badb{background:#d64545;color:#fff;border-color:#d64545}
+.qinp{width:100%;padding:14px;font-size:18px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--fg);font-family:inherit}
+.qrow{display:flex;gap:8px;margin-top:10px}.qrow button{flex:1}
+#qfb{margin:14px 0 6px;font-size:15.5px;line-height:1.4;padding:10px 12px;border-radius:12px;display:none}
+#qfb.ok{display:block;background:rgba(31,157,85,.15);border:1px solid #1f9d55}
+#qfb.bad{display:block;background:rgba(214,69,69,.15);border:1px solid #d64545}
+.qnextb{display:none;width:100%;margin-top:8px;border-radius:12px;padding:13px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;background:var(--chip-on);color:var(--chip-on-fg);border:1px solid var(--chip-on);position:sticky;bottom:0;z-index:6;box-shadow:0 -10px 14px -8px rgba(0,0,0,.35)}
+.qfoot{margin-top:18px}
+#quiz.map{background:transparent;pointer-events:none;overflow:visible}
+#quiz.map .qpanel{position:fixed;left:0;right:0;bottom:0;max-width:none;background:var(--card);border-top:1px solid var(--border);border-radius:18px 18px 0 0;pointer-events:auto;padding-top:10px;box-shadow:0 -8px 24px rgba(0,0,0,.25)}
+#quiz.map .qq{font-size:18px;margin:8px 0}
+#quiz.map .qfoot,#quiz.map #qpool{display:none}
+#quiz.map .qseg{flex-wrap:nowrap;overflow-x:auto;margin:6px 0}
+#quiz.map .qseg button{flex:none;min-width:0;padding:6px 10px;font-size:12px}
+#quiz.map .qtop{font-size:15px}#quiz.map .qtop button{padding:6px 12px;font-size:13px}
+#qmodes{display:grid;grid-template-columns:1fr 1fr}
+#qmodes button{min-width:0}
+#quiz.map #qmodes{display:grid;grid-template-columns:1fr 1fr;overflow:visible}#quiz.map #qmodes button{padding:9px 8px;font-size:13px}
+@media print{
+  html,body{height:auto!important;overflow:visible!important;background:#fff!important}
+  body>*:not(#study){display:none!important}
+  #study{position:static!important;display:block!important;background:#fff!important;color:#000!important}
+  #study .box{position:static!important;max-height:none!important;background:#fff!important;color:#000!important;padding:0!important;border:0!important}
+  #study .shead button{display:none}
+  #study td{border-bottom:1px solid #ccc!important;color:#000}
+}
+
+.rh{margin-top:12px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.rbar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:6px 0;background:var(--border)}
+.rbar span{display:block;min-width:2px}
+.rrow{display:flex;align-items:center;gap:8px;font-size:13px;padding:3px 0}
+.rrow i{width:10px;height:10px;border-radius:3px;flex:none}
+.rrow b{margin-left:auto;font-weight:700}
+.rsub{margin:0 0 4px 18px;font-size:12px;color:var(--muted);line-height:1.35}
+.qhint{font-size:12.5px;font-weight:500;color:var(--muted);margin-top:4px}
+body.quizing .chips,body.quizing .searchrow,body.quizing .seg,body.quizing .seg2{display:none}
+#quiz.map .qopts{gap:8px}
+#quiz.map .qopts button{padding:11px 6px;min-height:50px;font-size:14.5px}
+#quiz.map .qpanel{max-height:62%;overflow:auto;scroll-padding-bottom:14px}
+#quiz.map .qscore{display:block;font-size:11.5px;margin:4px 0}
+#quiz.map .qflag.big{font-size:60px}
+
