@@ -8,9 +8,8 @@ import { langText, relText } from '../dados/linguas.js';
 import { D, qcapDisp, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
 import { fmtArea, fmtPop } from '../interface/cartao-detalhes.js';
-import { $ } from '../nucleo/utilitarios.js';
-import { setStatus } from '../visualizacao/fronteiras.js';
-import { estadoMapa } from '../visualizacao/globo.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
+import { estadoMapa } from '../visualizacao/tela.js';
 
 /* ---------- exportar e folha de estudo ---------- */
 let dlNS = null;

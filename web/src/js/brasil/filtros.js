@@ -7,8 +7,7 @@
 import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { norm } from '../dados/paises.js';
 import { byName } from '../dados/vizinhos.js';
-import { estadoCartao } from '../interface/cartao-detalhes.js';
-import { card } from '../interface/cartao-pais.js';
+import { card, estadoCartao } from '../interface/cartao-detalhes.js';
 import { afterFilter, chips } from '../interface/filtros.js';
 import { ganchosInterface } from '../interface/ganchos.js';
 import { flyTo } from '../visualizacao/animacao.js';

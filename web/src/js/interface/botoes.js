@@ -5,8 +5,8 @@
  */
 
 import { $ } from '../nucleo/utilitarios.js';
-import { flyTo, PI } from '../visualizacao/animacao.js';
-import { estadoCamera, estadoMapa } from '../visualizacao/globo.js';
+import { flyTo } from '../visualizacao/animacao.js';
+import { estadoCamera, estadoMapa, PI } from '../visualizacao/tela.js';
 
 let spinB;
 let lp;

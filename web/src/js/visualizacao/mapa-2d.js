@@ -8,20 +8,18 @@ import { LLAT, LLNG } from '../dados/massas-terra.js';
 import { D, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
-import { PI } from './animacao.js';
 import { texCanvas } from './carregamento.js';
-import { estadoRender } from './fronteiras.js';
 import { ganchos } from './ganchos.js';
-import { avail, ctx, dpr, estadoCamera, estadoMapa, FONT, H, W } from './globo.js';
 import { shapePath, SHAPES } from './marcadores.js';
+import { estadoRender } from './projecao.js';
 import { paintSelBadge, selBadgeMetrics } from './selo.js';
+import { avail, ctx, dpr, estadoCamera, estadoMapa, FONT, H, PI, W } from './tela.js';
 
 /* =====================================================================
    MAPA 2D (alternativa ao globo 3D) — reaproveita lam/phi/zoom como
    deslocamento horizontal/vertical e escala, então arrastar/zoom já
    funcionam sem tocar nos manipuladores de ponteiro existentes.
    ===================================================================== */
-let flat2D;
 function R2now(){return Math.min(W,H)*0.26*estadoCamera.zoom;}
 function proj2D(lngDeg,latDeg,R2,cx,cy){
   var lng=lngDeg*PI/180-estadoCamera.lam;
@@ -145,7 +143,7 @@ function draw2D(){
   ganchos.desenharSeloResposta(0,cx,cy);
 }
 function setFlat2D(v){
-  flat2D=v;lsSet('globo.flat2d',v);
+  estadoCamera.plano2D=v;lsSet('globo.flat2d',v);
   $('flat2d').setAttribute('aria-pressed',v?'true':'false');
   $('flat2d').textContent=v?'🌐':'🗺️';
   $('flat2d').setAttribute('aria-label',v?'Ver como globo':'Ver como mapa 2D');
@@ -153,9 +151,9 @@ function setFlat2D(v){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
-  flat2D = lsGet('globo.flat2d',false);
-  $('flat2d').onclick=function(){setFlat2D(!flat2D);};
-  setFlat2D(flat2D);
+  estadoCamera.plano2D = lsGet('globo.flat2d',false);
+  $('flat2d').onclick=function(){setFlat2D(!estadoCamera.plano2D);};
+  setFlat2D(estadoCamera.plano2D);
 }
 
-export { draw2D, flat2D, iniciar, inv2D, proj2D, R2now, setFlat2D };
+export { draw2D, iniciar, inv2D, proj2D, R2now, setFlat2D };

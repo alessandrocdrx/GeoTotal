@@ -1,7 +1,7 @@
 /**
  * @arquivo js/nucleo/utilitarios.js
  * Camada: Núcleo
- * Utilitários gerais: $, localStorage (lsGet/lsSet), confirmação em dois toques.
+ * Utilitários gerais: $, localStorage (lsGet/lsSet), confirmação em dois toques, aviso de status.
  */
 
 /* =====================================================================
@@ -18,4 +18,13 @@ function confirmTap(btn,ask,fn){
   };
 }
 
-export { $, confirmTap, lsGet, lsSet };
+function setStatus(t,ms){
+  var statusEl=document.getElementById('status');
+  clearTimeout(statusT);
+  if(!t){statusEl.style.display='none';return;}
+  statusEl.textContent=t;statusEl.style.display='block';
+  if(ms)statusT=setTimeout(function(){statusEl.style.display='none';},ms);
+}
+let statusT = 0;
+
+export { $, confirmTap, lsGet, lsSet, setStatus };

@@ -2302,8 +2302,23 @@ Brunei:Malásia
   // web/src/js/visualizacao/globo.js
   var globo_exports = {};
   __export(globo_exports, {
+    frame: () => frame
+  });
+
+  // web/src/js/visualizacao/animacao.js
+  var animacao_exports = {};
+  __export(animacao_exports, {
+    fitTo: () => fitTo,
+    flyTo: () => flyTo,
+    shortest: () => shortest
+  });
+
+  // web/src/js/visualizacao/tela.js
+  var tela_exports = {};
+  __export(tela_exports, {
     FONT: () => FONT,
     H: () => H,
+    PI: () => PI,
     R0: () => R0,
     W: () => W,
     allOn: () => allOn,
@@ -2312,11 +2327,12 @@ Brunei:Malásia
     ctx: () => ctx,
     cv: () => cv,
     dpr: () => dpr,
-    draw: () => draw,
     estadoCamera: () => estadoCamera,
     estadoMapa: () => estadoMapa,
     firstOn: () => firstOn,
-    iniciar: () => iniciar17,
+    girar: () => girar,
+    glc: () => glc,
+    iniciar: () => iniciar9,
     resize: () => resize,
     rot: () => rot,
     visIdx: () => visIdx
@@ -2328,7 +2344,8 @@ Brunei:Malásia
     $: () => $,
     confirmTap: () => confirmTap,
     lsGet: () => lsGet,
-    lsSet: () => lsSet
+    lsSet: () => lsSet,
+    setStatus: () => setStatus
   });
   function $(id) {
     return document.getElementById(id);
@@ -2365,6 +2382,147 @@ Brunei:Malásia
       fn();
     };
   }
+  function setStatus(t, ms) {
+    var statusEl = document.getElementById("status");
+    clearTimeout(statusT);
+    if (!t) {
+      statusEl.style.display = "none";
+      return;
+    }
+    statusEl.textContent = t;
+    statusEl.style.display = "block";
+    if (ms) statusT = setTimeout(function() {
+      statusEl.style.display = "none";
+    }, ms);
+  }
+  var statusT = 0;
+
+  // web/src/js/visualizacao/tela.js
+  var PI = Math.PI;
+  var estadoCamera = {
+    dragging: false,
+    lam: -0.9,
+    phi: 0.25,
+    zoom: 1,
+    cyFrac: 0.5,
+    target: null,
+    auto: true,
+    lastInteract: 0,
+    /** Mapa 2D (planisfério) em vez do globo. */
+    plano2D: false
+  };
+  var estadoMapa = {
+    selected: null,
+    labelMode: "p",
+    includeDisputed: void 0,
+    includeDep: void 0,
+    includeUni: void 0,
+    on: void 0
+  };
+  var cv;
+  var ctx;
+  var W = 0;
+  var H = 0;
+  var R0 = 0;
+  var dpr = 1;
+  function avail(d) {
+    return (!d.dis || estadoMapa.includeDisputed) && (!d.dep || estadoMapa.includeDep) && (!d.uni || estadoMapa.includeUni);
+  }
+  function availCount() {
+    return D.filter(avail).length;
+  }
+  var reduce;
+  var FONT = 'system-ui,-apple-system,Segoe UI,Roboto,"Noto Color Emoji",sans-serif';
+  function resize() {
+    var r = cv.getBoundingClientRect();
+    W = r.width;
+    H = r.height;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    glc.width = cv.width;
+    glc.height = cv.height;
+    R0 = Math.min(W, H) * 0.44;
+  }
+  var cosL;
+  var sinL;
+  var cosP;
+  var sinP;
+  function girar() {
+    cosL = Math.cos(estadoCamera.lam);
+    sinL = Math.sin(estadoCamera.lam);
+    cosP = Math.cos(estadoCamera.phi);
+    sinP = Math.sin(estadoCamera.phi);
+  }
+  function rot(x, y, z) {
+    var x1 = x * cosL - z * sinL, z1 = x * sinL + z * cosL;
+    var y2 = y * cosP - z1 * sinP, z2 = y * sinP + z1 * cosP;
+    return [x1, y2, z2];
+  }
+  function allOn() {
+    return D.every(function(d) {
+      return estadoMapa.on[d.i] || !avail(d);
+    });
+  }
+  function firstOn() {
+    for (var i = 0; i < D.length; i++) if (estadoMapa.on[i]) return i;
+    return -1;
+  }
+  function visIdx() {
+    var v = [];
+    estadoMapa.on.forEach(function(x, k) {
+      if (x) v.push(k);
+    });
+    return v;
+  }
+  var glc;
+  function iniciar9() {
+    cv = document.getElementById("g");
+    ctx = cv.getContext("2d");
+    glc = document.getElementById("gl");
+    estadoMapa.includeDisputed = lsGet("globo.includeDisputed", true);
+    estadoMapa.includeDep = lsGet("globo.includeDep", false);
+    estadoMapa.includeUni = lsGet("globo.includeUni", false);
+    estadoMapa.on = D.map(function(d) {
+      return avail(d) ? 1 : 0;
+    });
+    reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) estadoCamera.auto = false;
+    window.addEventListener("resize", resize);
+  }
+
+  // web/src/js/visualizacao/animacao.js
+  function shortest(a, b) {
+    var d = b - a;
+    while (d > PI) d -= 2 * PI;
+    while (d < -PI) d += 2 * PI;
+    return d;
+  }
+  function flyTo(latDeg, lngDeg, z) {
+    document.getElementById("hint").style.display = "none";
+    estadoCamera.target = { lam: lngDeg * PI / 180, phi: Math.max(-PI / 2, Math.min(PI / 2, latDeg * PI / 180)), zoom: z };
+    estadoCamera.lastInteract = performance.now();
+  }
+  function fitTo(idxs) {
+    if (!idxs.length) return;
+    var sx = 0, sy = 0, sz = 0;
+    idxs.forEach(function(i) {
+      sx += D[i].x;
+      sy += D[i].y;
+      sz += D[i].z;
+    });
+    var m = Math.sqrt(sx * sx + sy * sy + sz * sz) || 1;
+    sx /= m;
+    sy /= m;
+    sz /= m;
+    var th = 0;
+    idxs.forEach(function(i) {
+      var c = D[i].x * sx + D[i].y * sy + D[i].z * sz;
+      th = Math.max(th, Math.acos(Math.max(-1, Math.min(1, c))));
+    });
+    var z = Math.max(1, Math.min(3.2, 0.9 / Math.sin(Math.min(th + 0.12, 1.5))));
+    flyTo(Math.asin(sy) * 180 / PI, Math.atan2(sx, sz) * 180 / PI, z);
+  }
 
   // web/src/js/visualizacao/estados.js
   var estados_exports = {};
@@ -2373,7 +2531,7 @@ Brunei:Malásia
     drawStates: () => drawStates,
     estadoBrasil: () => estadoBrasil,
     fitStates: () => fitStates,
-    iniciar: () => iniciar16,
+    iniciar: () => iniciar11,
     stateAt: () => stateAt,
     stateView: () => stateView
   });
@@ -2385,7 +2543,7 @@ Brunei:Malásia
     BRREG: () => BRREG,
     BRS: () => BRS,
     STSHAPES: () => STSHAPES,
-    iniciar: () => iniciar9
+    iniciar: () => iniciar10
   });
   var BRREG = [{ n: "Sul", c: "#b57cff" }, { n: "Sudeste", c: "#4da3ff" }, { n: "Centro-Oeste", c: "#f6c800" }, { n: "Nordeste", c: "#ff8a3d" }, { n: "Norte", c: "#2fd67f" }];
   var STSHAPES = ["c", "d", "s", "t", "c"];
@@ -2420,7 +2578,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
 `;
   var BRS;
   var BRBY = {};
-  function iniciar9() {
+  function iniciar10() {
     BRS = BR_RAW.trim().split("\n").map(function(l, i) {
       var p = l.split("|"), la = +p[3] * Math.PI / 180, lo = +p[4] * Math.PI / 180;
       return {
@@ -2463,14 +2621,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
   }
 
-  // web/src/js/visualizacao/animacao.js
-  var animacao_exports = {};
-  __export(animacao_exports, {
-    PI: () => PI,
-    fitTo: () => fitTo,
-    flyTo: () => flyTo,
-    frame: () => frame,
-    iniciar: () => iniciar15
+  // web/src/js/visualizacao/enquadramento.js
+  var enquadramento_exports = {};
+  __export(enquadramento_exports, {
+    countryView: () => countryView,
+    featView: () => featView,
+    limparCacheVistas: () => limparCacheVistas,
+    resetView: () => resetView,
+    showCountry: () => showCountry,
+    zoomFor: () => zoomFor
   });
 
   // web/src/js/visualizacao/ganchos.js
@@ -2502,73 +2661,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
   };
 
-  // web/src/js/visualizacao/mapa-2d.js
-  var mapa_2d_exports = {};
-  __export(mapa_2d_exports, {
-    R2now: () => R2now,
-    draw2D: () => draw2D,
-    flat2D: () => flat2D,
-    iniciar: () => iniciar14,
-    inv2D: () => inv2D,
-    proj2D: () => proj2D,
-    setFlat2D: () => setFlat2D
-  });
-
-  // web/src/js/visualizacao/carregamento.js
-  var carregamento_exports = {};
-  __export(carregamento_exports, {
-    fixWind: () => fixWind,
-    idbGet: () => idbGet,
-    idbSet: () => idbSet,
-    iniciar: () => iniciar13,
-    startMap: () => startMap,
-    texCanvas: () => texCanvas,
-    updateMapInfo: () => updateMapInfo
-  });
-
-  // web/src/js/nucleo/eventos.js
-  var eventos_exports = {};
-  __export(eventos_exports, {
-    emitir: () => emitir,
-    ouvir: () => ouvir
-  });
-  var ouvintes = {};
-  function ouvir(evento, fn) {
-    (ouvintes[evento] || (ouvintes[evento] = [])).push(fn);
-  }
-  function emitir(evento, dados) {
-    (ouvintes[evento] || []).forEach(function(fn) {
-      fn(dados);
-    });
-  }
-
-  // web/src/js/visualizacao/enquadramento.js
-  var enquadramento_exports = {};
-  __export(enquadramento_exports, {
-    countryView: () => countryView,
-    featView: () => featView,
-    limparCacheVistas: () => limparCacheVistas,
-    resetView: () => resetView,
-    showCountry: () => showCountry,
-    zoomFor: () => zoomFor
-  });
-
-  // web/src/js/visualizacao/fronteiras.js
-  var fronteiras_exports = {};
-  __export(fronteiras_exports, {
-    A3: () => A3,
+  // web/src/js/visualizacao/projecao.js
+  var projecao_exports = {};
+  __export(projecao_exports, {
     countryAt: () => countryAt,
-    drawGeo: () => drawGeo,
     estadoRender: () => estadoRender,
-    glU: () => glU,
-    glc: () => glc,
     hexA: () => hexA,
     inFeat: () => inFeat,
-    iniciar: () => iniciar10,
-    projCfg: () => projCfg,
-    setStatus: () => setStatus,
-    setupGeo: () => setupGeo,
-    tryLoad: () => tryLoad
+    projCfg: () => projCfg
   });
   var estadoRender = {
     gl: null,
@@ -2585,372 +2685,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     proj: null,
     gpath: null
   };
-  var glc;
-  var glU = {};
-  var A3 = {
-    TF: "ATF",
-    HM: "HMD",
-    GS: "SGS",
-    IO: "IOT",
-    BV: "BVT",
-    UM: "UMI",
-    PR: "PRI",
-    VI: "VIR",
-    VG: "VGB",
-    AI: "AIA",
-    MS: "MSR",
-    KY: "CYM",
-    TC: "TCA",
-    AW: "ABW",
-    CW: "CUW",
-    SX: "SXM",
-    BQ: "BES",
-    GP: "GLP",
-    MQ: "MTQ",
-    MF: "MAF",
-    BL: "BLM",
-    BM: "BMU",
-    GL: "GRL",
-    PM: "SPM",
-    FK: "FLK",
-    RE: "REU",
-    YT: "MYT",
-    SH: "SHN",
-    GI: "GIB",
-    FO: "FRO",
-    IM: "IMN",
-    JE: "JEY",
-    GG: "GGY",
-    AX: "ALA",
-    SJ: "SJM",
-    HK: "HKG",
-    MO: "MAC",
-    GU: "GUM",
-    MP: "MNP",
-    AS: "ASM",
-    PF: "PYF",
-    NC: "NCL",
-    WF: "WLF",
-    CK: "COK",
-    NU: "NIU",
-    TK: "TKL",
-    NF: "NFK",
-    PN: "PCN",
-    CX: "CXR",
-    CC: "CCK",
-    BR: "BRA",
-    GF: "GUF",
-    SR: "SUR",
-    GY: "GUY",
-    VE: "VEN",
-    CO: "COL",
-    EC: "ECU",
-    PE: "PER",
-    BO: "BOL",
-    CL: "CHL",
-    AR: "ARG",
-    PY: "PRY",
-    UY: "URY",
-    PA: "PAN",
-    CR: "CRI",
-    NI: "NIC",
-    HN: "HND",
-    SV: "SLV",
-    GT: "GTM",
-    BZ: "BLZ",
-    CU: "CUB",
-    JM: "JAM",
-    BS: "BHS",
-    HT: "HTI",
-    DO: "DOM",
-    KN: "KNA",
-    AG: "ATG",
-    DM: "DMA",
-    LC: "LCA",
-    VC: "VCT",
-    BB: "BRB",
-    GD: "GRD",
-    TT: "TTO",
-    MX: "MEX",
-    US: "USA",
-    CA: "CAN",
-    ZA: "ZAF",
-    LS: "LSO",
-    SZ: "SWZ",
-    BW: "BWA",
-    NA: "NAM",
-    ZM: "ZMB",
-    ZW: "ZWE",
-    MZ: "MOZ",
-    MG: "MDG",
-    MU: "MUS",
-    SC: "SYC",
-    KM: "COM",
-    MW: "MWI",
-    TZ: "TZA",
-    BI: "BDI",
-    RW: "RWA",
-    UG: "UGA",
-    KE: "KEN",
-    SO: "SOM",
-    DJ: "DJI",
-    ER: "ERI",
-    ET: "ETH",
-    SS: "SSD",
-    AO: "AGO",
-    CD: "COD",
-    CG: "COG",
-    GA: "GAB",
-    ST: "STP",
-    GQ: "GNQ",
-    CM: "CMR",
-    CF: "CAF",
-    TD: "TCD",
-    NE: "NER",
-    NG: "NGA",
-    BJ: "BEN",
-    TG: "TGO",
-    BF: "BFA",
-    GH: "GHA",
-    CI: "CIV",
-    LR: "LBR",
-    SL: "SLE",
-    GN: "GIN",
-    GW: "GNB",
-    GM: "GMB",
-    SN: "SEN",
-    CV: "CPV",
-    MR: "MRT",
-    ML: "MLI",
-    EH: "ESH",
-    MA: "MAR",
-    DZ: "DZA",
-    TN: "TUN",
-    LY: "LBY",
-    EG: "EGY",
-    SD: "SDN",
-    PT: "PRT",
-    ES: "ESP",
-    AD: "AND",
-    MC: "MCO",
-    SM: "SMR",
-    IT: "ITA",
-    VA: "VAT",
-    MT: "MLT",
-    GR: "GRC",
-    TR: "TUR",
-    FR: "FRA",
-    IE: "IRL",
-    GB: "GBR",
-    NL: "NLD",
-    BE: "BEL",
-    DE: "DEU",
-    LU: "LUX",
-    LI: "LIE",
-    CH: "CHE",
-    AT: "AUT",
-    IS: "ISL",
-    DK: "DNK",
-    SE: "SWE",
-    NO: "NOR",
-    FI: "FIN",
-    EE: "EST",
-    LV: "LVA",
-    LT: "LTU",
-    RU: "RUS",
-    BY: "BLR",
-    PL: "POL",
-    CZ: "CZE",
-    SK: "SVK",
-    HU: "HUN",
-    SI: "SVN",
-    HR: "HRV",
-    BA: "BIH",
-    ME: "MNE",
-    AL: "ALB",
-    CY: "CYP",
-    MK: "MKD",
-    RS: "SRB",
-    RO: "ROU",
-    BG: "BGR",
-    MD: "MDA",
-    UA: "UKR",
-    GE: "GEO",
-    AM: "ARM",
-    AZ: "AZE",
-    SY: "SYR",
-    LB: "LBN",
-    PS: "PSE",
-    IL: "ISR",
-    JO: "JOR",
-    SA: "SAU",
-    YE: "YEM",
-    OM: "OMN",
-    AE: "ARE",
-    QA: "QAT",
-    BH: "BHR",
-    KW: "KWT",
-    IQ: "IRQ",
-    IR: "IRN",
-    AF: "AFG",
-    KZ: "KAZ",
-    UZ: "UZB",
-    TM: "TKM",
-    KG: "KGZ",
-    TJ: "TJK",
-    PK: "PAK",
-    IN: "IND",
-    MV: "MDV",
-    LK: "LKA",
-    BD: "BGD",
-    BT: "BTN",
-    NP: "NPL",
-    MN: "MNG",
-    CN: "CHN",
-    KP: "PRK",
-    KR: "KOR",
-    JP: "JPN",
-    TW: "TWN",
-    MM: "MMR",
-    TH: "THA",
-    LA: "LAO",
-    VN: "VNM",
-    KH: "KHM",
-    MY: "MYS",
-    SG: "SGP",
-    ID: "IDN",
-    BN: "BRN",
-    PH: "PHL",
-    TL: "TLS",
-    AU: "AUS",
-    NZ: "NZL",
-    PG: "PNG",
-    SB: "SLB",
-    VU: "VUT",
-    FJ: "FJI",
-    PW: "PLW",
-    FM: "FSM",
-    MH: "MHL",
-    NR: "NRU",
-    KI: "KIR",
-    TV: "TUV",
-    WS: "WSM",
-    TO: "TON"
-  };
-  var statusEl;
-  var statusT = 0;
-  function setStatus(t, ms) {
-    clearTimeout(statusT);
-    if (!t) {
-      statusEl.style.display = "none";
-      return;
-    }
-    statusEl.textContent = t;
-    statusEl.style.display = "block";
-    if (ms) statusT = setTimeout(function() {
-      statusEl.style.display = "none";
-    }, ms);
-  }
   function hexA(h, a) {
     var n = parseInt(h.slice(1), 16);
     return "rgba(" + (n >> 16) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
   }
-  function loadScript(u) {
-    return new Promise(function(ok, no) {
-      var s = document.createElement("script");
-      s.src = u;
-      s.async = false;
-      s.onload = ok;
-      s.onerror = no;
-      document.head.appendChild(s);
-    });
-  }
-  function tryLoad(list, test) {
-    return new Promise(function(ok, no) {
-      var i = 0;
-      (function next() {
-        if (test()) return ok();
-        if (i >= list.length) return no(new Error("falhou"));
-        loadScript(list[i++]).then(next, next);
-      })();
-    });
-  }
-  function setupGeo() {
-    var topo = Datamap.prototype.worldTopo, key = Object.keys(topo.objects)[0];
-    estadoRender.feats = topojson.feature(topo, topo.objects[key]).features;
-    var idByA3 = {};
-    D.forEach(function(d) {
-      idByA3[A3[d.cc]] = d.i;
-    });
-    var m = 0;
-    estadoRender.feats.forEach(function(f) {
-      var i = idByA3[f.id];
-      if (i !== void 0 && !estadoRender.FEAT[i]) {
-        estadoRender.FEAT[i] = f;
-        m++;
-      } else estadoRender.EXTRA.push(f);
-    });
-    estadoRender.proj = d3.geo.orthographic().clipAngle(90).precision(0.6);
-    estadoRender.gpath = d3.geo.path().projection(estadoRender.proj).context(ctx);
-    return m;
-  }
   function projCfg(R, cx, cy) {
     estadoRender.proj.scale(R).translate([cx, cy]).rotate([-estadoCamera.lam * 180 / PI, -estadoCamera.phi * 180 / PI]);
-  }
-  function drawGeo(R, cx, cy) {
-    if (estadoBrasil.statesMode) {
-      drawGeoStates(R, cx, cy);
-      return;
-    }
-    if (!estadoRender.feats || !estadoRender.optBor && !estadoRender.optFill && allOn() && !estadoMapa.selected && !ganchos.destaquePais()) return;
-    projCfg(R, cx, cy);
-    var allon = allOn(), i, r;
-    if (estadoRender.optFill) {
-      for (r = 0; r < REG.length; r++) {
-        ctx.beginPath();
-        for (i = 0; i < D.length; i++) if (estadoMapa.on[i] && D[i].r === r && estadoRender.FEAT[i]) estadoRender.gpath(estadoRender.FEAT[i]);
-        ctx.fillStyle = hexA(REG[r].c, 0.32);
-        ctx.fill();
-      }
-    }
-    if (!allon) {
-      ctx.beginPath();
-      for (i = 0; i < D.length; i++) if (!estadoMapa.on[i] && avail(D[i]) && estadoRender.FEAT[i]) estadoRender.gpath(estadoRender.FEAT[i]);
-      ctx.fillStyle = "rgba(2,10,24,.58)";
-      ctx.fill();
-    }
-    if (estadoMapa.selected && estadoRender.FEAT[estadoMapa.selected.i]) {
-      ctx.beginPath();
-      estadoRender.gpath(estadoRender.FEAT[estadoMapa.selected.i]);
-      ctx.fillStyle = "rgba(255,224,102,.26)";
-      ctx.fill();
-    }
-    if (ganchos.destaquePais() && estadoRender.FEAT[ganchos.destaquePais().i]) {
-      var fk = ganchos.destaquePais().kind, fcol = fk === "ok" ? ["rgba(46,204,113,.45)", "#2ecc71"] : fk === "ask" ? ["rgba(77,163,255,.40)", "#4da3ff"] : ["rgba(255,224,102,.45)", "#ffe066"];
-      ctx.beginPath();
-      estadoRender.gpath(estadoRender.FEAT[ganchos.destaquePais().i]);
-      ctx.fillStyle = fcol[0];
-      ctx.fill();
-      ctx.lineWidth = 2.6;
-      ctx.strokeStyle = fcol[1];
-      ctx.stroke();
-    }
-    if (estadoRender.optBor) {
-      ctx.beginPath();
-      for (i = 0; i < D.length; i++) if (estadoRender.FEAT[i] && (estadoMapa.on[i] || allon && !avail(D[i]))) estadoRender.gpath(estadoRender.FEAT[i]);
-      if (allon) for (i = 0; i < estadoRender.EXTRA.length; i++) estadoRender.gpath(estadoRender.EXTRA[i]);
-      ctx.lineJoin = "round";
-      ctx.lineWidth = Math.max(0.7, Math.min(1.6, 0.6 + 0.25 * estadoCamera.zoom));
-      ctx.strokeStyle = estadoRender.useTex && estadoRender.optTex ? "rgba(255,255,255,.78)" : "rgba(255,255,255,.6)";
-      ctx.stroke();
-    }
-    if (estadoMapa.selected && estadoRender.FEAT[estadoMapa.selected.i]) {
-      ctx.beginPath();
-      estadoRender.gpath(estadoRender.FEAT[estadoMapa.selected.i]);
-      ctx.lineWidth = 2.2;
-      ctx.strokeStyle = "#ffe066";
-      ctx.stroke();
-    }
   }
   function inRing(x, y, r) {
     var c = false;
@@ -2981,13 +2721,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (!ll || isNaN(ll[0]) || isNaN(ll[1])) return null;
     for (var i = 0; i < D.length; i++) if (estadoMapa.on[i] && estadoRender.FEAT[i] && inFeat(estadoRender.FEAT[i], ll[0], ll[1])) return D[i];
     return null;
-  }
-  function iniciar10() {
-    glc = document.getElementById("gl");
-    estadoRender.FEAT = D.map(function() {
-      return null;
-    });
-    statusEl = document.getElementById("status");
   }
 
   // web/src/js/visualizacao/enquadramento.js
@@ -3081,677 +2814,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     flyTo(estadoCamera.phi * 180 / PI, estadoCamera.lam * 180 / PI, 1);
   }
 
-  // web/src/js/visualizacao/textura.js
-  var textura_exports = {};
-  __export(textura_exports, {
-    buildTexture: () => buildTexture,
-    iniciar: () => iniciar11,
-    updateOpts: () => updateOpts
-  });
-  function hh(x, y) {
-    var n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
-    return n - Math.floor(n);
-  }
-  function vn(x, y) {
-    var xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
-    var a = hh(xi, yi), b = hh(xi + 1, yi), c = hh(xi, yi + 1), d = hh(xi + 1, yi + 1);
-    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
-  }
-  function fbm(x, y) {
-    return 0.55 * vn(x, y) + 0.3 * vn(x * 2.1, y * 2.1) + 0.15 * vn(x * 4.3, y * 4.3);
-  }
-  function sm(a, b, x) {
-    var t = Math.max(0, Math.min(1, (x - a) / (b - a)));
-    return t * t * (3 - 2 * t);
-  }
-  function mix3(c, d, t) {
-    c[0] += (d[0] - c[0]) * t;
-    c[1] += (d[1] - c[1]) * t;
-    c[2] += (d[2] - c[2]) * t;
-  }
-  var DES = [[23, 10, 10, 28, 1], [24, 45, 9, 12, 1], [33, 58, 6, 11, 0.65], [41, 95, 6, 16, 0.8], [27, 71, 4, 6, 0.55], [-25, 132, 11, 15, 0.9], [-23, 19, 8, 8, 0.85], [-22, -69, 9, 3, 0.9], [-45, -68, 7, 4, 0.5], [35, -112, 6, 8, 0.65], [28, -105, 5, 5, 0.5], [7, 45, 6, 5, 0.5], [14, 5, 3, 26, 0.4], [48, 68, 5, 18, 0.4], [30, 44, 5, 8, 0.5]];
-  var FOR = [[-4, -62, 8, 13, 0.9], [0, 22, 7, 11, 0.9], [0, 111, 9, 24, 0.8], [5, -75, 6, 5, 0.5], [6, -3, 3, 10, 0.55], [-25, -50, 8, 6, 0.35], [35, -85, 8, 8, 0.2], [-38, 146, 5, 6, 0.2]];
-  var MTN = [[-20, -70, 26, 3.2, 1], [45, -112, 17, 5, 0.85], [32, 85, 4, 16, 1.1], [34, 92, 4, 9, 0.9], [46.5, 10, 2.2, 7, 0.9], [58, 60, 10, 1.5, 0.5], [9, 39, 5, 4, 0.8], [38, -80, 8, 3, 0.4], [64, 14, 7, 3.2, 0.6], [42.5, 44, 1.6, 5.5, 0.8], [43, 80, 3, 11, 0.85], [33, -3.5, 2, 8, 0.6], [-29, 29, 4, 3, 0.5], [-30, 150, 12, 2, 0.4], [-6, 35, 6, 3, 0.35], [19, -100, 3, 7, 0.7], [10, -73, 3, 3, 0.5]];
-  var RAMP = [[0, [203, 172, 118]], [0.22, [178, 150, 98]], [0.42, [139, 132, 76]], [0.62, [88, 114, 54]], [0.82, [46, 90, 44]], [1, [24, 64, 34]]];
-  function ramp(w) {
-    for (var i = 1; i < RAMP.length; i++) {
-      if (w <= RAMP[i][0]) {
-        var a = RAMP[i - 1], b = RAMP[i], t = (w - a[0]) / (b[0] - a[0]);
-        return [a[1][0] + (b[1][0] - a[1][0]) * t, a[1][1] + (b[1][1] - a[1][1]) * t, a[1][2] + (b[1][2] - a[1][2]) * t];
-      }
-    }
-    return RAMP[RAMP.length - 1][1].slice();
-  }
-  function dl(a, b) {
-    var d = a - b;
-    while (d > 180) d -= 360;
-    while (d < -180) d += 360;
-    return d;
-  }
-  function buildTexture(done, progress) {
-    var TW = 2048, TH = 1024, FW = 1024, FH = 512;
-    var fc = document.createElement("canvas");
-    fc.width = FW;
-    fc.height = FH;
-    var fx = fc.getContext("2d"), fd = fx.createImageData(FW, FH), fp = fd.data;
-    var y = 0, rowD = new Array(DES.length), rowF = new Array(FOR.length), rowM = new Array(MTN.length);
-    function rowFactors(lat) {
-      var k;
-      for (k = 0; k < DES.length; k++) {
-        var q2 = (lat - DES[k][0]) / DES[k][2];
-        rowD[k] = Math.exp(-q2 * q2);
-      }
-      for (k = 0; k < FOR.length; k++) {
-        var q22 = (lat - FOR[k][0]) / FOR[k][2];
-        rowF[k] = Math.exp(-q22 * q22);
-      }
-      for (k = 0; k < MTN.length; k++) {
-        var q3 = (lat - MTN[k][0]) / MTN[k][2];
-        rowM[k] = Math.exp(-q3 * q3);
-      }
-    }
-    function step2() {
-      var end = Math.min(FH, y + 22);
-      for (; y < end; y++) {
-        var lat = 90 - (y + 0.5) * 180 / FH, a = Math.abs(lat);
-        rowFactors(lat);
-        for (var x = 0; x < FW; x++) {
-          var lng = -180 + (x + 0.5) * 360 / FW, k, g, dg;
-          var n = fbm(lng * 0.09 + 7, lat * 0.09 + 3), n2 = fbm(lng * 0.5, lat * 0.5);
-          var w = 0.14 + 0.8 * Math.exp(-Math.pow(lat / 15, 2)) + 0.55 * Math.exp(-Math.pow((a - 47) / 13, 2));
-          var e = 0;
-          for (k = 0; k < DES.length; k++) {
-            if (rowD[k] < 0.02) continue;
-            dg = dl(lng, DES[k][1]);
-            if (Math.abs(dg) > DES[k][3] * 2.6) continue;
-            g = dg / DES[k][3];
-            w -= DES[k][4] * rowD[k] * Math.exp(-g * g);
-          }
-          for (k = 0; k < FOR.length; k++) {
-            if (rowF[k] < 0.02) continue;
-            dg = dl(lng, FOR[k][1]);
-            if (Math.abs(dg) > FOR[k][3] * 2.6) continue;
-            g = dg / FOR[k][3];
-            w += FOR[k][4] * rowF[k] * Math.exp(-g * g);
-          }
-          for (k = 0; k < MTN.length; k++) {
-            if (rowM[k] < 0.02) continue;
-            dg = dl(lng, MTN[k][1]);
-            if (Math.abs(dg) > MTN[k][3] * 2.6) continue;
-            g = dg / MTN[k][3];
-            e += MTN[k][4] * rowM[k] * Math.exp(-g * g);
-          }
-          e *= 0.45 + 1.1 * n2;
-          w += (n - 0.5) * 0.55;
-          w = Math.max(0, Math.min(1, w));
-          var c = ramp(w);
-          mix3(c, [40, 72, 54], sm(50, 62, a) * 0.6);
-          mix3(c, [126, 130, 112], sm(63, 73, a) * 0.8);
-          mix3(c, [122, 106, 92], sm(0.2, 0.7, e));
-          var sn = sm(70, 84, a) * (0.55 + (n2 - 0.5));
-          sn = Math.max(sn, sm(0.95, 1.45, e) * (a > 12 ? 1 : 0.3));
-          if (lat < -62) sn = Math.max(sn, sm(-62, -66, lat) * 1);
-          if (lat > 59 && lng > -75 && lng < -10) sn = Math.max(sn, 0.95 * sm(59, 63, lat));
-          mix3(c, [244, 247, 250], Math.max(0, Math.min(1, sn)));
-          var sh = 0.86 + 0.28 * n2;
-          sh = 1 - (1 - sh) * (1 - 0.65 * Math.max(0, Math.min(1, sn)));
-          var o = (y * FW + x) * 4;
-          fp[o] = c[0] * sh;
-          fp[o + 1] = c[1] * sh;
-          fp[o + 2] = c[2] * sh;
-          fp[o + 3] = 255;
-        }
-      }
-      if (progress) progress(Math.round(y / FH * 100));
-      if (y < FH) setTimeout(step2, 0);
-      else finish();
-    }
-    function finish() {
-      fx.putImageData(fd, 0, 0);
-      var eq = d3.geo.equirectangular().scale(TW / (2 * PI)).translate([TW / 2, TH / 2]).precision(0.2);
-      var mk = document.createElement("canvas");
-      mk.width = TW;
-      mk.height = TH;
-      var mx = mk.getContext("2d");
-      mx.fillStyle = "#000";
-      mx.fillRect(0, 0, TW, TH);
-      var pth = d3.geo.path().projection(eq).context(mx);
-      mx.fillStyle = "#fff";
-      mx.beginPath();
-      estadoRender.feats.forEach(function(f) {
-        pth(f);
-      });
-      mx.fill();
-      var hasAnt = estadoRender.feats.some(function(f) {
-        return f.id === "ATA";
-      });
-      if (!hasAnt) mx.fillRect(0, TH * (90 + 72) / 180, TW, TH);
-      var tc = document.createElement("canvas");
-      tc.width = TW;
-      tc.height = TH;
-      var tx = tc.getContext("2d");
-      var og = tx.createLinearGradient(0, 0, 0, TH);
-      og.addColorStop(0, "#8fb0c4");
-      og.addColorStop(0.07, "#1b4a78");
-      og.addColorStop(0.3, "#0c3a72");
-      og.addColorStop(0.5, "#0a4a86");
-      og.addColorStop(0.7, "#0c3a72");
-      og.addColorStop(0.93, "#1b4a78");
-      og.addColorStop(1, "#8fb0c4");
-      tx.fillStyle = og;
-      tx.fillRect(0, 0, TW, TH);
-      var pt = d3.geo.path().projection(eq).context(tx);
-      tx.save();
-      tx.translate(-6e3, 0);
-      tx.shadowOffsetX = 6e3;
-      tx.shadowColor = "rgba(70,175,195,.55)";
-      tx.shadowBlur = 26;
-      tx.fillStyle = "#000";
-      tx.beginPath();
-      estadoRender.feats.forEach(function(f) {
-        pt(f);
-      });
-      tx.fill();
-      tx.shadowColor = "rgba(120,215,215,.5)";
-      tx.shadowBlur = 9;
-      tx.beginPath();
-      estadoRender.feats.forEach(function(f) {
-        pt(f);
-      });
-      tx.fill();
-      tx.restore();
-      var cc = document.createElement("canvas");
-      cc.width = TW;
-      cc.height = TH;
-      var cx2 = cc.getContext("2d");
-      cx2.imageSmoothingEnabled = true;
-      cx2.drawImage(fc, 0, 0, TW, TH);
-      var od = tx.getImageData(0, 0, TW, TH), ld = cx2.getImageData(0, 0, TW, TH), md = mx.getImageData(0, 0, TW, TH);
-      var O = od.data, L = ld.data, M = md.data;
-      for (var i = 0; i < O.length; i += 4) {
-        var al = M[i] / 255;
-        if (al > 0) {
-          O[i] = O[i] * (1 - al) + L[i] * al;
-          O[i + 1] = O[i + 1] * (1 - al) + L[i + 1] * al;
-          O[i + 2] = O[i + 2] * (1 - al) + L[i + 2] * al;
-        }
-      }
-      tx.putImageData(od, 0, 0);
-      done(tc);
-    }
-    step2();
-  }
-  var oTex;
-  var oBor;
-  var oFill;
-  function updateOpts() {
-    $("oNight").disabled = !estadoRender.useTex;
-    oTex.disabled = !estadoRender.useTex;
-    oTex.checked = estadoRender.useTex && estadoRender.optTex;
-    oBor.disabled = !estadoRender.feats;
-    oFill.disabled = !estadoRender.feats;
-  }
-  function iniciar11() {
-    oTex = document.getElementById("oTex");
-    oBor = document.getElementById("oBor");
-    oFill = document.getElementById("oFill");
-    oTex.onchange = function() {
-      estadoRender.optTex = oTex.checked;
-    };
-    oBor.onchange = function() {
-      estadoRender.optBor = oBor.checked;
-    };
-    oFill.onchange = function() {
-      estadoRender.optFill = oFill.checked;
-    };
-  }
-
-  // web/src/js/visualizacao/webgl.js
-  var webgl_exports = {};
-  __export(webgl_exports, {
-    glDraw: () => glDraw,
-    initGL: () => initGL,
-    uploadTexture: () => uploadTexture
-  });
-
-  // web/src/js/visualizacao/dia-noite.js
-  var dia_noite_exports = {};
-  __export(dia_noite_exports, {
-    iniciar: () => iniciar12,
-    optNight: () => optNight,
-    sunVec: () => sunVec
-  });
-  var optNight = false;
-  function sunVec() {
-    var now = /* @__PURE__ */ new Date(), N = (now - Date.UTC(now.getUTCFullYear(), 0, 0)) / 864e5;
-    var decl = -23.44 * Math.cos(2 * PI / 365 * (N + 10)) * PI / 180;
-    var hrs = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
-    var B = 2 * PI * (N - 81) / 364, eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
-    var lg = -(hrs + eot / 60 - 12) * 15 * PI / 180;
-    return [Math.cos(decl) * Math.sin(lg), Math.sin(decl), Math.cos(decl) * Math.cos(lg)];
-  }
-  function iniciar12() {
-    $("oNight").onchange = function() {
-      optNight = this.checked;
-      if (optNight) {
-        var n = /* @__PURE__ */ new Date(), p = function(x) {
-          return (x < 10 ? "0" : "") + x;
-        };
-        setStatus("Noite calculada para agora (" + p(n.getUTCHours()) + ":" + p(n.getUTCMinutes()) + " UTC). Ela acompanha o relógio do seu aparelho.", 5e3);
-      }
-    };
-  }
-
-  // web/src/js/visualizacao/webgl.js
-  function initGL() {
-    try {
-      estadoRender.gl = glc.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false });
-    } catch (e) {
-      estadoRender.gl = null;
-    }
-    if (!estadoRender.gl) return false;
-    var vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}";
-    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.13,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=0.60+0.58*d;\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
-    function sh(t, src) {
-      var s = estadoRender.gl.createShader(t);
-      estadoRender.gl.shaderSource(s, src);
-      estadoRender.gl.compileShader(s);
-      if (!estadoRender.gl.getShaderParameter(s, estadoRender.gl.COMPILE_STATUS)) {
-        console.warn(estadoRender.gl.getShaderInfoLog(s));
-        return null;
-      }
-      return s;
-    }
-    var v = sh(estadoRender.gl.VERTEX_SHADER, vs), f = sh(estadoRender.gl.FRAGMENT_SHADER, fs);
-    if (!v || !f) return false;
-    estadoRender.glProg = estadoRender.gl.createProgram();
-    estadoRender.gl.attachShader(estadoRender.glProg, v);
-    estadoRender.gl.attachShader(estadoRender.glProg, f);
-    estadoRender.gl.linkProgram(estadoRender.glProg);
-    if (!estadoRender.gl.getProgramParameter(estadoRender.glProg, estadoRender.gl.LINK_STATUS)) return false;
-    estadoRender.gl.useProgram(estadoRender.glProg);
-    estadoRender.glBuf = estadoRender.gl.createBuffer();
-    estadoRender.gl.bindBuffer(estadoRender.gl.ARRAY_BUFFER, estadoRender.glBuf);
-    estadoRender.gl.bufferData(estadoRender.gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), estadoRender.gl.STATIC_DRAW);
-    var loc = estadoRender.gl.getAttribLocation(estadoRender.glProg, "p");
-    estadoRender.gl.enableVertexAttribArray(loc);
-    estadoRender.gl.vertexAttribPointer(loc, 2, estadoRender.gl.FLOAT, false, 0, 0);
-    ["uT", "uC", "uR", "uH", "uRot", "uSun", "uNight"].forEach(function(n) {
-      glU[n] = estadoRender.gl.getUniformLocation(estadoRender.glProg, n);
-    });
-    return true;
-  }
-  function uploadTexture(cvs) {
-    if (estadoRender.glTex) estadoRender.gl.deleteTexture(estadoRender.glTex);
-    estadoRender.glTex = estadoRender.gl.createTexture();
-    estadoRender.gl.bindTexture(estadoRender.gl.TEXTURE_2D, estadoRender.glTex);
-    estadoRender.gl.pixelStorei(estadoRender.gl.UNPACK_FLIP_Y_WEBGL, false);
-    estadoRender.gl.texImage2D(estadoRender.gl.TEXTURE_2D, 0, estadoRender.gl.RGBA, estadoRender.gl.RGBA, estadoRender.gl.UNSIGNED_BYTE, cvs);
-    estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D, estadoRender.gl.TEXTURE_MIN_FILTER, estadoRender.gl.LINEAR);
-    estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D, estadoRender.gl.TEXTURE_MAG_FILTER, estadoRender.gl.LINEAR);
-    estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D, estadoRender.gl.TEXTURE_WRAP_S, estadoRender.gl.REPEAT);
-    estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D, estadoRender.gl.TEXTURE_WRAP_T, estadoRender.gl.CLAMP_TO_EDGE);
-    return !estadoRender.gl.getError();
-  }
-  function glDraw(tex, R, cx, cy) {
-    if (!estadoRender.gl) return;
-    estadoRender.gl.viewport(0, 0, glc.width, glc.height);
-    estadoRender.gl.clearColor(0, 0, 0, 0);
-    estadoRender.gl.clear(estadoRender.gl.COLOR_BUFFER_BIT);
-    if (!tex) return;
-    estadoRender.gl.useProgram(estadoRender.glProg);
-    estadoRender.gl.bindBuffer(estadoRender.gl.ARRAY_BUFFER, estadoRender.glBuf);
-    estadoRender.gl.activeTexture(estadoRender.gl.TEXTURE0);
-    estadoRender.gl.bindTexture(estadoRender.gl.TEXTURE_2D, estadoRender.glTex);
-    estadoRender.gl.uniform1i(glU.uT, 0);
-    estadoRender.gl.uniform2f(glU.uC, cx * dpr, cy * dpr);
-    estadoRender.gl.uniform1f(glU.uR, R * dpr);
-    estadoRender.gl.uniform1f(glU.uH, glc.height);
-    estadoRender.gl.uniform4f(glU.uRot, Math.cos(estadoCamera.lam), Math.sin(estadoCamera.lam), Math.cos(estadoCamera.phi), Math.sin(estadoCamera.phi));
-    var sv = sunVec();
-    estadoRender.gl.uniform3f(glU.uSun, sv[0], sv[1], sv[2]);
-    estadoRender.gl.uniform1f(glU.uNight, optNight ? 1 : 0);
-    estadoRender.gl.drawArrays(estadoRender.gl.TRIANGLE_STRIP, 0, 4);
-  }
-
-  // web/src/js/visualizacao/carregamento.js
-  function idb() {
-    return new Promise(function(ok, no) {
-      try {
-        var r = indexedDB.open("globo-cache", 1);
-        r.onupgradeneeded = function() {
-          r.result.createObjectStore("kv");
-        };
-        r.onsuccess = function() {
-          ok(r.result);
-        };
-        r.onerror = function() {
-          no(r.error);
-        };
-      } catch (e) {
-        no(e);
-      }
-    });
-  }
-  function idbGet(k) {
-    return idb().then(function(db) {
-      return new Promise(function(ok, no) {
-        var q2 = db.transaction("kv", "readonly").objectStore("kv").get(k);
-        q2.onsuccess = function() {
-          ok(q2.result);
-        };
-        q2.onerror = function() {
-          no(q2.error);
-        };
-      });
-    }).catch(function() {
-      return void 0;
-    });
-  }
-  function idbSet(k, v) {
-    return idb().then(function(db) {
-      return new Promise(function(ok, no) {
-        var t = db.transaction("kv", "readwrite");
-        t.objectStore("kv").put(v, k);
-        t.oncomplete = ok;
-        t.onerror = function() {
-          no(t.error);
-        };
-      });
-    }).catch(function() {
-    });
-  }
-  function idbDel(k) {
-    return idb().then(function(db) {
-      return new Promise(function(ok, no) {
-        var t = db.transaction("kv", "readwrite");
-        t.objectStore("kv").delete(k);
-        t.oncomplete = ok;
-        t.onerror = function() {
-          no(t.error);
-        };
-      });
-    }).catch(function() {
-    });
-  }
-  function blobToImg(b) {
-    return new Promise(function(ok, no) {
-      var fr = new FileReader();
-      fr.onload = function() {
-        var im = new Image();
-        im.onload = function() {
-          ok(im);
-        };
-        im.onerror = no;
-        im.src = fr.result;
-      };
-      fr.onerror = no;
-      fr.readAsDataURL(b);
-    });
-  }
-  function blobToTexCanvas(b) {
-    return blobToImg(b).then(function(im) {
-      var c = document.createElement("canvas");
-      c.width = 2048;
-      c.height = 1024;
-      c.getContext("2d").drawImage(im, 0, 0, 2048, 1024);
-      return c;
-    });
-  }
-  var texSource = "nenhuma";
-  var bordersCustom = false;
-  var texCanvas = null;
-  function updateMapInfo() {
-    var t = { nenhuma: "ainda sem textura", proc: "gerada pelo app (salva neste aparelho)", custom: "imagem importada por você" }[texSource] || texSource;
-    $("minfo").textContent = "Textura: " + t + " · Fronteiras: " + (estadoRender.feats ? bordersCustom ? "arquivo importado por você" : "biblioteca de mapas" : "não carregadas");
-  }
-  function setTextureFrom(c, src) {
-    if (uploadTexture(c)) {
-      estadoRender.useTex = true;
-      texSource = src;
-      texCanvas = c;
-      updateOpts();
-      updateMapInfo();
-      return true;
-    }
-    return false;
-  }
-  function genTexture() {
-    if (!estadoRender.gl || !estadoRender.feats) return;
-    setStatus("Gerando a textura do globo… 0%");
-    buildTexture(function(tc) {
-      if (setTextureFrom(tc, "proc")) {
-        setStatus("Pronto: textura gerada e salva neste aparelho.", 3500);
-        tc.toBlob(function(b) {
-          if (b) idbSet("tex-proc", b);
-        }, "image/jpeg", 0.9);
-      } else setStatus("A textura não pôde ser usada neste aparelho.", 7e3);
-    }, function(p) {
-      setStatus("Gerando a textura do globo… " + p + "%");
-    });
-  }
-  function setupFeatures(list) {
-    estadoRender.feats = list;
-    limparCacheVistas();
-    estadoRender.FEAT = D.map(function() {
-      return null;
-    });
-    estadoRender.EXTRA = [];
-    var by = {};
-    D.forEach(function(d) {
-      by[A3[d.cc]] = d.i;
-    });
-    var m = 0;
-    list.forEach(function(f) {
-      var i = by[f.id];
-      if (i !== void 0 && !estadoRender.FEAT[i]) {
-        estadoRender.FEAT[i] = f;
-        m++;
-      } else estadoRender.EXTRA.push(f);
-    });
-    estadoRender.proj = d3.geo.orthographic().clipAngle(90).precision(0.6);
-    estadoRender.gpath = d3.geo.path().projection(estadoRender.proj).context(ctx);
-    return m;
-  }
-  function loadD3Topo() {
-    return tryLoad(["lib/d3.min.js","https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js", "https://cdn.jsdelivr.net/npm/d3@3.5.17/d3.min.js"], function() {
-      return window.d3 && d3.geo && d3.geo.orthographic;
-    }).then(function() {
-      return tryLoad(["lib/topojson.min.js","https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js", "https://cdn.jsdelivr.net/npm/topojson@1.6.9/topojson.min.js"], function() {
-        return window.topojson && topojson.feature;
-      });
-    });
-  }
-  function loadDM() {
-    return tryLoad(["lib/datamaps.world.min.js","https://cdn.jsdelivr.net/npm/datamaps@0.5.9/dist/datamaps.world.min.js", "https://cdnjs.cloudflare.com/ajax/libs/datamaps/0.5.9/datamaps.world.min.js", "https://cdn.jsdelivr.net/npm/datamaps@0.5.8/dist/datamaps.world.min.js"], function() {
-      return window.Datamap && Datamap.prototype && Datamap.prototype.worldTopo;
-    });
-  }
-  function startMap() {
-    var okGL = initGL();
-    setStatus("Carregando o mapa…");
-    var pTex = !okGL ? Promise.resolve(false) : idbGet("tex-custom").then(function(b) {
-      return b ? { b, src: "custom" } : idbGet("tex-proc").then(function(b2) {
-        return b2 ? { b: b2, src: "proc" } : null;
-      });
-    }).then(function(r) {
-      if (!r) return false;
-      return blobToTexCanvas(r.b).then(function(c) {
-        return setTextureFrom(c, r.src);
-      }).catch(function() {
-        return false;
-      });
-    });
-    Promise.all([pTex, idbGet("borders")]).then(function(res2) {
-      var bstr = res2[1];
-      if (res2[0]) setStatus("Textura carregada do aparelho. Carregando fronteiras…");
-      return loadD3Topo().then(function() {
-        if (bstr) {
-          try {
-            var m = setupFeatures(JSON.parse(bstr).features);
-            bordersCustom = true;
-            return m;
-          } catch (e) {
-            bordersCustom = false;
-          }
-        }
-        return loadDM().then(function() {
-          return setupGeo();
-        });
-      });
-    }).then(function(m) {
-      emitir("fronteiras-carregadas");
-      updateOpts();
-      updateMapInfo();
-      if (!okGL) {
-        setStatus("Fronteiras carregadas (" + m + " países com contorno). Este aparelho não suporta a textura 3D.", 7e3);
-        return;
-      }
-      if (estadoRender.useTex) {
-        setStatus("Pronto: fronteiras carregadas (" + m + " países com contorno).", 3500);
-        return;
-      }
-      genTexture();
-    }, function() {
-      updateOpts();
-      updateMapInfo();
-      setStatus(estadoRender.useTex ? "Textura carregada, mas não consegui carregar as fronteiras (a biblioteca de mapas não abriu)." : "Não consegui carregar as fronteiras (a biblioteca de mapas não abriu). O globo segue funcionando sem elas.", 9e3);
-    });
-  }
-  function featA3(f) {
-    var p = f.properties || {}, a2map = {};
-    D.forEach(function(d) {
-      a2map[d.cc] = A3[d.cc];
-    });
-    var cands = [p.ADM0_A3, p.ISO_A3, p.iso_a3, p.ISO3, p["ISO3166-1-Alpha-3"], p.iso_3166_1_alpha_3, p.A3, p.adm0_a3, typeof f.id === "string" && f.id.length === 3 ? f.id : null];
-    for (var i = 0; i < cands.length; i++) {
-      var c = cands[i];
-      if (typeof c === "string" && c.length === 3 && c !== "-99") return c.toUpperCase();
-    }
-    var c2 = [p.ISO_A2, p.iso_a2, p["ISO3166-1-Alpha-2"], p.ISO2];
-    for (var j = 0; j < c2.length; j++) {
-      var q2 = c2[j];
-      if (typeof q2 === "string" && a2map[q2.toUpperCase()]) return a2map[q2.toUpperCase()];
-    }
-    return null;
-  }
-  function fixWind(f) {
-    var g = f.geometry;
-    if (!g) return f;
-    function fixPoly(coords) {
-      try {
-        if (d3.geo.area({ type: "Polygon", coordinates: coords }) > 2 * Math.PI) return coords.map(function(r) {
-          return r.slice().reverse();
-        });
-      } catch (e) {
-      }
-      return coords;
-    }
-    if (g.type === "Polygon") g.coordinates = fixPoly(g.coordinates);
-    else if (g.type === "MultiPolygon") g.coordinates = g.coordinates.map(fixPoly);
-    return f;
-  }
-  function ingestGeo(json) {
-    var fs = null;
-    if (json.type === "FeatureCollection") fs = json.features;
-    else if (json.type === "Topology") {
-      var k = Object.keys(json.objects)[0];
-      fs = topojson.feature(json, json.objects[k]).features;
-    } else if (json.type === "Feature") fs = [json];
-    if (!fs) throw new Error("formato não reconhecido");
-    var valid = {};
-    D.forEach(function(d) {
-      valid[A3[d.cc]] = 1;
-    });
-    var out = [], m = 0;
-    fs.forEach(function(f) {
-      if (!f.geometry) return;
-      var a3 = featA3(f);
-      var nf = { type: "Feature", id: a3 || "X" + out.length, properties: {}, geometry: JSON.parse(JSON.stringify(f.geometry)) };
-      if (a3 && valid[a3]) m++;
-      out.push(fixWind(nf));
-    });
-    if (m < 50) throw new Error("só reconheci " + m + " países pelos códigos ISO");
-    return out;
-  }
-  function iniciar13() {
-    $("impBor").onchange = function() {
-      var f = this.files[0];
-      this.value = "";
-      if (!f) return;
-      if (!window.d3 || !window.topojson) {
-        setStatus("As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.", 6e3);
-        return;
-      }
-      var fr = new FileReader();
-      fr.onload = function() {
-        try {
-          var list = ingestGeo(JSON.parse(fr.result)), m = setupFeatures(list);
-          bordersCustom = true;
-          emitir("fronteiras-carregadas");
-          updateOpts();
-          updateMapInfo();
-          idbSet("borders", JSON.stringify({ type: "FeatureCollection", features: list }));
-          setStatus("Fronteiras importadas: " + m + " países com contorno. Salvas neste aparelho.", 6e3);
-          if (texSource !== "custom" && estadoRender.gl) {
-            idbDel("tex-proc");
-            genTexture();
-          }
-        } catch (e) {
-          setStatus("Não consegui usar esse arquivo: " + e.message + ". Use um GeoJSON de países com códigos ISO (por exemplo ISO_A3).", 1e4);
-        }
-      };
-      fr.readAsText(f);
-    };
-    $("impTex").onchange = function() {
-      var f = this.files[0];
-      this.value = "";
-      if (!f) return;
-      if (!estadoRender.gl) {
-        setStatus("Este aparelho não suporta a textura 3D.", 5e3);
-        return;
-      }
-      var fr = new FileReader();
-      fr.onload = function() {
-        var im = new Image();
-        im.onload = function() {
-          var ratio = im.width / im.height, c = document.createElement("canvas");
-          c.width = 2048;
-          c.height = 1024;
-          c.getContext("2d").drawImage(im, 0, 0, 2048, 1024);
-          if (setTextureFrom(c, "custom")) {
-            c.toBlob(function(b) {
-              if (b) idbSet("tex-custom", b);
-            }, "image/jpeg", 0.92);
-            setStatus("Textura importada e salva." + (ratio < 1.9 || ratio > 2.1 ? " A proporção não era 2:1, então a imagem foi esticada." : ""), 7e3);
-          } else setStatus("Essa imagem não pôde ser usada como textura.", 6e3);
-        };
-        im.onerror = function() {
-          setStatus("Não consegui abrir essa imagem.", 6e3);
-        };
-        im.src = fr.result;
-      };
-      fr.readAsDataURL(f);
-    };
-    $("resetTex").onclick = function() {
-      idbDel("tex-custom").then(function() {
-        return idbGet("tex-proc");
-      }).then(function(b) {
-        if (b) return blobToTexCanvas(b).then(function(c) {
-          setTextureFrom(c, "proc");
-          setStatus("Voltei à textura gerada pelo app.", 3500);
-        });
-        if (estadoRender.feats) genTexture();
-        else setStatus("A textura será gerada quando as fronteiras carregarem.", 4e3);
-      });
-    };
-    confirmTap($("clearData"), "Toque de novo para apagar", function() {
-      Promise.all([idbDel("tex-custom"), idbDel("tex-proc"), idbDel("borders")]).then(function() {
-        setStatus("Dados de mapa apagados. Recarregue a página para começar do zero.", 8e3);
-      });
-    });
-  }
-
   // web/src/js/visualizacao/marcadores.js
   var marcadores_exports = {};
   __export(marcadores_exports, {
@@ -3776,302 +2838,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     } else {
       ctx.arc(x, y, r, 0, 7);
     }
-  }
-
-  // web/src/js/visualizacao/selo.js
-  var selo_exports = {};
-  __export(selo_exports, {
-    paintSelBadge: () => paintSelBadge,
-    selBadgeMetrics: () => selBadgeMetrics
-  });
-  function selBadgeMetrics(d) {
-    var t1 = estadoMapa.labelMode === "p" || d.uni ? short(d) : capShort(d), t2 = d.uni ? d.cap : estadoMapa.labelMode === "p" ? "Capital: " + qcapDisp(d) : "País: " + short(d);
-    var fs = 16, maxw = W - 72 - 56, w1;
-    ctx.font = "700 " + fs + "px " + FONT;
-    w1 = ctx.measureText(t1).width;
-    while (w1 > maxw && fs > 10) {
-      fs--;
-      ctx.font = "700 " + fs + "px " + FONT;
-      w1 = ctx.measureText(t1).width;
-    }
-    ctx.font = "600 11.5px " + FONT;
-    var w2 = ctx.measureText(t2).width;
-    var bw = Math.min(W - 72, Math.max(w1, w2) + 56), bh = 46;
-    var bx = Math.max(6, Math.min(d.sx - bw / 2, W - bw - 66)), by = d.sy - bh - 20;
-    if (by < 6) by = d.sy + 20;
-    return { d, t1, t2, fs, bx, by, bw, bh };
-  }
-  function paintSelBadge(m) {
-    var d = m.d, col = REG[d.r].c, above = m.by < d.sy;
-    var px = Math.max(m.bx + 14, Math.min(d.sx, m.bx + m.bw - 14));
-    ctx.beginPath();
-    ctx.moveTo(px, above ? m.by + m.bh : m.by);
-    ctx.lineTo(d.sx, d.sy);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = col;
-    ctx.stroke();
-    ctx.fillStyle = "rgba(4,16,36,.93)";
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(m.bx, m.by, m.bw, m.bh, 13);
-    else ctx.rect(m.bx, m.by, m.bw, m.bh);
-    ctx.fill();
-    ctx.lineWidth = 2.2;
-    ctx.strokeStyle = col;
-    ctx.stroke();
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle = "#fff";
-    if (d.dis) {
-      ctx.fillStyle = col;
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(m.bx + 8, m.by + 9, 32, 28, 8);
-      else ctx.rect(m.bx + 8, m.by + 9, 32, 28);
-      ctx.fill();
-      ctx.font = "800 12px " + FONT;
-      ctx.textAlign = "center";
-      ctx.fillStyle = "#0b1220";
-      ctx.fillText(d.cc, m.bx + 24, m.by + 24);
-      ctx.textAlign = "left";
-      ctx.fillStyle = "#fff";
-    } else {
-      ctx.font = "28px 'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif";
-      ctx.fillText(d.flag, m.bx + 10, m.by + m.bh / 2 + 1);
-    }
-    ctx.font = "700 " + m.fs + "px " + FONT;
-    ctx.fillText(m.t1, m.bx + 48, m.by + 16);
-    ctx.font = "600 11.5px " + FONT;
-    ctx.fillStyle = "rgba(255,255,255,.72)";
-    ctx.fillText(m.t2, m.bx + 48, m.by + 34);
-  }
-
-  // web/src/js/visualizacao/mapa-2d.js
-  var flat2D;
-  function R2now() {
-    return Math.min(W, H) * 0.26 * estadoCamera.zoom;
-  }
-  function proj2D(lngDeg, latDeg, R2, cx, cy) {
-    var lng = lngDeg * PI / 180 - estadoCamera.lam;
-    while (lng > PI) lng -= 2 * PI;
-    while (lng < -PI) lng += 2 * PI;
-    var lat = latDeg * PI / 180 - estadoCamera.phi;
-    return { x: cx + lng * R2, y: cy - lat * R2 };
-  }
-  function inv2D(sx, sy, R2, cx, cy) {
-    return [(estadoCamera.lam + (sx - cx) / R2) * 180 / PI, (estadoCamera.phi + (cy - sy) / R2) * 180 / PI];
-  }
-  function walkFeat2D(f, R2, cx, cy) {
-    var g = f && f.geometry;
-    if (!g) return;
-    var polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
-    polys.forEach(function(poly) {
-      poly.forEach(function(ring) {
-        var px = null;
-        ring.forEach(function(c, ci) {
-          var pp = proj2D(c[0], c[1], R2, cx, cy);
-          if (ci === 0 || Math.abs(pp.x - px) > PI * R2) ctx.moveTo(pp.x, pp.y);
-          else ctx.lineTo(pp.x, pp.y);
-          px = pp.x;
-        });
-        ctx.closePath();
-      });
-    });
-  }
-  function draw2D() {
-    var R2 = R2now(), cx = W / 2, cy = H * estadoCamera.cyFrac, i, d, k, lo, la;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#0b2e52";
-    ctx.fillRect(0, 0, W, H);
-    var tex2 = estadoRender.useTex && estadoRender.optTex && texCanvas;
-    if (tex2) {
-      var tw = 2 * PI * R2, th = PI * R2, x0 = cx + (-PI - estadoCamera.lam) * R2, y0 = cy - (PI / 2 - estadoCamera.phi) * R2;
-      x0 = (x0 % tw + tw) % tw - tw;
-      ctx.imageSmoothingEnabled = true;
-      for (var xx = x0; xx < W; xx += tw) ctx.drawImage(texCanvas, xx, y0, tw, th);
-    }
-    ctx.lineWidth = 0.6;
-    for (lo = -180; lo < 180; lo += 30) {
-      var pp0 = proj2D(lo, 0, R2, cx, cy);
-      ctx.strokeStyle = "rgba(150,190,255,.14)";
-      ctx.beginPath();
-      ctx.moveTo(pp0.x, 0);
-      ctx.lineTo(pp0.x, H);
-      ctx.stroke();
-    }
-    for (la = -60; la <= 60; la += 30) {
-      var yy = cy - (la * PI / 180 - estadoCamera.phi) * R2;
-      ctx.strokeStyle = la === 0 ? "rgba(150,190,255,.3)" : "rgba(150,190,255,.14)";
-      ctx.lineWidth = la === 0 ? 1 : 0.6;
-      ctx.beginPath();
-      ctx.moveTo(0, yy);
-      ctx.lineTo(W, yy);
-      ctx.stroke();
-    }
-    var ds = tex2 ? 0 : Math.max(1, Math.min(2.4, R2 * 0.011));
-    ctx.fillStyle = "rgba(196,220,245,.55)";
-    ctx.beginPath();
-    for (k = 0; !tex2 && k < LLAT.length; k++) {
-      var pp = proj2D(LLNG[k], LLAT[k], R2, cx, cy);
-      if (pp.x < -8 || pp.x > W + 8 || pp.y < -8 || pp.y > H + 8) continue;
-      ctx.moveTo(pp.x + ds, pp.y);
-      ctx.arc(pp.x, pp.y, ds, 0, 6.2832);
-    }
-    ctx.fill();
-    if (estadoRender.feats) {
-      ctx.beginPath();
-      for (i = 0; i < D.length; i++) if (estadoRender.FEAT[i] && (estadoMapa.on[i] || !avail(D[i]))) walkFeat2D(estadoRender.FEAT[i], R2, cx, cy);
-      ctx.lineJoin = "round";
-      ctx.lineWidth = Math.max(0.6, Math.min(1.6, 0.5 + 0.15 * estadoCamera.zoom));
-      ctx.strokeStyle = "rgba(255,255,255,.72)";
-      ctx.stroke();
-      if (estadoMapa.selected && estadoRender.FEAT[estadoMapa.selected.i]) {
-        ctx.beginPath();
-        walkFeat2D(estadoRender.FEAT[estadoMapa.selected.i], R2, cx, cy);
-        ctx.fillStyle = "rgba(255,224,102,.28)";
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#ffe066";
-        ctx.stroke();
-      }
-    }
-    var vis = [];
-    for (i = 0; i < D.length; i++) {
-      d = D[i];
-      if (!estadoMapa.on[i]) continue;
-      var p2 = proj2D(d.lng, d.lat, R2, cx, cy);
-      if (p2.x < -40 || p2.x > W + 40 || p2.y < -40 || p2.y > H + 40) continue;
-      d.sx = p2.x;
-      d.sy = p2.y;
-      d.vz = 1;
-      vis.push(d);
-    }
-    if (ganchos.ocultarMarcadores()) vis = [];
-    var mr = Math.max(3.2, Math.min(6, R2 * 0.032));
-    for (i = 0; i < vis.length; i++) {
-      d = vis[i];
-      var rr = d === estadoMapa.selected ? mr * 1.9 : mr;
-      if (d === estadoMapa.selected) {
-        ctx.beginPath();
-        ctx.arc(d.sx, d.sy, rr + 5, 0, 7);
-        ctx.fillStyle = "rgba(255,255,255,.22)";
-        ctx.fill();
-      }
-      ctx.beginPath();
-      shapePath(d.sx, d.sy, rr, SHAPES[d.r]);
-      ctx.fillStyle = REG[d.r].c;
-      ctx.fill();
-      ctx.lineWidth = d === estadoMapa.selected ? 2.2 : 1.2;
-      ctx.strokeStyle = "#fff";
-      ctx.stroke();
-    }
-    if ((estadoCamera.zoom >= 1.4 || estadoMapa.selected) && !ganchos.treinoAberto()) {
-      ctx.lineJoin = "round";
-      var used = [], selB = null;
-      if (estadoMapa.selected && estadoMapa.on[estadoMapa.selected.i] && vis.indexOf(estadoMapa.selected) >= 0) {
-        selB = selBadgeMetrics(estadoMapa.selected);
-        used.push({ x: selB.bx - 6, y: selB.by - 6, w: selB.bw + 12, h: selB.bh + 12 });
-      }
-      for (i = 0; i < vis.length; i++) {
-        d = vis[i];
-        if (d === estadoMapa.selected || estadoCamera.zoom < 1.4) continue;
-        ctx.font = "500 10.5px " + FONT;
-        ctx.textBaseline = "middle";
-        ctx.lineWidth = 3;
-        var t = d.flag + " " + (estadoMapa.labelMode === "p" || d.uni ? short(d) : capShort(d));
-        var w = ctx.measureText(t).width;
-        var rx = d.sx + mr + 5, rct = { x: rx - 2, y: d.sy - 8, w: w + 4, h: 16 };
-        if (rx + w > W - 4) {
-          rct.x = d.sx - mr - 5 - w - 2;
-          rx = rct.x + 2;
-        }
-        var clash = false;
-        for (var u = 0; u < used.length; u++) {
-          var U = used[u];
-          if (!(rct.x > U.x + U.w || rct.x + rct.w < U.x || rct.y > U.y + U.h || rct.y + rct.h < U.y)) {
-            clash = true;
-            break;
-          }
-        }
-        if (clash) continue;
-        used.push(rct);
-        ctx.globalAlpha = 0.8;
-        ctx.strokeStyle = "rgba(4,16,36,.85)";
-        ctx.strokeText(t, rx, d.sy);
-        ctx.fillStyle = "#fff";
-        ctx.fillText(t, rx, d.sy);
-        ctx.globalAlpha = 1;
-      }
-      if (selB) paintSelBadge(selB);
-    }
-    ganchos.desenharSeloResposta(0, cx, cy);
-  }
-  function setFlat2D(v) {
-    flat2D = v;
-    lsSet("globo.flat2d", v);
-    $("flat2d").setAttribute("aria-pressed", v ? "true" : "false");
-    $("flat2d").textContent = v ? "🌐" : "🗺️";
-    $("flat2d").setAttribute("aria-label", v ? "Ver como globo" : "Ver como mapa 2D");
-  }
-  function iniciar14() {
-    flat2D = lsGet("globo.flat2d", false);
-    $("flat2d").onclick = function() {
-      setFlat2D(!flat2D);
-    };
-    setFlat2D(flat2D);
-  }
-
-  // web/src/js/visualizacao/animacao.js
-  var PI;
-  function shortest(a, b) {
-    var d = b - a;
-    while (d > PI) d -= 2 * PI;
-    while (d < -PI) d += 2 * PI;
-    return d;
-  }
-  function frame() {
-    if (estadoCamera.target) {
-      var dl2 = shortest(estadoCamera.lam, estadoCamera.target.lam), dp = estadoCamera.target.phi - estadoCamera.phi, dz = estadoCamera.target.zoom - estadoCamera.zoom;
-      estadoCamera.lam += dl2 * 0.14;
-      estadoCamera.phi += dp * 0.14;
-      estadoCamera.zoom += dz * 0.14;
-      if (Math.abs(dl2) < 8e-4 && Math.abs(dp) < 8e-4 && Math.abs(dz) < 4e-3) estadoCamera.target = null;
-    } else if (estadoCamera.auto && !estadoCamera.dragging && !estadoMapa.selected && !ganchos.treinoAberto() && !estadoBrasil.statesMode && !estadoBrasil.selSt && !flat2D && performance.now() - estadoCamera.lastInteract > 2500) {
-      estadoCamera.lam += 22e-4;
-    }
-    var wantCy = (estadoMapa.selected || estadoBrasil.selSt) && !ganchos.treinoAberto() ? Math.max(0.26, Math.min(0.5, (H - ganchos.alturaCartao()) / (2 * H))) : ganchos.treinoAberto() ? Math.max(0.24, Math.min(0.5, (H - ganchos.alturaTreino()) / (2 * H))) : 0.5;
-    estadoCamera.cyFrac += (wantCy - estadoCamera.cyFrac) * 0.15;
-    if (estadoCamera.lam > PI) estadoCamera.lam -= 2 * PI;
-    if (estadoCamera.lam < -PI) estadoCamera.lam += 2 * PI;
-    draw();
-    requestAnimationFrame(frame);
-  }
-  function flyTo(latDeg, lngDeg, z) {
-    document.getElementById("hint").style.display = "none";
-    estadoCamera.target = { lam: lngDeg * PI / 180, phi: Math.max(-PI / 2, Math.min(PI / 2, latDeg * PI / 180)), zoom: z };
-    estadoCamera.lastInteract = performance.now();
-  }
-  function fitTo(idxs) {
-    if (!idxs.length) return;
-    var sx = 0, sy = 0, sz = 0;
-    idxs.forEach(function(i) {
-      sx += D[i].x;
-      sy += D[i].y;
-      sz += D[i].z;
-    });
-    var m = Math.sqrt(sx * sx + sy * sy + sz * sz) || 1;
-    sx /= m;
-    sy /= m;
-    sz /= m;
-    var th = 0;
-    idxs.forEach(function(i) {
-      var c = D[i].x * sx + D[i].y * sy + D[i].z * sz;
-      th = Math.max(th, Math.acos(Math.max(-1, Math.min(1, c))));
-    });
-    var z = Math.max(1, Math.min(3.2, 0.9 / Math.sin(Math.min(th + 0.12, 1.5))));
-    flyTo(Math.asin(sy) * 180 / PI, Math.atan2(sx, sz) * 180 / PI, z);
-  }
-  function iniciar15() {
-    PI = Math.PI;
   }
 
   // web/src/js/visualizacao/estados.js
@@ -4335,7 +3101,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     flyTo(Math.asin(sy) * 180 / PI, Math.atan2(sx, sz) * 180 / PI, zoomFor(th + 0.05, 5));
   }
-  function iniciar16() {
+  function iniciar11() {
     estadoBrasil.onS = BRS.map(function() {
       return 1;
     });
@@ -4344,59 +3110,1318 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
   }
 
+  // web/src/js/visualizacao/fronteiras.js
+  var fronteiras_exports = {};
+  __export(fronteiras_exports, {
+    A3: () => A3,
+    drawGeo: () => drawGeo,
+    iniciar: () => iniciar12,
+    setupGeo: () => setupGeo,
+    tryLoad: () => tryLoad
+  });
+  var A3 = {
+    TF: "ATF",
+    HM: "HMD",
+    GS: "SGS",
+    IO: "IOT",
+    BV: "BVT",
+    UM: "UMI",
+    PR: "PRI",
+    VI: "VIR",
+    VG: "VGB",
+    AI: "AIA",
+    MS: "MSR",
+    KY: "CYM",
+    TC: "TCA",
+    AW: "ABW",
+    CW: "CUW",
+    SX: "SXM",
+    BQ: "BES",
+    GP: "GLP",
+    MQ: "MTQ",
+    MF: "MAF",
+    BL: "BLM",
+    BM: "BMU",
+    GL: "GRL",
+    PM: "SPM",
+    FK: "FLK",
+    RE: "REU",
+    YT: "MYT",
+    SH: "SHN",
+    GI: "GIB",
+    FO: "FRO",
+    IM: "IMN",
+    JE: "JEY",
+    GG: "GGY",
+    AX: "ALA",
+    SJ: "SJM",
+    HK: "HKG",
+    MO: "MAC",
+    GU: "GUM",
+    MP: "MNP",
+    AS: "ASM",
+    PF: "PYF",
+    NC: "NCL",
+    WF: "WLF",
+    CK: "COK",
+    NU: "NIU",
+    TK: "TKL",
+    NF: "NFK",
+    PN: "PCN",
+    CX: "CXR",
+    CC: "CCK",
+    BR: "BRA",
+    GF: "GUF",
+    SR: "SUR",
+    GY: "GUY",
+    VE: "VEN",
+    CO: "COL",
+    EC: "ECU",
+    PE: "PER",
+    BO: "BOL",
+    CL: "CHL",
+    AR: "ARG",
+    PY: "PRY",
+    UY: "URY",
+    PA: "PAN",
+    CR: "CRI",
+    NI: "NIC",
+    HN: "HND",
+    SV: "SLV",
+    GT: "GTM",
+    BZ: "BLZ",
+    CU: "CUB",
+    JM: "JAM",
+    BS: "BHS",
+    HT: "HTI",
+    DO: "DOM",
+    KN: "KNA",
+    AG: "ATG",
+    DM: "DMA",
+    LC: "LCA",
+    VC: "VCT",
+    BB: "BRB",
+    GD: "GRD",
+    TT: "TTO",
+    MX: "MEX",
+    US: "USA",
+    CA: "CAN",
+    ZA: "ZAF",
+    LS: "LSO",
+    SZ: "SWZ",
+    BW: "BWA",
+    NA: "NAM",
+    ZM: "ZMB",
+    ZW: "ZWE",
+    MZ: "MOZ",
+    MG: "MDG",
+    MU: "MUS",
+    SC: "SYC",
+    KM: "COM",
+    MW: "MWI",
+    TZ: "TZA",
+    BI: "BDI",
+    RW: "RWA",
+    UG: "UGA",
+    KE: "KEN",
+    SO: "SOM",
+    DJ: "DJI",
+    ER: "ERI",
+    ET: "ETH",
+    SS: "SSD",
+    AO: "AGO",
+    CD: "COD",
+    CG: "COG",
+    GA: "GAB",
+    ST: "STP",
+    GQ: "GNQ",
+    CM: "CMR",
+    CF: "CAF",
+    TD: "TCD",
+    NE: "NER",
+    NG: "NGA",
+    BJ: "BEN",
+    TG: "TGO",
+    BF: "BFA",
+    GH: "GHA",
+    CI: "CIV",
+    LR: "LBR",
+    SL: "SLE",
+    GN: "GIN",
+    GW: "GNB",
+    GM: "GMB",
+    SN: "SEN",
+    CV: "CPV",
+    MR: "MRT",
+    ML: "MLI",
+    EH: "ESH",
+    MA: "MAR",
+    DZ: "DZA",
+    TN: "TUN",
+    LY: "LBY",
+    EG: "EGY",
+    SD: "SDN",
+    PT: "PRT",
+    ES: "ESP",
+    AD: "AND",
+    MC: "MCO",
+    SM: "SMR",
+    IT: "ITA",
+    VA: "VAT",
+    MT: "MLT",
+    GR: "GRC",
+    TR: "TUR",
+    FR: "FRA",
+    IE: "IRL",
+    GB: "GBR",
+    NL: "NLD",
+    BE: "BEL",
+    DE: "DEU",
+    LU: "LUX",
+    LI: "LIE",
+    CH: "CHE",
+    AT: "AUT",
+    IS: "ISL",
+    DK: "DNK",
+    SE: "SWE",
+    NO: "NOR",
+    FI: "FIN",
+    EE: "EST",
+    LV: "LVA",
+    LT: "LTU",
+    RU: "RUS",
+    BY: "BLR",
+    PL: "POL",
+    CZ: "CZE",
+    SK: "SVK",
+    HU: "HUN",
+    SI: "SVN",
+    HR: "HRV",
+    BA: "BIH",
+    ME: "MNE",
+    AL: "ALB",
+    CY: "CYP",
+    MK: "MKD",
+    RS: "SRB",
+    RO: "ROU",
+    BG: "BGR",
+    MD: "MDA",
+    UA: "UKR",
+    GE: "GEO",
+    AM: "ARM",
+    AZ: "AZE",
+    SY: "SYR",
+    LB: "LBN",
+    PS: "PSE",
+    IL: "ISR",
+    JO: "JOR",
+    SA: "SAU",
+    YE: "YEM",
+    OM: "OMN",
+    AE: "ARE",
+    QA: "QAT",
+    BH: "BHR",
+    KW: "KWT",
+    IQ: "IRQ",
+    IR: "IRN",
+    AF: "AFG",
+    KZ: "KAZ",
+    UZ: "UZB",
+    TM: "TKM",
+    KG: "KGZ",
+    TJ: "TJK",
+    PK: "PAK",
+    IN: "IND",
+    MV: "MDV",
+    LK: "LKA",
+    BD: "BGD",
+    BT: "BTN",
+    NP: "NPL",
+    MN: "MNG",
+    CN: "CHN",
+    KP: "PRK",
+    KR: "KOR",
+    JP: "JPN",
+    TW: "TWN",
+    MM: "MMR",
+    TH: "THA",
+    LA: "LAO",
+    VN: "VNM",
+    KH: "KHM",
+    MY: "MYS",
+    SG: "SGP",
+    ID: "IDN",
+    BN: "BRN",
+    PH: "PHL",
+    TL: "TLS",
+    AU: "AUS",
+    NZ: "NZL",
+    PG: "PNG",
+    SB: "SLB",
+    VU: "VUT",
+    FJ: "FJI",
+    PW: "PLW",
+    FM: "FSM",
+    MH: "MHL",
+    NR: "NRU",
+    KI: "KIR",
+    TV: "TUV",
+    WS: "WSM",
+    TO: "TON"
+  };
+  function loadScript(u) {
+    return new Promise(function(ok, no) {
+      var s = document.createElement("script");
+      s.src = u;
+      s.async = false;
+      s.onload = ok;
+      s.onerror = no;
+      document.head.appendChild(s);
+    });
+  }
+  function tryLoad(list, test) {
+    return new Promise(function(ok, no) {
+      var i = 0;
+      (function next() {
+        if (test()) return ok();
+        if (i >= list.length) return no(new Error("falhou"));
+        loadScript(list[i++]).then(next, next);
+      })();
+    });
+  }
+  function setupGeo() {
+    var topo = Datamap.prototype.worldTopo, key = Object.keys(topo.objects)[0];
+    estadoRender.feats = topojson.feature(topo, topo.objects[key]).features;
+    var idByA3 = {};
+    D.forEach(function(d) {
+      idByA3[A3[d.cc]] = d.i;
+    });
+    var m = 0;
+    estadoRender.feats.forEach(function(f) {
+      var i = idByA3[f.id];
+      if (i !== void 0 && !estadoRender.FEAT[i]) {
+        estadoRender.FEAT[i] = f;
+        m++;
+      } else estadoRender.EXTRA.push(f);
+    });
+    estadoRender.proj = d3.geo.orthographic().clipAngle(90).precision(0.6);
+    estadoRender.gpath = d3.geo.path().projection(estadoRender.proj).context(ctx);
+    return m;
+  }
+  function drawGeo(R, cx, cy) {
+    if (estadoBrasil.statesMode) {
+      drawGeoStates(R, cx, cy);
+      return;
+    }
+    if (!estadoRender.feats || !estadoRender.optBor && !estadoRender.optFill && allOn() && !estadoMapa.selected && !ganchos.destaquePais()) return;
+    projCfg(R, cx, cy);
+    var allon = allOn(), i, r;
+    if (estadoRender.optFill) {
+      for (r = 0; r < REG.length; r++) {
+        ctx.beginPath();
+        for (i = 0; i < D.length; i++) if (estadoMapa.on[i] && D[i].r === r && estadoRender.FEAT[i]) estadoRender.gpath(estadoRender.FEAT[i]);
+        ctx.fillStyle = hexA(REG[r].c, 0.32);
+        ctx.fill();
+      }
+    }
+    if (!allon) {
+      ctx.beginPath();
+      for (i = 0; i < D.length; i++) if (!estadoMapa.on[i] && avail(D[i]) && estadoRender.FEAT[i]) estadoRender.gpath(estadoRender.FEAT[i]);
+      ctx.fillStyle = "rgba(2,10,24,.58)";
+      ctx.fill();
+    }
+    if (estadoMapa.selected && estadoRender.FEAT[estadoMapa.selected.i]) {
+      ctx.beginPath();
+      estadoRender.gpath(estadoRender.FEAT[estadoMapa.selected.i]);
+      ctx.fillStyle = "rgba(255,224,102,.26)";
+      ctx.fill();
+    }
+    if (ganchos.destaquePais() && estadoRender.FEAT[ganchos.destaquePais().i]) {
+      var fk = ganchos.destaquePais().kind, fcol = fk === "ok" ? ["rgba(46,204,113,.45)", "#2ecc71"] : fk === "ask" ? ["rgba(77,163,255,.40)", "#4da3ff"] : ["rgba(255,224,102,.45)", "#ffe066"];
+      ctx.beginPath();
+      estadoRender.gpath(estadoRender.FEAT[ganchos.destaquePais().i]);
+      ctx.fillStyle = fcol[0];
+      ctx.fill();
+      ctx.lineWidth = 2.6;
+      ctx.strokeStyle = fcol[1];
+      ctx.stroke();
+    }
+    if (estadoRender.optBor) {
+      ctx.beginPath();
+      for (i = 0; i < D.length; i++) if (estadoRender.FEAT[i] && (estadoMapa.on[i] || allon && !avail(D[i]))) estadoRender.gpath(estadoRender.FEAT[i]);
+      if (allon) for (i = 0; i < estadoRender.EXTRA.length; i++) estadoRender.gpath(estadoRender.EXTRA[i]);
+      ctx.lineJoin = "round";
+      ctx.lineWidth = Math.max(0.7, Math.min(1.6, 0.6 + 0.25 * estadoCamera.zoom));
+      ctx.strokeStyle = estadoRender.useTex && estadoRender.optTex ? "rgba(255,255,255,.78)" : "rgba(255,255,255,.6)";
+      ctx.stroke();
+    }
+    if (estadoMapa.selected && estadoRender.FEAT[estadoMapa.selected.i]) {
+      ctx.beginPath();
+      estadoRender.gpath(estadoRender.FEAT[estadoMapa.selected.i]);
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = "#ffe066";
+      ctx.stroke();
+    }
+  }
+  function iniciar12() {
+    estadoRender.FEAT = D.map(function() {
+      return null;
+    });
+  }
+
+  // web/src/js/visualizacao/mapa-2d.js
+  var mapa_2d_exports = {};
+  __export(mapa_2d_exports, {
+    R2now: () => R2now,
+    draw2D: () => draw2D,
+    iniciar: () => iniciar16,
+    inv2D: () => inv2D,
+    proj2D: () => proj2D,
+    setFlat2D: () => setFlat2D
+  });
+
+  // web/src/js/visualizacao/carregamento.js
+  var carregamento_exports = {};
+  __export(carregamento_exports, {
+    fixWind: () => fixWind,
+    idbGet: () => idbGet,
+    idbSet: () => idbSet,
+    iniciar: () => iniciar15,
+    startMap: () => startMap,
+    texCanvas: () => texCanvas,
+    updateMapInfo: () => updateMapInfo
+  });
+
+  // web/src/js/nucleo/eventos.js
+  var eventos_exports = {};
+  __export(eventos_exports, {
+    emitir: () => emitir,
+    ouvir: () => ouvir
+  });
+  var ouvintes = {};
+  function ouvir(evento, fn) {
+    (ouvintes[evento] || (ouvintes[evento] = [])).push(fn);
+  }
+  function emitir(evento, dados) {
+    (ouvintes[evento] || []).forEach(function(fn) {
+      fn(dados);
+    });
+  }
+
+  // web/src/js/visualizacao/textura.js
+  var textura_exports = {};
+  __export(textura_exports, {
+    buildTexture: () => buildTexture,
+    iniciar: () => iniciar13,
+    updateOpts: () => updateOpts
+  });
+  function hh(x, y) {
+    var n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+    return n - Math.floor(n);
+  }
+  function vn(x, y) {
+    var xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    var a = hh(xi, yi), b = hh(xi + 1, yi), c = hh(xi, yi + 1), d = hh(xi + 1, yi + 1);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  }
+  function fbm(x, y) {
+    return 0.55 * vn(x, y) + 0.3 * vn(x * 2.1, y * 2.1) + 0.15 * vn(x * 4.3, y * 4.3);
+  }
+  function sm(a, b, x) {
+    var t = Math.max(0, Math.min(1, (x - a) / (b - a)));
+    return t * t * (3 - 2 * t);
+  }
+  function mix3(c, d, t) {
+    c[0] += (d[0] - c[0]) * t;
+    c[1] += (d[1] - c[1]) * t;
+    c[2] += (d[2] - c[2]) * t;
+  }
+  var DES = [[23, 10, 10, 28, 1], [24, 45, 9, 12, 1], [33, 58, 6, 11, 0.65], [41, 95, 6, 16, 0.8], [27, 71, 4, 6, 0.55], [-25, 132, 11, 15, 0.9], [-23, 19, 8, 8, 0.85], [-22, -69, 9, 3, 0.9], [-45, -68, 7, 4, 0.5], [35, -112, 6, 8, 0.65], [28, -105, 5, 5, 0.5], [7, 45, 6, 5, 0.5], [14, 5, 3, 26, 0.4], [48, 68, 5, 18, 0.4], [30, 44, 5, 8, 0.5]];
+  var FOR = [[-4, -62, 8, 13, 0.9], [0, 22, 7, 11, 0.9], [0, 111, 9, 24, 0.8], [5, -75, 6, 5, 0.5], [6, -3, 3, 10, 0.55], [-25, -50, 8, 6, 0.35], [35, -85, 8, 8, 0.2], [-38, 146, 5, 6, 0.2]];
+  var MTN = [[-20, -70, 26, 3.2, 1], [45, -112, 17, 5, 0.85], [32, 85, 4, 16, 1.1], [34, 92, 4, 9, 0.9], [46.5, 10, 2.2, 7, 0.9], [58, 60, 10, 1.5, 0.5], [9, 39, 5, 4, 0.8], [38, -80, 8, 3, 0.4], [64, 14, 7, 3.2, 0.6], [42.5, 44, 1.6, 5.5, 0.8], [43, 80, 3, 11, 0.85], [33, -3.5, 2, 8, 0.6], [-29, 29, 4, 3, 0.5], [-30, 150, 12, 2, 0.4], [-6, 35, 6, 3, 0.35], [19, -100, 3, 7, 0.7], [10, -73, 3, 3, 0.5]];
+  var RAMP = [[0, [203, 172, 118]], [0.22, [178, 150, 98]], [0.42, [139, 132, 76]], [0.62, [88, 114, 54]], [0.82, [46, 90, 44]], [1, [24, 64, 34]]];
+  function ramp(w) {
+    for (var i = 1; i < RAMP.length; i++) {
+      if (w <= RAMP[i][0]) {
+        var a = RAMP[i - 1], b = RAMP[i], t = (w - a[0]) / (b[0] - a[0]);
+        return [a[1][0] + (b[1][0] - a[1][0]) * t, a[1][1] + (b[1][1] - a[1][1]) * t, a[1][2] + (b[1][2] - a[1][2]) * t];
+      }
+    }
+    return RAMP[RAMP.length - 1][1].slice();
+  }
+  function dl(a, b) {
+    var d = a - b;
+    while (d > 180) d -= 360;
+    while (d < -180) d += 360;
+    return d;
+  }
+  function buildTexture(done, progress) {
+    var TW = 2048, TH = 1024, FW = 1024, FH = 512;
+    var fc = document.createElement("canvas");
+    fc.width = FW;
+    fc.height = FH;
+    var fx = fc.getContext("2d"), fd = fx.createImageData(FW, FH), fp = fd.data;
+    var y = 0, rowD = new Array(DES.length), rowF = new Array(FOR.length), rowM = new Array(MTN.length);
+    function rowFactors(lat) {
+      var k;
+      for (k = 0; k < DES.length; k++) {
+        var q2 = (lat - DES[k][0]) / DES[k][2];
+        rowD[k] = Math.exp(-q2 * q2);
+      }
+      for (k = 0; k < FOR.length; k++) {
+        var q22 = (lat - FOR[k][0]) / FOR[k][2];
+        rowF[k] = Math.exp(-q22 * q22);
+      }
+      for (k = 0; k < MTN.length; k++) {
+        var q3 = (lat - MTN[k][0]) / MTN[k][2];
+        rowM[k] = Math.exp(-q3 * q3);
+      }
+    }
+    function step2() {
+      var end = Math.min(FH, y + 22);
+      for (; y < end; y++) {
+        var lat = 90 - (y + 0.5) * 180 / FH, a = Math.abs(lat);
+        rowFactors(lat);
+        for (var x = 0; x < FW; x++) {
+          var lng = -180 + (x + 0.5) * 360 / FW, k, g, dg;
+          var n = fbm(lng * 0.09 + 7, lat * 0.09 + 3), n2 = fbm(lng * 0.5, lat * 0.5);
+          var w = 0.14 + 0.8 * Math.exp(-Math.pow(lat / 15, 2)) + 0.55 * Math.exp(-Math.pow((a - 47) / 13, 2));
+          var e = 0;
+          for (k = 0; k < DES.length; k++) {
+            if (rowD[k] < 0.02) continue;
+            dg = dl(lng, DES[k][1]);
+            if (Math.abs(dg) > DES[k][3] * 2.6) continue;
+            g = dg / DES[k][3];
+            w -= DES[k][4] * rowD[k] * Math.exp(-g * g);
+          }
+          for (k = 0; k < FOR.length; k++) {
+            if (rowF[k] < 0.02) continue;
+            dg = dl(lng, FOR[k][1]);
+            if (Math.abs(dg) > FOR[k][3] * 2.6) continue;
+            g = dg / FOR[k][3];
+            w += FOR[k][4] * rowF[k] * Math.exp(-g * g);
+          }
+          for (k = 0; k < MTN.length; k++) {
+            if (rowM[k] < 0.02) continue;
+            dg = dl(lng, MTN[k][1]);
+            if (Math.abs(dg) > MTN[k][3] * 2.6) continue;
+            g = dg / MTN[k][3];
+            e += MTN[k][4] * rowM[k] * Math.exp(-g * g);
+          }
+          e *= 0.45 + 1.1 * n2;
+          w += (n - 0.5) * 0.55;
+          w = Math.max(0, Math.min(1, w));
+          var c = ramp(w);
+          mix3(c, [40, 72, 54], sm(50, 62, a) * 0.6);
+          mix3(c, [126, 130, 112], sm(63, 73, a) * 0.8);
+          mix3(c, [122, 106, 92], sm(0.2, 0.7, e));
+          var sn = sm(70, 84, a) * (0.55 + (n2 - 0.5));
+          sn = Math.max(sn, sm(0.95, 1.45, e) * (a > 12 ? 1 : 0.3));
+          if (lat < -62) sn = Math.max(sn, sm(-62, -66, lat) * 1);
+          if (lat > 59 && lng > -75 && lng < -10) sn = Math.max(sn, 0.95 * sm(59, 63, lat));
+          mix3(c, [244, 247, 250], Math.max(0, Math.min(1, sn)));
+          var sh = 0.86 + 0.28 * n2;
+          sh = 1 - (1 - sh) * (1 - 0.65 * Math.max(0, Math.min(1, sn)));
+          var o = (y * FW + x) * 4;
+          fp[o] = c[0] * sh;
+          fp[o + 1] = c[1] * sh;
+          fp[o + 2] = c[2] * sh;
+          fp[o + 3] = 255;
+        }
+      }
+      if (progress) progress(Math.round(y / FH * 100));
+      if (y < FH) setTimeout(step2, 0);
+      else finish();
+    }
+    function finish() {
+      fx.putImageData(fd, 0, 0);
+      var eq = d3.geo.equirectangular().scale(TW / (2 * PI)).translate([TW / 2, TH / 2]).precision(0.2);
+      var mk = document.createElement("canvas");
+      mk.width = TW;
+      mk.height = TH;
+      var mx = mk.getContext("2d");
+      mx.fillStyle = "#000";
+      mx.fillRect(0, 0, TW, TH);
+      var pth = d3.geo.path().projection(eq).context(mx);
+      mx.fillStyle = "#fff";
+      mx.beginPath();
+      estadoRender.feats.forEach(function(f) {
+        pth(f);
+      });
+      mx.fill();
+      var hasAnt = estadoRender.feats.some(function(f) {
+        return f.id === "ATA";
+      });
+      if (!hasAnt) mx.fillRect(0, TH * (90 + 72) / 180, TW, TH);
+      var tc = document.createElement("canvas");
+      tc.width = TW;
+      tc.height = TH;
+      var tx = tc.getContext("2d");
+      var og = tx.createLinearGradient(0, 0, 0, TH);
+      og.addColorStop(0, "#8fb0c4");
+      og.addColorStop(0.07, "#1b4a78");
+      og.addColorStop(0.3, "#0c3a72");
+      og.addColorStop(0.5, "#0a4a86");
+      og.addColorStop(0.7, "#0c3a72");
+      og.addColorStop(0.93, "#1b4a78");
+      og.addColorStop(1, "#8fb0c4");
+      tx.fillStyle = og;
+      tx.fillRect(0, 0, TW, TH);
+      var pt = d3.geo.path().projection(eq).context(tx);
+      tx.save();
+      tx.translate(-6e3, 0);
+      tx.shadowOffsetX = 6e3;
+      tx.shadowColor = "rgba(70,175,195,.55)";
+      tx.shadowBlur = 26;
+      tx.fillStyle = "#000";
+      tx.beginPath();
+      estadoRender.feats.forEach(function(f) {
+        pt(f);
+      });
+      tx.fill();
+      tx.shadowColor = "rgba(120,215,215,.5)";
+      tx.shadowBlur = 9;
+      tx.beginPath();
+      estadoRender.feats.forEach(function(f) {
+        pt(f);
+      });
+      tx.fill();
+      tx.restore();
+      var cc = document.createElement("canvas");
+      cc.width = TW;
+      cc.height = TH;
+      var cx2 = cc.getContext("2d");
+      cx2.imageSmoothingEnabled = true;
+      cx2.drawImage(fc, 0, 0, TW, TH);
+      var od = tx.getImageData(0, 0, TW, TH), ld = cx2.getImageData(0, 0, TW, TH), md = mx.getImageData(0, 0, TW, TH);
+      var O = od.data, L = ld.data, M = md.data;
+      for (var i = 0; i < O.length; i += 4) {
+        var al = M[i] / 255;
+        if (al > 0) {
+          O[i] = O[i] * (1 - al) + L[i] * al;
+          O[i + 1] = O[i + 1] * (1 - al) + L[i + 1] * al;
+          O[i + 2] = O[i + 2] * (1 - al) + L[i + 2] * al;
+        }
+      }
+      tx.putImageData(od, 0, 0);
+      done(tc);
+    }
+    step2();
+  }
+  var oTex;
+  var oBor;
+  var oFill;
+  function updateOpts() {
+    $("oNight").disabled = !estadoRender.useTex;
+    oTex.disabled = !estadoRender.useTex;
+    oTex.checked = estadoRender.useTex && estadoRender.optTex;
+    oBor.disabled = !estadoRender.feats;
+    oFill.disabled = !estadoRender.feats;
+  }
+  function iniciar13() {
+    oTex = document.getElementById("oTex");
+    oBor = document.getElementById("oBor");
+    oFill = document.getElementById("oFill");
+    oTex.onchange = function() {
+      estadoRender.optTex = oTex.checked;
+    };
+    oBor.onchange = function() {
+      estadoRender.optBor = oBor.checked;
+    };
+    oFill.onchange = function() {
+      estadoRender.optFill = oFill.checked;
+    };
+  }
+
+  // web/src/js/visualizacao/webgl.js
+  var webgl_exports = {};
+  __export(webgl_exports, {
+    glDraw: () => glDraw,
+    initGL: () => initGL,
+    uploadTexture: () => uploadTexture
+  });
+
+  // web/src/js/visualizacao/dia-noite.js
+  var dia_noite_exports = {};
+  __export(dia_noite_exports, {
+    iniciar: () => iniciar14,
+    optNight: () => optNight,
+    sunVec: () => sunVec
+  });
+  var optNight = false;
+  function sunVec() {
+    var now = /* @__PURE__ */ new Date(), N = (now - Date.UTC(now.getUTCFullYear(), 0, 0)) / 864e5;
+    var decl = -23.44 * Math.cos(2 * PI / 365 * (N + 10)) * PI / 180;
+    var hrs = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
+    var B = 2 * PI * (N - 81) / 364, eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+    var lg = -(hrs + eot / 60 - 12) * 15 * PI / 180;
+    return [Math.cos(decl) * Math.sin(lg), Math.sin(decl), Math.cos(decl) * Math.cos(lg)];
+  }
+  function iniciar14() {
+    $("oNight").onchange = function() {
+      optNight = this.checked;
+      if (optNight) {
+        var n = /* @__PURE__ */ new Date(), p = function(x) {
+          return (x < 10 ? "0" : "") + x;
+        };
+        setStatus("Noite calculada para agora (" + p(n.getUTCHours()) + ":" + p(n.getUTCMinutes()) + " UTC). Ela acompanha o relógio do seu aparelho.", 5e3);
+      }
+    };
+  }
+
+  // web/src/js/visualizacao/webgl.js
+  function initGL() {
+    try {
+      estadoRender.gl = glc.getContext("webgl", { alpha: true, premultipliedAlpha: true, antialias: false });
+    } catch (e) {
+      estadoRender.gl = null;
+    }
+    if (!estadoRender.gl) return false;
+    var vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}";
+    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.13,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=0.60+0.58*d;\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
+    function sh(t, src) {
+      var s = estadoRender.gl.createShader(t);
+      estadoRender.gl.shaderSource(s, src);
+      estadoRender.gl.compileShader(s);
+      if (!estadoRender.gl.getShaderParameter(s, estadoRender.gl.COMPILE_STATUS)) {
+        console.warn(estadoRender.gl.getShaderInfoLog(s));
+        return null;
+      }
+      return s;
+    }
+    var v = sh(estadoRender.gl.VERTEX_SHADER, vs), f = sh(estadoRender.gl.FRAGMENT_SHADER, fs);
+    if (!v || !f) return false;
+    estadoRender.glProg = estadoRender.gl.createProgram();
+    estadoRender.gl.attachShader(estadoRender.glProg, v);
+    estadoRender.gl.attachShader(estadoRender.glProg, f);
+    estadoRender.gl.linkProgram(estadoRender.glProg);
+    if (!estadoRender.gl.getProgramParameter(estadoRender.glProg, estadoRender.gl.LINK_STATUS)) return false;
+    estadoRender.gl.useProgram(estadoRender.glProg);
+    estadoRender.glBuf = estadoRender.gl.createBuffer();
+    estadoRender.gl.bindBuffer(estadoRender.gl.ARRAY_BUFFER, estadoRender.glBuf);
+    estadoRender.gl.bufferData(estadoRender.gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), estadoRender.gl.STATIC_DRAW);
+    var loc = estadoRender.gl.getAttribLocation(estadoRender.glProg, "p");
+    estadoRender.gl.enableVertexAttribArray(loc);
+    estadoRender.gl.vertexAttribPointer(loc, 2, estadoRender.gl.FLOAT, false, 0, 0);
+    ["uT", "uC", "uR", "uH", "uRot", "uSun", "uNight"].forEach(function(n) {
+      glU[n] = estadoRender.gl.getUniformLocation(estadoRender.glProg, n);
+    });
+    return true;
+  }
+  function uploadTexture(cvs) {
+    if (estadoRender.glTex) estadoRender.gl.deleteTexture(estadoRender.glTex);
+    estadoRender.glTex = estadoRender.gl.createTexture();
+    estadoRender.gl.bindTexture(estadoRender.gl.TEXTURE_2D, estadoRender.glTex);
+    estadoRender.gl.pixelStorei(estadoRender.gl.UNPACK_FLIP_Y_WEBGL, false);
+    estadoRender.gl.texImage2D(estadoRender.gl.TEXTURE_2D, 0, estadoRender.gl.RGBA, estadoRender.gl.RGBA, estadoRender.gl.UNSIGNED_BYTE, cvs);
+    estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D, estadoRender.gl.TEXTURE_MIN_FILTER, estadoRender.gl.LINEAR);
+    estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D, estadoRender.gl.TEXTURE_MAG_FILTER, estadoRender.gl.LINEAR);
+    estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D, estadoRender.gl.TEXTURE_WRAP_S, estadoRender.gl.REPEAT);
+    estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D, estadoRender.gl.TEXTURE_WRAP_T, estadoRender.gl.CLAMP_TO_EDGE);
+    return !estadoRender.gl.getError();
+  }
+  function glDraw(tex, R, cx, cy) {
+    if (!estadoRender.gl) return;
+    estadoRender.gl.viewport(0, 0, glc.width, glc.height);
+    estadoRender.gl.clearColor(0, 0, 0, 0);
+    estadoRender.gl.clear(estadoRender.gl.COLOR_BUFFER_BIT);
+    if (!tex) return;
+    estadoRender.gl.useProgram(estadoRender.glProg);
+    estadoRender.gl.bindBuffer(estadoRender.gl.ARRAY_BUFFER, estadoRender.glBuf);
+    estadoRender.gl.activeTexture(estadoRender.gl.TEXTURE0);
+    estadoRender.gl.bindTexture(estadoRender.gl.TEXTURE_2D, estadoRender.glTex);
+    estadoRender.gl.uniform1i(glU.uT, 0);
+    estadoRender.gl.uniform2f(glU.uC, cx * dpr, cy * dpr);
+    estadoRender.gl.uniform1f(glU.uR, R * dpr);
+    estadoRender.gl.uniform1f(glU.uH, glc.height);
+    estadoRender.gl.uniform4f(glU.uRot, Math.cos(estadoCamera.lam), Math.sin(estadoCamera.lam), Math.cos(estadoCamera.phi), Math.sin(estadoCamera.phi));
+    var sv = sunVec();
+    estadoRender.gl.uniform3f(glU.uSun, sv[0], sv[1], sv[2]);
+    estadoRender.gl.uniform1f(glU.uNight, optNight ? 1 : 0);
+    estadoRender.gl.drawArrays(estadoRender.gl.TRIANGLE_STRIP, 0, 4);
+  }
+  var glU = {};
+
+  // web/src/js/visualizacao/carregamento.js
+  function idb() {
+    return new Promise(function(ok, no) {
+      try {
+        var r = indexedDB.open("globo-cache", 1);
+        r.onupgradeneeded = function() {
+          r.result.createObjectStore("kv");
+        };
+        r.onsuccess = function() {
+          ok(r.result);
+        };
+        r.onerror = function() {
+          no(r.error);
+        };
+      } catch (e) {
+        no(e);
+      }
+    });
+  }
+  function idbGet(k) {
+    return idb().then(function(db) {
+      return new Promise(function(ok, no) {
+        var q2 = db.transaction("kv", "readonly").objectStore("kv").get(k);
+        q2.onsuccess = function() {
+          ok(q2.result);
+        };
+        q2.onerror = function() {
+          no(q2.error);
+        };
+      });
+    }).catch(function() {
+      return void 0;
+    });
+  }
+  function idbSet(k, v) {
+    return idb().then(function(db) {
+      return new Promise(function(ok, no) {
+        var t = db.transaction("kv", "readwrite");
+        t.objectStore("kv").put(v, k);
+        t.oncomplete = ok;
+        t.onerror = function() {
+          no(t.error);
+        };
+      });
+    }).catch(function() {
+    });
+  }
+  function idbDel(k) {
+    return idb().then(function(db) {
+      return new Promise(function(ok, no) {
+        var t = db.transaction("kv", "readwrite");
+        t.objectStore("kv").delete(k);
+        t.oncomplete = ok;
+        t.onerror = function() {
+          no(t.error);
+        };
+      });
+    }).catch(function() {
+    });
+  }
+  function blobToImg(b) {
+    return new Promise(function(ok, no) {
+      var fr = new FileReader();
+      fr.onload = function() {
+        var im = new Image();
+        im.onload = function() {
+          ok(im);
+        };
+        im.onerror = no;
+        im.src = fr.result;
+      };
+      fr.onerror = no;
+      fr.readAsDataURL(b);
+    });
+  }
+  function blobToTexCanvas(b) {
+    return blobToImg(b).then(function(im) {
+      var c = document.createElement("canvas");
+      c.width = 2048;
+      c.height = 1024;
+      c.getContext("2d").drawImage(im, 0, 0, 2048, 1024);
+      return c;
+    });
+  }
+  var texSource = "nenhuma";
+  var bordersCustom = false;
+  var texCanvas = null;
+  function updateMapInfo() {
+    var t = { nenhuma: "ainda sem textura", proc: "gerada pelo app (salva neste aparelho)", custom: "imagem importada por você" }[texSource] || texSource;
+    $("minfo").textContent = "Textura: " + t + " · Fronteiras: " + (estadoRender.feats ? bordersCustom ? "arquivo importado por você" : "biblioteca de mapas" : "não carregadas");
+  }
+  function setTextureFrom(c, src) {
+    if (uploadTexture(c)) {
+      estadoRender.useTex = true;
+      texSource = src;
+      texCanvas = c;
+      updateOpts();
+      updateMapInfo();
+      return true;
+    }
+    return false;
+  }
+  function genTexture() {
+    if (!estadoRender.gl || !estadoRender.feats) return;
+    setStatus("Gerando a textura do globo… 0%");
+    buildTexture(function(tc) {
+      if (setTextureFrom(tc, "proc")) {
+        setStatus("Pronto: textura gerada e salva neste aparelho.", 3500);
+        tc.toBlob(function(b) {
+          if (b) idbSet("tex-proc", b);
+        }, "image/jpeg", 0.9);
+      } else setStatus("A textura não pôde ser usada neste aparelho.", 7e3);
+    }, function(p) {
+      setStatus("Gerando a textura do globo… " + p + "%");
+    });
+  }
+  function setupFeatures(list) {
+    estadoRender.feats = list;
+    limparCacheVistas();
+    estadoRender.FEAT = D.map(function() {
+      return null;
+    });
+    estadoRender.EXTRA = [];
+    var by = {};
+    D.forEach(function(d) {
+      by[A3[d.cc]] = d.i;
+    });
+    var m = 0;
+    list.forEach(function(f) {
+      var i = by[f.id];
+      if (i !== void 0 && !estadoRender.FEAT[i]) {
+        estadoRender.FEAT[i] = f;
+        m++;
+      } else estadoRender.EXTRA.push(f);
+    });
+    estadoRender.proj = d3.geo.orthographic().clipAngle(90).precision(0.6);
+    estadoRender.gpath = d3.geo.path().projection(estadoRender.proj).context(ctx);
+    return m;
+  }
+  function loadD3Topo() {
+    return tryLoad(["lib/d3.min.js","https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js", "https://cdn.jsdelivr.net/npm/d3@3.5.17/d3.min.js"], function() {
+      return window.d3 && d3.geo && d3.geo.orthographic;
+    }).then(function() {
+      return tryLoad(["lib/topojson.min.js","https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js", "https://cdn.jsdelivr.net/npm/topojson@1.6.9/topojson.min.js"], function() {
+        return window.topojson && topojson.feature;
+      });
+    });
+  }
+  function loadDM() {
+    return tryLoad(["lib/datamaps.world.min.js","https://cdn.jsdelivr.net/npm/datamaps@0.5.9/dist/datamaps.world.min.js", "https://cdnjs.cloudflare.com/ajax/libs/datamaps/0.5.9/datamaps.world.min.js", "https://cdn.jsdelivr.net/npm/datamaps@0.5.8/dist/datamaps.world.min.js"], function() {
+      return window.Datamap && Datamap.prototype && Datamap.prototype.worldTopo;
+    });
+  }
+  function startMap() {
+    var okGL = initGL();
+    setStatus("Carregando o mapa…");
+    var pTex = !okGL ? Promise.resolve(false) : idbGet("tex-custom").then(function(b) {
+      return b ? { b, src: "custom" } : idbGet("tex-proc").then(function(b2) {
+        return b2 ? { b: b2, src: "proc" } : null;
+      });
+    }).then(function(r) {
+      if (!r) return false;
+      return blobToTexCanvas(r.b).then(function(c) {
+        return setTextureFrom(c, r.src);
+      }).catch(function() {
+        return false;
+      });
+    });
+    Promise.all([pTex, idbGet("borders")]).then(function(res2) {
+      var bstr = res2[1];
+      if (res2[0]) setStatus("Textura carregada do aparelho. Carregando fronteiras…");
+      return loadD3Topo().then(function() {
+        if (bstr) {
+          try {
+            var m = setupFeatures(JSON.parse(bstr).features);
+            bordersCustom = true;
+            return m;
+          } catch (e) {
+            bordersCustom = false;
+          }
+        }
+        return loadDM().then(function() {
+          return setupGeo();
+        });
+      });
+    }).then(function(m) {
+      emitir("fronteiras-carregadas");
+      updateOpts();
+      updateMapInfo();
+      if (!okGL) {
+        setStatus("Fronteiras carregadas (" + m + " países com contorno). Este aparelho não suporta a textura 3D.", 7e3);
+        return;
+      }
+      if (estadoRender.useTex) {
+        setStatus("Pronto: fronteiras carregadas (" + m + " países com contorno).", 3500);
+        return;
+      }
+      genTexture();
+    }, function() {
+      updateOpts();
+      updateMapInfo();
+      setStatus(estadoRender.useTex ? "Textura carregada, mas não consegui carregar as fronteiras (a biblioteca de mapas não abriu)." : "Não consegui carregar as fronteiras (a biblioteca de mapas não abriu). O globo segue funcionando sem elas.", 9e3);
+    });
+  }
+  function featA3(f) {
+    var p = f.properties || {}, a2map = {};
+    D.forEach(function(d) {
+      a2map[d.cc] = A3[d.cc];
+    });
+    var cands = [p.ADM0_A3, p.ISO_A3, p.iso_a3, p.ISO3, p["ISO3166-1-Alpha-3"], p.iso_3166_1_alpha_3, p.A3, p.adm0_a3, typeof f.id === "string" && f.id.length === 3 ? f.id : null];
+    for (var i = 0; i < cands.length; i++) {
+      var c = cands[i];
+      if (typeof c === "string" && c.length === 3 && c !== "-99") return c.toUpperCase();
+    }
+    var c2 = [p.ISO_A2, p.iso_a2, p["ISO3166-1-Alpha-2"], p.ISO2];
+    for (var j = 0; j < c2.length; j++) {
+      var q2 = c2[j];
+      if (typeof q2 === "string" && a2map[q2.toUpperCase()]) return a2map[q2.toUpperCase()];
+    }
+    return null;
+  }
+  function fixWind(f) {
+    var g = f.geometry;
+    if (!g) return f;
+    function fixPoly(coords) {
+      try {
+        if (d3.geo.area({ type: "Polygon", coordinates: coords }) > 2 * Math.PI) return coords.map(function(r) {
+          return r.slice().reverse();
+        });
+      } catch (e) {
+      }
+      return coords;
+    }
+    if (g.type === "Polygon") g.coordinates = fixPoly(g.coordinates);
+    else if (g.type === "MultiPolygon") g.coordinates = g.coordinates.map(fixPoly);
+    return f;
+  }
+  function ingestGeo(json) {
+    var fs = null;
+    if (json.type === "FeatureCollection") fs = json.features;
+    else if (json.type === "Topology") {
+      var k = Object.keys(json.objects)[0];
+      fs = topojson.feature(json, json.objects[k]).features;
+    } else if (json.type === "Feature") fs = [json];
+    if (!fs) throw new Error("formato não reconhecido");
+    var valid = {};
+    D.forEach(function(d) {
+      valid[A3[d.cc]] = 1;
+    });
+    var out = [], m = 0;
+    fs.forEach(function(f) {
+      if (!f.geometry) return;
+      var a3 = featA3(f);
+      var nf = { type: "Feature", id: a3 || "X" + out.length, properties: {}, geometry: JSON.parse(JSON.stringify(f.geometry)) };
+      if (a3 && valid[a3]) m++;
+      out.push(fixWind(nf));
+    });
+    if (m < 50) throw new Error("só reconheci " + m + " países pelos códigos ISO");
+    return out;
+  }
+  function iniciar15() {
+    $("impBor").onchange = function() {
+      var f = this.files[0];
+      this.value = "";
+      if (!f) return;
+      if (!window.d3 || !window.topojson) {
+        setStatus("As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.", 6e3);
+        return;
+      }
+      var fr = new FileReader();
+      fr.onload = function() {
+        try {
+          var list = ingestGeo(JSON.parse(fr.result)), m = setupFeatures(list);
+          bordersCustom = true;
+          emitir("fronteiras-carregadas");
+          updateOpts();
+          updateMapInfo();
+          idbSet("borders", JSON.stringify({ type: "FeatureCollection", features: list }));
+          setStatus("Fronteiras importadas: " + m + " países com contorno. Salvas neste aparelho.", 6e3);
+          if (texSource !== "custom" && estadoRender.gl) {
+            idbDel("tex-proc");
+            genTexture();
+          }
+        } catch (e) {
+          setStatus("Não consegui usar esse arquivo: " + e.message + ". Use um GeoJSON de países com códigos ISO (por exemplo ISO_A3).", 1e4);
+        }
+      };
+      fr.readAsText(f);
+    };
+    $("impTex").onchange = function() {
+      var f = this.files[0];
+      this.value = "";
+      if (!f) return;
+      if (!estadoRender.gl) {
+        setStatus("Este aparelho não suporta a textura 3D.", 5e3);
+        return;
+      }
+      var fr = new FileReader();
+      fr.onload = function() {
+        var im = new Image();
+        im.onload = function() {
+          var ratio = im.width / im.height, c = document.createElement("canvas");
+          c.width = 2048;
+          c.height = 1024;
+          c.getContext("2d").drawImage(im, 0, 0, 2048, 1024);
+          if (setTextureFrom(c, "custom")) {
+            c.toBlob(function(b) {
+              if (b) idbSet("tex-custom", b);
+            }, "image/jpeg", 0.92);
+            setStatus("Textura importada e salva." + (ratio < 1.9 || ratio > 2.1 ? " A proporção não era 2:1, então a imagem foi esticada." : ""), 7e3);
+          } else setStatus("Essa imagem não pôde ser usada como textura.", 6e3);
+        };
+        im.onerror = function() {
+          setStatus("Não consegui abrir essa imagem.", 6e3);
+        };
+        im.src = fr.result;
+      };
+      fr.readAsDataURL(f);
+    };
+    $("resetTex").onclick = function() {
+      idbDel("tex-custom").then(function() {
+        return idbGet("tex-proc");
+      }).then(function(b) {
+        if (b) return blobToTexCanvas(b).then(function(c) {
+          setTextureFrom(c, "proc");
+          setStatus("Voltei à textura gerada pelo app.", 3500);
+        });
+        if (estadoRender.feats) genTexture();
+        else setStatus("A textura será gerada quando as fronteiras carregarem.", 4e3);
+      });
+    };
+    confirmTap($("clearData"), "Toque de novo para apagar", function() {
+      Promise.all([idbDel("tex-custom"), idbDel("tex-proc"), idbDel("borders")]).then(function() {
+        setStatus("Dados de mapa apagados. Recarregue a página para começar do zero.", 8e3);
+      });
+    });
+  }
+
+  // web/src/js/visualizacao/selo.js
+  var selo_exports = {};
+  __export(selo_exports, {
+    paintSelBadge: () => paintSelBadge,
+    selBadgeMetrics: () => selBadgeMetrics
+  });
+  function selBadgeMetrics(d) {
+    var t1 = estadoMapa.labelMode === "p" || d.uni ? short(d) : capShort(d), t2 = d.uni ? d.cap : estadoMapa.labelMode === "p" ? "Capital: " + qcapDisp(d) : "País: " + short(d);
+    var fs = 16, maxw = W - 72 - 56, w1;
+    ctx.font = "700 " + fs + "px " + FONT;
+    w1 = ctx.measureText(t1).width;
+    while (w1 > maxw && fs > 10) {
+      fs--;
+      ctx.font = "700 " + fs + "px " + FONT;
+      w1 = ctx.measureText(t1).width;
+    }
+    ctx.font = "600 11.5px " + FONT;
+    var w2 = ctx.measureText(t2).width;
+    var bw = Math.min(W - 72, Math.max(w1, w2) + 56), bh = 46;
+    var bx = Math.max(6, Math.min(d.sx - bw / 2, W - bw - 66)), by = d.sy - bh - 20;
+    if (by < 6) by = d.sy + 20;
+    return { d, t1, t2, fs, bx, by, bw, bh };
+  }
+  function paintSelBadge(m) {
+    var d = m.d, col = REG[d.r].c, above = m.by < d.sy;
+    var px = Math.max(m.bx + 14, Math.min(d.sx, m.bx + m.bw - 14));
+    ctx.beginPath();
+    ctx.moveTo(px, above ? m.by + m.bh : m.by);
+    ctx.lineTo(d.sx, d.sy);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = col;
+    ctx.stroke();
+    ctx.fillStyle = "rgba(4,16,36,.93)";
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(m.bx, m.by, m.bw, m.bh, 13);
+    else ctx.rect(m.bx, m.by, m.bw, m.bh);
+    ctx.fill();
+    ctx.lineWidth = 2.2;
+    ctx.strokeStyle = col;
+    ctx.stroke();
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#fff";
+    if (d.dis) {
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(m.bx + 8, m.by + 9, 32, 28, 8);
+      else ctx.rect(m.bx + 8, m.by + 9, 32, 28);
+      ctx.fill();
+      ctx.font = "800 12px " + FONT;
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#0b1220";
+      ctx.fillText(d.cc, m.bx + 24, m.by + 24);
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#fff";
+    } else {
+      ctx.font = "28px 'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif";
+      ctx.fillText(d.flag, m.bx + 10, m.by + m.bh / 2 + 1);
+    }
+    ctx.font = "700 " + m.fs + "px " + FONT;
+    ctx.fillText(m.t1, m.bx + 48, m.by + 16);
+    ctx.font = "600 11.5px " + FONT;
+    ctx.fillStyle = "rgba(255,255,255,.72)";
+    ctx.fillText(m.t2, m.bx + 48, m.by + 34);
+  }
+
+  // web/src/js/visualizacao/mapa-2d.js
+  function R2now() {
+    return Math.min(W, H) * 0.26 * estadoCamera.zoom;
+  }
+  function proj2D(lngDeg, latDeg, R2, cx, cy) {
+    var lng = lngDeg * PI / 180 - estadoCamera.lam;
+    while (lng > PI) lng -= 2 * PI;
+    while (lng < -PI) lng += 2 * PI;
+    var lat = latDeg * PI / 180 - estadoCamera.phi;
+    return { x: cx + lng * R2, y: cy - lat * R2 };
+  }
+  function inv2D(sx, sy, R2, cx, cy) {
+    return [(estadoCamera.lam + (sx - cx) / R2) * 180 / PI, (estadoCamera.phi + (cy - sy) / R2) * 180 / PI];
+  }
+  function walkFeat2D(f, R2, cx, cy) {
+    var g = f && f.geometry;
+    if (!g) return;
+    var polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
+    polys.forEach(function(poly) {
+      poly.forEach(function(ring) {
+        var px = null;
+        ring.forEach(function(c, ci) {
+          var pp = proj2D(c[0], c[1], R2, cx, cy);
+          if (ci === 0 || Math.abs(pp.x - px) > PI * R2) ctx.moveTo(pp.x, pp.y);
+          else ctx.lineTo(pp.x, pp.y);
+          px = pp.x;
+        });
+        ctx.closePath();
+      });
+    });
+  }
+  function draw2D() {
+    var R2 = R2now(), cx = W / 2, cy = H * estadoCamera.cyFrac, i, d, k, lo, la;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "#0b2e52";
+    ctx.fillRect(0, 0, W, H);
+    var tex2 = estadoRender.useTex && estadoRender.optTex && texCanvas;
+    if (tex2) {
+      var tw = 2 * PI * R2, th = PI * R2, x0 = cx + (-PI - estadoCamera.lam) * R2, y0 = cy - (PI / 2 - estadoCamera.phi) * R2;
+      x0 = (x0 % tw + tw) % tw - tw;
+      ctx.imageSmoothingEnabled = true;
+      for (var xx = x0; xx < W; xx += tw) ctx.drawImage(texCanvas, xx, y0, tw, th);
+    }
+    ctx.lineWidth = 0.6;
+    for (lo = -180; lo < 180; lo += 30) {
+      var pp0 = proj2D(lo, 0, R2, cx, cy);
+      ctx.strokeStyle = "rgba(150,190,255,.14)";
+      ctx.beginPath();
+      ctx.moveTo(pp0.x, 0);
+      ctx.lineTo(pp0.x, H);
+      ctx.stroke();
+    }
+    for (la = -60; la <= 60; la += 30) {
+      var yy = cy - (la * PI / 180 - estadoCamera.phi) * R2;
+      ctx.strokeStyle = la === 0 ? "rgba(150,190,255,.3)" : "rgba(150,190,255,.14)";
+      ctx.lineWidth = la === 0 ? 1 : 0.6;
+      ctx.beginPath();
+      ctx.moveTo(0, yy);
+      ctx.lineTo(W, yy);
+      ctx.stroke();
+    }
+    var ds = tex2 ? 0 : Math.max(1, Math.min(2.4, R2 * 0.011));
+    ctx.fillStyle = "rgba(196,220,245,.55)";
+    ctx.beginPath();
+    for (k = 0; !tex2 && k < LLAT.length; k++) {
+      var pp = proj2D(LLNG[k], LLAT[k], R2, cx, cy);
+      if (pp.x < -8 || pp.x > W + 8 || pp.y < -8 || pp.y > H + 8) continue;
+      ctx.moveTo(pp.x + ds, pp.y);
+      ctx.arc(pp.x, pp.y, ds, 0, 6.2832);
+    }
+    ctx.fill();
+    if (estadoRender.feats) {
+      ctx.beginPath();
+      for (i = 0; i < D.length; i++) if (estadoRender.FEAT[i] && (estadoMapa.on[i] || !avail(D[i]))) walkFeat2D(estadoRender.FEAT[i], R2, cx, cy);
+      ctx.lineJoin = "round";
+      ctx.lineWidth = Math.max(0.6, Math.min(1.6, 0.5 + 0.15 * estadoCamera.zoom));
+      ctx.strokeStyle = "rgba(255,255,255,.72)";
+      ctx.stroke();
+      if (estadoMapa.selected && estadoRender.FEAT[estadoMapa.selected.i]) {
+        ctx.beginPath();
+        walkFeat2D(estadoRender.FEAT[estadoMapa.selected.i], R2, cx, cy);
+        ctx.fillStyle = "rgba(255,224,102,.28)";
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#ffe066";
+        ctx.stroke();
+      }
+    }
+    var vis = [];
+    for (i = 0; i < D.length; i++) {
+      d = D[i];
+      if (!estadoMapa.on[i]) continue;
+      var p2 = proj2D(d.lng, d.lat, R2, cx, cy);
+      if (p2.x < -40 || p2.x > W + 40 || p2.y < -40 || p2.y > H + 40) continue;
+      d.sx = p2.x;
+      d.sy = p2.y;
+      d.vz = 1;
+      vis.push(d);
+    }
+    if (ganchos.ocultarMarcadores()) vis = [];
+    var mr = Math.max(3.2, Math.min(6, R2 * 0.032));
+    for (i = 0; i < vis.length; i++) {
+      d = vis[i];
+      var rr = d === estadoMapa.selected ? mr * 1.9 : mr;
+      if (d === estadoMapa.selected) {
+        ctx.beginPath();
+        ctx.arc(d.sx, d.sy, rr + 5, 0, 7);
+        ctx.fillStyle = "rgba(255,255,255,.22)";
+        ctx.fill();
+      }
+      ctx.beginPath();
+      shapePath(d.sx, d.sy, rr, SHAPES[d.r]);
+      ctx.fillStyle = REG[d.r].c;
+      ctx.fill();
+      ctx.lineWidth = d === estadoMapa.selected ? 2.2 : 1.2;
+      ctx.strokeStyle = "#fff";
+      ctx.stroke();
+    }
+    if ((estadoCamera.zoom >= 1.4 || estadoMapa.selected) && !ganchos.treinoAberto()) {
+      ctx.lineJoin = "round";
+      var used = [], selB = null;
+      if (estadoMapa.selected && estadoMapa.on[estadoMapa.selected.i] && vis.indexOf(estadoMapa.selected) >= 0) {
+        selB = selBadgeMetrics(estadoMapa.selected);
+        used.push({ x: selB.bx - 6, y: selB.by - 6, w: selB.bw + 12, h: selB.bh + 12 });
+      }
+      for (i = 0; i < vis.length; i++) {
+        d = vis[i];
+        if (d === estadoMapa.selected || estadoCamera.zoom < 1.4) continue;
+        ctx.font = "500 10.5px " + FONT;
+        ctx.textBaseline = "middle";
+        ctx.lineWidth = 3;
+        var t = d.flag + " " + (estadoMapa.labelMode === "p" || d.uni ? short(d) : capShort(d));
+        var w = ctx.measureText(t).width;
+        var rx = d.sx + mr + 5, rct = { x: rx - 2, y: d.sy - 8, w: w + 4, h: 16 };
+        if (rx + w > W - 4) {
+          rct.x = d.sx - mr - 5 - w - 2;
+          rx = rct.x + 2;
+        }
+        var clash = false;
+        for (var u = 0; u < used.length; u++) {
+          var U = used[u];
+          if (!(rct.x > U.x + U.w || rct.x + rct.w < U.x || rct.y > U.y + U.h || rct.y + rct.h < U.y)) {
+            clash = true;
+            break;
+          }
+        }
+        if (clash) continue;
+        used.push(rct);
+        ctx.globalAlpha = 0.8;
+        ctx.strokeStyle = "rgba(4,16,36,.85)";
+        ctx.strokeText(t, rx, d.sy);
+        ctx.fillStyle = "#fff";
+        ctx.fillText(t, rx, d.sy);
+        ctx.globalAlpha = 1;
+      }
+      if (selB) paintSelBadge(selB);
+    }
+    ganchos.desenharSeloResposta(0, cx, cy);
+  }
+  function setFlat2D(v) {
+    estadoCamera.plano2D = v;
+    lsSet("globo.flat2d", v);
+    $("flat2d").setAttribute("aria-pressed", v ? "true" : "false");
+    $("flat2d").textContent = v ? "🌐" : "🗺️";
+    $("flat2d").setAttribute("aria-label", v ? "Ver como globo" : "Ver como mapa 2D");
+  }
+  function iniciar16() {
+    estadoCamera.plano2D = lsGet("globo.flat2d", false);
+    $("flat2d").onclick = function() {
+      setFlat2D(!estadoCamera.plano2D);
+    };
+    setFlat2D(estadoCamera.plano2D);
+  }
+
   // web/src/js/visualizacao/globo.js
-  var estadoCamera = {
-    dragging: false,
-    lam: -0.9,
-    phi: 0.25,
-    zoom: 1,
-    cyFrac: 0.5,
-    target: null,
-    auto: true,
-    lastInteract: 0
-  };
-  var estadoMapa = {
-    selected: null,
-    labelMode: "p",
-    includeDisputed: void 0,
-    includeDep: void 0,
-    includeUni: void 0,
-    on: void 0
-  };
-  var cv;
-  var ctx;
-  var W = 0;
-  var H = 0;
-  var R0 = 0;
-  var dpr = 1;
-  function avail(d) {
-    return (!d.dis || estadoMapa.includeDisputed) && (!d.dep || estadoMapa.includeDep) && (!d.uni || estadoMapa.includeUni);
-  }
-  function availCount() {
-    return D.filter(avail).length;
-  }
-  var reduce;
-  var FONT = 'system-ui,-apple-system,Segoe UI,Roboto,"Noto Color Emoji",sans-serif';
-  function resize() {
-    var r = cv.getBoundingClientRect();
-    W = r.width;
-    H = r.height;
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    cv.width = Math.round(W * dpr);
-    cv.height = Math.round(H * dpr);
-    glc.width = cv.width;
-    glc.height = cv.height;
-    R0 = Math.min(W, H) * 0.44;
-  }
-  var cosL;
-  var sinL;
-  var cosP;
-  var sinP;
-  function rot(x, y, z) {
-    var x1 = x * cosL - z * sinL, z1 = x * sinL + z * cosL;
-    var y2 = y * cosP - z1 * sinP, z2 = y * sinP + z1 * cosP;
-    return [x1, y2, z2];
-  }
   function drawPole(north, R, cx, cy) {
     var p = rot(0, north ? 1 : -1, 0);
     if (p[2] < 0.03) return;
@@ -4437,15 +4462,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.textAlign = "left";
   }
   function draw() {
-    if (flat2D) {
+    if (estadoCamera.plano2D) {
       draw2D();
       return;
     }
     var R = R0 * estadoCamera.zoom, cx = W / 2, cy = H * estadoCamera.cyFrac;
-    cosL = Math.cos(estadoCamera.lam);
-    sinL = Math.sin(estadoCamera.lam);
-    cosP = Math.cos(estadoCamera.phi);
-    sinP = Math.sin(estadoCamera.phi);
+    girar();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     var tex = estadoRender.useTex && estadoRender.optTex;
@@ -4619,69 +4641,49 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     drawPole(false, R, cx, cy);
     ganchos.desenharSeloResposta(R, cx, cy);
   }
-  function allOn() {
-    return D.every(function(d) {
-      return estadoMapa.on[d.i] || !avail(d);
-    });
-  }
-  function firstOn() {
-    for (var i = 0; i < D.length; i++) if (estadoMapa.on[i]) return i;
-    return -1;
-  }
-  function visIdx() {
-    var v = [];
-    estadoMapa.on.forEach(function(x, k) {
-      if (x) v.push(k);
-    });
-    return v;
-  }
-  function iniciar17() {
-    cv = document.getElementById("g");
-    ctx = cv.getContext("2d");
-    estadoMapa.includeDisputed = lsGet("globo.includeDisputed", true);
-    estadoMapa.includeDep = lsGet("globo.includeDep", false);
-    estadoMapa.includeUni = lsGet("globo.includeUni", false);
-    estadoMapa.on = D.map(function(d) {
-      return avail(d) ? 1 : 0;
-    });
-    reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) estadoCamera.auto = false;
-    window.addEventListener("resize", resize);
+  function frame() {
+    if (estadoCamera.target) {
+      var dl2 = shortest(estadoCamera.lam, estadoCamera.target.lam), dp = estadoCamera.target.phi - estadoCamera.phi, dz = estadoCamera.target.zoom - estadoCamera.zoom;
+      estadoCamera.lam += dl2 * 0.14;
+      estadoCamera.phi += dp * 0.14;
+      estadoCamera.zoom += dz * 0.14;
+      if (Math.abs(dl2) < 8e-4 && Math.abs(dp) < 8e-4 && Math.abs(dz) < 4e-3) estadoCamera.target = null;
+    } else if (estadoCamera.auto && !estadoCamera.dragging && !estadoMapa.selected && !ganchos.treinoAberto() && !estadoBrasil.statesMode && !estadoBrasil.selSt && !estadoCamera.plano2D && performance.now() - estadoCamera.lastInteract > 2500) {
+      estadoCamera.lam += 22e-4;
+    }
+    var wantCy = (estadoMapa.selected || estadoBrasil.selSt) && !ganchos.treinoAberto() ? Math.max(0.26, Math.min(0.5, (H - ganchos.alturaCartao()) / (2 * H))) : ganchos.treinoAberto() ? Math.max(0.24, Math.min(0.5, (H - ganchos.alturaTreino()) / (2 * H))) : 0.5;
+    estadoCamera.cyFrac += (wantCy - estadoCamera.cyFrac) * 0.15;
+    if (estadoCamera.lam > PI) estadoCamera.lam -= 2 * PI;
+    if (estadoCamera.lam < -PI) estadoCamera.lam += 2 * PI;
+    draw();
+    requestAnimationFrame(frame);
   }
 
   // web/src/js/interface/interacao.js
   var interacao_exports = {};
   __export(interacao_exports, {
-    iniciar: () => iniciar25,
+    iniciar: () => iniciar21,
     tap: () => tap,
     tap2D: () => tap2D
-  });
-
-  // web/src/js/interface/cartao-pais.js
-  var cartao_pais_exports = {};
-  __export(cartao_pais_exports, {
-    card: () => card,
-    closeCard: () => closeCard,
-    iniciar: () => iniciar23,
-    renderChips: () => renderChips,
-    renderFacts: () => renderFacts,
-    renderNear: () => renderNear,
-    select: () => select,
-    step: () => step
   });
 
   // web/src/js/interface/cartao-detalhes.js
   var cartao_detalhes_exports = {};
   __export(cartao_detalhes_exports, {
+    card: () => card,
+    closeCard: () => closeCard,
     estadoCartao: () => estadoCartao,
     fillInfo: () => fillInfo,
     fmtArea: () => fmtArea,
     fmtPop: () => fmtPop,
-    iniciar: () => iniciar18,
-    measureCard: () => measureCard
+    iniciar: () => iniciar17,
+    measureCard: () => measureCard,
+    tourStop: () => tourStop
   });
   var estadoCartao = {
-    cardH: 0
+    cardH: 0,
+    /** Intervalo do passeio automático pela rota (null = parado). */
+    passeio: null
   };
   function fmtPop(p) {
     if (!p) return "Sem população permanente";
@@ -4725,8 +4727,23 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function measureCard() {
     estadoCartao.cardH = card.style.display === "block" ? card.offsetHeight + 10 : 0;
   }
-  var sw = null;
-  function iniciar18() {
+  var card;
+  function closeCard() {
+    estadoMapa.selected = null;
+    estadoBrasil.selSt = null;
+    card.style.display = "none";
+    estadoCartao.cardH = 0;
+    tourStop();
+  }
+  function tourStop() {
+    if (!estadoCartao.passeio) return;
+    clearInterval(estadoCartao.passeio);
+    estadoCartao.passeio = null;
+    $("tour").textContent = "▶";
+    $("tour").setAttribute("aria-label", "Passeio pela rota");
+  }
+  function iniciar17() {
+    card = document.getElementById("card");
     ganchos.alturaCartao = function() {
       return estadoCartao.cardH;
     };
@@ -4736,23 +4753,21 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       $("moreb").textContent = b.hidden ? "Ver mais detalhes ▾" : "Ver menos ▴";
       setTimeout(measureCard, 40);
     };
-    card.addEventListener("pointerdown", function(e) {
-      if (e.target.closest("button")) {
-        sw = null;
-        return;
-      }
-      sw = { x: e.clientX, y: e.clientY };
-    });
-    card.addEventListener("pointerup", function(e) {
-      if (!sw) return;
-      var dx = e.clientX - sw.x, dy = e.clientY - sw.y;
-      sw = null;
-      if (Math.abs(dx) > 60 && Math.abs(dy) < 45) step(dx < 0 ? 1 : -1);
-    });
     window.addEventListener("resize", function() {
       setTimeout(measureCard, 60);
     });
   }
+
+  // web/src/js/interface/cartao-pais.js
+  var cartao_pais_exports = {};
+  __export(cartao_pais_exports, {
+    iniciar: () => iniciar19,
+    renderChips: () => renderChips,
+    renderFacts: () => renderFacts,
+    renderNear: () => renderNear,
+    select: () => select,
+    step: () => step
+  });
 
   // web/src/js/interface/filtros.js
   var filtros_exports = {};
@@ -4762,46 +4777,16 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     buildTree: () => buildTree,
     chips: () => chips,
     estadoFiltros: () => estadoFiltros,
-    iniciar: () => iniciar22,
+    hist: () => hist,
+    iniciar: () => iniciar18,
     setIncludeDep: () => setIncludeDep,
     setIncludeDisputed: () => setIncludeDisputed,
     setIncludeUni: () => setIncludeUni,
+    snap: () => snap,
     toggleNb: () => toggleNb,
-    updateNbBtn: () => updateNbBtn
+    updateNbBtn: () => updateNbBtn,
+    updateUndo: () => updateUndo
   });
-
-  // web/src/js/interface/filtros-desfazer.js
-  var filtros_desfazer_exports = {};
-  __export(filtros_desfazer_exports, {
-    iniciar: () => iniciar19,
-    snap: () => snap
-  });
-  var hist = [];
-  function updateUndo() {
-    var b = $("ubtn");
-    b.disabled = !hist.length;
-    b.style.opacity = hist.length ? 1 : 0.4;
-  }
-  function snap() {
-    hist.push(estadoMapa.on.slice());
-    if (hist.length > 30) hist.shift();
-    updateUndo();
-  }
-  function undo() {
-    if (!hist.length) return;
-    estadoMapa.on = hist.pop();
-    estadoFiltros.nbSaved = null;
-    afterFilter();
-    updateUndo();
-    var v = visIdx();
-    if (v.length === D.length) flyTo(estadoCamera.phi * 180 / PI, estadoCamera.lam * 180 / PI, 1);
-    else if (v.length) fitTo(v);
-    setStatus("Filtro desfeito.", 1800);
-  }
-  function iniciar19() {
-    $("ubtn").onclick = undo;
-    updateUndo();
-  }
 
   // web/src/js/interface/ganchos.js
   var ganchos_exports2 = {};
@@ -4842,95 +4827,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     /** Treino: o mesmo no mapa 2D. */
     toqueNoMapa2D: () => false
   };
-
-  // web/src/js/interface/passeio.js
-  var passeio_exports = {};
-  __export(passeio_exports, {
-    iniciar: () => iniciar21,
-    tourStop: () => tourStop
-  });
-
-  // web/src/js/interface/botoes.js
-  var botoes_exports = {};
-  __export(botoes_exports, {
-    iniciar: () => iniciar20,
-    spinB: () => spinB
-  });
-  var spinB;
-  var lp;
-  var lc;
-  function iniciar20() {
-    document.getElementById("zin").onclick = function() {
-      estadoCamera.target = null;
-      estadoCamera.zoom = Math.min(7, estadoCamera.zoom * 1.35);
-      estadoCamera.lastInteract = performance.now();
-    };
-    document.getElementById("zout").onclick = function() {
-      estadoCamera.target = null;
-      estadoCamera.zoom = Math.max(0.8, estadoCamera.zoom / 1.35);
-      estadoCamera.lastInteract = performance.now();
-    };
-    document.getElementById("pn").onclick = function() {
-      $("msheet").style.display = "none";
-      flyTo(90, estadoCamera.lam * 180 / PI, 1);
-    };
-    document.getElementById("ps").onclick = function() {
-      $("msheet").style.display = "none";
-      flyTo(-90, estadoCamera.lam * 180 / PI, 1);
-    };
-    spinB = document.getElementById("spin");
-    spinB.setAttribute("aria-pressed", estadoCamera.auto ? "true" : "false");
-    spinB.style.opacity = estadoCamera.auto ? 1 : 0.5;
-    spinB.onclick = function() {
-      estadoCamera.auto = !estadoCamera.auto;
-      spinB.setAttribute("aria-pressed", estadoCamera.auto ? "true" : "false");
-      spinB.style.opacity = estadoCamera.auto ? 1 : 0.5;
-    };
-    lp = document.getElementById("lp");
-    lc = document.getElementById("lc");
-    lp.onclick = function() {
-      estadoMapa.labelMode = "p";
-      lp.setAttribute("aria-pressed", "true");
-      lc.setAttribute("aria-pressed", "false");
-    };
-    lc.onclick = function() {
-      estadoMapa.labelMode = "c";
-      lc.setAttribute("aria-pressed", "true");
-      lp.setAttribute("aria-pressed", "false");
-    };
-  }
-
-  // web/src/js/interface/passeio.js
-  var tourT = null;
-  function tourStart() {
-    if (tourT) return;
-    var f = estadoBrasil.statesMode ? estadoBrasil.onS.indexOf(1) : firstOn();
-    if (f < 0) return;
-    estadoCamera.auto = false;
-    spinB.setAttribute("aria-pressed", "false");
-    spinB.style.opacity = 0.5;
-    if (estadoBrasil.statesMode) {
-      if (!estadoBrasil.selSt || !estadoBrasil.onS[estadoBrasil.selSt.i]) ganchosInterface.selecionarEstado(BRS[f], true);
-    } else if (!estadoMapa.selected || !estadoMapa.on[estadoMapa.selected.i]) select(D[f], true);
-    tourT = setInterval(function() {
-      step(1);
-    }, 4200);
-    $("tour").textContent = "⏸";
-    $("tour").setAttribute("aria-label", "Parar passeio");
-  }
-  function tourStop() {
-    if (!tourT) return;
-    clearInterval(tourT);
-    tourT = null;
-    $("tour").textContent = "▶";
-    $("tour").setAttribute("aria-label", "Passeio pela rota");
-  }
-  function iniciar21() {
-    $("tour").onclick = function() {
-      if (tourT) tourStop();
-      else tourStart();
-    };
-  }
 
   // web/src/js/interface/filtros.js
   var estadoFiltros = {
@@ -5205,7 +5101,18 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     afterFilter();
     emitir("categorias-mudaram", { placar: true });
   }
-  function iniciar22() {
+  var hist = [];
+  function updateUndo() {
+    var b = $("ubtn");
+    b.disabled = !hist.length;
+    b.style.opacity = hist.length ? 1 : 0.4;
+  }
+  function snap() {
+    hist.push(estadoMapa.on.slice());
+    if (hist.length > 30) hist.shift();
+    updateUndo();
+  }
+  function iniciar18() {
     ouvir("fronteiras-carregadas", afterFilter);
     chips = document.getElementById("chips");
     sel = document.getElementById("nbsel");
@@ -5271,7 +5178,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
 
   // web/src/js/interface/cartao-pais.js
-  var card;
   function renderNear(group, cur, pick2, label) {
     var box = document.getElementById("cnear");
     box.innerHTML = "";
@@ -5405,13 +5311,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       flyTo(cv2.lat, cv2.lng, zoomFor(cv2.r, 5.5));
     }
   }
-  function closeCard() {
-    estadoMapa.selected = null;
-    estadoBrasil.selSt = null;
-    card.style.display = "none";
-    estadoCartao.cardH = 0;
-    tourStop();
-  }
   function step(dir) {
     if (estadoBrasil.statesMode) {
       ganchosInterface.passoEstado(dir);
@@ -5427,8 +5326,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       }
     }
   }
-  function iniciar23() {
-    card = document.getElementById("card");
+  var sw = null;
+  function iniciar19() {
     document.getElementById("close").onclick = closeCard;
     document.getElementById("prev").onclick = function() {
       step(-1);
@@ -5437,19 +5336,32 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       step(1);
     };
     document.getElementById("nbtn").onclick = toggleNb;
+    card.addEventListener("pointerdown", function(e) {
+      if (e.target.closest("button")) {
+        sw = null;
+        return;
+      }
+      sw = { x: e.clientX, y: e.clientY };
+    });
+    card.addEventListener("pointerup", function(e) {
+      if (!sw) return;
+      var dx = e.clientX - sw.x, dy = e.clientY - sw.y;
+      sw = null;
+      if (Math.abs(dx) > 60 && Math.abs(dy) < 45) step(dx < 0 ? 1 : -1);
+    });
   }
 
   // web/src/js/interface/lista-proximos.js
   var lista_proximos_exports = {};
   __export(lista_proximos_exports, {
     hidePick: () => hidePick,
-    iniciar: () => iniciar24
+    iniciar: () => iniciar20
   });
   var pick;
   function hidePick() {
     pick.style.display = "none";
   }
-  function iniciar24() {
+  function iniciar20() {
     pick = $("pick");
     cv.addEventListener("pointerdown", function() {
       hidePick();
@@ -5482,7 +5394,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
   }
   function tap(px, py) {
-    if (flat2D && !estadoBrasil.statesMode) {
+    if (estadoCamera.plano2D && !estadoBrasil.statesMode) {
       tap2D(px, py);
       return;
     }
@@ -5547,7 +5459,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       select(chosen, false, grp);
     } else if (estadoMapa.selected) closeCard();
   }
-  function iniciar25() {
+  function iniciar21() {
     cv.addEventListener("pointerdown", function(e) {
       cv.setPointerCapture(e.pointerId);
       ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -5581,7 +5493,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         lastX = e.clientX;
         lastY = e.clientY;
         moved += Math.abs(dx) + Math.abs(dy);
-        var Re = (flat2D ? R2now() : R0) * estadoCamera.zoom;
+        var Re = (estadoCamera.plano2D ? R2now() : R0) * estadoCamera.zoom;
         estadoCamera.lam -= dx / Re;
         estadoCamera.phi = Math.max(-PI / 2, Math.min(PI / 2, estadoCamera.phi + dy / Re));
       }
@@ -5599,11 +5511,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/busca.js
   var busca_exports = {};
   __export(busca_exports, {
-    iniciar: () => iniciar26
+    iniciar: () => iniciar22
   });
   var q;
   var res;
-  function iniciar26() {
+  function iniciar22() {
     q = document.getElementById("q");
     res = document.getElementById("results");
     q.addEventListener("input", function() {
@@ -5660,10 +5572,81 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
   }
 
+  // web/src/js/interface/botoes.js
+  var botoes_exports = {};
+  __export(botoes_exports, {
+    iniciar: () => iniciar23,
+    spinB: () => spinB
+  });
+  var spinB;
+  var lp;
+  var lc;
+  function iniciar23() {
+    document.getElementById("zin").onclick = function() {
+      estadoCamera.target = null;
+      estadoCamera.zoom = Math.min(7, estadoCamera.zoom * 1.35);
+      estadoCamera.lastInteract = performance.now();
+    };
+    document.getElementById("zout").onclick = function() {
+      estadoCamera.target = null;
+      estadoCamera.zoom = Math.max(0.8, estadoCamera.zoom / 1.35);
+      estadoCamera.lastInteract = performance.now();
+    };
+    document.getElementById("pn").onclick = function() {
+      $("msheet").style.display = "none";
+      flyTo(90, estadoCamera.lam * 180 / PI, 1);
+    };
+    document.getElementById("ps").onclick = function() {
+      $("msheet").style.display = "none";
+      flyTo(-90, estadoCamera.lam * 180 / PI, 1);
+    };
+    spinB = document.getElementById("spin");
+    spinB.setAttribute("aria-pressed", estadoCamera.auto ? "true" : "false");
+    spinB.style.opacity = estadoCamera.auto ? 1 : 0.5;
+    spinB.onclick = function() {
+      estadoCamera.auto = !estadoCamera.auto;
+      spinB.setAttribute("aria-pressed", estadoCamera.auto ? "true" : "false");
+      spinB.style.opacity = estadoCamera.auto ? 1 : 0.5;
+    };
+    lp = document.getElementById("lp");
+    lc = document.getElementById("lc");
+    lp.onclick = function() {
+      estadoMapa.labelMode = "p";
+      lp.setAttribute("aria-pressed", "true");
+      lc.setAttribute("aria-pressed", "false");
+    };
+    lc.onclick = function() {
+      estadoMapa.labelMode = "c";
+      lc.setAttribute("aria-pressed", "true");
+      lp.setAttribute("aria-pressed", "false");
+    };
+  }
+
+  // web/src/js/interface/filtros-desfazer.js
+  var filtros_desfazer_exports = {};
+  __export(filtros_desfazer_exports, {
+    iniciar: () => iniciar24
+  });
+  function undo() {
+    if (!hist.length) return;
+    estadoMapa.on = hist.pop();
+    estadoFiltros.nbSaved = null;
+    afterFilter();
+    updateUndo();
+    var v = visIdx();
+    if (v.length === D.length) flyTo(estadoCamera.phi * 180 / PI, estadoCamera.lam * 180 / PI, 1);
+    else if (v.length) fitTo(v);
+    setStatus("Filtro desfeito.", 1800);
+  }
+  function iniciar24() {
+    $("ubtn").onclick = undo;
+    updateUndo();
+  }
+
   // web/src/js/interface/filtros-favoritos.js
   var filtros_favoritos_exports = {};
   __export(filtros_favoritos_exports, {
-    iniciar: () => iniciar27
+    iniciar: () => iniciar25
   });
   function favs() {
     return lsGet("globo.fav.v1", []);
@@ -5716,7 +5699,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       box.appendChild(row);
     });
   }
-  function iniciar27() {
+  function iniciar25() {
     $("favsave").onclick = function() {
       var v = visIdx();
       if (!v.length) {
@@ -5735,13 +5718,41 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     renderFavs();
   }
 
+  // web/src/js/interface/passeio.js
+  var passeio_exports = {};
+  __export(passeio_exports, {
+    iniciar: () => iniciar26
+  });
+  function tourStart() {
+    if (estadoCartao.passeio) return;
+    var f = estadoBrasil.statesMode ? estadoBrasil.onS.indexOf(1) : firstOn();
+    if (f < 0) return;
+    estadoCamera.auto = false;
+    spinB.setAttribute("aria-pressed", "false");
+    spinB.style.opacity = 0.5;
+    if (estadoBrasil.statesMode) {
+      if (!estadoBrasil.selSt || !estadoBrasil.onS[estadoBrasil.selSt.i]) ganchosInterface.selecionarEstado(BRS[f], true);
+    } else if (!estadoMapa.selected || !estadoMapa.on[estadoMapa.selected.i]) select(D[f], true);
+    estadoCartao.passeio = setInterval(function() {
+      step(1);
+    }, 4200);
+    $("tour").textContent = "⏸";
+    $("tour").setAttribute("aria-label", "Parar passeio");
+  }
+  function iniciar26() {
+    $("tour").onclick = function() {
+      if (estadoCartao.passeio) tourStop();
+      else tourStart();
+    };
+  }
+
   // web/src/js/interface/distancia.js
   var distancia_exports = {};
   __export(distancia_exports, {
     drawArc: () => drawArc,
     estadoDistancia: () => estadoDistancia,
     fillCountrySelect: () => fillCountrySelect,
-    iniciar: () => iniciar28,
+    iniciar: () => iniciar27,
     slerp: () => slerp
   });
 
@@ -5767,7 +5778,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return [a[0] * s1 + b[0] * s2, a[1] * s1 + b[1] * s2, a[2] * s1 + b[2] * s2];
   }
   function drawArc(R, cx, cy) {
-    if (!estadoDistancia.arc || flat2D) return;
+    if (!estadoDistancia.arc || estadoCamera.plano2D) return;
     ctx.save();
     ctx.setLineDash([7, 5]);
     ctx.lineWidth = 2.4;
@@ -5811,7 +5822,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     sel2.value = byName[norm(first)];
   }
-  function iniciar28() {
+  function iniciar27() {
     ganchos.desenharArco = drawArc;
     fillCountrySelect($("dA"), "Brasil");
     fillCountrySelect($("dB"), "Japão");
@@ -5841,7 +5852,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var exportar_exports = {};
   __export(exportar_exports, {
     csvCell: () => csvCell,
-    iniciar: () => iniciar29,
+    iniciar: () => iniciar28,
     offerFile: () => offerFile
   });
   var dlNS = null;
@@ -5919,7 +5930,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     if (!n) box.textContent = "Nenhum país ligado nos filtros.";
   }
-  function iniciar29() {
+  function iniciar28() {
     setTimeout(function() {
       try {
         if (window.claude && claude.use) claude.use("downloads").then(function(n) {
@@ -5982,12 +5993,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoTreino: () => estadoTreino,
     freshQS: () => freshQS,
     inScope: () => inScope,
-    iniciar: () => iniciar30,
+    iniciar: () => iniciar29,
     matches: () => matches,
     measureQ: () => measureQ,
     qHide: () => qHide,
     quiz: () => quiz,
-    scopeLabel: () => scopeLabel
+    resetSession: () => resetSession,
+    scopeLabel: () => scopeLabel,
+    stopTimerTick: () => stopTimerTick
   });
   var estadoTreino = {
     QS: void 0,
@@ -6076,7 +6089,17 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (sc.t === "reg") return REG[sc.r].n;
     return sc.s;
   }
-  function iniciar30() {
+  function resetSession() {
+    quiz.sessionAsked = 0;
+    quiz.sessionLog = [];
+  }
+  function stopTimerTick() {
+    if (quiz.timerInt) {
+      clearInterval(quiz.timerInt);
+      quiz.timerInt = null;
+    }
+  }
+  function iniciar29() {
     ganchos.treinoAberto = function() {
       return quiz.open;
     };
@@ -6167,464 +6190,166 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     tierOf: () => tierOf,
     unitWord: () => unitWord,
     updateScopeBackBtn: () => updateScopeBackBtn,
-    updateScopeBtn: () => updateScopeBtn
-  });
-
-  // web/src/js/treino/perguntas.js
-  var perguntas_exports = {};
-  __export(perguntas_exports, {
-    buildModeButtons: () => buildModeButtons,
-    iniciar: () => iniciar37,
-    nextQ: () => nextQ,
-    pickStateNear: () => pickStateNear,
-    quizMapAnswer: () => quizMapAnswer,
-    quizMapAnswerBR: () => quizMapAnswerBR,
-    quizOpen: () => quizOpen,
-    quizSetMode: () => quizSetMode,
-    resetSession: () => resetSession,
-    stopTimerTick: () => stopTimerTick,
+    updateScopeBtn: () => updateScopeBtn,
     updateTrainRow: () => updateTrainRow
   });
-
-  // web/src/js/brasil/modo-estados.js
-  var modo_estados_exports = {};
-  __export(modo_estados_exports, {
-    enterStates: () => enterStates,
-    exitStates: () => exitStates,
-    iniciar: () => iniciar33,
-    updateStBtn: () => updateStBtn
-  });
-
-  // web/src/js/brasil/cartao-estado.js
-  var cartao_estado_exports = {};
-  __export(cartao_estado_exports, {
-    iniciar: () => iniciar31,
-    selectSt: () => selectSt
-  });
-  function fillInfoSt(st) {
-    var box = $("cinfo");
-    box.innerHTML = "";
-    [["Sigla", st.sigla], ["Código IBGE", st.ibge]].forEach(function(r) {
-      var row = document.createElement("div");
-      row.className = "irow";
-      var a = document.createElement("span");
-      a.textContent = r[0];
-      var b = document.createElement("b");
-      b.textContent = r[1];
-      row.appendChild(a);
-      row.appendChild(b);
-      box.appendChild(row);
-    });
-    var n = document.createElement("div");
-    n.className = "inote";
-    n.textContent = "Valores aproximados (Censo 2022 e áreas do IBGE, arredondados). Confira em fonte oficial antes de citar.";
-    box.appendChild(n);
+  function QD() {
+    return estadoTreino.quizDomain === "br" ? BRS : D;
   }
-  function refreshNbC() {
-    estadoBrasil.stNbC = estadoBrasil.stSaved && estadoBrasil.selSt ? estadoBrasil.selSt.cn.slice() : [];
+  function qcc(o) {
+    return estadoTreino.quizDomain === "br" ? "BR-" + o.sigla : o.cc;
   }
-  function renderStCountries(st) {
-    var box = document.getElementById("cncty");
-    box.innerHTML = "";
-    var t = document.createElement("span");
-    t.className = "nt";
-    t.textContent = st.cn.length ? "Países na fronteira" : "Não faz fronteira com outro país";
-    box.appendChild(t);
-    st.cn.forEach(function(k) {
-      var b = document.createElement("button");
-      b.textContent = D[k].flag + " " + short(D[k]);
-      b.onclick = function() {
-        exitStates(false);
-        select(D[k], true);
-      };
-      box.appendChild(b);
-    });
-    box.hidden = false;
+  function qflag(o) {
+    return estadoTreino.quizDomain === "br" ? o.sigla : dflag(o);
   }
-  function selectSt(st, fly, group) {
-    if (!estadoBrasil.onS[st.i]) {
-      estadoBrasil.onS[st.i] = 1;
-      afterFilter();
-    }
-    estadoBrasil.selSt = st;
-    estadoMapa.selected = null;
-    refreshNbC();
-    $("hint").style.display = "none";
-    $("cdot").style.background = BRREG[st.reg].c;
-    $("creg").textContent = "Brasil · " + BRREG[st.reg].n;
-    var fl = $("cflag");
-    fl.textContent = st.sigla;
-    fl.className = "flag sig";
-    $("cname").textContent = st.name;
-    $("ccap").textContent = st.cap;
-    $("ccapnote").textContent = "";
-    ganchosInterface.mostrarDesempenho("BR-" + st.sigla, true);
-    var ob = $("cobs");
-    ob.textContent = st.note;
-    ob.style.display = st.note ? "block" : "none";
-    var dens = st.pop / st.area;
-    renderFacts([["👥 População", fmtPop(st.pop / 1e3)], ["📐 Área", fmtArea(st.area)], ["🏙️ Densidade", (dens < 10 ? dens.toFixed(1) : Math.round(dens)).toString().replace(".", ",") + " hab./km²"], ["🧭 Região", BRREG[st.reg].n]]);
-    renderChips("Estados vizinhos", st.nb.map(function(k) {
-      return { t: BRS[k].sigla + " · " + BRS[k].name, f: function() {
-        selectSt(BRS[k], true);
-      } };
-    }), "Não faz fronteira com outro estado.");
-    card.style.display = "block";
-    updateNbBtn();
-    updateStBtn();
-    renderNear(group, st, function(x) {
-      selectSt(x, false, group);
-    }, function(x) {
-      return x.sigla + " " + x.name;
-    });
-    renderStCountries(st);
-    fillInfoSt(st);
-    setTimeout(measureCard, 40);
-    if (fly === false) flyTo(st.lat, st.lng, Math.max(estadoCamera.zoom, 1.6));
-    else {
-      var v = stateView(st);
-      flyTo(v.lat, v.lng, zoomFor(v.r, 5.5));
-    }
+  function qcapD(o) {
+    return estadoTreino.quizDomain === "br" ? o.cap : qcapDisp(o);
   }
-  function stepSt(dir) {
-    if (!estadoBrasil.selSt) return;
-    var i = estadoBrasil.selSt.i, n = BRS.length;
-    for (var k = 0; k < n; k++) {
-      i = (i + dir + n) % n;
-      if (estadoBrasil.onS[i]) {
-        selectSt(BRS[i], true);
-        return;
-      }
-    }
+  function unitWord(n) {
+    return estadoTreino.quizDomain === "br" ? n === 1 ? "estado" : "estados" : n === 1 ? "país" : "países";
   }
-  function toggleNbSt() {
-    if (estadoBrasil.stSaved) {
-      estadoBrasil.onS = estadoBrasil.stSaved.slice();
-      estadoBrasil.stSaved = null;
-      refreshNbC();
-      afterFilter();
-      var v = [];
-      estadoBrasil.onS.forEach(function(x, k) {
-        if (x) v.push(k);
+  function regNameOf(o) {
+    return estadoTreino.quizDomain === "br" ? BRREG[o.r].n : o.sub && o.sub !== REG[o.r].n ? o.sub : REG[o.r].n;
+  }
+  function applyDomainForScope() {
+    var wasBR = estadoTreino.quizDomain === "br";
+    estadoTreino.quizDomain = estadoTreino.quizScope.t === "br" || estadoTreino.quizScope.t === "brreg" ? "br" : "world";
+    if (estadoTreino.quizDomain === "br") {
+      if (estadoCamera.plano2D) setFlat2D(false);
+      estadoBrasil.statesMode = true;
+      estadoBrasil.onS = BRS.map(function(s) {
+        return estadoTreino.quizScope.t === "brreg" ? s.r === estadoTreino.quizScope.r ? 1 : 0 : 1;
       });
-      var b = countryView(byName[norm("Brasil")]);
-      if (v.length === BRS.length) flyTo(b.lat, b.lng, zoomFor(b.r, 3));
-      else fitStates(v, []);
-      return;
-    }
-    if (!estadoBrasil.selSt) return;
-    estadoBrasil.stSaved = estadoBrasil.onS.slice();
-    estadoBrasil.onS = BRS.map(function() {
-      return 0;
-    });
-    var idx = [estadoBrasil.selSt.i].concat(estadoBrasil.selSt.nb);
-    idx.forEach(function(k) {
-      estadoBrasil.onS[k] = 1;
-    });
-    refreshNbC();
-    afterFilter();
-    fitStates(idx, estadoBrasil.stNbC);
-  }
-  function stTap(x, y) {
-    var R = R0 * estadoCamera.zoom, cand = [];
-    BRS.forEach(function(st) {
-      if (!estadoBrasil.onS[st.i]) return;
-      var p = rot(st.x, st.y, st.z);
-      if (p[2] <= 0.05) return;
-      var sx = W / 2 + R * p[0], sy = H * estadoCamera.cyFrac - R * p[1], dd = (sx - x) * (sx - x) + (sy - y) * (sy - y);
-      if (dd < 36 * 36) cand.push({ s: st, dd });
-    });
-    cand.sort(function(a, b) {
-      return a.dd - b.dd;
-    });
-    var precise = cand.length && cand[0].dd < 14 * 14;
-    var poly = precise ? null : stateAt(x, y);
-    var chosen = precise ? cand[0].s : poly || (cand.length ? cand[0].s : null);
-    if (chosen) {
-      var grp = cand.map(function(c) {
-        return c.s;
-      });
-      if (grp.indexOf(chosen) < 0) grp.unshift(chosen);
-      selectSt(chosen, false, grp);
-    } else if (estadoBrasil.selSt) {
+      if (quiz.mode === "flag") quiz.mode = "cap";
+    } else if (wasBR) {
+      estadoBrasil.statesMode = false;
       estadoBrasil.selSt = null;
-      card.style.display = "none";
-      estadoCartao.cardH = 0;
     }
   }
-  function iniciar31() {
-    ganchosInterface.passoEstado = stepSt;
-    ganchosInterface.alternarVizinhosEstado = toggleNbSt;
-    ganchosInterface.selecionarEstado = selectSt;
-    ganchosInterface.toqueEstados = function(x, y) {
-      if (!estadoBrasil.statesMode) return false;
-      stTap(x, y);
-      return true;
-    };
+  function updateScopeBtn() {
+    $("qscopev").textContent = "📍 " + scopeLabel();
+    $("qfocusb").textContent = "Foco: " + { mix: "tudo", "new": "só novos", wrong: "só errados" }[estadoTreino.quizFocus];
+    updateTrainRow();
   }
-
-  // web/src/js/brasil/importar-contornos.js
-  var importar_contornos_exports = {};
-  __export(importar_contornos_exports, {
-    ensureStateShapes: () => ensureStateShapes,
-    iniciar: () => iniciar32
-  });
-  function stFeatIndex(f) {
-    var p = f.properties || {};
-    var idc = [p.id, p.ID, f.id, p.iso_3166_2, p["ISO3166-2"], p.ISO_3166_2, p.hasc, p.HASC_1];
-    for (var a = 0; a < idc.length; a++) {
-      var v = idc[a];
-      if (typeof v === "string") {
-        var m = v.match(/^(?:BR[-.])?([A-Za-z]{2})$/);
-        if (m && BRBY[m[1].toUpperCase()] !== void 0) return BRBY[m[1].toUpperCase()];
-      }
-    }
-    var cands = [p.SIGLA, p.sigla, p.UF, p.uf, p.SIGLA_UF, p.sigla_uf, p.abbrev_state, p.abbrev, p.postal];
-    for (var i = 0; i < cands.length; i++) {
-      var c = cands[i];
-      if (typeof c === "string" && BRBY[c.toUpperCase()] !== void 0) return BRBY[c.toUpperCase()];
-    }
-    var codes = [p.codarea, p.CD_UF, p.CD_GEOCUF, p.GEOCODIGO, p.cod_uf, p.codigo_ibge, p.id, f.id];
-    for (var j = 0; j < codes.length; j++) {
-      var q2 = codes[j];
-      if (q2 == null || !/^\d{2}/.test(String(q2))) continue;
-      q2 = String(q2).slice(0, 2);
-      for (var k = 0; k < BRS.length; k++) if (BRS[k].ibge === q2) return k;
-    }
-    var names = [p.name, p.NAME, p.NOME, p.nome, p.NM_UF, p.NM_ESTADO, p.estado, p.ESTADO, p.name_1, p.NAME_1];
-    for (var m2 = 0; m2 < names.length; m2++) {
-      var n = names[m2];
-      if (typeof n !== "string") continue;
-      n = norm(n);
-      for (var t = 0; t < BRS.length; t++) if (norm(BRS[t].name) === n) return t;
-      if (n === "federal district") return BRBY.DF;
-    }
-    return -1;
+  function updateScopeBackBtn() {
+    var btn = $("qscopeback");
+    if (estadoTreino.quizScopePrev) {
+      btn.hidden = false;
+      var save = estadoTreino.quizScope;
+      estadoTreino.quizScope = estadoTreino.quizScopePrev;
+      btn.textContent = "↩ Voltar para: " + scopeLabel();
+      estadoTreino.quizScope = save;
+    } else btn.hidden = true;
   }
-  function setupStates(list) {
-    estadoBrasil.STFEAT = BRS.map(function() {
-      return null;
-    });
-    estadoBrasil.STGEOM = {};
-    var m = 0;
-    list.forEach(function(f) {
-      var k = stFeatIndex(f);
-      if (k >= 0 && !estadoBrasil.STFEAT[k]) {
-        estadoBrasil.STFEAT[k] = f;
-        m++;
-      }
-    });
-    return m;
+  function fitScopeView(pl) {
+    if (estadoTreino.quizDomain === "br") fitStates(pl, []);
+    else fitTo(pl);
   }
-  function ingestStates(json) {
-    var fs = null;
-    if (json.type === "FeatureCollection") fs = json.features;
-    else if (json.type === "Topology" && window.topojson) {
-      var k = Object.keys(json.objects)[0];
-      fs = topojson.feature(json, json.objects[k]).features;
-    }
-    if (!fs) throw new Error("formato não reconhecido");
-    var out = [], m = 0;
-    fs.forEach(function(f) {
-      if (!f.geometry) return;
-      var nf = { type: "Feature", id: f.id, properties: f.properties || {}, geometry: JSON.parse(JSON.stringify(f.geometry)) };
-      if (stFeatIndex(nf) >= 0) m++;
-      out.push(fixWind(nf));
-    });
-    if (m < 25) throw new Error("só reconheci " + m + " dos 27 estados");
-    return out;
-  }
-  function saveStates(list) {
-    var slim = list.map(function(x) {
-      var k = stFeatIndex(x);
-      return { type: "Feature", id: "S" + k, properties: { SIGLA: k >= 0 ? BRS[k].sigla : "" }, geometry: x.geometry };
-    });
-    idbSet("br-states", JSON.stringify({ type: "FeatureCollection", features: slim }));
-  }
-  var stAuto = 0;
-  function loadAmcharts() {
-    return new Promise(function(ok, no) {
-      if (window.am5geodata_brazilLow) return ok(window.am5geodata_brazilLow);
-      var oe = window.exports, om = window.module;
-      window.exports = {};
-      window.module = { exports: window.exports };
-      function restore() {
-        if (oe === void 0) delete window.exports;
-        else window.exports = oe;
-        if (om === void 0) delete window.module;
-        else window.module = om;
-      }
-      var urls = ["lib/brazilLow.js","https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5.1.4/brazilLow.js", "https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5/brazilLow.js"];
-      (function next(i) {
-        if (i >= urls.length) {
-          restore();
-          return no(new Error("indisponível"));
-        }
-        var sc = document.createElement("script");
-        sc.src = urls[i];
-        sc.onload = function() {
-          var g = window.am5geodata_brazilLow || window.module && window.module.exports && (window.module.exports.default || window.module.exports) || window.exports && (window.exports.default || window.exports);
-          if (g && g.features && g.features.length) {
-            restore();
-            ok(g);
-          } else next(i + 1);
-        };
-        sc.onerror = function() {
-          next(i + 1);
-        };
-        document.head.appendChild(sc);
-      })(0);
-    });
-  }
-  function ensureStateShapes() {
-    if (estadoBrasil.STFEAT.some(function(f) {
-      return f;
-    }) || stAuto === 1) return;
-    if (!estadoRender.feats || !window.d3) {
-      setStatus("Os limites dos estados aparecem depois que o mapa carregar. Importe um arquivo em ⋯ Mais se preferir.", 6e3);
-      return;
-    }
-    stAuto = 1;
-    setStatus("Carregando os limites dos estados…");
-    loadAmcharts().then(function(g) {
-      var list = ingestStates(g), m = setupStates(list);
-      saveStates(list);
-      stAuto = 2;
-      setStatus("Limites dos estados carregados (" + m + " de 27). Dados: amCharts geodata / Natural Earth.", 6e3);
-    }).catch(function() {
-      stAuto = 0;
-      setStatus("Não consegui carregar os limites dos estados sozinho. Você pode importar um GeoJSON em ⋯ Mais → Brasil.", 9e3);
-    });
-  }
-  function loadSavedStates() {
-    idbGet("br-states").then(function(str) {
-      if (!str) return;
-      var tries = 0;
-      (function wait() {
-        if (window.d3 && estadoRender.feats) {
-          try {
-            setupStates(JSON.parse(str).features);
-          } catch (e) {
-          }
-          return;
-        }
-        if (++tries < 80) setTimeout(wait, 500);
-      })();
-    });
-  }
-  function iniciar32() {
-    $("impSt").onchange = function() {
-      var f = this.files[0];
-      this.value = "";
-      if (!f) return;
-      if (!window.d3 || !window.topojson) {
-        setStatus("As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.", 6e3);
+  function scopeView() {
+    if (estadoTreino.quizDomain === "br") {
+      if (estadoTreino.quizScope.t === "br") {
+        var v = countryView(byName[norm("Brasil")]);
+        flyTo(v.lat, v.lng, zoomFor(v.r, 3));
         return;
       }
-      var fr = new FileReader();
-      fr.onload = function() {
-        try {
-          var list = ingestStates(JSON.parse(fr.result)), m = setupStates(list);
-          saveStates(list);
-          setStatus("Contornos dos estados importados (" + m + " de 27). Salvos neste aparelho.", 6e3);
-        } catch (e) {
-          setStatus("Não consegui usar esse arquivo: " + e.message + ". Use um GeoJSON dos estados do Brasil (por exemplo, a malha do IBGE).", 1e4);
-        }
-      };
-      fr.readAsText(f);
-    };
-    loadSavedStates();
-  }
-
-  // web/src/js/brasil/modo-estados.js
-  function updateStBtn() {
-    $("stbtn").style.display = !estadoBrasil.statesMode && estadoMapa.selected && estadoMapa.selected.cc === "BR" ? "block" : "none";
-  }
-  function enterStates(st) {
-    if (flat2D) setFlat2D(false);
-    emitir("modo-estados-abriu");
-    tourStop();
-    hidePick();
-    estadoBrasil.statesMode = true;
-    document.body.classList.add("states");
-    closeCard();
-    estadoBrasil.onS = BRS.map(function() {
-      return 1;
-    });
-    estadoBrasil.stSaved = null;
-    estadoBrasil.stNbC = [];
-    buildChips();
-    updateNbBtn();
-    setStatus("");
-    selectSt(st || BRS[0], true);
-    ensureStateShapes();
-  }
-  function exitStates(goBrazil) {
-    estadoBrasil.statesMode = false;
-    document.body.classList.remove("states");
-    estadoBrasil.selSt = null;
-    estadoBrasil.stSaved = null;
-    estadoBrasil.stNbC = [];
-    card.style.display = "none";
-    estadoCartao.cardH = 0;
-    hidePick();
-    buildChips();
-    afterFilter();
-    if (goBrazil !== false) select(D[byName[norm("Brasil")]], true);
-  }
-  function iniciar33() {
-    ganchosInterface.atualizarBotaoEstados = updateStBtn;
-    ganchosInterface.abrirEstado = enterStates;
-    $("stexit").onclick = function() {
-      exitStates(true);
-    };
-    $("stbtn").onclick = function() {
-      enterStates(null);
-    };
-  }
-
-  // web/src/js/treino/dica.js
-  var dica_exports = {};
-  __export(dica_exports, {
-    addHintBtn: () => addHintBtn
-  });
-  function hintText(d) {
-    var reg = regNameOf(d);
-    if (quiz.mode === "cap") {
-      var l = (qcapD(d).replace(/[^\p{L}]/gu, "")[0] || "?").toUpperCase();
-      return "Fica em: " + reg + '. A capital começa com "' + l + '".';
+      var pl2 = poolIdx();
+      if (pl2.length) fitStates(pl2, []);
+      else resetView();
+      return;
     }
-    if (quiz.mode === "code") return "Fica em: " + reg + ".";
-    var l2 = (short(d).replace(/[^\p{L}]/gu, "")[0] || "?").toUpperCase();
-    return "Fica em: " + reg + '. O nome começa com "' + l2 + '".';
+    if (estadoTreino.quizScope.t === "world") {
+      resetView();
+      return;
+    }
+    var pl = poolIdx();
+    if (pl.length) fitTo(pl);
+    else resetView();
   }
-  function addHintBtn(container, d, isMap) {
-    var b = document.createElement("button");
-    b.className = "qcenter qhintbtn";
-    b.textContent = isMap ? "💡 Dica (revela a região)" : "💡 Dica";
-    b.onclick = function() {
-      if (quiz.hinted || quiz.answered) return;
-      quiz.hinted = true;
-      var reg = regNameOf(d);
-      if (isMap) {
-        b.textContent = "💡 " + reg;
-        var idxs = poolIdx().filter(function(k) {
-          return QD()[k].r === d.r && (estadoTreino.quizDomain === "world" ? QD()[k].sub === d.sub : true);
-        });
-        if (idxs.length) fitScopeView(idxs);
-      } else {
-        b.textContent = "💡 " + hintText(d);
+  function emptyMsg() {
+    var u = unitWord(2);
+    if (estadoTreino.quizFocus === "wrong") return "Nenhum " + unitWord(1) + ' errado neste escopo — bom sinal! Troque o foco para "tudo" ou "só novos".';
+    if (estadoTreino.quizFocus === "new") return "Você já viu todos os " + u + ' deste escopo. Troque o foco para "tudo" ou "só errados".';
+    return "Nenhum " + unitWord(1) + " neste escopo. Escolha outro em 📍.";
+  }
+  function inScopeActive(o) {
+    if (estadoTreino.quizDomain === "br") return estadoTreino.quizScope.t === "brreg" ? o.r === estadoTreino.quizScope.r : true;
+    return inScope(o);
+  }
+  function poolIdx() {
+    var arr = QD(), p = [];
+    for (var i = 0; i < arr.length; i++) {
+      if (!inScopeActive(arr[i])) continue;
+      if (arr[i].dis && !estadoMapa.includeDisputed) continue;
+      if (arr[i].dep && !estadoMapa.includeDep) continue;
+      if (arr[i].uni && (!estadoMapa.includeUni || quiz.mode !== "map")) continue;
+      if (arr[i].pseudo && (quiz.mode === "flag" || quiz.mode === "code")) continue;
+      if (quiz.mode === "flag" && arr[i].dis) continue;
+      if (quiz.mode === "neighbor") {
+        var nbz = estadoTreino.quizDomain === "br" ? arr[i].nb : NB[i];
+        if (!nbz || !nbz.length) continue;
       }
-      b.disabled = true;
-    };
-    container.appendChild(b);
+      if (quiz.mode === "map") {
+        if (estadoTreino.quizDomain === "br") {
+          if (estadoBrasil.STFEAT.some(function(f) {
+            return f;
+          }) && !estadoBrasil.STFEAT[i]) continue;
+        } else {
+          if (estadoRender.feats && !estadoRender.FEAT[i] && !arr[i].uni) continue;
+        }
+      }
+      p.push(i);
+    }
+    return p;
   }
+  var TIER_P = { "new": 0.6, "wrong": 0.3, "ok": 0.1 };
+  function mstats() {
+    return estadoTreino.QS.m[quiz.mode] || (estadoTreino.QS.m[quiz.mode] = {});
+  }
+  function gapOf(e) {
+    if (e.s === 0) return 3;
+    var g = Math.min(120, 12 + 12 * e.s);
+    return e.w > 0 ? Math.round(g * 0.6) : g;
+  }
+  function tierOf(i) {
+    var e = mstats()[qcc(QD()[i])];
+    return !e ? "new" : e.s === 0 ? "wrong" : "ok";
+  }
+  function updateTrainRow() {
+    var el = $("mtrainv");
+    if (el) el.textContent = (quiz.type === "type" ? "Digitar" : "Múltipla escolha") + " · " + { mix: "foco em tudo", "new": "só novos", wrong: "só errados" }[estadoTreino.quizFocus] + (quiz.timerLen ? " · " + quiz.timerLen + "s" : "") + (quiz.survivalMode ? " · sobrevivência" : "");
+  }
+
+  // web/src/js/treino/partida.js
+  var partida_exports = {};
+  __export(partida_exports, {
+    MEDAL: () => MEDAL,
+    curRun: () => curRun,
+    drawBadge: () => drawBadge,
+    estadoPartida: () => estadoPartida,
+    finishQ: () => finishQ,
+    fmtTime: () => fmtTime,
+    iniciar: () => iniciar32,
+    makeNeighborOptions: () => makeNeighborOptions,
+    makeOptions: () => makeOptions,
+    medalFor: () => medalFor,
+    optLabel: () => optLabel,
+    pickQ: () => pickQ,
+    recordable: () => recordable,
+    renderScore: () => renderScore,
+    runKey: () => runKey,
+    runPool: () => runPool,
+    saveRecs: () => saveRecs,
+    saveRuns: () => saveRuns,
+    scopeKeyFor: () => scopeKeyFor,
+    shareRun: () => shareRun,
+    showTarget: () => showTarget
+  });
 
   // web/src/js/treino/estatisticas.js
   var estatisticas_exports = {};
   __export(estatisticas_exports, {
     fillQStat: () => fillQStat,
-    iniciar: () => iniciar34,
+    iniciar: () => iniciar30,
     modeName: () => modeName,
     openHistory: () => openHistory
   });
@@ -6916,7 +6641,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     el.appendChild(bar);
     el.appendChild(t);
   }
-  function iniciar34() {
+  function iniciar30() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
     $("htabC").onclick = function() {
       histTab = "c";
@@ -6956,35 +6681,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     };
   }
 
-  // web/src/js/treino/partida.js
-  var partida_exports = {};
-  __export(partida_exports, {
-    MEDAL: () => MEDAL,
-    drawBadge: () => drawBadge,
-    estadoPartida: () => estadoPartida,
-    finishQ: () => finishQ,
-    iniciar: () => iniciar36,
-    makeNeighborOptions: () => makeNeighborOptions,
-    makeOptions: () => makeOptions,
-    optLabel: () => optLabel,
-    pickQ: () => pickQ,
-    recordable: () => recordable,
-    renderScore: () => renderScore,
-    runPool: () => runPool,
-    runRestart: () => runRestart,
-    saveRecs: () => saveRecs,
-    saveRuns: () => saveRuns,
-    scopeKeyFor: () => scopeKeyFor,
-    showRunDone: () => showRunDone,
-    showTarget: () => showTarget
-  });
-
   // web/src/js/treino/progressao.js
   var progressao_exports = {};
   __export(progressao_exports, {
     addXP: () => addXP,
     celebrate: () => celebrate,
-    iniciar: () => iniciar35,
+    iniciar: () => iniciar31,
     recordProgress: () => recordProgress,
     updateProgUI: () => updateProgUI
   });
@@ -7189,7 +6891,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("badgeshead").textContent = "Conquistas (" + n + "/" + tot + ")";
     $("badgesheet").style.display = "block";
   }
-  function iniciar35() {
+  function iniciar31() {
     PROG = lsGet("globo.prog.v1", { xp: 0, totalCorrect: 0, streak: 0, lastStreakDate: null, dailyGoal: 10, dailyDate: null, dailyCount: 0, goalDoneDate: null, badges: [] });
     $("mbadges").onclick = openBadges;
     $("mhist").onclick = function() {
@@ -7299,85 +7001,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (recordable(estadoTreino.quizScope) && r.res.newMedal) celebrate(MEDAL[r.res.medal].i + " Medalha de " + MEDAL[r.res.medal].n + "!");
     }
     saveRuns();
-  }
-  function runRestart() {
-    delete estadoPartida.RUNS[runKey()];
-    saveRuns();
-    resetSession();
-    quiz.last = -1;
-    nextQ();
-    renderScore();
-  }
-  function showRunDone() {
-    stopTimerTick();
-    var r = curRun(), n = poolIdx().length, body = $("qbody"), fb = $("qfb"), res2 = r.res || { medal: medalFor(r.e), t: r.at || 0 };
-    fb.textContent = "";
-    fb.className = "";
-    $("qnext").style.display = "none";
-    $("qpool").textContent = "";
-    body.innerHTML = "";
-    var box = document.createElement("div");
-    box.className = "rundone";
-    var rec = recordable(estadoTreino.quizScope);
-    if (rec) {
-      var md = document.createElement("div");
-      md.className = "medal";
-      md.textContent = MEDAL[res2.medal].i;
-      box.appendChild(md);
-    }
-    var h = document.createElement("div");
-    h.className = "qq";
-    h.textContent = "Você zerou " + scopeLabel() + "!";
-    var sub = document.createElement("div");
-    sub.className = "qhint";
-    sub.textContent = n + " " + unitWord(n) + " em " + modeName(quiz.mode) + " · " + r.e + " " + (r.e === 1 ? "erro" : "erros") + " · " + fmtTime(res2.t) + " de jogo" + (rec ? " · medalha de " + MEDAL[res2.medal].n : "") + ".";
-    box.appendChild(h);
-    box.appendChild(sub);
-    if (rec) {
-      var rl = document.createElement("div");
-      rl.className = "recline";
-      var bits = [];
-      if (res2.first) bits.push("🎉 Primeira vez que você zera esta região neste tipo de pergunta!");
-      else {
-        if (res2.newT) bits.push("🎉 Novo recorde de tempo! (antes: " + fmtTime(res2.prevT) + ")");
-        if (res2.newE && res2.prevE != null && r.e < res2.prevE) bits.push("🎉 Novo recorde de menos erros! (antes: " + res2.prevE + ")");
-        if (!bits.length) {
-          var R2 = estadoPartida.RECS[runKey()] || {};
-          bits.push("Seus recordes: " + fmtTime(R2.bestT) + " · " + R2.bestE + " " + (R2.bestE === 1 ? "erro" : "erros"));
-        }
-      }
-      if (res2.medal > 1) bits.push(res2.medal === 2 ? "Para o ouro: zere sem nenhum erro." : "Para a prata: zere com até 3 erros.");
-      rl.textContent = bits.join(" ");
-      box.appendChild(rl);
-    }
-    var row = document.createElement("div");
-    row.className = "qrow";
-    var again = document.createElement("button");
-    again.textContent = "🔁 Jogar de novo";
-    again.onclick = runRestart;
-    var other = document.createElement("button");
-    other.textContent = "📍 Outra região";
-    other.onclick = function() {
-      $("qscopeb").click();
-    };
-    var sh = document.createElement("button");
-    sh.className = "qshare";
-    sh.textContent = "📤";
-    sh.title = "Compartilhar resultado";
-    sh.setAttribute("aria-label", "Compartilhar resultado");
-    sh.onclick = function() {
-      shareRun(n, r, res2);
-    };
-    row.appendChild(again);
-    row.appendChild(other);
-    row.appendChild(sh);
-    box.appendChild(row);
-    var tip = document.createElement("div");
-    tip.className = "inote";
-    tip.textContent = "Cada tipo de pergunta tem a sua própria partida e a sua medalha.";
-    box.appendChild(tip);
-    body.appendChild(box);
-    measureQ();
   }
   function shareRun(n, r, res2) {
     var W2 = 1080, cv2 = document.createElement("canvas");
@@ -7750,7 +7373,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function drawBadge(R, cx, cy) {
     if (estadoTreino.qBadge == null || estadoTreino.quizDomain !== "world") return;
     var d = D[estadoTreino.qBadge], X, Y;
-    if (flat2D) {
+    if (estadoCamera.plano2D) {
       var R2 = R2now(), pp = proj2D(d.lng, d.lat, R2, cx, cy);
       X = pp.x;
       Y = pp.y;
@@ -7804,17 +7427,94 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.fillStyle = "#fff";
     ctx.fillText(name, bx + 44, by + bh / 2 + 1);
   }
-  function iniciar36() {
+  function iniciar32() {
     ganchos.desenharSeloResposta = drawBadge;
     estadoPartida.RUNS = lsGet("globo.runs.v1", {});
     estadoPartida.RECS = lsGet("globo.recs.v1", {});
   }
 
-  // web/src/js/treino/perguntas.js
-  function resetSession() {
-    quiz.sessionAsked = 0;
-    quiz.sessionLog = [];
+  // web/src/js/treino/dica.js
+  var dica_exports = {};
+  __export(dica_exports, {
+    addHintBtn: () => addHintBtn
+  });
+  function hintText(d) {
+    var reg = regNameOf(d);
+    if (quiz.mode === "cap") {
+      var l = (qcapD(d).replace(/[^\p{L}]/gu, "")[0] || "?").toUpperCase();
+      return "Fica em: " + reg + '. A capital começa com "' + l + '".';
+    }
+    if (quiz.mode === "code") return "Fica em: " + reg + ".";
+    var l2 = (short(d).replace(/[^\p{L}]/gu, "")[0] || "?").toUpperCase();
+    return "Fica em: " + reg + '. O nome começa com "' + l2 + '".';
   }
+  function addHintBtn(container, d, isMap) {
+    var b = document.createElement("button");
+    b.className = "qcenter qhintbtn";
+    b.textContent = isMap ? "💡 Dica (revela a região)" : "💡 Dica";
+    b.onclick = function() {
+      if (quiz.hinted || quiz.answered) return;
+      quiz.hinted = true;
+      var reg = regNameOf(d);
+      if (isMap) {
+        b.textContent = "💡 " + reg;
+        var idxs = poolIdx().filter(function(k) {
+          return QD()[k].r === d.r && (estadoTreino.quizDomain === "world" ? QD()[k].sub === d.sub : true);
+        });
+        if (idxs.length) fitScopeView(idxs);
+      } else {
+        b.textContent = "💡 " + hintText(d);
+      }
+      b.disabled = true;
+    };
+    container.appendChild(b);
+  }
+
+  // web/src/js/treino/perguntas.js
+  var perguntas_exports = {};
+  __export(perguntas_exports, {
+    buildModeButtons: () => buildModeButtons,
+    iniciar: () => iniciar34,
+    nextQ: () => nextQ,
+    pickStateNear: () => pickStateNear,
+    quizMapAnswer: () => quizMapAnswer,
+    quizMapAnswerBR: () => quizMapAnswerBR,
+    quizOpen: () => quizOpen,
+    quizSetMode: () => quizSetMode,
+    runRestart: () => runRestart
+  });
+
+  // web/src/js/brasil/modo-estados.js
+  var modo_estados_exports = {};
+  __export(modo_estados_exports, {
+    exitStates: () => exitStates,
+    iniciar: () => iniciar33,
+    updateStBtn: () => updateStBtn
+  });
+  function updateStBtn() {
+    $("stbtn").style.display = !estadoBrasil.statesMode && estadoMapa.selected && estadoMapa.selected.cc === "BR" ? "block" : "none";
+  }
+  function exitStates(goBrazil) {
+    estadoBrasil.statesMode = false;
+    document.body.classList.remove("states");
+    estadoBrasil.selSt = null;
+    estadoBrasil.stSaved = null;
+    estadoBrasil.stNbC = [];
+    card.style.display = "none";
+    estadoCartao.cardH = 0;
+    hidePick();
+    buildChips();
+    afterFilter();
+    if (goBrazil !== false) select(D[byName[norm("Brasil")]], true);
+  }
+  function iniciar33() {
+    ganchosInterface.atualizarBotaoEstados = updateStBtn;
+    $("stexit").onclick = function() {
+      exitStates(true);
+    };
+  }
+
+  // web/src/js/treino/perguntas.js
   function sessionDone() {
     return quiz.sessionLen > 0 && quiz.sessionAsked >= quiz.sessionLen;
   }
@@ -7825,12 +7525,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function updateTimerDisplay() {
     var el = $("qtimer"), r = timerRemaining();
     el.textContent = r == null ? "" : "⏱️ " + Math.ceil(r / 1e3) + "s";
-  }
-  function stopTimerTick() {
-    if (quiz.timerInt) {
-      clearInterval(quiz.timerInt);
-      quiz.timerInt = null;
-    }
   }
   function startTimerTick() {
     stopTimerTick();
@@ -7926,10 +7620,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       row.appendChild(rev);
     }
     body.appendChild(row);
-  }
-  function updateTrainRow() {
-    var el = $("mtrainv");
-    if (el) el.textContent = (quiz.type === "type" ? "Digitar" : "Múltipla escolha") + " · " + { mix: "foco em tudo", "new": "só novos", wrong: "só errados" }[estadoTreino.quizFocus] + (quiz.timerLen ? " · " + quiz.timerLen + "s" : "") + (quiz.survivalMode ? " · sobrevivência" : "");
   }
   function updateSessionBtn() {
     updateTrainRow();
@@ -8277,7 +7967,86 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("qbtn").setAttribute("aria-pressed", quiz.open ? "true" : "false");
     $("qclose").setAttribute("aria-pressed", quiz.open ? "false" : "true");
   }
-  function iniciar37() {
+  function runRestart() {
+    delete estadoPartida.RUNS[runKey()];
+    saveRuns();
+    resetSession();
+    quiz.last = -1;
+    nextQ();
+    renderScore();
+  }
+  function showRunDone() {
+    stopTimerTick();
+    var r = curRun(), n = poolIdx().length, body = $("qbody"), fb = $("qfb"), res2 = r.res || { medal: medalFor(r.e), t: r.at || 0 };
+    fb.textContent = "";
+    fb.className = "";
+    $("qnext").style.display = "none";
+    $("qpool").textContent = "";
+    body.innerHTML = "";
+    var box = document.createElement("div");
+    box.className = "rundone";
+    var rec = recordable(estadoTreino.quizScope);
+    if (rec) {
+      var md = document.createElement("div");
+      md.className = "medal";
+      md.textContent = MEDAL[res2.medal].i;
+      box.appendChild(md);
+    }
+    var h = document.createElement("div");
+    h.className = "qq";
+    h.textContent = "Você zerou " + scopeLabel() + "!";
+    var sub = document.createElement("div");
+    sub.className = "qhint";
+    sub.textContent = n + " " + unitWord(n) + " em " + modeName(quiz.mode) + " · " + r.e + " " + (r.e === 1 ? "erro" : "erros") + " · " + fmtTime(res2.t) + " de jogo" + (rec ? " · medalha de " + MEDAL[res2.medal].n : "") + ".";
+    box.appendChild(h);
+    box.appendChild(sub);
+    if (rec) {
+      var rl = document.createElement("div");
+      rl.className = "recline";
+      var bits = [];
+      if (res2.first) bits.push("🎉 Primeira vez que você zera esta região neste tipo de pergunta!");
+      else {
+        if (res2.newT) bits.push("🎉 Novo recorde de tempo! (antes: " + fmtTime(res2.prevT) + ")");
+        if (res2.newE && res2.prevE != null && r.e < res2.prevE) bits.push("🎉 Novo recorde de menos erros! (antes: " + res2.prevE + ")");
+        if (!bits.length) {
+          var R2 = estadoPartida.RECS[runKey()] || {};
+          bits.push("Seus recordes: " + fmtTime(R2.bestT) + " · " + R2.bestE + " " + (R2.bestE === 1 ? "erro" : "erros"));
+        }
+      }
+      if (res2.medal > 1) bits.push(res2.medal === 2 ? "Para o ouro: zere sem nenhum erro." : "Para a prata: zere com até 3 erros.");
+      rl.textContent = bits.join(" ");
+      box.appendChild(rl);
+    }
+    var row = document.createElement("div");
+    row.className = "qrow";
+    var again = document.createElement("button");
+    again.textContent = "🔁 Jogar de novo";
+    again.onclick = runRestart;
+    var other = document.createElement("button");
+    other.textContent = "📍 Outra região";
+    other.onclick = function() {
+      $("qscopeb").click();
+    };
+    var sh = document.createElement("button");
+    sh.className = "qshare";
+    sh.textContent = "📤";
+    sh.title = "Compartilhar resultado";
+    sh.setAttribute("aria-label", "Compartilhar resultado");
+    sh.onclick = function() {
+      shareRun(n, r, res2);
+    };
+    row.appendChild(again);
+    row.appendChild(other);
+    row.appendChild(sh);
+    box.appendChild(row);
+    var tip = document.createElement("div");
+    tip.className = "inote";
+    tip.textContent = "Cada tipo de pergunta tem a sua própria partida e a sua medalha.";
+    box.appendChild(tip);
+    body.appendChild(box);
+    measureQ();
+  }
+  function iniciar34() {
     ouvir("modo-estados-abriu", function() {
       if (quiz.open) quizClose();
     });
@@ -8361,135 +8130,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
   }
 
-  // web/src/js/treino/dominio.js
-  function QD() {
-    return estadoTreino.quizDomain === "br" ? BRS : D;
-  }
-  function qcc(o) {
-    return estadoTreino.quizDomain === "br" ? "BR-" + o.sigla : o.cc;
-  }
-  function qflag(o) {
-    return estadoTreino.quizDomain === "br" ? o.sigla : dflag(o);
-  }
-  function qcapD(o) {
-    return estadoTreino.quizDomain === "br" ? o.cap : qcapDisp(o);
-  }
-  function unitWord(n) {
-    return estadoTreino.quizDomain === "br" ? n === 1 ? "estado" : "estados" : n === 1 ? "país" : "países";
-  }
-  function regNameOf(o) {
-    return estadoTreino.quizDomain === "br" ? BRREG[o.r].n : o.sub && o.sub !== REG[o.r].n ? o.sub : REG[o.r].n;
-  }
-  function applyDomainForScope() {
-    var wasBR = estadoTreino.quizDomain === "br";
-    estadoTreino.quizDomain = estadoTreino.quizScope.t === "br" || estadoTreino.quizScope.t === "brreg" ? "br" : "world";
-    if (estadoTreino.quizDomain === "br") {
-      if (flat2D) setFlat2D(false);
-      estadoBrasil.statesMode = true;
-      estadoBrasil.onS = BRS.map(function(s) {
-        return estadoTreino.quizScope.t === "brreg" ? s.r === estadoTreino.quizScope.r ? 1 : 0 : 1;
-      });
-      if (quiz.mode === "flag") quiz.mode = "cap";
-    } else if (wasBR) {
-      estadoBrasil.statesMode = false;
-      estadoBrasil.selSt = null;
-    }
-  }
-  function updateScopeBtn() {
-    $("qscopev").textContent = "📍 " + scopeLabel();
-    $("qfocusb").textContent = "Foco: " + { mix: "tudo", "new": "só novos", wrong: "só errados" }[estadoTreino.quizFocus];
-    updateTrainRow();
-  }
-  function updateScopeBackBtn() {
-    var btn = $("qscopeback");
-    if (estadoTreino.quizScopePrev) {
-      btn.hidden = false;
-      var save = estadoTreino.quizScope;
-      estadoTreino.quizScope = estadoTreino.quizScopePrev;
-      btn.textContent = "↩ Voltar para: " + scopeLabel();
-      estadoTreino.quizScope = save;
-    } else btn.hidden = true;
-  }
-  function fitScopeView(pl) {
-    if (estadoTreino.quizDomain === "br") fitStates(pl, []);
-    else fitTo(pl);
-  }
-  function scopeView() {
-    if (estadoTreino.quizDomain === "br") {
-      if (estadoTreino.quizScope.t === "br") {
-        var v = countryView(byName[norm("Brasil")]);
-        flyTo(v.lat, v.lng, zoomFor(v.r, 3));
-        return;
-      }
-      var pl2 = poolIdx();
-      if (pl2.length) fitStates(pl2, []);
-      else resetView();
-      return;
-    }
-    if (estadoTreino.quizScope.t === "world") {
-      resetView();
-      return;
-    }
-    var pl = poolIdx();
-    if (pl.length) fitTo(pl);
-    else resetView();
-  }
-  function emptyMsg() {
-    var u = unitWord(2);
-    if (estadoTreino.quizFocus === "wrong") return "Nenhum " + unitWord(1) + ' errado neste escopo — bom sinal! Troque o foco para "tudo" ou "só novos".';
-    if (estadoTreino.quizFocus === "new") return "Você já viu todos os " + u + ' deste escopo. Troque o foco para "tudo" ou "só errados".';
-    return "Nenhum " + unitWord(1) + " neste escopo. Escolha outro em 📍.";
-  }
-  function inScopeActive(o) {
-    if (estadoTreino.quizDomain === "br") return estadoTreino.quizScope.t === "brreg" ? o.r === estadoTreino.quizScope.r : true;
-    return inScope(o);
-  }
-  function poolIdx() {
-    var arr = QD(), p = [];
-    for (var i = 0; i < arr.length; i++) {
-      if (!inScopeActive(arr[i])) continue;
-      if (arr[i].dis && !estadoMapa.includeDisputed) continue;
-      if (arr[i].dep && !estadoMapa.includeDep) continue;
-      if (arr[i].uni && (!estadoMapa.includeUni || quiz.mode !== "map")) continue;
-      if (arr[i].pseudo && (quiz.mode === "flag" || quiz.mode === "code")) continue;
-      if (quiz.mode === "flag" && arr[i].dis) continue;
-      if (quiz.mode === "neighbor") {
-        var nbz = estadoTreino.quizDomain === "br" ? arr[i].nb : NB[i];
-        if (!nbz || !nbz.length) continue;
-      }
-      if (quiz.mode === "map") {
-        if (estadoTreino.quizDomain === "br") {
-          if (estadoBrasil.STFEAT.some(function(f) {
-            return f;
-          }) && !estadoBrasil.STFEAT[i]) continue;
-        } else {
-          if (estadoRender.feats && !estadoRender.FEAT[i] && !arr[i].uni) continue;
-        }
-      }
-      p.push(i);
-    }
-    return p;
-  }
-  var TIER_P = { "new": 0.6, "wrong": 0.3, "ok": 0.1 };
-  function mstats() {
-    return estadoTreino.QS.m[quiz.mode] || (estadoTreino.QS.m[quiz.mode] = {});
-  }
-  function gapOf(e) {
-    if (e.s === 0) return 3;
-    var g = Math.min(120, 12 + 12 * e.s);
-    return e.w > 0 ? Math.round(g * 0.6) : g;
-  }
-  function tierOf(i) {
-    var e = mstats()[qcc(QD()[i])];
-    return !e ? "new" : e.s === 0 ? "wrong" : "ok";
-  }
-
   // web/src/js/treino/destaque-escopo.js
   var destaque_escopo_exports = {};
   __export(destaque_escopo_exports, {
     drawScopePulse: () => drawScopePulse,
     firePulseForScope: () => firePulseForScope,
-    iniciar: () => iniciar38
+    iniciar: () => iniciar35
   });
   var scopePulse = null;
   function firePulse(pts) {
@@ -8502,7 +8148,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }));
   }
   function drawScopePulse(R, cx, cy) {
-    if (!scopePulse || flat2D) return;
+    if (!scopePulse || estadoCamera.plano2D) return;
     var dt = performance.now() - scopePulse.t0, dur = 1300;
     if (dt > dur) {
       scopePulse = null;
@@ -8523,7 +8169,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     ctx.restore();
   }
-  function iniciar38() {
+  function iniciar35() {
     ganchos.desenharPulsoEscopo = drawScopePulse;
   }
 
@@ -8531,7 +8177,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var escopo_exports = {};
   __export(escopo_exports, {
     applyScopeChange: () => applyScopeChange,
-    iniciar: () => iniciar39
+    iniciar: () => iniciar36
   });
   function applyScopeChange(newScope) {
     estadoTreino.quizScopePrev = estadoTreino.quizScope;
@@ -8690,7 +8336,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("scopeempty").style.display = any ? "none" : "block";
     updateMultiApplyBtn();
   }
-  function iniciar39() {
+  function iniciar36() {
     ouvir("categorias-mudaram", function(o) {
       if (quiz.open) {
         updateScopeBtn();
@@ -8757,7 +8403,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
-    iniciar: () => iniciar40
+    iniciar: () => iniciar37
   });
   var themeMode;
   function applyTheme() {
@@ -8781,7 +8427,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function updateLabelsRow() {
     $("mlabelsv").textContent = estadoMapa.labelMode === "p" ? "Países" : "Capitais";
   }
-  function iniciar40() {
+  function iniciar37() {
     themeMode = lsGet("globo.theme", "auto");
     $("themeb").onclick = function() {
       themeMode = themeMode === "auto" ? "light" : themeMode === "light" ? "dark" : "auto";
@@ -8821,10 +8467,376 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
   }
 
+  // web/src/js/brasil/cartao-estado.js
+  var cartao_estado_exports = {};
+  __export(cartao_estado_exports, {
+    enterStates: () => enterStates,
+    iniciar: () => iniciar39
+  });
+
+  // web/src/js/brasil/importar-contornos.js
+  var importar_contornos_exports = {};
+  __export(importar_contornos_exports, {
+    ensureStateShapes: () => ensureStateShapes,
+    iniciar: () => iniciar38
+  });
+  function stFeatIndex(f) {
+    var p = f.properties || {};
+    var idc = [p.id, p.ID, f.id, p.iso_3166_2, p["ISO3166-2"], p.ISO_3166_2, p.hasc, p.HASC_1];
+    for (var a = 0; a < idc.length; a++) {
+      var v = idc[a];
+      if (typeof v === "string") {
+        var m = v.match(/^(?:BR[-.])?([A-Za-z]{2})$/);
+        if (m && BRBY[m[1].toUpperCase()] !== void 0) return BRBY[m[1].toUpperCase()];
+      }
+    }
+    var cands = [p.SIGLA, p.sigla, p.UF, p.uf, p.SIGLA_UF, p.sigla_uf, p.abbrev_state, p.abbrev, p.postal];
+    for (var i = 0; i < cands.length; i++) {
+      var c = cands[i];
+      if (typeof c === "string" && BRBY[c.toUpperCase()] !== void 0) return BRBY[c.toUpperCase()];
+    }
+    var codes = [p.codarea, p.CD_UF, p.CD_GEOCUF, p.GEOCODIGO, p.cod_uf, p.codigo_ibge, p.id, f.id];
+    for (var j = 0; j < codes.length; j++) {
+      var q2 = codes[j];
+      if (q2 == null || !/^\d{2}/.test(String(q2))) continue;
+      q2 = String(q2).slice(0, 2);
+      for (var k = 0; k < BRS.length; k++) if (BRS[k].ibge === q2) return k;
+    }
+    var names = [p.name, p.NAME, p.NOME, p.nome, p.NM_UF, p.NM_ESTADO, p.estado, p.ESTADO, p.name_1, p.NAME_1];
+    for (var m2 = 0; m2 < names.length; m2++) {
+      var n = names[m2];
+      if (typeof n !== "string") continue;
+      n = norm(n);
+      for (var t = 0; t < BRS.length; t++) if (norm(BRS[t].name) === n) return t;
+      if (n === "federal district") return BRBY.DF;
+    }
+    return -1;
+  }
+  function setupStates(list) {
+    estadoBrasil.STFEAT = BRS.map(function() {
+      return null;
+    });
+    estadoBrasil.STGEOM = {};
+    var m = 0;
+    list.forEach(function(f) {
+      var k = stFeatIndex(f);
+      if (k >= 0 && !estadoBrasil.STFEAT[k]) {
+        estadoBrasil.STFEAT[k] = f;
+        m++;
+      }
+    });
+    return m;
+  }
+  function ingestStates(json) {
+    var fs = null;
+    if (json.type === "FeatureCollection") fs = json.features;
+    else if (json.type === "Topology" && window.topojson) {
+      var k = Object.keys(json.objects)[0];
+      fs = topojson.feature(json, json.objects[k]).features;
+    }
+    if (!fs) throw new Error("formato não reconhecido");
+    var out = [], m = 0;
+    fs.forEach(function(f) {
+      if (!f.geometry) return;
+      var nf = { type: "Feature", id: f.id, properties: f.properties || {}, geometry: JSON.parse(JSON.stringify(f.geometry)) };
+      if (stFeatIndex(nf) >= 0) m++;
+      out.push(fixWind(nf));
+    });
+    if (m < 25) throw new Error("só reconheci " + m + " dos 27 estados");
+    return out;
+  }
+  function saveStates(list) {
+    var slim = list.map(function(x) {
+      var k = stFeatIndex(x);
+      return { type: "Feature", id: "S" + k, properties: { SIGLA: k >= 0 ? BRS[k].sigla : "" }, geometry: x.geometry };
+    });
+    idbSet("br-states", JSON.stringify({ type: "FeatureCollection", features: slim }));
+  }
+  var stAuto = 0;
+  function loadAmcharts() {
+    return new Promise(function(ok, no) {
+      if (window.am5geodata_brazilLow) return ok(window.am5geodata_brazilLow);
+      var oe = window.exports, om = window.module;
+      window.exports = {};
+      window.module = { exports: window.exports };
+      function restore() {
+        if (oe === void 0) delete window.exports;
+        else window.exports = oe;
+        if (om === void 0) delete window.module;
+        else window.module = om;
+      }
+      var urls = ["lib/brazilLow.js","https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5.1.4/brazilLow.js", "https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5/brazilLow.js"];
+      (function next(i) {
+        if (i >= urls.length) {
+          restore();
+          return no(new Error("indisponível"));
+        }
+        var sc = document.createElement("script");
+        sc.src = urls[i];
+        sc.onload = function() {
+          var g = window.am5geodata_brazilLow || window.module && window.module.exports && (window.module.exports.default || window.module.exports) || window.exports && (window.exports.default || window.exports);
+          if (g && g.features && g.features.length) {
+            restore();
+            ok(g);
+          } else next(i + 1);
+        };
+        sc.onerror = function() {
+          next(i + 1);
+        };
+        document.head.appendChild(sc);
+      })(0);
+    });
+  }
+  function ensureStateShapes() {
+    if (estadoBrasil.STFEAT.some(function(f) {
+      return f;
+    }) || stAuto === 1) return;
+    if (!estadoRender.feats || !window.d3) {
+      setStatus("Os limites dos estados aparecem depois que o mapa carregar. Importe um arquivo em ⋯ Mais se preferir.", 6e3);
+      return;
+    }
+    stAuto = 1;
+    setStatus("Carregando os limites dos estados…");
+    loadAmcharts().then(function(g) {
+      var list = ingestStates(g), m = setupStates(list);
+      saveStates(list);
+      stAuto = 2;
+      setStatus("Limites dos estados carregados (" + m + " de 27). Dados: amCharts geodata / Natural Earth.", 6e3);
+    }).catch(function() {
+      stAuto = 0;
+      setStatus("Não consegui carregar os limites dos estados sozinho. Você pode importar um GeoJSON em ⋯ Mais → Brasil.", 9e3);
+    });
+  }
+  function loadSavedStates() {
+    idbGet("br-states").then(function(str) {
+      if (!str) return;
+      var tries = 0;
+      (function wait() {
+        if (window.d3 && estadoRender.feats) {
+          try {
+            setupStates(JSON.parse(str).features);
+          } catch (e) {
+          }
+          return;
+        }
+        if (++tries < 80) setTimeout(wait, 500);
+      })();
+    });
+  }
+  function iniciar38() {
+    $("impSt").onchange = function() {
+      var f = this.files[0];
+      this.value = "";
+      if (!f) return;
+      if (!window.d3 || !window.topojson) {
+        setStatus("As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.", 6e3);
+        return;
+      }
+      var fr = new FileReader();
+      fr.onload = function() {
+        try {
+          var list = ingestStates(JSON.parse(fr.result)), m = setupStates(list);
+          saveStates(list);
+          setStatus("Contornos dos estados importados (" + m + " de 27). Salvos neste aparelho.", 6e3);
+        } catch (e) {
+          setStatus("Não consegui usar esse arquivo: " + e.message + ". Use um GeoJSON dos estados do Brasil (por exemplo, a malha do IBGE).", 1e4);
+        }
+      };
+      fr.readAsText(f);
+    };
+    loadSavedStates();
+  }
+
+  // web/src/js/brasil/cartao-estado.js
+  function fillInfoSt(st) {
+    var box = $("cinfo");
+    box.innerHTML = "";
+    [["Sigla", st.sigla], ["Código IBGE", st.ibge]].forEach(function(r) {
+      var row = document.createElement("div");
+      row.className = "irow";
+      var a = document.createElement("span");
+      a.textContent = r[0];
+      var b = document.createElement("b");
+      b.textContent = r[1];
+      row.appendChild(a);
+      row.appendChild(b);
+      box.appendChild(row);
+    });
+    var n = document.createElement("div");
+    n.className = "inote";
+    n.textContent = "Valores aproximados (Censo 2022 e áreas do IBGE, arredondados). Confira em fonte oficial antes de citar.";
+    box.appendChild(n);
+  }
+  function refreshNbC() {
+    estadoBrasil.stNbC = estadoBrasil.stSaved && estadoBrasil.selSt ? estadoBrasil.selSt.cn.slice() : [];
+  }
+  function renderStCountries(st) {
+    var box = document.getElementById("cncty");
+    box.innerHTML = "";
+    var t = document.createElement("span");
+    t.className = "nt";
+    t.textContent = st.cn.length ? "Países na fronteira" : "Não faz fronteira com outro país";
+    box.appendChild(t);
+    st.cn.forEach(function(k) {
+      var b = document.createElement("button");
+      b.textContent = D[k].flag + " " + short(D[k]);
+      b.onclick = function() {
+        exitStates(false);
+        select(D[k], true);
+      };
+      box.appendChild(b);
+    });
+    box.hidden = false;
+  }
+  function selectSt(st, fly, group) {
+    if (!estadoBrasil.onS[st.i]) {
+      estadoBrasil.onS[st.i] = 1;
+      afterFilter();
+    }
+    estadoBrasil.selSt = st;
+    estadoMapa.selected = null;
+    refreshNbC();
+    $("hint").style.display = "none";
+    $("cdot").style.background = BRREG[st.reg].c;
+    $("creg").textContent = "Brasil · " + BRREG[st.reg].n;
+    var fl = $("cflag");
+    fl.textContent = st.sigla;
+    fl.className = "flag sig";
+    $("cname").textContent = st.name;
+    $("ccap").textContent = st.cap;
+    $("ccapnote").textContent = "";
+    ganchosInterface.mostrarDesempenho("BR-" + st.sigla, true);
+    var ob = $("cobs");
+    ob.textContent = st.note;
+    ob.style.display = st.note ? "block" : "none";
+    var dens = st.pop / st.area;
+    renderFacts([["👥 População", fmtPop(st.pop / 1e3)], ["📐 Área", fmtArea(st.area)], ["🏙️ Densidade", (dens < 10 ? dens.toFixed(1) : Math.round(dens)).toString().replace(".", ",") + " hab./km²"], ["🧭 Região", BRREG[st.reg].n]]);
+    renderChips("Estados vizinhos", st.nb.map(function(k) {
+      return { t: BRS[k].sigla + " · " + BRS[k].name, f: function() {
+        selectSt(BRS[k], true);
+      } };
+    }), "Não faz fronteira com outro estado.");
+    card.style.display = "block";
+    updateNbBtn();
+    updateStBtn();
+    renderNear(group, st, function(x) {
+      selectSt(x, false, group);
+    }, function(x) {
+      return x.sigla + " " + x.name;
+    });
+    renderStCountries(st);
+    fillInfoSt(st);
+    setTimeout(measureCard, 40);
+    if (fly === false) flyTo(st.lat, st.lng, Math.max(estadoCamera.zoom, 1.6));
+    else {
+      var v = stateView(st);
+      flyTo(v.lat, v.lng, zoomFor(v.r, 5.5));
+    }
+  }
+  function stepSt(dir) {
+    if (!estadoBrasil.selSt) return;
+    var i = estadoBrasil.selSt.i, n = BRS.length;
+    for (var k = 0; k < n; k++) {
+      i = (i + dir + n) % n;
+      if (estadoBrasil.onS[i]) {
+        selectSt(BRS[i], true);
+        return;
+      }
+    }
+  }
+  function toggleNbSt() {
+    if (estadoBrasil.stSaved) {
+      estadoBrasil.onS = estadoBrasil.stSaved.slice();
+      estadoBrasil.stSaved = null;
+      refreshNbC();
+      afterFilter();
+      var v = [];
+      estadoBrasil.onS.forEach(function(x, k) {
+        if (x) v.push(k);
+      });
+      var b = countryView(byName[norm("Brasil")]);
+      if (v.length === BRS.length) flyTo(b.lat, b.lng, zoomFor(b.r, 3));
+      else fitStates(v, []);
+      return;
+    }
+    if (!estadoBrasil.selSt) return;
+    estadoBrasil.stSaved = estadoBrasil.onS.slice();
+    estadoBrasil.onS = BRS.map(function() {
+      return 0;
+    });
+    var idx = [estadoBrasil.selSt.i].concat(estadoBrasil.selSt.nb);
+    idx.forEach(function(k) {
+      estadoBrasil.onS[k] = 1;
+    });
+    refreshNbC();
+    afterFilter();
+    fitStates(idx, estadoBrasil.stNbC);
+  }
+  function stTap(x, y) {
+    var R = R0 * estadoCamera.zoom, cand = [];
+    BRS.forEach(function(st) {
+      if (!estadoBrasil.onS[st.i]) return;
+      var p = rot(st.x, st.y, st.z);
+      if (p[2] <= 0.05) return;
+      var sx = W / 2 + R * p[0], sy = H * estadoCamera.cyFrac - R * p[1], dd = (sx - x) * (sx - x) + (sy - y) * (sy - y);
+      if (dd < 36 * 36) cand.push({ s: st, dd });
+    });
+    cand.sort(function(a, b) {
+      return a.dd - b.dd;
+    });
+    var precise = cand.length && cand[0].dd < 14 * 14;
+    var poly = precise ? null : stateAt(x, y);
+    var chosen = precise ? cand[0].s : poly || (cand.length ? cand[0].s : null);
+    if (chosen) {
+      var grp = cand.map(function(c) {
+        return c.s;
+      });
+      if (grp.indexOf(chosen) < 0) grp.unshift(chosen);
+      selectSt(chosen, false, grp);
+    } else if (estadoBrasil.selSt) {
+      estadoBrasil.selSt = null;
+      card.style.display = "none";
+      estadoCartao.cardH = 0;
+    }
+  }
+  function enterStates(st) {
+    if (estadoCamera.plano2D) setFlat2D(false);
+    emitir("modo-estados-abriu");
+    tourStop();
+    hidePick();
+    estadoBrasil.statesMode = true;
+    document.body.classList.add("states");
+    closeCard();
+    estadoBrasil.onS = BRS.map(function() {
+      return 1;
+    });
+    estadoBrasil.stSaved = null;
+    estadoBrasil.stNbC = [];
+    buildChips();
+    updateNbBtn();
+    setStatus("");
+    selectSt(st || BRS[0], true);
+    ensureStateShapes();
+  }
+  function iniciar39() {
+    ganchosInterface.passoEstado = stepSt;
+    ganchosInterface.alternarVizinhosEstado = toggleNbSt;
+    ganchosInterface.selecionarEstado = selectSt;
+    ganchosInterface.abrirEstado = enterStates;
+    $("stbtn").onclick = function() {
+      enterStates(null);
+    };
+    ganchosInterface.toqueEstados = function(x, y) {
+      if (!estadoBrasil.statesMode) return false;
+      stTap(x, y);
+      return true;
+    };
+  }
+
   // web/src/js/brasil/filtros.js
   var filtros_exports2 = {};
   __export(filtros_exports2, {
-    iniciar: () => iniciar41
+    iniciar: () => iniciar40
   });
   function mkChipSt(label, color, val, count) {
     var b = document.createElement("button");
@@ -8873,14 +8885,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       }).length));
     });
   }
-  function iniciar41() {
+  function iniciar40() {
     ganchosInterface.montarChipsEstados = buildChipsSt;
   }
 
   // web/src/js/brasil/menu.js
   var menu_exports2 = {};
   __export(menu_exports2, {
-    iniciar: () => iniciar42
+    iniciar: () => iniciar41
   });
   function cmpRow(box, label, va, vb) {
     var r = document.createElement("div");
@@ -8905,7 +8917,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function cmpRelTop(d) {
     return d.rel && d.rel.items[0] ? d.rel.items[0].n + (d.rel.items[0].p != null ? " " + d.rel.items[0].p + "%" : "") : "—";
   }
-  function iniciar42() {
+  function iniciar41() {
     BRS.forEach(function(s) {
       var o = document.createElement("option");
       o.value = s.i;
@@ -8975,7 +8987,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/app/ultima-visao.js
   var ultima_visao_exports = {};
   __export(ultima_visao_exports, {
-    iniciar: () => iniciar43
+    iniciar: () => iniciar42
   });
   function saveLastView() {
     if (quiz.open || estadoBrasil.statesMode) return;
@@ -9005,7 +9017,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (i >= 0 && estadoMapa.on[i]) select(D[i], false);
     }
   }
-  function iniciar43() {
+  function iniciar42() {
     ouvir("visao-mudou", saveLastView);
     restoreLastView();
   }
@@ -9013,16 +9025,16 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/app/inicio.js
   var inicio_exports = {};
   __export(inicio_exports, {
-    iniciar: () => iniciar44
+    iniciar: () => iniciar43
   });
-  function iniciar44() {
+  function iniciar43() {
     quizOpen();
   }
 
   // web/src/js/treino/toques.js
   var toques_exports = {};
   __export(toques_exports, {
-    iniciar: () => iniciar45
+    iniciar: () => iniciar44
   });
   function toqueAntes(x, y) {
     if (quiz.open && !estadoTreino.qMap) return true;
@@ -9092,7 +9104,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     quizMapAnswer(cand.length ? cand[0].d : poly);
     return true;
   }
-  function iniciar45() {
+  function iniciar44() {
     ganchosInterface.toqueAntes = toqueAntes;
     ganchosInterface.toqueNoGlobo = toqueNoGlobo;
     ganchosInterface.toqueNoMapa2D = toqueNoMapa2D;
@@ -9107,45 +9119,44 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   iniciar6();
   iniciar7();
   iniciar8();
-  iniciar17();
-  iniciar15();
-  iniciar25();
-  iniciar23();
-  iniciar22();
-  iniciar26();
-  iniciar20();
-  iniciar10();
-  iniciar11();
-  iniciar18();
-  iniciar19();
-  iniciar24();
-  iniciar27();
+  iniciar9();
   iniciar21();
-  iniciar28();
+  iniciar17();
+  iniciar19();
+  iniciar18();
+  iniciar22();
+  iniciar23();
   iniciar12();
   iniciar13();
+  iniciar24();
+  iniciar20();
+  iniciar25();
+  iniciar26();
+  iniciar27();
+  iniciar14();
+  iniciar15();
+  iniciar28();
   iniciar29();
+  iniciar32();
+  iniciar34();
+  iniciar44();
   iniciar30();
+  iniciar35();
   iniciar36();
   iniciar37();
-  iniciar45();
-  iniciar34();
-  iniciar38();
+  iniciar10();
+  iniciar11();
+  iniciar33();
   iniciar39();
   iniciar40();
-  iniciar9();
-  iniciar16();
-  iniciar33();
-  iniciar31();
+  iniciar38();
   iniciar41();
-  iniciar32();
   iniciar42();
+  iniciar16();
+  iniciar31();
   iniciar43();
-  iniciar14();
-  iniciar35();
-  iniciar44();
-  window.setStatus = setStatus;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports];
+  window.setStatus = void 0;
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

@@ -9,13 +9,12 @@ import { D, dflag, norm, qcapDisp, REG } from '../dados/paises.js';
 import { byName, NB } from '../dados/vizinhos.js';
 import { $ } from '../nucleo/utilitarios.js';
 import { estadoTreino, inScope, quiz, scopeLabel } from './estado.js';
-import { updateTrainRow } from './perguntas.js';
 import { fitTo, flyTo } from '../visualizacao/animacao.js';
 import { countryView, resetView, zoomFor } from '../visualizacao/enquadramento.js';
 import { estadoBrasil, fitStates } from '../visualizacao/estados.js';
-import { estadoRender } from '../visualizacao/fronteiras.js';
-import { estadoMapa } from '../visualizacao/globo.js';
-import { flat2D, setFlat2D } from '../visualizacao/mapa-2d.js';
+import { setFlat2D } from '../visualizacao/mapa-2d.js';
+import { estadoRender } from '../visualizacao/projecao.js';
+import { estadoCamera, estadoMapa } from '../visualizacao/tela.js';
 
 /* ---------- domínio ativo (mundo ou Brasil/estados) ---------- */
 function QD(){return estadoTreino.quizDomain==='br'?BRS:D;}
@@ -28,7 +27,7 @@ function applyDomainForScope(){
   var wasBR=estadoTreino.quizDomain==='br';
   estadoTreino.quizDomain=(estadoTreino.quizScope.t==='br'||estadoTreino.quizScope.t==='brreg')?'br':'world';
   if(estadoTreino.quizDomain==='br'){
-    if(flat2D)setFlat2D(false);
+    if(estadoCamera.plano2D)setFlat2D(false);
     estadoBrasil.statesMode=true;
     estadoBrasil.onS=BRS.map(function(s){return (estadoTreino.quizScope.t==='brreg')?(s.r===estadoTreino.quizScope.r?1:0):1;});
     if(quiz.mode==='flag')quiz.mode='cap';
@@ -98,4 +97,6 @@ function mstats(){return estadoTreino.QS.m[quiz.mode]||(estadoTreino.QS.m[quiz.m
 function gapOf(e){if(e.s===0)return 3;var g=Math.min(120,12+12*e.s);return e.w>0?Math.round(g*.6):g;}
 function tierOf(i){var e=mstats()[qcc(QD()[i])];return !e?'new':(e.s===0?'wrong':'ok');}
 
-export { applyDomainForScope, emptyMsg, fitScopeView, gapOf, inScopeActive, mstats, poolIdx, qcapD, qcc, QD, qflag, regNameOf, scopeView, TIER_P, tierOf, unitWord, updateScopeBackBtn, updateScopeBtn };
+function updateTrainRow(){var el=$('mtrainv');if(el)el.textContent=(quiz.type==='type'?'Digitar':'Múltipla escolha')+' · '+({mix:'foco em tudo','new':'só novos',wrong:'só errados'})[estadoTreino.quizFocus]+(quiz.timerLen?' · '+quiz.timerLen+'s':'')+(quiz.survivalMode?' · sobrevivência':'');}
+
+export { applyDomainForScope, emptyMsg, fitScopeView, gapOf, inScopeActive, mstats, poolIdx, qcapD, qcc, QD, qflag, regNameOf, scopeView, TIER_P, tierOf, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow };

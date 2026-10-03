@@ -1,74 +1,26 @@
 /**
  * @arquivo js/visualizacao/globo.js
  * Camada: Visualização
- * Estado da câmera/seleção do globo 3D e desenho principal no canvas.
+ * Desenho principal do globo 3D no canvas e laço de quadros (frame).
  */
 
 import { LX, LY, LZ } from '../dados/massas-terra.js';
 import { OC } from '../dados/oceanos-polos.js';
 import { D, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
-import { lsGet } from '../nucleo/utilitarios.js';
+import { shortest } from './animacao.js';
 import { drawStates, estadoBrasil } from './estados.js';
-import { drawGeo, estadoRender, glc } from './fronteiras.js';
+import { drawGeo } from './fronteiras.js';
 import { ganchos } from './ganchos.js';
-import { draw2D, flat2D } from './mapa-2d.js';
+import { draw2D } from './mapa-2d.js';
 import { shapePath, SHAPES } from './marcadores.js';
+import { estadoRender } from './projecao.js';
 import { paintSelBadge, selBadgeMetrics } from './selo.js';
+import { ctx, dpr, estadoCamera, estadoMapa, FONT, girar, H, PI, R0, rot, W } from './tela.js';
 import { glDraw } from './webgl.js';
 
-/** Estado compartilhado com outros módulos (leitura e escrita por estadoCamera.nome). */
-const estadoCamera = {
-  dragging: false,
-  lam: -0.9,
-  phi: 0.25,
-  zoom: 1,
-  cyFrac: .5,
-  target: null,
-  auto: true,
-  lastInteract: 0,
-};
-
-/** Estado compartilhado com outros módulos (leitura e escrita por estadoMapa.nome). */
-const estadoMapa = {
-  selected: null,
-  labelMode: 'p',
-  includeDisputed: undefined,
-  includeDep: undefined,
-  includeUni: undefined,
-  on: undefined,
-};
-
 /* ---------- Estado e desenho ---------- */
-let cv;
-let ctx;
-let W = 0;
-let H = 0;
-let R0 = 0;
-let dpr = 1;
 /* item disponível = não está escondido por "não reconhecidos" nem por "territórios dependentes" */
-function avail(d){return (!d.dis||estadoMapa.includeDisputed)&&(!d.dep||estadoMapa.includeDep)&&(!d.uni||estadoMapa.includeUni);}
-function availCount(){return D.filter(avail).length;}
-let reduce;
-const FONT = 'system-ui,-apple-system,Segoe UI,Roboto,"Noto Color Emoji",sans-serif';
-
-function resize(){
-  var r=cv.getBoundingClientRect();W=r.width;H=r.height;
-  dpr=Math.min(window.devicePixelRatio||1,2);
-  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
-  glc.width=cv.width;glc.height=cv.height;
-  R0=Math.min(W,H)*0.44;
-}
-
-let cosL;
-let sinL;
-let cosP;
-let sinP;
-function rot(x,y,z){
-  var x1=x*cosL-z*sinL, z1=x*sinL+z*cosL;
-  var y2=y*cosP-z1*sinP, z2=y*sinP+z1*cosP;
-  return [x1,y2,z2];
-}
 
 function drawPole(north,R,cx,cy){
   var p=rot(0,north?1:-1,0);
@@ -92,9 +44,9 @@ function drawPole(north,R,cx,cy){
 }
 
 function draw(){
-  if(flat2D){draw2D();return;}
+  if(estadoCamera.plano2D){draw2D();return;}
   var R=R0*estadoCamera.zoom, cx=W/2, cy=H*estadoCamera.cyFrac;
-  cosL=Math.cos(estadoCamera.lam);sinL=Math.sin(estadoCamera.lam);cosP=Math.cos(estadoCamera.phi);sinP=Math.sin(estadoCamera.phi);
+  girar();
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,W,H);
   var tex=estadoRender.useTex&&estadoRender.optTex;
@@ -220,20 +172,17 @@ function draw(){
   ganchos.desenharSeloResposta(R,cx,cy);
 }
 
-function allOn(){return D.every(function(d){return estadoMapa.on[d.i]||!avail(d);});}
-function firstOn(){for(var i=0;i<D.length;i++)if(estadoMapa.on[i])return i;return -1;}
-function visIdx(){var v=[];estadoMapa.on.forEach(function(x,k){if(x)v.push(k);});return v;}
-/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
-function iniciar() {
-  cv = document.getElementById('g');
-  ctx = cv.getContext('2d');
-  estadoMapa.includeDisputed = lsGet('globo.includeDisputed',true);
-  estadoMapa.includeDep = lsGet('globo.includeDep',false);
-  estadoMapa.includeUni = lsGet('globo.includeUni',false);
-  estadoMapa.on = D.map(function(d){return avail(d)?1:0;});
-  reduce = window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce)estadoCamera.auto=false;
-  window.addEventListener('resize',resize);
+function frame(){
+  if(estadoCamera.target){
+    var dl=shortest(estadoCamera.lam,estadoCamera.target.lam),dp=estadoCamera.target.phi-estadoCamera.phi,dz=estadoCamera.target.zoom-estadoCamera.zoom;
+    estadoCamera.lam+=dl*.14;estadoCamera.phi+=dp*.14;estadoCamera.zoom+=dz*.14;
+    if(Math.abs(dl)<.0008&&Math.abs(dp)<.0008&&Math.abs(dz)<.004)estadoCamera.target=null;
+  }else if(estadoCamera.auto&&!estadoCamera.dragging&&!estadoMapa.selected&&!ganchos.treinoAberto()&&!estadoBrasil.statesMode&&!estadoBrasil.selSt&&!estadoCamera.plano2D&&(performance.now()-estadoCamera.lastInteract>2500)){
+    estadoCamera.lam+=0.0022;
+  }
+  var wantCy=((estadoMapa.selected||estadoBrasil.selSt)&&!ganchos.treinoAberto())?Math.max(.26,Math.min(.5,(H-ganchos.alturaCartao())/(2*H))):(ganchos.treinoAberto()?Math.max(.24,Math.min(.5,(H-ganchos.alturaTreino())/(2*H))):.5);estadoCamera.cyFrac+=(wantCy-estadoCamera.cyFrac)*.15;
+  if(estadoCamera.lam>PI)estadoCamera.lam-=2*PI;if(estadoCamera.lam<-PI)estadoCamera.lam+=2*PI;
+  draw();requestAnimationFrame(frame);
 }
 
-export { allOn, avail, availCount, ctx, cv, dpr, draw, estadoCamera, estadoMapa, firstOn, FONT, H, iniciar, R0, resize, rot, visIdx, W };
+export { frame };

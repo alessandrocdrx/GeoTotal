@@ -1,39 +1,36 @@
 /**
  * @arquivo js/treino/perguntas.js
  * Camada: Treino
- * Montagem e resposta das perguntas (nextQ), tipos de pergunta e cronômetro.
+ * Fluxo das perguntas (nextQ), respostas, cronômetro e tela de fim de partida.
  */
 
 import { exitStates } from '../brasil/modo-estados.js';
 import { BRS } from '../dados/estados-brasil.js';
 import { D, dflag, norm } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
-import { closeCard } from '../interface/cartao-pais.js';
+import { closeCard, tourStop } from '../interface/cartao-detalhes.js';
 import { estadoDistancia, slerp } from '../interface/distancia.js';
 import { hidePick } from '../interface/lista-proximos.js';
-import { tourStop } from '../interface/passeio.js';
 import { ouvir } from '../nucleo/eventos.js';
 import { haversine } from '../nucleo/geo.js';
-import { $, confirmTap, lsSet } from '../nucleo/utilitarios.js';
+import { $, confirmTap, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { addHintBtn } from './dica.js';
-import { applyDomainForScope, emptyMsg, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
-import { accList, estadoTreino, freshQS, matches, measureQ, quiz, scopeLabel } from './estado.js';
+import { applyDomainForScope, emptyMsg, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow } from './dominio.js';
+import { accList, estadoTreino, freshQS, matches, measureQ, quiz, resetSession, scopeLabel, stopTimerTick } from './estado.js';
 import { fillQStat, modeName } from './estatisticas.js';
-import { estadoPartida, finishQ, makeNeighborOptions, makeOptions, optLabel, pickQ, renderScore, runPool, runRestart, saveRecs, saveRuns, showRunDone, showTarget } from './partida.js';
+import { curRun, estadoPartida, finishQ, fmtTime, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, shareRun, showTarget } from './partida.js';
 import { addXP } from './progressao.js';
 import { estadoBrasil, stateAt } from '../visualizacao/estados.js';
-import { estadoRender, setStatus } from '../visualizacao/fronteiras.js';
-import { estadoCamera, estadoMapa, H, R0, resize, rot, W } from '../visualizacao/globo.js';
+import { estadoRender } from '../visualizacao/projecao.js';
+import { estadoCamera, estadoMapa, H, R0, resize, rot, W } from '../visualizacao/tela.js';
 
 /* ---------- sessões fechadas ---------- */
-function resetSession(){quiz.sessionAsked=0;quiz.sessionLog=[];}
 function sessionDone(){return quiz.sessionLen>0&&quiz.sessionAsked>=quiz.sessionLen;}
 function timerRemaining(){if(!quiz.timerLen)return null;return Math.max(0,quiz.timerLen*1000-(Date.now()-quiz.timerStart));}
 function updateTimerDisplay(){
   var el=$('qtimer'),r=timerRemaining();
   el.textContent=(r==null)?'':('⏱️ '+Math.ceil(r/1000)+'s');
 }
-function stopTimerTick(){if(quiz.timerInt){clearInterval(quiz.timerInt);quiz.timerInt=null;}}
 function startTimerTick(){
   stopTimerTick();
   if(!quiz.timerLen){updateTimerDisplay();return;}
@@ -81,7 +78,6 @@ function showRoundSummary(reason){
   }
   body.appendChild(row);
 }
-function updateTrainRow(){var el=$('mtrainv');if(el)el.textContent=(quiz.type==='type'?'Digitar':'Múltipla escolha')+' · '+({mix:'foco em tudo','new':'só novos',wrong:'só errados'})[estadoTreino.quizFocus]+(quiz.timerLen?' · '+quiz.timerLen+'s':'')+(quiz.survivalMode?' · sobrevivência':'');}
 function updateSessionBtn(){updateTrainRow();
   $('qsessionb').textContent='🧮 Sessão: '+(quiz.sessionLen?quiz.sessionLen+' perguntas':'livre');
 }
@@ -265,6 +261,41 @@ function quizClose(){
 }
 function syncModeSw(){$('qbtn').setAttribute('aria-pressed',quiz.open?'true':'false');$('qclose').setAttribute('aria-pressed',quiz.open?'false':'true');}
 
+function runRestart(){delete estadoPartida.RUNS[runKey()];saveRuns();resetSession();quiz.last=-1;nextQ();renderScore();}
+function showRunDone(){
+  stopTimerTick();
+  var r=curRun(),n=poolIdx().length,body=$('qbody'),fb=$('qfb'),res=r.res||{medal:medalFor(r.e),t:r.at||0};
+  fb.textContent='';fb.className='';$('qnext').style.display='none';$('qpool').textContent='';
+  body.innerHTML='';
+  var box=document.createElement('div');box.className='rundone';
+  var rec=recordable(estadoTreino.quizScope);
+  if(rec){var md=document.createElement('div');md.className='medal';md.textContent=MEDAL[res.medal].i;box.appendChild(md);}
+  var h=document.createElement('div');h.className='qq';h.textContent='Você zerou '+scopeLabel()+'!';
+  var sub=document.createElement('div');sub.className='qhint';
+  sub.textContent=n+' '+unitWord(n)+' em '+modeName(quiz.mode)+' · '+r.e+' '+(r.e===1?'erro':'erros')+' · '+fmtTime(res.t)+' de jogo'+(rec?' · medalha de '+MEDAL[res.medal].n:'')+'.';
+  box.appendChild(h);box.appendChild(sub);
+  if(rec){
+    var rl=document.createElement('div');rl.className='recline';
+    var bits=[];
+    if(res.first)bits.push('🎉 Primeira vez que você zera esta região neste tipo de pergunta!');
+    else{
+      if(res.newT)bits.push('🎉 Novo recorde de tempo! (antes: '+fmtTime(res.prevT)+')');
+      if(res.newE&&res.prevE!=null&&r.e<res.prevE)bits.push('🎉 Novo recorde de menos erros! (antes: '+res.prevE+')');
+      if(!bits.length){var R2=estadoPartida.RECS[runKey()]||{};bits.push('Seus recordes: '+fmtTime(R2.bestT)+' · '+R2.bestE+' '+(R2.bestE===1?'erro':'erros'));}
+    }
+    if(res.medal>1)bits.push(res.medal===2?'Para o ouro: zere sem nenhum erro.':'Para a prata: zere com até 3 erros.');
+    rl.textContent=bits.join(' ');box.appendChild(rl);
+  }
+  var row=document.createElement('div');row.className='qrow';
+  var again=document.createElement('button');again.textContent='🔁 Jogar de novo';again.onclick=runRestart;
+  var other=document.createElement('button');other.textContent='📍 Outra região';other.onclick=function(){$('qscopeb').click();};
+  var sh=document.createElement('button');sh.className='qshare';sh.textContent='📤';sh.title='Compartilhar resultado';sh.setAttribute('aria-label','Compartilhar resultado');
+  sh.onclick=function(){shareRun(n,r,res);};
+  row.appendChild(again);row.appendChild(other);row.appendChild(sh);box.appendChild(row);
+  var tip=document.createElement('div');tip.className='inote';tip.textContent='Cada tipo de pergunta tem a sua própria partida e a sua medalha.';
+  box.appendChild(tip);
+  body.appendChild(box);measureQ();
+}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ouvir('modo-estados-abriu',function(){if(quiz.open)quizClose();});
@@ -303,4 +334,4 @@ function iniciar() {
   confirmTap($('qreset'),'Toque de novo para zerar',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
 }
 
-export { buildModeButtons, iniciar, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, resetSession, stopTimerTick, updateTrainRow };
+export { buildModeButtons, iniciar, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, runRestart };

@@ -5,15 +5,15 @@
  */
 
 import { D } from '../dados/paises.js';
-import { closeCard, select } from './cartao-pais.js';
+import { closeCard } from './cartao-detalhes.js';
+import { select } from './cartao-pais.js';
 import { ganchosInterface } from './ganchos.js';
 import { hidePick } from './lista-proximos.js';
-import { PI } from '../visualizacao/animacao.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
-import { countryAt, estadoRender, inFeat } from '../visualizacao/fronteiras.js';
 import { ganchos } from '../visualizacao/ganchos.js';
-import { cv, estadoCamera, estadoMapa, H, R0, rot, W } from '../visualizacao/globo.js';
-import { flat2D, inv2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
+import { inv2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
+import { countryAt, estadoRender, inFeat } from '../visualizacao/projecao.js';
+import { cv, estadoCamera, estadoMapa, H, PI, R0, rot, W } from '../visualizacao/tela.js';
 
 /* ---------- Interação ---------- */
 const ptrs = {};
@@ -35,7 +35,7 @@ function endPtr(e){
 }
 
 function tap(px,py){
-  if(flat2D&&!estadoBrasil.statesMode){tap2D(px,py);return;}
+  if(estadoCamera.plano2D&&!estadoBrasil.statesMode){tap2D(px,py);return;}
   var r=cv.getBoundingClientRect(),x=px-r.left,y=py-r.top,R=R0*estadoCamera.zoom,cand=[];
   if(ganchosInterface.toqueAntes(x,y))return;
   if(ganchosInterface.toqueEstados(x,y))return;
@@ -106,7 +106,7 @@ function iniciar() {
     }else if(estadoCamera.dragging){
       var dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;
       moved+=Math.abs(dx)+Math.abs(dy);
-      var Re=(flat2D?R2now():R0)*estadoCamera.zoom;
+      var Re=(estadoCamera.plano2D?R2now():R0)*estadoCamera.zoom;
       estadoCamera.lam-=dx/Re;estadoCamera.phi=Math.max(-PI/2,Math.min(PI/2,estadoCamera.phi+dy/Re));
     }
     estadoCamera.lastInteract=performance.now();

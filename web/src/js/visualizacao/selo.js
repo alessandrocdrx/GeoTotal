@@ -6,7 +6,7 @@
 
 import { qcapDisp, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
-import { ctx, estadoMapa, FONT, W } from './globo.js';
+import { ctx, estadoMapa, FONT, W } from './tela.js';
 
 function selBadgeMetrics(d){
   var t1=estadoMapa.labelMode==='p'||d.uni?short(d):capShort(d),t2=d.uni?d.cap:estadoMapa.labelMode==='p'?('Capital: '+qcapDisp(d)):('País: '+short(d));

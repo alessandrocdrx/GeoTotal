@@ -5,10 +5,10 @@
  */
 
 import { D } from '../dados/paises.js';
-import { flyTo, PI } from './animacao.js';
-import { estadoRender } from './fronteiras.js';
+import { flyTo } from './animacao.js';
 import { ganchos } from './ganchos.js';
-import { estadoCamera, H, R0, W } from './globo.js';
+import { estadoRender } from './projecao.js';
+import { estadoCamera, H, PI, R0, W } from './tela.js';
 
 /* vistas já calculadas por país (zera quando os contornos mudam) */
 let cacheVistas = {};

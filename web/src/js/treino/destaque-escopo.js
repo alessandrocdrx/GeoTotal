@@ -6,8 +6,7 @@
 
 import { poolIdx, QD } from './dominio.js';
 import { ganchos } from '../visualizacao/ganchos.js';
-import { ctx, rot } from '../visualizacao/globo.js';
-import { flat2D } from '../visualizacao/mapa-2d.js';
+import { ctx, estadoCamera, rot } from '../visualizacao/tela.js';
 
 /* ---------- pulso de destaque do escopo no globo ---------- */
 let scopePulse = null;
@@ -17,7 +16,7 @@ function firePulseForScope(){
   firePulse(idxs.map(function(i){return arr[i];}));
 }
 function drawScopePulse(R,cx,cy){
-  if(!scopePulse||flat2D)return;
+  if(!scopePulse||estadoCamera.plano2D)return;
   var dt=performance.now()-scopePulse.t0,dur=1300;
   if(dt>dur){scopePulse=null;return;}
   var t=dt/dur,rad=10+34*t,al=(1-t)*.85;

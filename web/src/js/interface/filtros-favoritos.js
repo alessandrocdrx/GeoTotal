@@ -5,12 +5,10 @@
  */
 
 import { D } from '../dados/paises.js';
-import { snap } from './filtros-desfazer.js';
-import { afterFilter, estadoFiltros } from './filtros.js';
-import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
-import { fitTo, flyTo, PI } from '../visualizacao/animacao.js';
-import { setStatus } from '../visualizacao/fronteiras.js';
-import { estadoCamera, estadoMapa, visIdx } from '../visualizacao/globo.js';
+import { afterFilter, estadoFiltros, snap } from './filtros.js';
+import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
+import { fitTo, flyTo } from '../visualizacao/animacao.js';
+import { estadoCamera, estadoMapa, PI, visIdx } from '../visualizacao/tela.js';
 
 /* ---------- favoritos de filtro ---------- */
 function favs(){return lsGet('globo.fav.v1',[]);}

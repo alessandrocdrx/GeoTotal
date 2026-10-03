@@ -5,7 +5,9 @@
 // (ex.: visualização usando treino) e grupos de módulos com dependência circular.
 // Ver "Camadas e dependências" em docs/ARQUITETURA.md.
 //
-// Uso: node scripts/verificar-camadas.mjs [--max N]   (falha se houver mais de N violações)
+// Uso: node scripts/verificar-camadas.mjs [--max N] [--sem-ciclos]
+//   --max N        falha se houver mais de N importações que sobem de camada
+//   --sem-ciclos   falha se houver dependência circular entre módulos
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, normalize, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -65,10 +67,15 @@ for (const v of violacoes) {
   porPar[`${a} → ${b}`] = (porPar[`${a} → ${b}`] || 0) + 1;
 }
 for (const [par, n] of Object.entries(porPar).sort((a, b) => b[1] - a[1])) console.log(`  ${par}: ${n}`);
-console.log(`Grupos circulares: ${grupos.length}${grupos.length ? ' (' + grupos.map((g) => g.length + ' módulos').join(', ') + ')' : ''}`);
+console.log(`Grupos circulares: ${grupos.length}`);
+for (const g of grupos) console.log('  ' + g.sort().join(', '));
 
 const i = process.argv.indexOf('--max');
 if (i > 0 && violacoes.length > Number(process.argv[i + 1])) {
   console.error(`\nMais violações (${violacoes.length}) do que o limite (${process.argv[i + 1]}). Não piore a arquitetura.`);
+  process.exit(1);
+}
+if (process.argv.includes('--sem-ciclos') && grupos.length) {
+  console.error('\nHá dependência circular entre módulos. Use um gancho ou um evento (ver docs/ARQUITETURA.md).');
   process.exit(1);
 }

@@ -5,8 +5,8 @@
  */
 
 import { $ } from '../nucleo/utilitarios.js';
-import { PI } from './animacao.js';
-import { estadoRender } from './fronteiras.js';
+import { estadoRender } from './projecao.js';
+import { PI } from './tela.js';
 
 /* ---------- Textura procedural (aparência de satélite, NÃO é foto real) ---------- */
 function hh(x,y){var n=Math.sin(x*127.1+y*311.7)*43758.5453;return n-Math.floor(n);}

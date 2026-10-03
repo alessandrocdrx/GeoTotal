@@ -6,10 +6,10 @@
 
 import { BRBY, BRS } from '../dados/estados-brasil.js';
 import { norm } from '../dados/paises.js';
-import { $ } from '../nucleo/utilitarios.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
 import { fixWind, idbGet, idbSet } from '../visualizacao/carregamento.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
-import { estadoRender, setStatus } from '../visualizacao/fronteiras.js';
+import { estadoRender } from '../visualizacao/projecao.js';
 
 /* ---------- importar contornos dos estados (GeoJSON) ---------- */
 function stFeatIndex(f){

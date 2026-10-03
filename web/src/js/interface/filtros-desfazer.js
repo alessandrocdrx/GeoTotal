@@ -1,20 +1,16 @@
 /**
  * @arquivo js/interface/filtros-desfazer.js
  * Camada: Interface
- * Desfazer a última mudança de filtros.
+ * Botão Desfazer: volta ao filtro anterior guardado por filtros.js.
  */
 
 import { D } from '../dados/paises.js';
-import { afterFilter, estadoFiltros } from './filtros.js';
-import { $ } from '../nucleo/utilitarios.js';
-import { fitTo, flyTo, PI } from '../visualizacao/animacao.js';
-import { setStatus } from '../visualizacao/fronteiras.js';
-import { estadoCamera, estadoMapa, visIdx } from '../visualizacao/globo.js';
+import { afterFilter, estadoFiltros, hist, updateUndo } from './filtros.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
+import { fitTo, flyTo } from '../visualizacao/animacao.js';
+import { estadoCamera, estadoMapa, PI, visIdx } from '../visualizacao/tela.js';
 
 /* ---------- desfazer filtros ---------- */
-const hist = [];
-function updateUndo(){var b=$('ubtn');b.disabled=!hist.length;b.style.opacity=hist.length?1:.4;}
-function snap(){hist.push(estadoMapa.on.slice());if(hist.length>30)hist.shift();updateUndo();}
 function undo(){
   if(!hist.length)return;
   estadoMapa.on=hist.pop();estadoFiltros.nbSaved=null;afterFilter();updateUndo();
@@ -28,4 +24,4 @@ function iniciar() {
   $('ubtn').onclick=undo;updateUndo();
 }
 
-export { iniciar, snap };
+export { iniciar };

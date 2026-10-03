@@ -10,9 +10,9 @@ import { haversine } from '../nucleo/geo.js';
 import { estadoTreino, qHide, quiz } from './estado.js';
 import { finishQ } from './partida.js';
 import { pickStateNear, quizMapAnswer, quizMapAnswerBR } from './perguntas.js';
-import { countryAt, estadoRender, inFeat, projCfg } from '../visualizacao/fronteiras.js';
-import { estadoCamera, estadoMapa, H, R0, rot, W } from '../visualizacao/globo.js';
 import { inv2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
+import { countryAt, estadoRender, inFeat, projCfg } from '../visualizacao/projecao.js';
+import { estadoCamera, estadoMapa, H, R0, rot, W } from '../visualizacao/tela.js';
 
 /** Antes de tudo: durante perguntas sem mapa o toque é ignorado; no "Achar no mapa" dos estados, responde. */
 function toqueAntes(x,y){

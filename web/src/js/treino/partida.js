@@ -11,14 +11,13 @@ import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { gapOf, mstats, poolIdx, qcapD, qcc, QD, qflag, TIER_P, tierOf, unitWord } from './dominio.js';
 import { estadoTreino, measureQ, quiz, scopeLabel } from './estado.js';
 import { fillQStat, modeName } from './estatisticas.js';
-import { nextQ, resetSession, stopTimerTick } from './perguntas.js';
 import { addXP, celebrate, recordProgress, updateProgUI } from './progressao.js';
 import { flyTo } from '../visualizacao/animacao.js';
 import { showCountry, zoomFor } from '../visualizacao/enquadramento.js';
 import { estadoBrasil, stateView } from '../visualizacao/estados.js';
 import { ganchos } from '../visualizacao/ganchos.js';
-import { ctx, FONT, rot, W } from '../visualizacao/globo.js';
-import { flat2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
+import { proj2D, R2now } from '../visualizacao/mapa-2d.js';
+import { ctx, estadoCamera, FONT, rot, W } from '../visualizacao/tela.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoPartida.nome). */
 const estadoPartida = {
@@ -60,41 +59,6 @@ function runRecord(i,ok){
     if(recordable(estadoTreino.quizScope)&&r.res.newMedal)celebrate(MEDAL[r.res.medal].i+' Medalha de '+MEDAL[r.res.medal].n+'!');
   }
   saveRuns();
-}
-function runRestart(){delete estadoPartida.RUNS[runKey()];saveRuns();resetSession();quiz.last=-1;nextQ();renderScore();}
-function showRunDone(){
-  stopTimerTick();
-  var r=curRun(),n=poolIdx().length,body=$('qbody'),fb=$('qfb'),res=r.res||{medal:medalFor(r.e),t:r.at||0};
-  fb.textContent='';fb.className='';$('qnext').style.display='none';$('qpool').textContent='';
-  body.innerHTML='';
-  var box=document.createElement('div');box.className='rundone';
-  var rec=recordable(estadoTreino.quizScope);
-  if(rec){var md=document.createElement('div');md.className='medal';md.textContent=MEDAL[res.medal].i;box.appendChild(md);}
-  var h=document.createElement('div');h.className='qq';h.textContent='Você zerou '+scopeLabel()+'!';
-  var sub=document.createElement('div');sub.className='qhint';
-  sub.textContent=n+' '+unitWord(n)+' em '+modeName(quiz.mode)+' · '+r.e+' '+(r.e===1?'erro':'erros')+' · '+fmtTime(res.t)+' de jogo'+(rec?' · medalha de '+MEDAL[res.medal].n:'')+'.';
-  box.appendChild(h);box.appendChild(sub);
-  if(rec){
-    var rl=document.createElement('div');rl.className='recline';
-    var bits=[];
-    if(res.first)bits.push('🎉 Primeira vez que você zera esta região neste tipo de pergunta!');
-    else{
-      if(res.newT)bits.push('🎉 Novo recorde de tempo! (antes: '+fmtTime(res.prevT)+')');
-      if(res.newE&&res.prevE!=null&&r.e<res.prevE)bits.push('🎉 Novo recorde de menos erros! (antes: '+res.prevE+')');
-      if(!bits.length){var R2=estadoPartida.RECS[runKey()]||{};bits.push('Seus recordes: '+fmtTime(R2.bestT)+' · '+R2.bestE+' '+(R2.bestE===1?'erro':'erros'));}
-    }
-    if(res.medal>1)bits.push(res.medal===2?'Para o ouro: zere sem nenhum erro.':'Para a prata: zere com até 3 erros.');
-    rl.textContent=bits.join(' ');box.appendChild(rl);
-  }
-  var row=document.createElement('div');row.className='qrow';
-  var again=document.createElement('button');again.textContent='🔁 Jogar de novo';again.onclick=runRestart;
-  var other=document.createElement('button');other.textContent='📍 Outra região';other.onclick=function(){$('qscopeb').click();};
-  var sh=document.createElement('button');sh.className='qshare';sh.textContent='📤';sh.title='Compartilhar resultado';sh.setAttribute('aria-label','Compartilhar resultado');
-  sh.onclick=function(){shareRun(n,r,res);};
-  row.appendChild(again);row.appendChild(other);row.appendChild(sh);box.appendChild(row);
-  var tip=document.createElement('div');tip.className='inote';tip.textContent='Cada tipo de pergunta tem a sua própria partida e a sua medalha.';
-  box.appendChild(tip);
-  body.appendChild(box);measureQ();
 }
 /* imagem do resultado para compartilhar */
 function shareRun(n,r,res){
@@ -292,7 +256,7 @@ function finishQ(ok,extra){
 function drawBadge(R,cx,cy){
   if(estadoTreino.qBadge==null||estadoTreino.quizDomain!=='world')return;
   var d=D[estadoTreino.qBadge],X,Y;
-  if(flat2D){var R2=R2now(),pp=proj2D(d.lng,d.lat,R2,cx,cy);X=pp.x;Y=pp.y;}
+  if(estadoCamera.plano2D){var R2=R2now(),pp=proj2D(d.lng,d.lat,R2,cx,cy);X=pp.x;Y=pp.y;}
   else{var p=rot(d.x,d.y,d.z);if(p[2]<0.05)return;X=cx+R*p[0];Y=cy-R*p[1];}
   ctx.beginPath();ctx.arc(X,Y,10,0,7);ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.stroke();
   ctx.beginPath();ctx.arc(X,Y,4.5,0,7);ctx.fillStyle=REG[d.r].c;ctx.fill();
@@ -329,4 +293,4 @@ function iniciar() {
   estadoPartida.RECS = lsGet('globo.recs.v1',{});
 }
 
-export { drawBadge, estadoPartida, finishQ, iniciar, makeNeighborOptions, makeOptions, MEDAL, optLabel, pickQ, recordable, renderScore, runPool, runRestart, saveRecs, saveRuns, scopeKeyFor, showRunDone, showTarget };
+export { curRun, drawBadge, estadoPartida, finishQ, fmtTime, iniciar, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget };

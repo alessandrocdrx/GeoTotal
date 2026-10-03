@@ -7,12 +7,10 @@
 import { D, norm } from '../dados/paises.js';
 import { byName, capShort, short } from '../dados/vizinhos.js';
 import { haversine } from '../nucleo/geo.js';
-import { $ } from '../nucleo/utilitarios.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
 import { fitTo } from '../visualizacao/animacao.js';
-import { setStatus } from '../visualizacao/fronteiras.js';
 import { ganchos } from '../visualizacao/ganchos.js';
-import { ctx, rot } from '../visualizacao/globo.js';
-import { flat2D } from '../visualizacao/mapa-2d.js';
+import { ctx, estadoCamera, rot } from '../visualizacao/tela.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoDistancia.nome). */
 const estadoDistancia = {
@@ -26,7 +24,7 @@ function slerp(a,b,t){
   return [a[0]*s1+b[0]*s2,a[1]*s1+b[1]*s2,a[2]*s1+b[2]*s2];
 }
 function drawArc(R,cx,cy){
-  if(!estadoDistancia.arc||flat2D)return;
+  if(!estadoDistancia.arc||estadoCamera.plano2D)return;
   ctx.save();ctx.setLineDash([7,5]);ctx.lineWidth=2.4;ctx.strokeStyle='#ffe066';ctx.lineJoin='round';
   ctx.beginPath();
   var pen=false,k,p;

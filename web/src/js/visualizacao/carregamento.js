@@ -6,10 +6,11 @@
 
 import { D } from '../dados/paises.js';
 import { emitir } from '../nucleo/eventos.js';
-import { $, confirmTap } from '../nucleo/utilitarios.js';
+import { $, confirmTap, setStatus } from '../nucleo/utilitarios.js';
 import { limparCacheVistas } from './enquadramento.js';
-import { A3, estadoRender, setStatus, setupGeo, tryLoad } from './fronteiras.js';
-import { ctx } from './globo.js';
+import { A3, setupGeo, tryLoad } from './fronteiras.js';
+import { estadoRender } from './projecao.js';
+import { ctx } from './tela.js';
 import { buildTexture, updateOpts } from './textura.js';
 import { initGL, uploadTexture } from './webgl.js';
 

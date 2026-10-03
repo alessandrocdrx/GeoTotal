@@ -43,7 +43,7 @@ web/src/
     ├── main.js             ponto de entrada: chama o iniciar() de cada módulo, na ordem
     ├── dados/              dados puros: países, territórios, extras, religiões, línguas, vizinhos
     ├── nucleo/             utilitários, cálculo de distância e eventos
-    ├── visualizacao/       globo 3D, WebGL, textura, fronteiras, mapa 2D, dia e noite, carregamento
+    ├── visualizacao/       tela e câmera, globo 3D, WebGL, textura, fronteiras, mapa 2D, dia e noite
     ├── interface/          gestos, cartão, filtros, busca, menu e ferramentas
     ├── recursos/           exportação (CSV, Anki) e folha de estudo
     ├── brasil/             modo estados do Brasil
@@ -79,8 +79,18 @@ As camadas do JavaScript seguem esta direção (de baixo para cima):
 dados → nucleo → visualizacao → interface → recursos → brasil → treino → app
 ```
 
-Uma camada só importa das iguais ou de baixo; as de baixo não conhecem as de cima.
-`npm run camadas` confere isso e a CI falha se aparecer uma importação que sobe de camada.
+Uma camada só importa das iguais ou de baixo; as de baixo não conhecem as de cima. Também não
+há dependência circular: se A importa B, B não importa A (nem por intermédio de outros).
+`npm run camadas` confere as duas regras e a CI falha se alguma for quebrada.
+
+Dentro de cada camada há um módulo de base com o estado compartilhado, que os outros importam:
+
+| Camada | Base | O que guarda |
+| --- | --- | --- |
+| visualizacao | `tela.js`, `projecao.js` | canvas, tamanho, câmera, países ligados, rotação; estado do desenho e projeção |
+| interface | `cartao-detalhes.js` | elemento e altura do cartão, fechar, parar o passeio |
+| brasil | `visualizacao/estados.js` | `estadoBrasil` (fica na visualização porque o globo desenha os estados) |
+| treino | `estado.js` | `quiz`, `estadoTreino`, sessão e cronômetro |
 
 Quando uma camada de baixo precisa de algo de cima, há dois mecanismos:
 
@@ -148,8 +158,8 @@ export { AMERICAS_R, estadoTreino, iniciar, inScope };    // a interface públic
    ESLint aponta o que sobra.
 3. **Nada executa no nível do módulo** além de declarações; o resto vai para `iniciar()`.
 4. **Um módulo novo entra em `main.js`** (import e chamada do `iniciar()`, se tiver).
-5. **Camadas só importam de camadas iguais ou de baixo** (ver acima); para falar com as de
-   cima, use um gancho ou um evento. `npm run camadas` confere e a CI falha se houver exceção.
+5. **Camadas só importam de camadas iguais ou de baixo, e sem ciclos** (ver acima); para
+   falar com quem está acima, use um gancho ou um evento. `npm run camadas` confere.
 6. **Dados ficam em `js/dados/`**, no formato de texto com campos separados por `|`.
 7. **Sem internet:** o app não pode depender de nada fora do pacote. Os testes de ponta a ponta
    falham se a página tentar acessar outro endereço.
@@ -209,6 +219,7 @@ Feito:
    domínio, as chamadas de baixo para cima viraram ganchos e eventos, e as importações que
    sobem de camada caíram de 70 para 0 (a CI agora exige 0).
 
-Próximo (opcional): ainda há dependência circular *dentro* de algumas camadas (visualização,
-interface, Brasil e treino), herança do arquivo único. Não quebra a arquitetura em camadas,
-mas dá para reduzir separando o estado compartilhado de cada camada num módulo próprio.
+5. ~~Acabar com as dependências circulares~~ (versão 1.20): o estado compartilhado de cada
+   camada foi para um módulo de base (`visualizacao/tela.js`, `visualizacao/projecao.js`,
+   `interface/cartao-detalhes.js`, `treino/estado.js`) e o grafo de módulos ficou sem ciclos
+   (a CI agora exige isso com `--sem-ciclos`).

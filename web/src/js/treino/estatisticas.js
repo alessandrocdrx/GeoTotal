@@ -8,11 +8,10 @@ import { BRREG } from '../dados/estados-brasil.js';
 import { dflag, norm, REG } from '../dados/paises.js';
 import { short } from '../dados/vizinhos.js';
 import { ganchosInterface } from '../interface/ganchos.js';
-import { $ } from '../nucleo/utilitarios.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
 import { inScopeActive, mstats, qcc, QD, unitWord } from './dominio.js';
 import { estadoTreino, quiz, scopeLabel } from './estado.js';
-import { setStatus } from '../visualizacao/fronteiras.js';
-import { avail } from '../visualizacao/globo.js';
+import { avail } from '../visualizacao/tela.js';
 
 /* ---------- estatísticas por região ---------- */
 function modeName(m){

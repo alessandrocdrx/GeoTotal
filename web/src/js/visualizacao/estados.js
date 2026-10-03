@@ -7,12 +7,12 @@
 import { BRREG, BRS, STSHAPES } from '../dados/estados-brasil.js';
 import { D, norm, REG } from '../dados/paises.js';
 import { byName, short } from '../dados/vizinhos.js';
-import { flyTo, PI } from './animacao.js';
+import { flyTo } from './animacao.js';
 import { featView, zoomFor } from './enquadramento.js';
-import { estadoRender, hexA, inFeat, projCfg } from './fronteiras.js';
 import { ganchos } from './ganchos.js';
-import { ctx, estadoCamera, FONT, H, R0, rot, W } from './globo.js';
 import { shapePath } from './marcadores.js';
+import { estadoRender, hexA, inFeat, projCfg } from './projecao.js';
+import { ctx, estadoCamera, FONT, H, PI, R0, rot, W } from './tela.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoBrasil.nome). */
 const estadoBrasil = {

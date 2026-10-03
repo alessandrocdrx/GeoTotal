@@ -4,13 +4,12 @@
  * Itens do menu específicos do Brasil.
  */
 
-import { enterStates } from './modo-estados.js';
+import { enterStates } from './cartao-estado.js';
 import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { D, dflag } from '../dados/paises.js';
 import { short } from '../dados/vizinhos.js';
-import { fmtArea, fmtPop } from '../interface/cartao-detalhes.js';
+import { fmtArea, fmtPop, tourStop } from '../interface/cartao-detalhes.js';
 import { fillCountrySelect } from '../interface/distancia.js';
-import { tourStop } from '../interface/passeio.js';
 import { $ } from '../nucleo/utilitarios.js';
 import { csvCell, offerFile } from '../recursos/exportar.js';
 

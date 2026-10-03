@@ -1,22 +1,26 @@
 /**
  * @arquivo js/brasil/cartao-estado.js
  * Camada: Brasil
- * Cartão do estado selecionado.
+ * Cartão do estado selecionado e entrada no modo estados.
  */
 
+import { ensureStateShapes } from './importar-contornos.js';
 import { exitStates, updateStBtn } from './modo-estados.js';
 import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { D, norm } from '../dados/paises.js';
 import { byName, short } from '../dados/vizinhos.js';
-import { estadoCartao, fmtArea, fmtPop, measureCard } from '../interface/cartao-detalhes.js';
-import { card, renderChips, renderFacts, renderNear, select } from '../interface/cartao-pais.js';
-import { afterFilter, updateNbBtn } from '../interface/filtros.js';
+import { card, closeCard, estadoCartao, fmtArea, fmtPop, measureCard, tourStop } from '../interface/cartao-detalhes.js';
+import { renderChips, renderFacts, renderNear, select } from '../interface/cartao-pais.js';
+import { afterFilter, buildChips, updateNbBtn } from '../interface/filtros.js';
 import { ganchosInterface } from '../interface/ganchos.js';
-import { $ } from '../nucleo/utilitarios.js';
+import { hidePick } from '../interface/lista-proximos.js';
+import { emitir } from '../nucleo/eventos.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
 import { flyTo } from '../visualizacao/animacao.js';
 import { countryView, zoomFor } from '../visualizacao/enquadramento.js';
 import { estadoBrasil, fitStates, stateAt, stateView } from '../visualizacao/estados.js';
-import { estadoCamera, estadoMapa, H, R0, rot, W } from '../visualizacao/globo.js';
+import { setFlat2D } from '../visualizacao/mapa-2d.js';
+import { estadoCamera, estadoMapa, H, R0, rot, W } from '../visualizacao/tela.js';
 
 /* ---------- cartão do estado ---------- */
 function fillInfoSt(st){
@@ -106,12 +110,26 @@ function stTap(x,y){
   }else if(estadoBrasil.selSt){estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;}
 }
 
+function enterStates(st){
+  if(estadoCamera.plano2D)setFlat2D(false);
+  emitir('modo-estados-abriu');
+  tourStop();hidePick();
+  estadoBrasil.statesMode=true;document.body.classList.add('states');
+  closeCard();
+  estadoBrasil.onS=BRS.map(function(){return 1;});estadoBrasil.stSaved=null;estadoBrasil.stNbC=[];
+  buildChips();updateNbBtn();
+  setStatus('');
+  selectSt(st||BRS[0],true);
+  ensureStateShapes();
+}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ganchosInterface.passoEstado = stepSt;
   ganchosInterface.alternarVizinhosEstado = toggleNbSt;
   ganchosInterface.selecionarEstado = selectSt;
+  ganchosInterface.abrirEstado = enterStates;
+  $('stbtn').onclick=function(){enterStates(null);};
   ganchosInterface.toqueEstados = function(x,y){if(!estadoBrasil.statesMode)return false;stTap(x,y);return true;};
 }
 
-export { iniciar, selectSt };
+export { enterStates, iniciar };

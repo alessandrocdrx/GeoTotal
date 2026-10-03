@@ -11,10 +11,10 @@ import { ouvir } from '../nucleo/eventos.js';
 import { $, lsSet } from '../nucleo/utilitarios.js';
 import { firePulseForScope } from './destaque-escopo.js';
 import { applyDomainForScope, inScopeActive, QD, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
-import { AMERICAS_R, estadoTreino, quiz } from './estado.js';
+import { AMERICAS_R, estadoTreino, quiz, resetSession } from './estado.js';
 import { estadoPartida, MEDAL, recordable, renderScore, scopeKeyFor } from './partida.js';
-import { buildModeButtons, nextQ, resetSession } from './perguntas.js';
-import { avail, availCount, estadoMapa } from '../visualizacao/globo.js';
+import { buildModeButtons, nextQ } from './perguntas.js';
+import { avail, availCount, estadoMapa } from '../visualizacao/tela.js';
 
 /* ---------- escopo e foco do treino ---------- */
 function applyScopeChange(newScope){

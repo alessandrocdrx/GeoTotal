@@ -1,35 +1,16 @@
 /**
  * @arquivo js/visualizacao/fronteiras.js
  * Camada: Visualização
- * Fronteiras reais (TopoJSON) e desenho dos contornos dos países.
+ * Fronteiras reais (TopoJSON): carregamento das bibliotecas e desenho dos contornos dos países.
  */
 
 import { D, REG } from '../dados/paises.js';
-import { PI } from './animacao.js';
 import { drawGeoStates, estadoBrasil } from './estados.js';
 import { ganchos } from './ganchos.js';
-import { allOn, avail, ctx, estadoCamera, estadoMapa, H, R0, W } from './globo.js';
-
-/** Estado compartilhado com outros módulos (leitura e escrita por estadoRender.nome). */
-const estadoRender = {
-  gl: null,
-  glProg: null,
-  glTex: null,
-  glBuf: null,
-  useTex: false,
-  optTex: true,
-  optBor: true,
-  optFill: false,
-  feats: null,
-  FEAT: undefined,
-  EXTRA: [],
-  proj: null,
-  gpath: null,
-};
+import { estadoRender, hexA, projCfg } from './projecao.js';
+import { allOn, avail, ctx, estadoCamera, estadoMapa } from './tela.js';
 
 /* ---------- Fronteiras reais + textura estilizada ---------- */
-let glc;
-const glU = {};
 const A3 = {TF:'ATF',HM:'HMD',GS:'SGS',IO:'IOT',BV:'BVT',UM:'UMI',PR:'PRI',VI:'VIR',VG:'VGB',AI:'AIA',MS:'MSR',KY:'CYM',TC:'TCA',AW:'ABW',CW:'CUW',SX:'SXM',BQ:'BES',GP:'GLP',MQ:'MTQ',MF:'MAF',BL:'BLM',BM:'BMU',GL:'GRL',PM:'SPM',FK:'FLK',RE:'REU',YT:'MYT',SH:'SHN',GI:'GIB',FO:'FRO',IM:'IMN',JE:'JEY',GG:'GGY',AX:'ALA',SJ:'SJM',HK:'HKG',MO:'MAC',GU:'GUM',MP:'MNP',AS:'ASM',PF:'PYF',NC:'NCL',WF:'WLF',CK:'COK',NU:'NIU',TK:'TKL',NF:'NFK',PN:'PCN',CX:'CXR',CC:'CCK',BR:'BRA',GF:'GUF',SR:'SUR',GY:'GUY',VE:'VEN',CO:'COL',EC:'ECU',PE:'PER',BO:'BOL',CL:'CHL',AR:'ARG',PY:'PRY',UY:'URY',
 PA:'PAN',CR:'CRI',NI:'NIC',HN:'HND',SV:'SLV',GT:'GTM',BZ:'BLZ',CU:'CUB',JM:'JAM',BS:'BHS',HT:'HTI',DO:'DOM',KN:'KNA',AG:'ATG',DM:'DMA',LC:'LCA',VC:'VCT',BB:'BRB',GD:'GRD',TT:'TTO',
 MX:'MEX',US:'USA',CA:'CAN',ZA:'ZAF',LS:'LSO',SZ:'SWZ',BW:'BWA',NA:'NAM',ZM:'ZMB',ZW:'ZWE',MZ:'MOZ',MG:'MDG',MU:'MUS',SC:'SYC',KM:'COM',MW:'MWI',TZ:'TZA',BI:'BDI',RW:'RWA',UG:'UGA',KE:'KEN',SO:'SOM',DJ:'DJI',ER:'ERI',ET:'ETH',SS:'SSD',
@@ -40,15 +21,6 @@ RU:'RUS',BY:'BLR',PL:'POL',CZ:'CZE',SK:'SVK',HU:'HUN',SI:'SVN',HR:'HRV',BA:'BIH'
 SY:'SYR',LB:'LBN',PS:'PSE',IL:'ISR',JO:'JOR',SA:'SAU',YE:'YEM',OM:'OMN',AE:'ARE',QA:'QAT',BH:'BHR',KW:'KWT',IQ:'IRQ',IR:'IRN',AF:'AFG',KZ:'KAZ',UZ:'UZB',TM:'TKM',KG:'KGZ',TJ:'TJK',
 PK:'PAK',IN:'IND',MV:'MDV',LK:'LKA',BD:'BGD',BT:'BTN',NP:'NPL',MN:'MNG',CN:'CHN',KP:'PRK',KR:'KOR',JP:'JPN',TW:'TWN',MM:'MMR',TH:'THA',LA:'LAO',VN:'VNM',KH:'KHM',MY:'MYS',SG:'SGP',ID:'IDN',BN:'BRN',PH:'PHL',TL:'TLS',
 AU:'AUS',NZ:'NZL',PG:'PNG',SB:'SLB',VU:'VUT',FJ:'FJI',PW:'PLW',FM:'FSM',MH:'MHL',NR:'NRU',KI:'KIR',TV:'TUV',WS:'WSM',TO:'TON'};
-let statusEl;
-let statusT = 0;
-function setStatus(t,ms){
-  clearTimeout(statusT);
-  if(!t){statusEl.style.display='none';return;}
-  statusEl.textContent=t;statusEl.style.display='block';
-  if(ms)statusT=setTimeout(function(){statusEl.style.display='none';},ms);
-}
-function hexA(h,a){var n=parseInt(h.slice(1),16);return 'rgba('+(n>>16)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
 
 /* carregamento sequencial de scripts (hosts permitidos: cdnjs e jsDelivr /npm/) */
 function loadScript(u){return new Promise(function(ok,no){var s=document.createElement('script');s.src=u;s.async=false;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
@@ -72,7 +44,6 @@ function setupGeo(){
   estadoRender.gpath=d3.geo.path().projection(estadoRender.proj).context(ctx);
   return m;
 }
-function projCfg(R,cx,cy){estadoRender.proj.scale(R).translate([cx,cy]).rotate([-estadoCamera.lam*180/PI,-estadoCamera.phi*180/PI]);}
 
 function drawGeo(R,cx,cy){
   if(estadoBrasil.statesMode){drawGeoStates(R,cx,cy);return;}
@@ -114,30 +85,10 @@ function drawGeo(R,cx,cy){
 }
 
 /* toque dentro de um país (quando não acertou um ponto) */
-function inRing(x,y,r){var c=false;for(var i=0,j=r.length-1;i<r.length;j=i++){var xi=r[i][0],yi=r[i][1],xj=r[j][0],yj=r[j][1];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))c=!c;}return c;}
-function inFeat(f,x,y){
-  var g=f.geometry;if(!g)return false;
-  var polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];
-  for(var a=0;a<polys.length;a++){
-    var p=polys[a];
-    if(inRing(x,y,p[0])){var hole=false;for(var h=1;h<p.length;h++)if(inRing(x,y,p[h]))hole=true;if(!hole)return true;}
-  }
-  return false;
-}
-function countryAt(x,y){
-  if(!estadoRender.feats)return null;
-  projCfg(R0*estadoCamera.zoom,W/2,H*estadoCamera.cyFrac);
-  var ll=estadoRender.proj.invert([x,y]);
-  if(!ll||isNaN(ll[0])||isNaN(ll[1]))return null;
-  for(var i=0;i<D.length;i++)if(estadoMapa.on[i]&&estadoRender.FEAT[i]&&inFeat(estadoRender.FEAT[i],ll[0],ll[1]))return D[i];
-  return null;
-}
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
-  glc = document.getElementById('gl');
   estadoRender.FEAT = D.map(function(){return null;});
-  statusEl = document.getElementById('status');
 }
 
-export { A3, countryAt, drawGeo, estadoRender, glc, glU, hexA, inFeat, iniciar, projCfg, setStatus, setupGeo, tryLoad };
+export { A3, drawGeo, iniciar, setupGeo, tryLoad };

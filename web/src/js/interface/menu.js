@@ -6,7 +6,7 @@
 
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { updateMapInfo } from '../visualizacao/carregamento.js';
-import { estadoMapa } from '../visualizacao/globo.js';
+import { estadoMapa } from '../visualizacao/tela.js';
 
 /* ---------- menu Mais ---------- */
 let themeMode;

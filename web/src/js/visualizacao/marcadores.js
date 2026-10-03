@@ -4,7 +4,7 @@
  * Formas dos marcadores por região (acessibilidade para daltonismo).
  */
 
-import { ctx } from './globo.js';
+import { ctx } from './tela.js';
 
 /* ---------- formas dos marcadores (ajuda quem confunde cores) ---------- */
 const SHAPES = ['c','d','s','t','c','s','d'];

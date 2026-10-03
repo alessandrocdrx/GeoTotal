@@ -5,8 +5,8 @@
  */
 
 import { optNight, sunVec } from './dia-noite.js';
-import { estadoRender, glc, glU } from './fronteiras.js';
-import { dpr, estadoCamera } from './globo.js';
+import { estadoRender } from './projecao.js';
+import { dpr, estadoCamera, glc } from './tela.js';
 
 /* ---------- WebGL: esfera com textura ---------- */
 function initGL(){
@@ -74,5 +74,7 @@ function glDraw(tex,R,cx,cy){
   var sv=sunVec();estadoRender.gl.uniform3f(glU.uSun,sv[0],sv[1],sv[2]);estadoRender.gl.uniform1f(glU.uNight,optNight?1:0);
   estadoRender.gl.drawArrays(estadoRender.gl.TRIANGLE_STRIP,0,4);
 }
+
+const glU = {};
 
 export { glDraw, initGL, uploadTexture };

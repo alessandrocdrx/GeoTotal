@@ -10,9 +10,9 @@ import { afterFilter, buildTree } from '../interface/filtros.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { estadoTreino, quiz } from './estado.js';
 import { openHistory } from './estatisticas.js';
-import { frame } from '../visualizacao/animacao.js';
 import { startMap } from '../visualizacao/carregamento.js';
-import { resize } from '../visualizacao/globo.js';
+import { frame } from '../visualizacao/globo.js';
+import { resize } from '../visualizacao/tela.js';
 
 /* =====================================================================
    PROGRESSÃO: XP, níveis, sequência de dias, meta diária, conquistas

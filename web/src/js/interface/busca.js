@@ -7,9 +7,9 @@
 import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { D, dflag, norm, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
+import { tourStop } from './cartao-detalhes.js';
 import { select } from './cartao-pais.js';
 import { ganchosInterface } from './ganchos.js';
-import { tourStop } from './passeio.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 
 /* ---------- Busca ---------- */

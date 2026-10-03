@@ -1,24 +1,22 @@
 /**
  * @arquivo js/interface/cartao-pais.js
  * Camada: Interface
- * Cartão do país selecionado: abrir, preencher, navegar (anterior/próximo).
+ * Cartão do país selecionado: abrir, preencher, navegar (anterior/próximo, deslizar).
  */
 
 import { D, dflag, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
-import { estadoCartao, fillInfo, fmtArea, fmtPop, measureCard } from './cartao-detalhes.js';
+import { card, closeCard, fillInfo, fmtArea, fmtPop, measureCard, tourStop } from './cartao-detalhes.js';
 import { afterFilter, toggleNb, updateNbBtn } from './filtros.js';
 import { ganchosInterface } from './ganchos.js';
-import { tourStop } from './passeio.js';
 import { emitir } from '../nucleo/eventos.js';
 import { flyTo } from '../visualizacao/animacao.js';
 import { countryView, zoomFor } from '../visualizacao/enquadramento.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { ganchos } from '../visualizacao/ganchos.js';
-import { estadoCamera, estadoMapa } from '../visualizacao/globo.js';
+import { estadoCamera, estadoMapa } from '../visualizacao/tela.js';
 
 /* ---------- Cartão ---------- */
-let card;
 function renderNear(group,cur,pick,label){
   var box=document.getElementById('cnear');box.innerHTML='';
   var others=(group||[]).filter(function(x){return x!==cur;}).slice(0,5);
@@ -79,7 +77,6 @@ function select(d,fly,group){
   if(fly===false)flyTo(d.lat,d.lng,Math.max(estadoCamera.zoom,1.5));
   else{var cv2=countryView(d.i);flyTo(cv2.lat,cv2.lng,zoomFor(cv2.r,5.5));}
 }
-function closeCard(){estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;tourStop();}
 function step(dir){
   if(estadoBrasil.statesMode){ganchosInterface.passoEstado(dir);return;}
   if(!estadoMapa.selected)return;
@@ -87,13 +84,16 @@ function step(dir){
   for(var k=0;k<n;k++){i=(i+dir+n)%n;if(estadoMapa.on[i]){select(D[i],true);return;}}
 }
 
+let sw = null;
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
-  card = document.getElementById('card');
   document.getElementById('close').onclick=closeCard;
   document.getElementById('prev').onclick=function(){step(-1);};
   document.getElementById('next').onclick=function(){step(1);};
   document.getElementById('nbtn').onclick=toggleNb;
+  /* deslizar o cartão para o lado troca de país */
+  card.addEventListener('pointerdown',function(e){if(e.target.closest('button')){sw=null;return;}sw={x:e.clientX,y:e.clientY};});
+  card.addEventListener('pointerup',function(e){if(!sw)return;var dx=e.clientX-sw.x,dy=e.clientY-sw.y;sw=null;if(Math.abs(dx)>60&&Math.abs(dy)<45)step(dx<0?1:-1);});
 }
 
-export { card, closeCard, iniciar, renderChips, renderFacts, renderNear, select, step };
+export { iniciar, renderChips, renderFacts, renderNear, select, step };

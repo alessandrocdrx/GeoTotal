@@ -1,20 +1,18 @@
 /**
  * @arquivo js/interface/filtros.js
  * Camada: Interface
- * Filtros de países (chips, árvore, vizinhança) e disponibilidade das categorias.
+ * Filtros de países (chips, árvore, vizinhança), categorias de territórios e histórico para o Desfazer.
  */
 
 import { D, dflag, N_DEP, N_UNI, norm, REG } from '../dados/paises.js';
 import { byName, capShort, NB, short } from '../dados/vizinhos.js';
-import { closeCard } from './cartao-pais.js';
-import { snap } from './filtros-desfazer.js';
+import { closeCard, tourStop } from './cartao-detalhes.js';
 import { ganchosInterface } from './ganchos.js';
-import { tourStop } from './passeio.js';
 import { emitir, ouvir } from '../nucleo/eventos.js';
 import { $, lsSet } from '../nucleo/utilitarios.js';
-import { fitTo, flyTo, PI } from '../visualizacao/animacao.js';
+import { fitTo, flyTo } from '../visualizacao/animacao.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
-import { allOn, avail, availCount, estadoCamera, estadoMapa } from '../visualizacao/globo.js';
+import { allOn, avail, availCount, estadoCamera, estadoMapa, PI } from '../visualizacao/tela.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoFiltros.nome). */
 const estadoFiltros = {
@@ -164,6 +162,9 @@ function setIncludeUni(v){
   buildTree();afterFilter();
   emitir('categorias-mudaram',{placar:true});
 }
+const hist = [];
+function updateUndo(){var b=$('ubtn');b.disabled=!hist.length;b.style.opacity=hist.length?1:.4;}
+function snap(){hist.push(estadoMapa.on.slice());if(hist.length>30)hist.shift();updateUndo();}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ouvir('fronteiras-carregadas',afterFilter);
@@ -190,4 +191,4 @@ function iniciar() {
   $('oDep').onclick=function(){setIncludeDep(this.checked);};
 }
 
-export { afterFilter, buildChips, buildTree, chips, estadoFiltros, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, toggleNb, updateNbBtn };
+export { afterFilter, buildChips, buildTree, chips, estadoFiltros, hist, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, snap, toggleNb, updateNbBtn, updateUndo };

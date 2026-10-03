@@ -7,9 +7,9 @@
 import { BRREG } from '../dados/estados-brasil.js';
 import { norm, REG } from '../dados/paises.js';
 import { $, lsGet } from '../nucleo/utilitarios.js';
-import { estadoRender } from '../visualizacao/fronteiras.js';
 import { ganchos } from '../visualizacao/ganchos.js';
-import { estadoMapa } from '../visualizacao/globo.js';
+import { estadoRender } from '../visualizacao/projecao.js';
+import { estadoMapa } from '../visualizacao/tela.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoTreino.nome). */
 const estadoTreino = {
@@ -83,6 +83,8 @@ function scopeLabel(){
   return sc.s;
 }
 
+function resetSession(){quiz.sessionAsked=0;quiz.sessionLog=[];}
+function stopTimerTick(){if(quiz.timerInt){clearInterval(quiz.timerInt);quiz.timerInt=null;}}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   /* o globo consulta o treino por aqui (ver visualizacao/ganchos.js) */
@@ -118,4 +120,4 @@ function iniciar() {
     survivalMode:lsGet('globo.quiz.survival',false),lastOk:null,nbAnswer:-1};
 }
 
-export { accList, AMERICAS_R, estadoTreino, freshQS, iniciar, inScope, matches, measureQ, qHide, quiz, scopeLabel };
+export { accList, AMERICAS_R, estadoTreino, freshQS, iniciar, inScope, matches, measureQ, qHide, quiz, resetSession, scopeLabel, stopTimerTick };
