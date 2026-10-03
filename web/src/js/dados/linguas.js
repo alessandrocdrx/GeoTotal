@@ -3,9 +3,12 @@
  * Camada: Dados
  * Línguas por país (estimativas, % da população).
  */
+
+import { D } from './paises.js';
+
 /* ---------- Línguas (estimativas aproximadas; % da população por língua materna / falada em casa) ----------
    código|Língua:pct[Variante:pct];Língua:pct|nota */
-var LANG_RAW=`
+const LANG_RAW = `
 BR|Português:98;Outras (línguas indígenas, alemão, italiano, japonês, Libras etc.):2|Cerca de 270 línguas indígenas e comunidades de imigrantes
 GF|Crioulo guianense:40;Francês:35;Português:8;Crioulos de base inglesa (sranan, saramaka):6;Línguas indígenas e outras:11|Dados escassos
 SR|Holandês:52;Sarnami (híndi surinamês):17;Sranan Tongo:16;Javanês:8;Outras (línguas maroon e indígenas):7|Sranan Tongo é a língua franca; muitos são bilíngues
@@ -205,20 +208,8 @@ TV|Tuvaluano:96;Inglês e outras (samoano, kiribati):4
 WS|Samoano:91;Inglês:2;Tonganês e outras:7
 TO|Tonganês:96;Inglês e outras:4
 `;
-var LANG={};
-LANG_RAW.trim().split('\n').forEach(function(l){
-  var p=l.split('|'),items=[];
-  p[1].split(';').forEach(function(it){
-    var m=it.match(/^([^:\[]+)(?::([\d.]+))?(?:\[(.*)\])?$/);
-    if(!m)return;
-    var subs=[];
-    if(m[3])m[3].split(',').forEach(function(s){var mm=s.match(/^([^:]+)(?::([\d.]+))?$/);if(mm)subs.push({n:mm[1].trim(),p:mm[2]?+mm[2]:null});});
-    items.push({n:m[1].trim(),p:m[2]?+m[2]:null,subs:subs});
-  });
-  LANG[p[0]]={items:items,note:p[2]||''};
-});
-D.forEach(function(d){d.lang=LANG[d.cc]||null;});
-var LPAL=['#4da3ff','#f59e0b','#2fd67f','#ef4444','#a78bfa','#22d3ee','#f472b6','#84cc16','#fb923c','#38bdf8','#e879f9','#facc15'];
+const LANG = {};
+const LPAL = ['#4da3ff','#f59e0b','#2fd67f','#ef4444','#a78bfa','#22d3ee','#f472b6','#84cc16','#fb923c','#38bdf8','#e879f9','#facc15'];
 function langColor(n){
   if(/^outras?\b/i.test(n))return '#94a3b8';
   var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;
@@ -306,5 +297,20 @@ function appendRel(box,d){
   box.appendChild(n);
 }
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  LANG_RAW.trim().split('\n').forEach(function(l){
+    var p=l.split('|'),items=[];
+    p[1].split(';').forEach(function(it){
+      var m=it.match(/^([^:[]+)(?::([\d.]+))?(?:\[(.*)\])?$/);
+      if(!m)return;
+      var subs=[];
+      if(m[3])m[3].split(',').forEach(function(s){var mm=s.match(/^([^:]+)(?::([\d.]+))?$/);if(mm)subs.push({n:mm[1].trim(),p:mm[2]?+mm[2]:null});});
+      items.push({n:m[1].trim(),p:m[2]?+m[2]:null,subs:subs});
+    });
+    LANG[p[0]]={items:items,note:p[2]||''};
+  });
+  D.forEach(function(d){d.lang=LANG[d.cc]||null;});
+}
 
-
+export { appendLang, appendRel, iniciar, langText, relText };

@@ -3,15 +3,27 @@
  * Camada: Treino
  * Progressão: XP, níveis, sequência de dias, meta diária e conquistas.
  */
+
+import { D, N_BASE, REG } from '../dados/paises.js';
+import { resize } from '../visualizacao/globo.js';
+import { frame } from '../visualizacao/animacao.js';
+import { card } from '../interface/cartao-pais.js';
+import { afterFilter, buildTree } from '../interface/filtros.js';
+import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
+import { startMap } from '../nucleo/armazenamento.js';
+import { estadoTreino, quiz } from './estado.js';
+import { openHistory } from './estatisticas.js';
+import { BRS, estadoBrasil } from '../brasil/dados-estados.js';
+
 /* =====================================================================
    PROGRESSÃO: XP, níveis, sequência de dias, meta diária, conquistas
    ===================================================================== */
-function syncFab(){var f=$('fabtrain');if(!f)return;f.style.display=(card.style.display==='block'||quiz.open||statesMode)?'none':'block';}
+function syncFab(){var f=$('fabtrain');if(!f)return;f.style.display=(card.style.display==='block'||quiz.open||estadoBrasil.statesMode)?'none':'block';}
 function pad2(n){return (n<10?'0':'')+n;}
 function dateStr(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
 function todayStr(){return dateStr(new Date());}
 function yestStr(){var d=new Date();d.setDate(d.getDate()-1);return dateStr(d);}
-var PROG=lsGet('globo.prog.v1',{xp:0,totalCorrect:0,streak:0,lastStreakDate:null,dailyGoal:10,dailyDate:null,dailyCount:0,goalDoneDate:null,badges:[]});
+let PROG;
 function saveProg(){lsSet('globo.prog.v1',PROG);}
 function levelOf(xp){return Math.floor(xp/100)+1;}
 function displayStreak(){
@@ -42,7 +54,7 @@ function updateProgUI(){
   var gt=$('qgoaltxt'),stk=displayStreak();if(gt)gt.textContent=Math.min(PROG.dailyCount,PROG.dailyGoal)+'/'+PROG.dailyGoal+' hoje'+(stk>0?' · 🔥'+stk:'');
   updateStreakPill();
 }
-var toastQ=[];
+const toastQ = [];
 function celebrate(msg){
   toastQ.push(msg);
   if(toastQ.length>1)return;
@@ -66,15 +78,15 @@ function badgeDefs(){
   REG.forEach(function(rg,ri){
     if(!D.some(function(d){return d.r===ri&&!d.dep&&!d.uni;}))return;
     arr.push({id:'reg'+ri,title:'Domina '+rg.n,icon:'🌎',desc:'Chegue a 3 acertos seguidos em todos os países de '+rg.n+' (País → Capital).',need:function(){
-      var st=QS.m.cap||{},list=D.filter(function(d){return d.r===ri&&!d.dep&&!d.uni;});
+      var st=estadoTreino.QS.m.cap||{},list=D.filter(function(d){return d.r===ri&&!d.dep&&!d.uni;});
       return list.length>0&&list.every(function(d){var e=st[d.cc];return e&&e.s>=3;});
     }});
   });
   arr.push({id:'world',title:'Mestre do Mundo',icon:'👑',desc:'Domine os '+N_BASE+' países e territórios em País → Capital.',need:function(){
-    var st=QS.m.cap||{};return D.every(function(d){if(d.dep||d.uni)return true;var e=st[d.cc];return e&&e.s>=3;});
+    var st=estadoTreino.QS.m.cap||{};return D.every(function(d){if(d.dep||d.uni)return true;var e=st[d.cc];return e&&e.s>=3;});
   }});
   arr.push({id:'br27',title:'De Norte a Sul',icon:'🇧🇷',desc:'Domine os 27 estados do Brasil em Estado → Capital.',need:function(){
-    var st=QS.m.cap||{};return BRS.every(function(s){var e=st['BR-'+s.sigla];return e&&e.s>=3;});
+    var st=estadoTreino.QS.m.cap||{};return BRS.every(function(s){var e=st['BR-'+s.sigla];return e&&e.s>=3;});
   }});
   [3,7,30].forEach(function(n){arr.push({id:'streak'+n,title:'Sequência de '+n+' dia'+(n===1?'':'s'),icon:'🔥',desc:'Bata a meta diária '+n+' dias seguidos.',need:function(){return PROG.streak>=n;}});});
   [10,100,500,1000].forEach(function(n){arr.push({id:'xp'+n,title:n+' acertos',icon:'⭐',desc:'Acerte '+n+' perguntas no total, em qualquer modo.',need:function(){return PROG.totalCorrect>=n;}});});
@@ -132,21 +144,28 @@ function openBadges(){
   $('badgeshead').textContent='Conquistas ('+n+'/'+tot+')';
   $('badgesheet').style.display='block';
 }
-$('mbadges').onclick=openBadges;$('mhist').onclick=function(){openHistory();};
-$('badgesclose').onclick=function(){$('badgesheet').style.display='none';};
-$('goalgo').onclick=function(){
-  var opts=[5,10,20,30],idx=opts.indexOf(PROG.dailyGoal);
-  PROG.dailyGoal=opts[(idx+1)%opts.length];saveProg();updateProgUI();
-};
-ensureDay();saveProg();updateProgUI();
-(function firstTip(){
-  if(lsGet('globo.seenhint',false)){$('hint').style.display='none';return;}
-  var h=$('hint');h.classList.add('tip');
-  setTimeout(function(){h.classList.add('out');lsSet('globo.seenhint',true);setTimeout(function(){h.style.display='none';},650);},4200);
-})();
-syncFab();
 
-updateStreakPill();
-buildTree();afterFilter();resize();
-requestAnimationFrame(frame);
-startMap();
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  PROG = lsGet('globo.prog.v1',{xp:0,totalCorrect:0,streak:0,lastStreakDate:null,dailyGoal:10,dailyDate:null,dailyCount:0,goalDoneDate:null,badges:[]});
+  $('mbadges').onclick=openBadges;$('mhist').onclick=function(){openHistory();};
+  $('badgesclose').onclick=function(){$('badgesheet').style.display='none';};
+  $('goalgo').onclick=function(){
+    var opts=[5,10,20,30],idx=opts.indexOf(PROG.dailyGoal);
+    PROG.dailyGoal=opts[(idx+1)%opts.length];saveProg();updateProgUI();
+  };
+  ensureDay();saveProg();updateProgUI();
+  (function firstTip(){
+    if(lsGet('globo.seenhint',false)){$('hint').style.display='none';return;}
+    var h=$('hint');h.classList.add('tip');
+    setTimeout(function(){h.classList.add('out');lsSet('globo.seenhint',true);setTimeout(function(){h.style.display='none';},650);},4200);
+  })();
+  syncFab();
+
+  updateStreakPill();
+  buildTree();afterFilter();resize();
+  requestAnimationFrame(frame);
+  startMap();
+}
+
+export { addXP, celebrate, iniciar, recordProgress, syncFab, updateProgUI };

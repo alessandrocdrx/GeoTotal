@@ -3,6 +3,26 @@
  * Camada: Treino
  * Montagem e resposta das perguntas (nextQ), tipos de pergunta e cronômetro.
  */
+
+import { D, norm } from '../dados/paises.js';
+import { NB, short } from '../dados/vizinhos.js';
+import { estadoCamera, estadoMapa, H, R0, resize, rot, W } from '../visualizacao/globo.js';
+import { closeCard, fillQStat } from '../interface/cartao-pais.js';
+import { estadoRender, setStatus } from '../visualizacao/fronteiras.js';
+import { $, confirmTap, lsSet } from '../nucleo/utilitarios.js';
+import { hidePick } from '../interface/lista-proximos.js';
+import { tourStop } from '../interface/passeio.js';
+import { estadoDistancia, haversine, slerp } from '../interface/distancia.js';
+import { accList, estadoTreino, freshQS, matches, measureQ, quiz, scopeLabel } from './estado.js';
+import { applyDomainForScope, dflag, emptyMsg, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
+import { estadoPartida, finishQ, makeNeighborOptions, makeOptions, optLabel, pickQ, renderScore, runPool, runRestart, saveRecs, saveRuns, showRunDone, showTarget } from './partida.js';
+import { addHintBtn } from './dica.js';
+import { modeName } from './estatisticas.js';
+import { BRS, estadoBrasil } from '../brasil/dados-estados.js';
+import { exitStates } from '../brasil/modo-estados.js';
+import { stateAt } from '../brasil/desenho.js';
+import { addXP, syncFab } from './progressao.js';
+
 /* ---------- sessões fechadas ---------- */
 function resetSession(){quiz.sessionAsked=0;quiz.sessionLog=[];}
 function sessionDone(){return quiz.sessionLen>0&&quiz.sessionAsked>=quiz.sessionLen;}
@@ -54,12 +74,12 @@ function showRoundSummary(reason){
   row.appendChild(again);row.appendChild(free);
   if(miss.length){
     var rev=document.createElement('button');rev.textContent='Só revisar erros';
-    rev.onclick=function(){quizFocus='wrong';lsSet('globo.quiz.focus','wrong');resetSession();if(quiz.timerLen)startTimerTick();nextQ();};
+    rev.onclick=function(){estadoTreino.quizFocus='wrong';lsSet('globo.quiz.focus','wrong');resetSession();if(quiz.timerLen)startTimerTick();nextQ();};
     row.appendChild(rev);
   }
   body.appendChild(row);
 }
-function updateTrainRow(){var el=$('mtrainv');if(el)el.textContent=(quiz.type==='type'?'Digitar':'Múltipla escolha')+' · '+({mix:'foco em tudo','new':'só novos',wrong:'só errados'})[quizFocus]+(quiz.timerLen?' · '+quiz.timerLen+'s':'')+(quiz.survivalMode?' · sobrevivência':'');}
+function updateTrainRow(){var el=$('mtrainv');if(el)el.textContent=(quiz.type==='type'?'Digitar':'Múltipla escolha')+' · '+({mix:'foco em tudo','new':'só novos',wrong:'só errados'})[estadoTreino.quizFocus]+(quiz.timerLen?' · '+quiz.timerLen+'s':'')+(quiz.survivalMode?' · sobrevivência':'');}
 function updateSessionBtn(){updateTrainRow();
   $('qsessionb').textContent='🧮 Sessão: '+(quiz.sessionLen?quiz.sessionLen+' perguntas':'livre');
 }
@@ -69,66 +89,38 @@ function updateTimerBtn(){
 function updateSurvBtn(){
   $('qsurvb').textContent='💀 Sobrevivência: '+(quiz.survivalMode?'ligada':'desligada');
 }
-$('qtimerb').onclick=function(){
-  var opts=[0,30,60],idx=opts.indexOf(quiz.timerLen);
-  quiz.timerLen=opts[(idx+1)%opts.length];lsSet('globo.quiz.timerlen',quiz.timerLen);
-  if(quiz.timerLen){
-    quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);updateSessionBtn();
-    quiz.survivalMode=false;lsSet('globo.quiz.survival',false);updateSurvBtn();
-  }
-  updateTimerBtn();resetSession();startTimerTick();nextQ();
-};
-$('qsurvb').onclick=function(){
-  quiz.survivalMode=!quiz.survivalMode;lsSet('globo.quiz.survival',quiz.survivalMode);
-  if(quiz.survivalMode){
-    quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);updateSessionBtn();
-    quiz.timerLen=0;lsSet('globo.quiz.timerlen',0);updateTimerBtn();stopTimerTick();updateTimerDisplay();
-  }
-  updateSurvBtn();resetSession();nextQ();
-};
 function updateOrderBtn(){
   $('qorderb').textContent=quiz.order==='seq'?'➡️ Ordem: sequencial':'🔀 Ordem: aleatória';
 }
-$('qorderb').onclick=function(){
-  quiz.order=quiz.order==='seq'?'random':'seq';
-  lsSet('globo.quiz.order2',quiz.order);
-  updateOrderBtn();quiz.last=-1;resetSession();nextQ();
-};
-$('qsessionb').onclick=function(){
-  var opts=[0,10,20],i2=opts.indexOf(quiz.sessionLen);
-  quiz.sessionLen=opts[(i2+1)%opts.length];
-  lsSet('globo.quiz.sesslen',quiz.sessionLen);
-  updateSessionBtn();resetSession();
-};
 function nextQ(){
-  qFlash=null;qBadge=null;selected=null;quiz.hinted=false;quiz.nbAnswer=-1;
-  if(arc&&arc.quiz)arc=null;
+  estadoTreino.qFlash=null;estadoTreino.qBadge=null;estadoMapa.selected=null;quiz.hinted=false;quiz.nbAnswer=-1;
+  if(estadoDistancia.arc&&estadoDistancia.arc.quiz)estadoDistancia.arc=null;
   var arr=QD(),i=pickQ();
   var body=$('qbody'),fb=$('qfb');body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
   var isMap=quiz.mode==='map',isNeighbor=quiz.mode==='neighbor';
   $('qtypes').style.display=(isMap||isNeighbor)?'none':'flex';measureQ();
   if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){showRunDone();return;}body.textContent=emptyMsg();$('qpool').textContent='';return;}
-  quiz.cur=i;quiz.last=i;quiz.answered=false;quiz.sessionAsked++;QS.q[quiz.mode]=(QS.q[quiz.mode]||0)+1;lsSet('globo.quiz.v1',QS);
+  quiz.cur=i;quiz.last=i;quiz.answered=false;quiz.sessionAsked++;estadoTreino.QS.q[quiz.mode]=(estadoTreino.QS.q[quiz.mode]||0)+1;lsSet('globo.quiz.v1',estadoTreino.QS);
   var d=arr[i];
   var n=poolIdx().length;updateScopeBtn();
-  $('qpool').textContent=n+' '+unitWord(n)+' em '+scopeLabel()+'.'+(isMap&&quizDomain==='world'&&!feats?' Sem fronteiras carregadas: os pontos das capitais ficam visíveis.':'')+(isMap&&quizDomain==='br'&&!STFEAT.some(function(f){return f;})?' Sem divisas importadas: os pontos das capitais ficam visíveis.':'');
+  $('qpool').textContent=n+' '+unitWord(n)+' em '+scopeLabel()+'.'+(isMap&&estadoTreino.quizDomain==='world'&&!estadoRender.feats?' Sem fronteiras carregadas: os pontos das capitais ficam visíveis.':'')+(isMap&&estadoTreino.quizDomain==='br'&&!estadoBrasil.STFEAT.some(function(f){return f;})?' Sem divisas importadas: os pontos das capitais ficam visíveis.':'');
   var q=document.createElement('div');q.className='qq';
   if(quiz.mode==='cap'){
     q.textContent='Qual é a capital de '+qflag(d)+' '+short(d)+'?';
-    var hint=document.createElement('div');hint.className='qhint';hint.textContent=(quizDomain==='br'?'O estado está':'O país está')+' destacado no mapa.';q.appendChild(hint);
+    var hint=document.createElement('div');hint.className='qhint';hint.textContent=(estadoTreino.quizDomain==='br'?'O estado está':'O país está')+' destacado no mapa.';q.appendChild(hint);
     var cbt=document.createElement('button');cbt.className='qcenter';cbt.textContent='⌖ Centralizar';cbt.onclick=function(){showTarget(i);};q.appendChild(cbt);
     addHintBtn(q,d,false);
-    showTarget(i);if(quizDomain==='world')qFlash={i:i,kind:'ask'};
+    showTarget(i);if(estadoTreino.quizDomain==='world')estadoTreino.qFlash={i:i,kind:'ask'};
   }
-  else if(quiz.mode==='pais'){q.textContent='Qual '+(quizDomain==='br'?'estado':'país')+' tem como capital '+qcapD(d)+'?';scopeView();addHintBtn(q,d,false);}
+  else if(quiz.mode==='pais'){q.textContent='Qual '+(estadoTreino.quizDomain==='br'?'estado':'país')+' tem como capital '+qcapD(d)+'?';scopeView();addHintBtn(q,d,false);}
   else if(quiz.mode==='flag'){scopeView();var f2=document.createElement('div');f2.className='qflag big';f2.textContent=d.flag;var t2=document.createElement('div');t2.textContent='De qual país é esta bandeira?';q.appendChild(f2);q.appendChild(t2);addHintBtn(q,d,false);}
   else if(quiz.mode==='code'){q.textContent='Qual é a sigla de '+qflag(d)+' '+short(d)+'?';scopeView();addHintBtn(q,d,false);}
   else if(isNeighbor){
-    var nbIdxs=quizDomain==='br'?d.nb:NB[i];
+    var nbIdxs=estadoTreino.quizDomain==='br'?d.nb:NB[i];
     quiz.nbAnswer=nbIdxs[Math.floor(Math.random()*nbIdxs.length)];
     q.textContent='Qual destes '+unitWord(2)+' faz fronteira com '+qflag(d)+' '+short(d)+'?';
     addHintBtn(q,arr[quiz.nbAnswer],false);
-    showTarget(i);if(quizDomain==='world')qFlash={i:i,kind:'ask'};
+    showTarget(i);if(estadoTreino.quizDomain==='world')estadoTreino.qFlash={i:i,kind:'ask'};
   }
   else{q.textContent='Toque no mapa: onde fica '+qflag(d)+' '+short(d)+'?';}
   var qs=document.createElement('div');qs.id='qstat';qs.className='qstat';fillQStat(qs,d);q.appendChild(qs);
@@ -184,10 +176,10 @@ function nextQ(){
       var ok;
       if(reveal)ok=false;
       else if(quiz.mode==='code'){
-        var want=(quizDomain==='br'?d.sigla:d.cc).toUpperCase();
+        var want=(estadoTreino.quizDomain==='br'?d.sigla:d.cc).toUpperCase();
         ok=inp.value.trim().toUpperCase()===want;
       }else{
-        var list=quizDomain==='br'?[norm(quiz.mode==='cap'?d.cap:d.name)]:(quiz.mode==='cap'?accList(d.cap,d.cc,true):accList(d.name,d.cc,false));
+        var list=estadoTreino.quizDomain==='br'?[norm(quiz.mode==='cap'?d.cap:d.name)]:(quiz.mode==='cap'?accList(d.cap,d.cc,true):accList(d.name,d.cc,false));
         ok=matches(inp.value,list);
       }
       inp.disabled=true;go.disabled=true;idk.disabled=true;
@@ -201,18 +193,18 @@ function nextQ(){
   }
 }
 function quizMapAnswer(cn){
-  if(!qMap||quiz.answered)return;
+  if(!estadoTreino.qMap||quiz.answered)return;
   var i=quiz.cur,d=D[i],ok=!!cn&&cn.i===i;
   if(ok||!cn){finishQ(ok,ok?'':'Você tocou fora de qualquer país.');return;}
   var km=Math.round(haversine(cn,d)),near=km<800;
   var pts=[],A=[cn.x,cn.y,cn.z],B=[d.x,d.y,d.z];
   for(var t=0;t<=1.0001;t+=1/60)pts.push(slerp(A,B,Math.min(1,t)));
-  arc={a:cn.i,b:i,pts:pts,quiz:true};
+  estadoDistancia.arc={a:cn.i,b:i,pts:pts,quiz:true};
   if(near)addXP(3);
   finishQ(false,'Você tocou em '+dflag(cn)+' '+short(cn)+', a '+km.toLocaleString('pt-BR')+' km (entre as capitais).'+(near?' Quase! +3 XP':''));
 }
 function quizMapAnswerBR(st){
-  if(!qMap||quiz.answered)return;
+  if(!estadoTreino.qMap||quiz.answered)return;
   var i=quiz.cur,d=BRS[i],ok=!!st&&st.i===i;
   if(ok||!st){finishQ(ok,ok?'':'Você tocou fora de qualquer estado.');return;}
   var km=Math.round(haversine(st,d)),near=km<300;
@@ -220,11 +212,11 @@ function quizMapAnswerBR(st){
   finishQ(false,'Você tocou em '+st.sigla+' '+st.name+', a '+km.toLocaleString('pt-BR')+' km (entre as capitais).'+(near?' Quase! +3 XP':''));
 }
 function pickStateNear(x,y){
-  var R=R0*zoom,cand=[];
+  var R=R0*estadoCamera.zoom,cand=[];
   BRS.forEach(function(st){
-    if(!onS[st.i])return;
+    if(!estadoBrasil.onS[st.i])return;
     var p=rot(st.x,st.y,st.z);if(p[2]<=0.05)return;
-    var sx=W/2+R*p[0],sy=H*cyFrac-R*p[1],dd=(sx-x)*(sx-x)+(sy-y)*(sy-y);
+    var sx=W/2+R*p[0],sy=H*estadoCamera.cyFrac-R*p[1],dd=(sx-x)*(sx-x)+(sy-y)*(sy-y);
     if(dd<36*36)cand.push({s:st,dd:dd});
   });
   cand.sort(function(a,b){return a.dd-b.dd;});
@@ -233,7 +225,7 @@ function pickStateNear(x,y){
 }
 function buildModeButtons(){
   var box=$('qmodes');box.innerHTML='';$('qmodev').textContent=modeName(quiz.mode);
-  var defs=quizDomain==='br'?[['cap','Estado → Capital'],['pais','Capital → Estado'],['neighbor','Estado → Vizinho'],['code','Estado → Sigla'],['map','Achar no mapa']]:[['cap','País → Capital'],['pais','Capital → País'],['flag','Bandeira → País'],['neighbor','País → Vizinho'],['code','País → Sigla'],['map','Achar no mapa']];
+  var defs=estadoTreino.quizDomain==='br'?[['cap','Estado → Capital'],['pais','Capital → Estado'],['neighbor','Estado → Vizinho'],['code','Estado → Sigla'],['map','Achar no mapa']]:[['cap','País → Capital'],['pais','Capital → País'],['flag','Bandeira → País'],['neighbor','País → Vizinho'],['code','País → Sigla'],['map','Achar no mapa']];
   defs.forEach(function(m){
     var b=document.createElement('button');b.textContent=m[1];b.setAttribute('aria-pressed',quiz.mode===m[0]?'true':'false');
     b.onclick=function(){quizSetMode(m[0]);};box.appendChild(b);
@@ -244,15 +236,14 @@ function buildModeButtons(){
     b.onclick=function(){quiz.type=m[0];buildModeButtons();resetSession();nextQ();};t.appendChild(b);
   });
 }
-$('qmodeb').onclick=function(){var o=$('qmodes').hidden;$('qmodes').hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');};
 function quizSetMode(m){
   $('qmodes').hidden=true;$('qmodeb').setAttribute('aria-expanded','false');
-  quiz.mode=m;qMap=(m==='map'&&quiz.open);
+  quiz.mode=m;estadoTreino.qMap=(m==='map'&&quiz.open);
   if(m==='neighbor')quiz.type='choice';
   buildModeButtons();resetSession();nextQ();measureQ();renderScore();
 }
 function quizOpen(){
-  if(statesMode)exitStates(false);
+  if(estadoBrasil.statesMode)exitStates(false);
   tourStop();closeCard();hidePick();
   quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncFab();syncModeSw();
   document.body.classList.add('quizing');$('quiz').classList.add('map');
@@ -265,15 +256,49 @@ function quizOpen(){
 }
 function quizClose(){
   setTimeout(syncFab,0);
-  quiz.open=false;qMap=false;qPanelH=0;qFlash=null;qBadge=null;syncModeSw();
-  if(arc&&arc.quiz)arc=null;
+  quiz.open=false;estadoTreino.qMap=false;estadoTreino.qPanelH=0;estadoTreino.qFlash=null;estadoTreino.qBadge=null;syncModeSw();
+  if(estadoDistancia.arc&&estadoDistancia.arc.quiz)estadoDistancia.arc=null;
   stopTimerTick();
-  if(quizDomain==='br'){statesMode=false;selSt=null;}
+  if(estadoTreino.quizDomain==='br'){estadoBrasil.statesMode=false;estadoBrasil.selSt=null;}
   document.body.classList.remove('quizing');$('quiz').style.display='none';setTimeout(resize,60);
 }
 function syncModeSw(){$('qbtn').setAttribute('aria-pressed',quiz.open?'true':'false');$('qclose').setAttribute('aria-pressed',quiz.open?'false':'true');}
-$('qbtn').onclick=function(){if(!quiz.open)quizOpen();};$('qclose').onclick=function(){if(quiz.open)quizClose();};
-confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
-$('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
-confirmTap($('qreset'),'Toque de novo para zerar',function(){QS=freshQS();lsSet('globo.quiz.v1',QS);RUNS={};saveRuns();RECS={};saveRecs();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  $('qtimerb').onclick=function(){
+    var opts=[0,30,60],idx=opts.indexOf(quiz.timerLen);
+    quiz.timerLen=opts[(idx+1)%opts.length];lsSet('globo.quiz.timerlen',quiz.timerLen);
+    if(quiz.timerLen){
+      quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);updateSessionBtn();
+      quiz.survivalMode=false;lsSet('globo.quiz.survival',false);updateSurvBtn();
+    }
+    updateTimerBtn();resetSession();startTimerTick();nextQ();
+  };
+  $('qsurvb').onclick=function(){
+    quiz.survivalMode=!quiz.survivalMode;lsSet('globo.quiz.survival',quiz.survivalMode);
+    if(quiz.survivalMode){
+      quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);updateSessionBtn();
+      quiz.timerLen=0;lsSet('globo.quiz.timerlen',0);updateTimerBtn();stopTimerTick();updateTimerDisplay();
+    }
+    updateSurvBtn();resetSession();nextQ();
+  };
+  $('qorderb').onclick=function(){
+    quiz.order=quiz.order==='seq'?'random':'seq';
+    lsSet('globo.quiz.order2',quiz.order);
+    updateOrderBtn();quiz.last=-1;resetSession();nextQ();
+  };
+  $('qsessionb').onclick=function(){
+    var opts=[0,10,20],i2=opts.indexOf(quiz.sessionLen);
+    quiz.sessionLen=opts[(i2+1)%opts.length];
+    lsSet('globo.quiz.sesslen',quiz.sessionLen);
+    updateSessionBtn();resetSession();
+  };
+  $('qmodeb').onclick=function(){var o=$('qmodes').hidden;$('qmodes').hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');};
+  $('qbtn').onclick=function(){if(!quiz.open)quizOpen();};$('qclose').onclick=function(){if(quiz.open)quizClose();};
+  confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
+  $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
+  confirmTap($('qreset'),'Toque de novo para zerar',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
+}
+
+export { buildModeButtons, iniciar, nextQ, pickStateNear, quizClose, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, resetSession, stopTimerTick, updateTrainRow };

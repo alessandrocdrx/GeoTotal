@@ -3,8 +3,13 @@
  * Camada: Treino
  * Pulso de destaque da região do treino no globo.
  */
+
+import { ctx, rot } from '../visualizacao/globo.js';
+import { poolIdx, QD } from './dominio.js';
+import { flat2D } from '../visualizacao/mapa-2d.js';
+
 /* ---------- pulso de destaque do escopo no globo ---------- */
-var scopePulse=null;
+let scopePulse = null;
 function firePulse(pts){scopePulse={pts:pts,t0:performance.now()};}
 function firePulseForScope(){
   var idxs=poolIdx(),arr=QD();
@@ -24,3 +29,4 @@ function drawScopePulse(R,cx,cy){
   ctx.restore();
 }
 
+export { drawScopePulse, firePulseForScope };

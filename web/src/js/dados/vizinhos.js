@@ -3,8 +3,11 @@
  * Camada: Dados
  * Fronteiras terrestres entre países (lista de vizinhos NB).
  */
+
+import { D, norm } from './paises.js';
+
 /* ---------- Vizinhos (fronteiras terrestres) ---------- */
-var NB_RAW=`
+const NB_RAW = `
 Chipre:Chipre do Norte
 Brasil:Guiana Francesa,Suriname,Guiana,Venezuela,Colômbia,Peru,Bolívia,Paraguai,Argentina,Uruguai
 Guiana Francesa:Suriname
@@ -152,20 +155,26 @@ Malásia:Brunei,Indonésia
 Indonésia:Timor-Leste,Papua-Nova Guiné
 Brunei:Malásia
 `;
-var NB=D.map(function(){return [];});
-var byName={};
-D.forEach(function(d){byName[norm(d.name.split(' (')[0])]=d.i;});
-NB_RAW.trim().split('\n').forEach(function(l){
-  var p=l.split(':'),a=byName[norm(p[0].trim())];
-  if(a===undefined){console.warn('país?',p[0]);return;}
-  (p[1]||'').split(',').forEach(function(n){
-    n=n.trim();if(!n)return;
-    var b=byName[norm(n)];
-    if(b===undefined){console.warn('vizinho?',n);return;}
-    if(NB[a].indexOf(b)<0)NB[a].push(b);
-    if(NB[b].indexOf(a)<0)NB[b].push(a);
-  });
-});
+let NB;
+const byName = {};
 function short(d){return d.name.split(' (')[0];}
 function capShort(d){return d.cap.split(' (')[0].split(' · ')[0].split(' / ')[0];}
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  NB = D.map(function(){return [];});
+  D.forEach(function(d){byName[norm(d.name.split(' (')[0])]=d.i;});
+  NB_RAW.trim().split('\n').forEach(function(l){
+    var p=l.split(':'),a=byName[norm(p[0].trim())];
+    if(a===undefined){console.warn('país?',p[0]);return;}
+    (p[1]||'').split(',').forEach(function(n){
+      n=n.trim();if(!n)return;
+      var b=byName[norm(n)];
+      if(b===undefined){console.warn('vizinho?',n);return;}
+      if(NB[a].indexOf(b)<0)NB[a].push(b);
+      if(NB[b].indexOf(a)<0)NB[b].push(a);
+    });
+  });
+}
+
+export { byName, capShort, iniciar, NB, short };

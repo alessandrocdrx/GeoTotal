@@ -3,28 +3,50 @@
  * Camada: Treino
  * Partida por região: baralho embaralhado, medalhas, recordes e escolha da próxima pergunta.
  */
-/* ---------- partida: cada acerto tira o item da rodada; ao acertar todos, a região está zerada ---------- */
-var RUNS=lsGet('globo.runs.v1',{});
-function runKey(){return quizDomain+'|'+JSON.stringify(quizScope)+'|'+quiz.mode;}
-function curRun(){var k=runKey();return RUNS[k]||(RUNS[k]={d:{},e:0,t0:Date.now(),fin:0,at:0,la:Date.now()});}
-/* recordes e medalhas de cada partida zerada (por região + tipo de pergunta) */
-var RECS=lsGet('globo.recs.v1',{});
-function saveRecs(){lsSet('globo.recs.v1',RECS);}
-var MEDAL={1:{i:'🥇',n:'ouro'},2:{i:'🥈',n:'prata'},3:{i:'🥉',n:'bronze'}};
+
+import { D, REG } from '../dados/paises.js';
+import { capShort, NB, short } from '../dados/vizinhos.js';
+import { ctx, estadoCamera, estadoMapa, FONT, H, R0, rot, W } from '../visualizacao/globo.js';
+import { flyTo, PI } from '../visualizacao/animacao.js';
+import { fillQStat } from '../interface/cartao-pais.js';
+import { estadoRender } from '../visualizacao/fronteiras.js';
+import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
+import { estadoCartao } from '../interface/cartao-detalhes.js';
+import { qcapDisp } from '../recursos/exportar.js';
+import { estadoTreino, measureQ, quiz, scopeLabel } from './estado.js';
+import { gapOf, mstats, poolIdx, qcapD, qcc, QD, qflag, TIER_P, tierOf, unitWord } from './dominio.js';
+import { nextQ, resetSession, stopTimerTick } from './perguntas.js';
+import { modeName } from './estatisticas.js';
+import { BRS, estadoBrasil } from '../brasil/dados-estados.js';
+import { stateView } from '../brasil/cartao-estado.js';
+import { flat2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
+import { addXP, celebrate, recordProgress, updateProgUI } from './progressao.js';
+
+/** Estado compartilhado com outros módulos (leitura e escrita por estadoPartida.nome). */
+const estadoPartida = {
+  RUNS: undefined,
+  RECS: undefined,
+  GEOM: {},
+};
+
+function runKey(){return estadoTreino.quizDomain+'|'+JSON.stringify(estadoTreino.quizScope)+'|'+quiz.mode;}
+function curRun(){var k=runKey();return estadoPartida.RUNS[k]||(estadoPartida.RUNS[k]={d:{},e:0,t0:Date.now(),fin:0,at:0,la:Date.now()});}
+function saveRecs(){lsSet('globo.recs.v1',estadoPartida.RECS);}
+const MEDAL = {1:{i:'🥇',n:'ouro'},2:{i:'🥈',n:'prata'},3:{i:'🥉',n:'bronze'}};
 function medalFor(e){return e===0?1:(e<=3?2:3);}
 function scopeKeyFor(sc,mode){return ((sc.t==='br'||sc.t==='brreg')?'br':'world')+'|'+JSON.stringify(sc)+'|'+mode;}
 function recordable(sc){return sc.t!=='filter'&&sc.t!=='review';}
 function recFinish(r){
-  var k=runKey(),old=RECS[k]||{},m=medalFor(r.e),t=r.at||((r.fin||Date.now())-r.t0);
+  var k=runKey(),old=estadoPartida.RECS[k]||{},m=medalFor(r.e),t=r.at||((r.fin||Date.now())-r.t0);
   var res={medal:m,t:t,first:!old.n,newMedal:!old.medal||m<old.medal,newT:old.bestT==null||Math.round(t/1000)<Math.round(old.bestT/1000),newE:old.bestE==null||r.e<old.bestE,prevT:old.bestT,prevE:old.bestE};
-  if(recordable(quizScope)){
-    RECS[k]={medal:Math.min(m,old.medal||9),bestT:Math.min(t,old.bestT==null?t:old.bestT),bestE:Math.min(r.e,old.bestE==null?r.e:old.bestE),n:(old.n||0)+1};
+  if(recordable(estadoTreino.quizScope)){
+    estadoPartida.RECS[k]={medal:Math.min(m,old.medal||9),bestT:Math.min(t,old.bestT==null?t:old.bestT),bestE:Math.min(r.e,old.bestE==null?r.e:old.bestE),n:(old.n||0)+1};
     saveRecs();
   }
   return res;
 }
 function fmtTime(ms){var s2=Math.max(1,Math.round(ms/1000)),m=Math.floor(s2/60);return m?(m+' min '+(s2%60)+' s'):(s2+' s');}
-function saveRuns(){lsSet('globo.runs.v1',RUNS);}
+function saveRuns(){lsSet('globo.runs.v1',estadoPartida.RUNS);}
 function runPool(){var arr=QD(),r=curRun();return poolIdx().filter(function(i){return !r.d[qcc(arr[i])];});}
 function runRecord(i,ok){
   var r=curRun(),cc=qcc(QD()[i]),now=Date.now();
@@ -38,19 +60,18 @@ function runRecord(i,ok){
     r.fin=now;
     r.res=recFinish(r);
     celebrate('🏁 Você zerou '+scopeLabel()+'!');addXP(50);
-    if(recordable(quizScope)&&r.res.newMedal)celebrate(MEDAL[r.res.medal].i+' Medalha de '+MEDAL[r.res.medal].n+'!');
+    if(recordable(estadoTreino.quizScope)&&r.res.newMedal)celebrate(MEDAL[r.res.medal].i+' Medalha de '+MEDAL[r.res.medal].n+'!');
   }
   saveRuns();
 }
-function runRestart(){delete RUNS[runKey()];saveRuns();resetSession();quiz.last=-1;nextQ();renderScore();}
-function fmtDur(ms){var m=Math.round(ms/60000);if(m<1)return 'menos de 1 min';if(m<60)return m+' min';var h=Math.floor(m/60);return h+' h '+(m%60)+' min';}
+function runRestart(){delete estadoPartida.RUNS[runKey()];saveRuns();resetSession();quiz.last=-1;nextQ();renderScore();}
 function showRunDone(){
   stopTimerTick();
   var r=curRun(),n=poolIdx().length,body=$('qbody'),fb=$('qfb'),res=r.res||{medal:medalFor(r.e),t:r.at||0};
   fb.textContent='';fb.className='';$('qnext').style.display='none';$('qpool').textContent='';
   body.innerHTML='';
   var box=document.createElement('div');box.className='rundone';
-  var rec=recordable(quizScope);
+  var rec=recordable(estadoTreino.quizScope);
   if(rec){var md=document.createElement('div');md.className='medal';md.textContent=MEDAL[res.medal].i;box.appendChild(md);}
   var h=document.createElement('div');h.className='qq';h.textContent='Você zerou '+scopeLabel()+'!';
   var sub=document.createElement('div');sub.className='qhint';
@@ -63,7 +84,7 @@ function showRunDone(){
     else{
       if(res.newT)bits.push('🎉 Novo recorde de tempo! (antes: '+fmtTime(res.prevT)+')');
       if(res.newE&&res.prevE!=null&&r.e<res.prevE)bits.push('🎉 Novo recorde de menos erros! (antes: '+res.prevE+')');
-      if(!bits.length){var R2=RECS[runKey()]||{};bits.push('Seus recordes: '+fmtTime(R2.bestT)+' · '+R2.bestE+' '+(R2.bestE===1?'erro':'erros'));}
+      if(!bits.length){var R2=estadoPartida.RECS[runKey()]||{};bits.push('Seus recordes: '+fmtTime(R2.bestT)+' · '+R2.bestE+' '+(R2.bestE===1?'erro':'erros'));}
     }
     if(res.medal>1)bits.push(res.medal===2?'Para o ouro: zere sem nenhum erro.':'Para a prata: zere com até 3 erros.');
     rl.textContent=bits.join(' ');box.appendChild(rl);
@@ -88,7 +109,7 @@ function shareRun(n,r,res){
   c.fillStyle=gl2;c.fillRect(0,0,W2,W2);
   var EM="'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif";
   c.textAlign='center';c.textBaseline='middle';
-  var rec=recordable(quizScope);
+  var rec=recordable(estadoTreino.quizScope);
   c.font='220px '+EM;c.fillText(rec?MEDAL[res.medal].i:'🏆',W2/2,250);
   c.fillStyle='#ffffff';c.font='800 66px '+FONT;
   var title='Zerei '+scopeLabel()+'!',fs=66;
@@ -117,8 +138,8 @@ function pickQ(){
   var pool=runPool();if(!pool.length)return -1;
   if(quiz.order==='seq')return pickQFrom(pool);
   var arr=QD(),cand=pool;
-  if(quizFocus!=='mix'){
-    var f=pool.filter(function(i){var t=tierOf(i);return quizFocus==='new'?t==='new':t==='wrong';});
+  if(estadoTreino.quizFocus!=='mix'){
+    var f=pool.filter(function(i){var t=tierOf(i);return estadoTreino.quizFocus==='new'?t==='new':t==='wrong';});
     if(f.length){if(f.length>1)f=f.filter(function(i){return i!==quiz.last;});return f[rndInt(f.length)];}
   }
   /* baralho da partida: embaralhado de novo a cada partida; cada país sai uma vez e os errados voltam depois */
@@ -138,7 +159,7 @@ function pickQFrom(pool){
     var pos=pool.indexOf(quiz.last);
     return pool[(pos<0?0:pos+1)%pool.length];
   }
-  var st=mstats(),qn=QS.q[quiz.mode]||0,T={'new':[],'wrong':[],'ok':[]},rest=[];
+  var st=mstats(),qn=estadoTreino.QS.q[quiz.mode]||0,T={'new':[],'wrong':[],'ok':[]},rest=[];
   pool.forEach(function(i){
     if(i===quiz.last)return;
     var e=st[qcc(arr[i])];
@@ -146,8 +167,8 @@ function pickQFrom(pool){
     rest.push(i);
     if(qn-(e.l||0)>=gapOf(e))T[e.s===0?'wrong':'ok'].push(i);
   });
-  if(quizFocus==='new'){return T['new'].length?T['new'][Math.floor(Math.random()*T['new'].length)]:-1;}
-  if(quizFocus==='wrong'){
+  if(estadoTreino.quizFocus==='new'){return T['new'].length?T['new'][Math.floor(Math.random()*T['new'].length)]:-1;}
+  if(estadoTreino.quizFocus==='wrong'){
     var wl=T['wrong'];
     if(!wl.length){wl=[];pool.forEach(function(i){if(i!==quiz.last&&tierOf(i)==='wrong')wl.push(i);});}
     if(!wl.length)return (quiz.last>=0&&pool.indexOf(quiz.last)>=0&&tierOf(quiz.last)==='wrong')?quiz.last:-1;
@@ -174,11 +195,11 @@ function pickQFrom(pool){
 function optLabel(k){
   var o=QD()[k];
   if(quiz.mode==='cap')return qcapD(o);
-  if(quiz.mode==='code')return quizDomain==='br'?o.sigla:o.cc;
+  if(quiz.mode==='code')return estadoTreino.quizDomain==='br'?o.sigla:o.cc;
   return qflag(o)+' '+short(o);
 }
 function makeNeighborOptions(qIdx,ansIdx){
-  var arr=QD(),nbSet={};(quizDomain==='br'?arr[qIdx].nb:NB[qIdx]).forEach(function(k){nbSet[k]=1;});
+  var arr=QD(),nbSet={};(estadoTreino.quizDomain==='br'?arr[qIdx].nb:NB[qIdx]).forEach(function(k){nbSet[k]=1;});
   var label=optLabel(ansIdx),labels={},out=[ansIdx];labels[label]=1;
   var pool=poolIdx().filter(function(k){return k!==qIdx&&!nbSet[k];});
   var same=pool.filter(function(k){return arr[k].r===arr[qIdx].r;}),guard=0;
@@ -223,11 +244,11 @@ function renderScore(){
 }
 function record(i,ok,hinted){
   var o=QD()[i],cc=qcc(o),stt=mstats(),s=stt[cc]||(stt[cc]={r:0,w:0,s:0,l:0});
-  if(ok&&!hinted){s.r++;s.s++;quiz.ok++;quiz.streak++;if(quiz.streak>QS.best)QS.best=quiz.streak;}
+  if(ok&&!hinted){s.r++;s.s++;quiz.ok++;quiz.streak++;if(quiz.streak>estadoTreino.QS.best)estadoTreino.QS.best=quiz.streak;}
   else if(ok&&hinted){s.r++;s.s=0;quiz.ok++;}
   else{s.w++;s.s=0;quiz.streak=0;}
-  s.l=QS.q[quiz.mode]||0;
-  quiz.total++;lsSet('globo.quiz.v1',QS);renderScore();
+  s.l=estadoTreino.QS.q[quiz.mode]||0;
+  quiz.total++;lsSet('globo.quiz.v1',estadoTreino.QS);renderScore();
 }
 function fbText(d,ok,extra){
   var fl=qflag(d),nm=short(d),cp=qcapD(d);
@@ -237,15 +258,15 @@ function fbText(d,ok,extra){
     var an=QD()[quiz.nbAnswer];
     ans=fl+' '+nm+' faz fronteira com '+qflag(an)+' '+short(an)+'.';
   }else if(quiz.mode==='code'){
-    ans='A sigla de '+fl+' '+nm+' é '+(quizDomain==='br'?d.sigla:d.cc)+'.';
+    ans='A sigla de '+fl+' '+nm+' é '+(estadoTreino.quizDomain==='br'?d.sigla:d.cc)+'.';
   }else{
     ans=quiz.mode==='cap'?('A capital de '+fl+' '+nm+' é '+cp+'.'):(quiz.mode==='map'?(fl+' '+nm+' fica aqui'+(d.uni?'.':' (capital: '+cp+').')):('É '+fl+' '+nm+' (capital: '+cp+').'));
   }
   return base+ans+(quiz.hinted?' (com dica)':'')+(extra?' '+extra:'');
 }
 function showTarget(i){
-  if(quizDomain==='br'){statesMode=true;selSt=BRS[i];var v=stateView(BRS[i]);flyTo(v.lat,v.lng,zoomFor(v.r,3.4));}
-  else{qBadge=i;showCountry(i);}
+  if(estadoTreino.quizDomain==='br'){estadoBrasil.statesMode=true;estadoBrasil.selSt=BRS[i];var v=stateView(BRS[i]);flyTo(v.lat,v.lng,zoomFor(v.r,3.4));}
+  else{estadoTreino.qBadge=i;showCountry(i);}
 }
 function sessionRecord(ok){
   var s=quiz;s.sessionLog.push({label:qflag(QD()[s.cur])+' '+short(QD()[s.cur]),ok:ok});
@@ -254,7 +275,7 @@ function finishQ(ok,extra){
   quiz.answered=true;quiz.lastOk=ok;record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
   recordProgress(ok,quiz.hinted);
   showTarget(quiz.cur);
-  if(quizDomain==='world'){qFlash={i:quiz.cur,kind:ok?'ok':'reveal'};}
+  if(estadoTreino.quizDomain==='world'){estadoTreino.qFlash={i:quiz.cur,kind:ok?'ok':'reveal'};}
   var fb=$('qfb');fb.textContent=fbText(QD()[quiz.cur],ok,extra);fb.className=ok?'ok':'bad';
   var qse=$('qstat');if(qse)fillQStat(qse,QD()[quiz.cur]);
   $('qnext').style.display='block';measureQ();
@@ -271,8 +292,7 @@ function finishQ(ok,extra){
     try{var qp=$('quiz').querySelector('.qpanel');if(qp)qp.scrollTo({top:qp.scrollHeight,behavior:'smooth'});}catch(e){}
   },30);
 }
-var GEOM={};
-var EXT_FB={CL:20,AR:17,NO:12,SE:8,FI:7,IT:8,JP:14,PH:9,VN:9,ID:25,MY:10,NZ:12,RU:42,US:23,CA:30,MX:14,CN:25,IN:16,BR:24,KZ:15,MN:13,EG:10,LY:10,DZ:12,SD:11,CD:14,PE:9,CO:9,SA:12,IR:12,ZA:9,AU:22,GR:5,PT:5,GB:6,CU:6,TR:11,TH:8,MM:9,CL_:0};
+const EXT_FB = {CL:20,AR:17,NO:12,SE:8,FI:7,IT:8,JP:14,PH:9,VN:9,ID:25,MY:10,NZ:12,RU:42,US:23,CA:30,MX:14,CN:25,IN:16,BR:24,KZ:15,MN:13,EG:10,LY:10,DZ:12,SD:11,CD:14,PE:9,CO:9,SA:12,IR:12,ZA:9,AU:22,GR:5,PT:5,GB:6,CU:6,TR:11,TH:8,MM:9,CL_:0};
 function featView(f){
   if(!(f&&f.geometry&&window.d3&&d3.geo&&d3.geo.area))return null;
   try{
@@ -300,23 +320,23 @@ function featView(f){
   }catch(e){return null;}
 }
 function countryView(i){
-  if(GEOM[i])return GEOM[i];
-  var d=D[i],f=FEAT[i];
-  if(f){var fv=featView(f);if(fv)return (GEOM[i]=fv);}
+  if(estadoPartida.GEOM[i])return estadoPartida.GEOM[i];
+  var d=D[i],f=estadoRender.FEAT[i];
+  if(f){var fv=featView(f);if(fv)return (estadoPartida.GEOM[i]=fv);}
   /* sem contorno: usa a área e a posição da capital (com extensão manual para países alongados) */
   var a=d.info?d.info.area:50000,ex=EXT_FB[d.cc];
   return {lat:d.lat,lng:d.lng,r:ex?ex*Math.PI/180:Math.sqrt(a/Math.PI)/6371*1.4};
 }
 function zoomFor(r,cap){
-  var reserved=quiz.open?qPanelH:(cardH||H*0.4);
+  var reserved=quiz.open?estadoTreino.qPanelH:(estadoCartao.cardH||H*0.4);
   var avail=Math.max(60,Math.min(W,H-reserved)/2);
   var sn=Math.sin(Math.min(Math.max(r,0.004)*1.1+0.015,1.45));
   return Math.max(1,Math.min(cap||5.5,0.8*avail/(R0*sn)));
 }
 function showCountry(i){var v=countryView(i);flyTo(v.lat,v.lng,zoomFor(v.r,3.4));}
-function resetView(){flyTo(phi*180/PI,lam*180/PI,1);}
+function resetView(){flyTo(estadoCamera.phi*180/PI,estadoCamera.lam*180/PI,1);}
 function selBadgeMetrics(d){
-  var t1=labelMode==='p'||d.uni?short(d):capShort(d),t2=d.uni?d.cap:labelMode==='p'?('Capital: '+qcapDisp(d)):('País: '+short(d));
+  var t1=estadoMapa.labelMode==='p'||d.uni?short(d):capShort(d),t2=d.uni?d.cap:estadoMapa.labelMode==='p'?('Capital: '+qcapDisp(d)):('País: '+short(d));
   var fs=16,maxw=W-72-56,w1;
   ctx.font='700 '+fs+'px '+FONT;w1=ctx.measureText(t1).width;
   while(w1>maxw&&fs>10){fs--;ctx.font='700 '+fs+'px '+FONT;w1=ctx.measureText(t1).width;}
@@ -348,8 +368,8 @@ function paintSelBadge(m){
   ctx.font='600 11.5px '+FONT;ctx.fillStyle='rgba(255,255,255,.72)';ctx.fillText(m.t2,m.bx+48,m.by+34);
 }
 function drawBadge(R,cx,cy){
-  if(qBadge==null||quizDomain!=='world')return;
-  var d=D[qBadge],X,Y;
+  if(estadoTreino.qBadge==null||estadoTreino.quizDomain!=='world')return;
+  var d=D[estadoTreino.qBadge],X,Y;
   if(flat2D){var R2=R2now(),pp=proj2D(d.lng,d.lat,R2,cx,cy);X=pp.x;Y=pp.y;}
   else{var p=rot(d.x,d.y,d.z);if(p[2]<0.05)return;X=cx+R*p[0];Y=cy-R*p[1];}
   ctx.beginPath();ctx.arc(X,Y,10,0,7);ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.stroke();
@@ -377,3 +397,13 @@ function drawBadge(R,cx,cy){
   ctx.font='700 '+fs+'px '+FONT;ctx.fillStyle='#fff';
   ctx.fillText(name,bx+44,by+bh/2+1);
 }
+
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  /* ---------- partida: cada acerto tira o item da rodada; ao acertar todos, a região está zerada ---------- */
+  estadoPartida.RUNS = lsGet('globo.runs.v1',{});
+  /* recordes e medalhas de cada partida zerada (por região + tipo de pergunta) */
+  estadoPartida.RECS = lsGet('globo.recs.v1',{});
+}
+
+export { countryView, drawBadge, estadoPartida, featView, finishQ, iniciar, makeNeighborOptions, makeOptions, MEDAL, optLabel, paintSelBadge, pickQ, recordable, renderScore, resetView, runPool, runRestart, saveRecs, saveRuns, scopeKeyFor, selBadgeMetrics, showRunDone, showTarget, zoomFor };

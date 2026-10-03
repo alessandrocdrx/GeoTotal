@@ -3,6 +3,18 @@
  * Camada: Brasil
  * Desenho dos estados no globo.
  */
+
+import { D, norm, REG } from '../dados/paises.js';
+import { byName, short } from '../dados/vizinhos.js';
+import { ctx, estadoCamera, FONT, H, R0, rot, W } from '../visualizacao/globo.js';
+import { card } from '../interface/cartao-pais.js';
+import { estadoRender, hexA, inFeat, projCfg } from '../visualizacao/fronteiras.js';
+import { shapePath } from '../visualizacao/marcadores.js';
+import { estadoCartao } from '../interface/cartao-detalhes.js';
+import { estadoTreino, quiz } from '../treino/estado.js';
+import { BRREG, BRS, estadoBrasil, STSHAPES } from './dados-estados.js';
+import { selectSt } from './cartao-estado.js';
+
 /* ---------- desenho ---------- */
 function stBadgeMetrics(st){
   var t1=st.name,t2='Capital: '+st.cap,fs=16,maxw=W-72-64,w1;
@@ -31,32 +43,32 @@ function paintStBadge(m){
   ctx.font='600 11.5px '+FONT;ctx.fillStyle='rgba(255,255,255,.72)';ctx.fillText(m.t2,m.bx+54,m.by+34);
 }
 function drawStates(R,cx,cy){
-  if(!statesMode)return;
-  var hideMk=quiz.open&&qMap&&quizDomain==='br'&&STFEAT.some(function(f){return f;});
+  if(!estadoBrasil.statesMode)return;
+  var hideMk=quiz.open&&estadoTreino.qMap&&estadoTreino.quizDomain==='br'&&estadoBrasil.STFEAT.some(function(f){return f;});
   var mr=Math.max(3.8,Math.min(6.5,R*0.014)),vs=[],i,st,p;
   for(i=0;i<BRS.length;i++){
-    st=BRS[i];if(!onS[i])continue;
+    st=BRS[i];if(!estadoBrasil.onS[i])continue;
     p=rot(st.x,st.y,st.z);
     if(p[2]>0.05){st.sx=cx+R*p[0];st.sy=cy-R*p[1];st.vz=p[2];vs.push(st);}
   }
   for(i=0;!hideMk&&i<vs.length;i++){
     st=vs[i];
-    var sel=st===selSt,rr=sel?mr*1.9:mr;
+    var sel=st===estadoBrasil.selSt,rr=sel?mr*1.9:mr;
     if(sel){ctx.beginPath();ctx.arc(st.sx,st.sy,rr+5,0,7);ctx.fillStyle='rgba(255,255,255,.22)';ctx.fill();}
     ctx.beginPath();shapePath(st.sx,st.sy,rr,STSHAPES[st.reg]);
     ctx.fillStyle=BRREG[st.reg].c;ctx.fill();
     ctx.lineWidth=sel?2.2:1.2;ctx.strokeStyle='#fff';ctx.stroke();
   }
   var used=[],selB=null;
-  if(selSt&&onS[selSt.i]&&vs.indexOf(selSt)>=0){
-    selB=stBadgeMetrics(selSt);
+  if(estadoBrasil.selSt&&estadoBrasil.onS[estadoBrasil.selSt.i]&&vs.indexOf(estadoBrasil.selSt)>=0){
+    selB=stBadgeMetrics(estadoBrasil.selSt);
     used.push({x:selB.bx-6,y:selB.by-6,w:selB.bw+12,h:selB.bh+12});
   }
   ctx.lineJoin='round';ctx.lineWidth=3;ctx.textBaseline='middle';ctx.textAlign='left';
   (hideMk?[]:vs.slice()).sort(function(a,b){return b.vz-a.vz;}).forEach(function(s2){
-    if(s2===selSt)return;
+    if(s2===estadoBrasil.selSt)return;
     ctx.font='600 11px '+FONT;
-    var t=zoom>=1.7?s2.name:s2.sigla,w=ctx.measureText(t).width;
+    var t=estadoCamera.zoom>=1.7?s2.name:s2.sigla,w=ctx.measureText(t).width;
     var rx=s2.sx+mr+5,rct={x:rx-2,y:s2.sy-8,w:w+4,h:16};
     if(rx+w>W-4){rct.x=s2.sx-mr-5-w-2;rx=rct.x+2;}
     for(var u=0;u<used.length;u++){var U=used[u];if(!(rct.x>U.x+U.w||rct.x+rct.w<U.x||rct.y>U.y+U.h||rct.y+rct.h<U.y))return;}
@@ -64,7 +76,7 @@ function drawStates(R,cx,cy){
     ctx.globalAlpha=.85;ctx.strokeStyle='rgba(4,16,36,.85)';ctx.strokeText(t,rx,s2.sy);ctx.fillStyle='#fff';ctx.fillText(t,rx,s2.sy);ctx.globalAlpha=1;
   });
   /* países vizinhos (no modo "Só vizinhos") */
-  stNbC.forEach(function(k){
+  estadoBrasil.stNbC.forEach(function(k){
     var d=D[k];p=rot(d.x,d.y,d.z);
     if(p[2]<=0.05)return;
     var X=cx+R*p[0],Y=cy-R*p[1];
@@ -79,48 +91,48 @@ function drawStates(R,cx,cy){
   if(selB)paintStBadge(selB);
 }
 function drawGeoStates(R,cx,cy){
-  if(!feats)return;
+  if(!estadoRender.feats)return;
   projCfg(R,cx,cy);
-  var i,br=byName[norm('Brasil')],hasSt=STFEAT.some(function(f){return f;});
+  var i,br=byName[norm('Brasil')],hasSt=estadoBrasil.STFEAT.some(function(f){return f;});
   ctx.beginPath();
-  for(i=0;i<D.length;i++)if(i!==br&&stNbC.indexOf(i)<0&&FEAT[i])gpath(FEAT[i]);
+  for(i=0;i<D.length;i++)if(i!==br&&estadoBrasil.stNbC.indexOf(i)<0&&estadoRender.FEAT[i])estadoRender.gpath(estadoRender.FEAT[i]);
   ctx.fillStyle='rgba(2,10,24,.6)';ctx.fill();
-  if(stNbC.length){
-    ctx.beginPath();stNbC.forEach(function(k){if(FEAT[k])gpath(FEAT[k]);});
+  if(estadoBrasil.stNbC.length){
+    ctx.beginPath();estadoBrasil.stNbC.forEach(function(k){if(estadoRender.FEAT[k])estadoRender.gpath(estadoRender.FEAT[k]);});
     ctx.fillStyle='rgba(255,255,255,.10)';ctx.fill();ctx.lineWidth=1.6;ctx.strokeStyle='rgba(255,255,255,.9)';ctx.stroke();
   }
   if(hasSt){
-    var anyOff=onS.some(function(v){return !v;});
-    if(anyOff){ctx.beginPath();for(i=0;i<BRS.length;i++)if(!onS[i]&&STFEAT[i])gpath(STFEAT[i]);ctx.fillStyle='rgba(2,10,24,.6)';ctx.fill();}
-    if(optFill){
+    var anyOff=estadoBrasil.onS.some(function(v){return !v;});
+    if(anyOff){ctx.beginPath();for(i=0;i<BRS.length;i++)if(!estadoBrasil.onS[i]&&estadoBrasil.STFEAT[i])estadoRender.gpath(estadoBrasil.STFEAT[i]);ctx.fillStyle='rgba(2,10,24,.6)';ctx.fill();}
+    if(estadoRender.optFill){
       for(var r=0;r<BRREG.length;r++){
         ctx.beginPath();
-        for(i=0;i<BRS.length;i++)if(onS[i]&&BRS[i].reg===r&&STFEAT[i])gpath(STFEAT[i]);
+        for(i=0;i<BRS.length;i++)if(estadoBrasil.onS[i]&&BRS[i].reg===r&&estadoBrasil.STFEAT[i])estadoRender.gpath(estadoBrasil.STFEAT[i]);
         ctx.fillStyle=hexA(BRREG[r].c,.30);ctx.fill();
       }
     }
-    if(selSt&&STFEAT[selSt.i]){ctx.beginPath();gpath(STFEAT[selSt.i]);ctx.fillStyle='rgba(255,224,102,.26)';ctx.fill();}
+    if(estadoBrasil.selSt&&estadoBrasil.STFEAT[estadoBrasil.selSt.i]){ctx.beginPath();estadoRender.gpath(estadoBrasil.STFEAT[estadoBrasil.selSt.i]);ctx.fillStyle='rgba(255,224,102,.26)';ctx.fill();}
     ctx.beginPath();
-    for(i=0;i<BRS.length;i++)if(onS[i]&&STFEAT[i])gpath(STFEAT[i]);
+    for(i=0;i<BRS.length;i++)if(estadoBrasil.onS[i]&&estadoBrasil.STFEAT[i])estadoRender.gpath(estadoBrasil.STFEAT[i]);
     ctx.lineJoin='round';ctx.lineWidth=1.3;ctx.strokeStyle='rgba(255,255,255,.9)';ctx.stroke();
-    if(selSt&&STFEAT[selSt.i]){ctx.beginPath();gpath(STFEAT[selSt.i]);ctx.lineWidth=2.6;ctx.strokeStyle='#ffe066';ctx.stroke();}
+    if(estadoBrasil.selSt&&estadoBrasil.STFEAT[estadoBrasil.selSt.i]){ctx.beginPath();estadoRender.gpath(estadoBrasil.STFEAT[estadoBrasil.selSt.i]);ctx.lineWidth=2.6;ctx.strokeStyle='#ffe066';ctx.stroke();}
   }
-  if(FEAT[br]){ctx.beginPath();gpath(FEAT[br]);ctx.lineWidth=hasSt?1.8:2;ctx.strokeStyle=hasSt?'rgba(255,255,255,.95)':'#ffe066';ctx.stroke();}
+  if(estadoRender.FEAT[br]){ctx.beginPath();estadoRender.gpath(estadoRender.FEAT[br]);ctx.lineWidth=hasSt?1.8:2;ctx.strokeStyle=hasSt?'rgba(255,255,255,.95)':'#ffe066';ctx.stroke();}
 }
 function stateAt(x,y){
-  if(!feats||!STFEAT.some(function(f){return f;}))return null;
-  projCfg(R0*zoom,W/2,H*cyFrac);
-  var ll=proj.invert([x,y]);
+  if(!estadoRender.feats||!estadoBrasil.STFEAT.some(function(f){return f;}))return null;
+  projCfg(R0*estadoCamera.zoom,W/2,H*estadoCamera.cyFrac);
+  var ll=estadoRender.proj.invert([x,y]);
   if(!ll||isNaN(ll[0])||isNaN(ll[1]))return null;
-  for(var i=0;i<BRS.length;i++)if(onS[i]&&STFEAT[i]&&inFeat(STFEAT[i],ll[0],ll[1]))return BRS[i];
+  for(var i=0;i<BRS.length;i++)if(estadoBrasil.onS[i]&&estadoBrasil.STFEAT[i]&&inFeat(estadoBrasil.STFEAT[i],ll[0],ll[1]))return BRS[i];
   return null;
 }
 function stTap(x,y){
-  var R=R0*zoom,cand=[];
+  var R=R0*estadoCamera.zoom,cand=[];
   BRS.forEach(function(st){
-    if(!onS[st.i])return;
+    if(!estadoBrasil.onS[st.i])return;
     var p=rot(st.x,st.y,st.z);if(p[2]<=0.05)return;
-    var sx=W/2+R*p[0],sy=H*cyFrac-R*p[1],dd=(sx-x)*(sx-x)+(sy-y)*(sy-y);
+    var sx=W/2+R*p[0],sy=H*estadoCamera.cyFrac-R*p[1],dd=(sx-x)*(sx-x)+(sy-y)*(sy-y);
     if(dd<36*36)cand.push({s:st,dd:dd});
   });
   cand.sort(function(a,b){return a.dd-b.dd;});
@@ -131,6 +143,7 @@ function stTap(x,y){
     var grp=cand.map(function(c){return c.s;});
     if(grp.indexOf(chosen)<0)grp.unshift(chosen);
     selectSt(chosen,false,grp);
-  }else if(selSt){selSt=null;card.style.display='none';cardH=0;}
+  }else if(estadoBrasil.selSt){estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;}
 }
 
+export { drawGeoStates, drawStates, stateAt, stTap };

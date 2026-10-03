@@ -3,14 +3,28 @@
  * Camada: Brasil
  * Estados do Brasil e regiões (dados).
  */
+
+import { D, norm } from '../dados/paises.js';
+
+/** Estado compartilhado com outros módulos (leitura e escrita por estadoBrasil.nome). */
+const estadoBrasil = {
+  stNbC: [],
+  statesMode: false,
+  selSt: null,
+  onS: undefined,
+  stSaved: null,
+  STFEAT: undefined,
+  STGEOM: {},
+};
+
 /* =====================================================================
    BRASIL: ESTADOS E CAPITAIS
    ===================================================================== */
-var BRREG=[{n:'Sul',c:'#b57cff'},{n:'Sudeste',c:'#4da3ff'},{n:'Centro-Oeste',c:'#f6c800'},{n:'Nordeste',c:'#ff8a3d'},{n:'Norte',c:'#2fd67f'}];
-var STSHAPES=['c','d','s','t','c'];
+const BRREG = [{n:'Sul',c:'#b57cff'},{n:'Sudeste',c:'#4da3ff'},{n:'Centro-Oeste',c:'#f6c800'},{n:'Nordeste',c:'#ff8a3d'},{n:'Norte',c:'#2fd67f'}];
+const STSHAPES = ['c','d','s','t','c'];
 /* Ordem de navegação: Sul → Sudeste → Centro-Oeste → Nordeste (da Bahia para cima, vizinho a vizinho) → Norte.
    sigla|estado|capital|lat|lng|região|área km²|população (Censo 2022)|código IBGE|lat centro|lng centro|meia-extensão (°)|estados vizinhos|nota|países vizinhos */
-var BR_RAW=`
+const BR_RAW = `
 RS|Rio Grande do Sul|Porto Alegre|-30.03|-51.23|0|281708|10882965|43|-29.7|-53.5|4.5|SC|Faz fronteira com a Argentina e o Uruguai|AR,UY
 SC|Santa Catarina|Florianópolis|-27.60|-48.55|0|95730|7610361|42|-27.3|-50.5|3|PR,RS|A capital fica em grande parte numa ilha|AR
 PR|Paraná|Curitiba|-25.43|-49.27|0|199298|11444380|41|-24.6|-51.5|3.5|SP,MS,SC||PY,AR
@@ -39,17 +53,23 @@ AM|Amazonas|Manaus|-3.12|-60.02|4|1559256|3941613|13|-4.5|-64.5|9|RR,PA,MT,RO,AC
 AC|Acre|Rio Branco|-9.97|-67.81|4|164173|830018|12|-9.0|-70.5|4.5|AM,RO||PE,BO
 RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT||BO
 `;
-var BRS=BR_RAW.trim().split('\n').map(function(l,i){
-  var p=l.split('|'),la=+p[3]*Math.PI/180,lo=+p[4]*Math.PI/180;
-  return {i:i,sigla:p[0],name:p[1],cap:p[2],lat:+p[3],lng:+p[4],x:Math.cos(la)*Math.sin(lo),y:Math.sin(la),z:Math.cos(la)*Math.cos(lo),
-    reg:+p[5],r:+p[5],area:+p[6],pop:+p[7],ibge:p[8],clat:+p[9],clng:+p[10],ext:+p[11],nbs:p[12].split(','),note:p[13]||'',cnc:p[14]?p[14].split(','):[],
-    key:norm(p[1]+' '+p[2]+' '+p[0])};
-});
-var BRBY={};BRS.forEach(function(s){BRBY[s.sigla]=s.i;});
-BRS.forEach(function(s){
-  s.nb=s.nbs.map(function(x){return BRBY[x];});
-  s.cn=s.cnc.map(function(cc){for(var k=0;k<D.length;k++)if(D[k].cc===cc)return k;return -1;}).filter(function(k){return k>=0;});
-});
-var stNbC=[];
-var statesMode=false,selSt=null,onS=BRS.map(function(){return 1;}),stSaved=null,STFEAT=BRS.map(function(){return null;}),STGEOM={};
+let BRS;
+const BRBY = {};
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  BRS = BR_RAW.trim().split('\n').map(function(l,i){
+    var p=l.split('|'),la=+p[3]*Math.PI/180,lo=+p[4]*Math.PI/180;
+    return {i:i,sigla:p[0],name:p[1],cap:p[2],lat:+p[3],lng:+p[4],x:Math.cos(la)*Math.sin(lo),y:Math.sin(la),z:Math.cos(la)*Math.cos(lo),
+      reg:+p[5],r:+p[5],area:+p[6],pop:+p[7],ibge:p[8],clat:+p[9],clng:+p[10],ext:+p[11],nbs:p[12].split(','),note:p[13]||'',cnc:p[14]?p[14].split(','):[],
+      key:norm(p[1]+' '+p[2]+' '+p[0])};
+  });BRS.forEach(function(s){BRBY[s.sigla]=s.i;});
+  BRS.forEach(function(s){
+    s.nb=s.nbs.map(function(x){return BRBY[x];});
+    s.cn=s.cnc.map(function(cc){for(var k=0;k<D.length;k++)if(D[k].cc===cc)return k;return -1;}).filter(function(k){return k>=0;});
+  });
+  estadoBrasil.onS = BRS.map(function(){return 1;});
+  estadoBrasil.STFEAT = BRS.map(function(){return null;});
+}
+
+export { BRBY, BRREG, BRS, estadoBrasil, iniciar, STSHAPES };

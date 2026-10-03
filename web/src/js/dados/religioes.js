@@ -3,9 +3,12 @@
  * Camada: Dados
  * Religiões por país (estimativas, % da população).
  */
+
+import { D } from './paises.js';
+
 /* ---------- Religiões (estimativas aproximadas; % da população) ----------
    código|Grupo:pct[Subgrupo:pct,Subgrupo];Grupo:pct|nota */
-var REL_RAW=`
+const REL_RAW = `
 BR|Cristãos:86[Católicos:57,Evangélicos:27,Outros cristãos:2];Sem religião:9;Espíritas:2;Religiões afro-brasileiras:1;Outras:2
 GF|Cristãos:80[Católicos:70,Protestantes:10];Outras:20|Dados escassos
 SR|Cristãos:49[Protestantes:27,Católicos:21,Outros:1];Hindus:22;Muçulmanos:14[Sunitas];Sem religião:10;Outras:5
@@ -205,16 +208,22 @@ TV|Cristãos:97[Congregacionais:87,Adventistas:3,Outros:7];Bahá'ís:1;Outras:2
 WS|Cristãos:98[Congregacionais:32,Católicos:19,Mórmons:17,Metodistas:14,Assembleias de Deus:7,Outros:9];Bahá'ís:1;Outras:1
 TO|Cristãos:97[Metodistas:45,Mórmons:18,Católicos:14,Outros:20];Outras:3
 `;
-var REL={};
-REL_RAW.trim().split('\n').forEach(function(l){
-  var p=l.split('|'),items=[];
-  p[1].split(';').forEach(function(it){
-    var m=it.match(/^([^:\[]+)(?::([\d.]+))?(?:\[(.*)\])?$/);
-    if(!m)return;
-    var subs=[];
-    if(m[3])m[3].split(',').forEach(function(s){var mm=s.match(/^([^:]+)(?::([\d.]+))?$/);if(mm)subs.push({n:mm[1].trim(),p:mm[2]?+mm[2]:null});});
-    items.push({n:m[1].trim(),p:m[2]?+m[2]:null,subs:subs});
+const REL = {};
+
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  REL_RAW.trim().split('\n').forEach(function(l){
+    var p=l.split('|'),items=[];
+    p[1].split(';').forEach(function(it){
+      var m=it.match(/^([^:[]+)(?::([\d.]+))?(?:\[(.*)\])?$/);
+      if(!m)return;
+      var subs=[];
+      if(m[3])m[3].split(',').forEach(function(s){var mm=s.match(/^([^:]+)(?::([\d.]+))?$/);if(mm)subs.push({n:mm[1].trim(),p:mm[2]?+mm[2]:null});});
+      items.push({n:m[1].trim(),p:m[2]?+m[2]:null,subs:subs});
+    });
+    REL[p[0]]={items:items,note:p[2]||''};
   });
-  REL[p[0]]={items:items,note:p[2]||''};
-});
-D.forEach(function(d){d.rel=REL[d.cc]||null;});
+  D.forEach(function(d){d.rel=REL[d.cc]||null;});
+}
+
+export { iniciar };

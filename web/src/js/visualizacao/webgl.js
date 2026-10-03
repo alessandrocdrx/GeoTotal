@@ -3,10 +3,15 @@
  * Camada: Visualização
  * Esfera texturizada em WebGL.
  */
+
+import { dpr, estadoCamera } from './globo.js';
+import { estadoRender, glc, glU } from './fronteiras.js';
+import { optNight, sunVec } from './dia-noite.js';
+
 /* ---------- WebGL: esfera com textura ---------- */
 function initGL(){
-  try{gl=glc.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false});}catch(e){gl=null;}
-  if(!gl)return false;
+  try{estadoRender.gl=glc.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false});}catch(e){estadoRender.gl=null;}
+  if(!estadoRender.gl)return false;
   var vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}';
   var fs='#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n'+
   'uniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\n'+
@@ -31,42 +36,43 @@ function initGL(){
   ' float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n'+
   ' gl_FragColor=vec4(c*a,a);\n'+
   '}';
-  function sh(t,src){var s=gl.createShader(t);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){console.warn(gl.getShaderInfoLog(s));return null;}return s;}
-  var v=sh(gl.VERTEX_SHADER,vs),f=sh(gl.FRAGMENT_SHADER,fs);
+  function sh(t,src){var s=estadoRender.gl.createShader(t);estadoRender.gl.shaderSource(s,src);estadoRender.gl.compileShader(s);if(!estadoRender.gl.getShaderParameter(s,estadoRender.gl.COMPILE_STATUS)){console.warn(estadoRender.gl.getShaderInfoLog(s));return null;}return s;}
+  var v=sh(estadoRender.gl.VERTEX_SHADER,vs),f=sh(estadoRender.gl.FRAGMENT_SHADER,fs);
   if(!v||!f)return false;
-  glProg=gl.createProgram();gl.attachShader(glProg,v);gl.attachShader(glProg,f);gl.linkProgram(glProg);
-  if(!gl.getProgramParameter(glProg,gl.LINK_STATUS))return false;
-  gl.useProgram(glProg);
-  glBuf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,glBuf);
-  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
-  var loc=gl.getAttribLocation(glProg,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
-  ['uT','uC','uR','uH','uRot','uSun','uNight'].forEach(function(n){glU[n]=gl.getUniformLocation(glProg,n);});
+  estadoRender.glProg=estadoRender.gl.createProgram();estadoRender.gl.attachShader(estadoRender.glProg,v);estadoRender.gl.attachShader(estadoRender.glProg,f);estadoRender.gl.linkProgram(estadoRender.glProg);
+  if(!estadoRender.gl.getProgramParameter(estadoRender.glProg,estadoRender.gl.LINK_STATUS))return false;
+  estadoRender.gl.useProgram(estadoRender.glProg);
+  estadoRender.glBuf=estadoRender.gl.createBuffer();estadoRender.gl.bindBuffer(estadoRender.gl.ARRAY_BUFFER,estadoRender.glBuf);
+  estadoRender.gl.bufferData(estadoRender.gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),estadoRender.gl.STATIC_DRAW);
+  var loc=estadoRender.gl.getAttribLocation(estadoRender.glProg,'p');estadoRender.gl.enableVertexAttribArray(loc);estadoRender.gl.vertexAttribPointer(loc,2,estadoRender.gl.FLOAT,false,0,0);
+  ['uT','uC','uR','uH','uRot','uSun','uNight'].forEach(function(n){glU[n]=estadoRender.gl.getUniformLocation(estadoRender.glProg,n);});
   return true;
 }
 function uploadTexture(cvs){
-  if(glTex)gl.deleteTexture(glTex);
-  glTex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,glTex);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
-  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,cvs);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-  return !gl.getError();
+  if(estadoRender.glTex)estadoRender.gl.deleteTexture(estadoRender.glTex);
+  estadoRender.glTex=estadoRender.gl.createTexture();estadoRender.gl.bindTexture(estadoRender.gl.TEXTURE_2D,estadoRender.glTex);
+  estadoRender.gl.pixelStorei(estadoRender.gl.UNPACK_FLIP_Y_WEBGL,false);
+  estadoRender.gl.texImage2D(estadoRender.gl.TEXTURE_2D,0,estadoRender.gl.RGBA,estadoRender.gl.RGBA,estadoRender.gl.UNSIGNED_BYTE,cvs);
+  estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D,estadoRender.gl.TEXTURE_MIN_FILTER,estadoRender.gl.LINEAR);
+  estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D,estadoRender.gl.TEXTURE_MAG_FILTER,estadoRender.gl.LINEAR);
+  estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D,estadoRender.gl.TEXTURE_WRAP_S,estadoRender.gl.REPEAT);
+  estadoRender.gl.texParameteri(estadoRender.gl.TEXTURE_2D,estadoRender.gl.TEXTURE_WRAP_T,estadoRender.gl.CLAMP_TO_EDGE);
+  return !estadoRender.gl.getError();
 }
 function glDraw(tex,R,cx,cy){
-  if(!gl)return;
-  gl.viewport(0,0,glc.width,glc.height);
-  gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
+  if(!estadoRender.gl)return;
+  estadoRender.gl.viewport(0,0,glc.width,glc.height);
+  estadoRender.gl.clearColor(0,0,0,0);estadoRender.gl.clear(estadoRender.gl.COLOR_BUFFER_BIT);
   if(!tex)return;
-  gl.useProgram(glProg);gl.bindBuffer(gl.ARRAY_BUFFER,glBuf);
-  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,glTex);
-  gl.uniform1i(glU.uT,0);
-  gl.uniform2f(glU.uC,cx*dpr,cy*dpr);
-  gl.uniform1f(glU.uR,R*dpr);
-  gl.uniform1f(glU.uH,glc.height);
-  gl.uniform4f(glU.uRot,Math.cos(lam),Math.sin(lam),Math.cos(phi),Math.sin(phi));
-  var sv=sunVec();gl.uniform3f(glU.uSun,sv[0],sv[1],sv[2]);gl.uniform1f(glU.uNight,optNight?1:0);
-  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  estadoRender.gl.useProgram(estadoRender.glProg);estadoRender.gl.bindBuffer(estadoRender.gl.ARRAY_BUFFER,estadoRender.glBuf);
+  estadoRender.gl.activeTexture(estadoRender.gl.TEXTURE0);estadoRender.gl.bindTexture(estadoRender.gl.TEXTURE_2D,estadoRender.glTex);
+  estadoRender.gl.uniform1i(glU.uT,0);
+  estadoRender.gl.uniform2f(glU.uC,cx*dpr,cy*dpr);
+  estadoRender.gl.uniform1f(glU.uR,R*dpr);
+  estadoRender.gl.uniform1f(glU.uH,glc.height);
+  estadoRender.gl.uniform4f(glU.uRot,Math.cos(estadoCamera.lam),Math.sin(estadoCamera.lam),Math.cos(estadoCamera.phi),Math.sin(estadoCamera.phi));
+  var sv=sunVec();estadoRender.gl.uniform3f(glU.uSun,sv[0],sv[1],sv[2]);estadoRender.gl.uniform1f(glU.uNight,optNight?1:0);
+  estadoRender.gl.drawArrays(estadoRender.gl.TRIANGLE_STRIP,0,4);
 }
 
+export { glDraw, initGL, uploadTexture };

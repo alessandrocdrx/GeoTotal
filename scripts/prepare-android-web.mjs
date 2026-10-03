@@ -18,15 +18,18 @@ const out = root + 'android/app/src/main/assets/www/index.html';
 
 let html = readFileSync(src, 'utf8');
 
+// Cada lista de endereços de uma biblioteca ganha, na frente, a cópia local que vai no APK.
+// Aceita aspas simples ou duplas (o esbuild normaliza para duplas).
 const local = [
-  ["['https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'", 'lib/d3.min.js'],
-  ["['https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js'", 'lib/topojson.min.js'],
-  ["['https://cdn.jsdelivr.net/npm/datamaps@0.5.9/dist/datamaps.world.min.js'", 'lib/datamaps.world.min.js'],
-  ["['https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5.1.4/brazilLow.js'", 'lib/brazilLow.js'],
+  ['https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js', 'lib/d3.min.js'],
+  ['https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js', 'lib/topojson.min.js'],
+  ['https://cdn.jsdelivr.net/npm/datamaps@0.5.9/dist/datamaps.world.min.js', 'lib/datamaps.world.min.js'],
+  ['https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5.1.4/brazilLow.js', 'lib/brazilLow.js'],
 ];
-for (const [list, file] of local) {
-  if (!html.includes(list)) throw new Error(`Não achei a lista de scripts ${list} no HTML`);
-  html = html.split(list).join(`['${file}',` + list.slice(1));
+for (const [url, file] of local) {
+  const lista = new RegExp('\\[(["\'])' + url.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '\\1', 'g');
+  if (!lista.test(html)) throw new Error(`Não achei a lista de scripts que começa com ${url} no HTML`);
+  html = html.replace(lista, (m, q) => `[${q}${file}${q},${q}${url}${q}`);
 }
 
 const shim = readFileSync(root + 'scripts/android-shim.js', 'utf8');

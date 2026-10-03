@@ -3,21 +3,56 @@
  * Camada: Visualização
  * Estado da câmera/seleção do globo 3D e desenho principal no canvas.
  */
+
+import { D, REG } from '../dados/paises.js';
+import { LX, LY, LZ } from '../dados/massas-terra.js';
+import { capShort, short } from '../dados/vizinhos.js';
+import { OC } from '../dados/oceanos-polos.js';
+import { drawGeo, estadoRender, glc } from './fronteiras.js';
+import { glDraw } from './webgl.js';
+import { lsGet } from '../nucleo/utilitarios.js';
+import { shapePath, SHAPES } from './marcadores.js';
+import { drawArc } from '../interface/distancia.js';
+import { qHide, quiz } from '../treino/estado.js';
+import { drawBadge, paintSelBadge, selBadgeMetrics } from '../treino/partida.js';
+import { drawScopePulse } from '../treino/destaque-escopo.js';
+import { estadoBrasil } from '../brasil/dados-estados.js';
+import { drawStates } from '../brasil/desenho.js';
+import { draw2D, flat2D } from './mapa-2d.js';
+
+/** Estado compartilhado com outros módulos (leitura e escrita por estadoCamera.nome). */
+const estadoCamera = {
+  lam: -0.9,
+  phi: 0.25,
+  zoom: 1,
+  cyFrac: .5,
+  target: null,
+  auto: true,
+  lastInteract: 0,
+};
+
+/** Estado compartilhado com outros módulos (leitura e escrita por estadoMapa.nome). */
+const estadoMapa = {
+  selected: null,
+  labelMode: 'p',
+  includeDisputed: undefined,
+  includeDep: undefined,
+  includeUni: undefined,
+  on: undefined,
+};
+
 /* ---------- Estado e desenho ---------- */
-var cv=document.getElementById('g'),ctx=cv.getContext('2d');
-var W=0,H=0,R0=0,dpr=1;
-var lam=-0.9,phi=0.25,zoom=1,cyFrac=.5;
-var target=null,selected=null,auto=true,labelMode='p',lastInteract=0;
-var includeDisputed=lsGet('globo.includeDisputed',true);
-var includeDep=lsGet('globo.includeDep',false);
-var includeUni=lsGet('globo.includeUni',false);
+let cv;
+let ctx;
+let W = 0;
+let H = 0;
+let R0 = 0;
+let dpr = 1;
 /* item disponível = não está escondido por "não reconhecidos" nem por "territórios dependentes" */
-function avail(d){return (!d.dis||includeDisputed)&&(!d.dep||includeDep)&&(!d.uni||includeUni);}
+function avail(d){return (!d.dis||estadoMapa.includeDisputed)&&(!d.dep||estadoMapa.includeDep)&&(!d.uni||estadoMapa.includeUni);}
 function availCount(){return D.filter(avail).length;}
-var on=D.map(function(d){return avail(d)?1:0;});
-var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if(reduce)auto=false;
-var FONT='system-ui,-apple-system,Segoe UI,Roboto,"Noto Color Emoji",sans-serif';
+let reduce;
+const FONT = 'system-ui,-apple-system,Segoe UI,Roboto,"Noto Color Emoji",sans-serif';
 
 function resize(){
   var r=cv.getBoundingClientRect();W=r.width;H=r.height;
@@ -26,9 +61,11 @@ function resize(){
   glc.width=cv.width;glc.height=cv.height;
   R0=Math.min(W,H)*0.44;
 }
-window.addEventListener('resize',resize);
 
-var cosL,sinL,cosP,sinP;
+let cosL;
+let sinL;
+let cosP;
+let sinP;
 function rot(x,y,z){
   var x1=x*cosL-z*sinL, z1=x*sinL+z*cosL;
   var y2=y*cosP-z1*sinP, z2=y*sinP+z1*cosP;
@@ -58,11 +95,11 @@ function drawPole(north,R,cx,cy){
 
 function draw(){
   if(flat2D){draw2D();return;}
-  var R=R0*zoom, cx=W/2, cy=H*cyFrac;
-  cosL=Math.cos(lam);sinL=Math.sin(lam);cosP=Math.cos(phi);sinP=Math.sin(phi);
+  var R=R0*estadoCamera.zoom, cx=W/2, cy=H*estadoCamera.cyFrac;
+  cosL=Math.cos(estadoCamera.lam);sinL=Math.sin(estadoCamera.lam);cosP=Math.cos(estadoCamera.phi);sinP=Math.sin(estadoCamera.phi);
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,W,H);
-  var tex=useTex&&optTex;
+  var tex=estadoRender.useTex&&estadoRender.optTex;
   glDraw(tex,R,cx,cy);
 
   var g=ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.12);
@@ -133,35 +170,35 @@ function draw(){
   /* marcadores (só países ligados) */
   var vis=[],i,d;
   for(i=0;i<D.length;i++){
-    d=D[i];if(!on[i])continue;
+    d=D[i];if(!estadoMapa.on[i])continue;
     p=rot(d.x,d.y,d.z);
     if(p[2]>0.05){d.sx=cx+R*p[0];d.sy=cy-R*p[1];d.vz=p[2];vis.push(d);}
   }
-  if(qHide()||statesMode)vis=[];
+  if(qHide()||estadoBrasil.statesMode)vis=[];
   var mr=Math.max(3.2,Math.min(6,R*0.0125));
   for(i=0;i<vis.length;i++){
     d=vis[i];
-    var rr=(d===selected)?mr*1.9:mr;
-    if(d===selected){ctx.beginPath();ctx.arc(d.sx,d.sy,rr+5,0,7);ctx.fillStyle='rgba(255,255,255,.22)';ctx.fill();}
+    var rr=(d===estadoMapa.selected)?mr*1.9:mr;
+    if(d===estadoMapa.selected){ctx.beginPath();ctx.arc(d.sx,d.sy,rr+5,0,7);ctx.fillStyle='rgba(255,255,255,.22)';ctx.fill();}
     ctx.beginPath();shapePath(d.sx,d.sy,rr,SHAPES[d.r]);
     ctx.fillStyle=REG[d.r].c;ctx.fill();
-    ctx.lineWidth=d===selected?2.2:1.2;ctx.strokeStyle='#fff';ctx.stroke();
+    ctx.lineWidth=d===estadoMapa.selected?2.2:1.2;ctx.strokeStyle='#fff';ctx.stroke();
   }
 
   /* rótulos dos países/capitais (o selecionado ganha um selo em destaque) */
-  if((zoom>=1.9||selected)&&!quiz.open){
+  if((estadoCamera.zoom>=1.9||estadoMapa.selected)&&!quiz.open){
     ctx.lineJoin='round';
     var used=[],selB=null;
-    if(selected&&on[selected.i]&&vis.indexOf(selected)>=0){
-      selB=selBadgeMetrics(selected);
+    if(estadoMapa.selected&&estadoMapa.on[estadoMapa.selected.i]&&vis.indexOf(estadoMapa.selected)>=0){
+      selB=selBadgeMetrics(estadoMapa.selected);
       used.push({x:selB.bx-6,y:selB.by-6,w:selB.bw+12,h:selB.bh+12});
     }
     var order=vis.slice().sort(function(a,b){return b.vz-a.vz;});
     for(i=0;i<order.length;i++){
       d=order[i];
-      if(d===selected||zoom<1.9)continue;
+      if(d===estadoMapa.selected||estadoCamera.zoom<1.9)continue;
       ctx.font='500 10.5px '+FONT;ctx.textBaseline='middle';ctx.lineWidth=3;
-      var t=d.flag+' '+(labelMode==='p'||d.uni?short(d):capShort(d));
+      var t=d.flag+' '+(estadoMapa.labelMode==='p'||d.uni?short(d):capShort(d));
       var w=ctx.measureText(t).width;
       var rx=d.sx+mr+5,rct={x:rx-2,y:d.sy-8,w:w+4,h:16};
       if(rx+w>W-4){rct.x=d.sx-mr-5-w-2;rx=rct.x+2;}
@@ -185,3 +222,17 @@ function draw(){
   drawBadge(R,cx,cy);
 }
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  cv = document.getElementById('g');
+  ctx = cv.getContext('2d');
+  estadoMapa.includeDisputed = lsGet('globo.includeDisputed',true);
+  estadoMapa.includeDep = lsGet('globo.includeDep',false);
+  estadoMapa.includeUni = lsGet('globo.includeUni',false);
+  estadoMapa.on = D.map(function(d){return avail(d)?1:0;});
+  reduce = window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce)estadoCamera.auto=false;
+  window.addEventListener('resize',resize);
+}
+
+export { avail, availCount, ctx, cv, dpr, draw, estadoCamera, estadoMapa, FONT, H, iniciar, R0, resize, rot, W };

@@ -3,6 +3,11 @@
  * Camada: Treino
  * Dicas por tipo de pergunta.
  */
+
+import { short } from '../dados/vizinhos.js';
+import { estadoTreino, quiz } from './estado.js';
+import { fitScopeView, poolIdx, qcapD, QD, regNameOf } from './dominio.js';
+
 /* ---------- dica ---------- */
 function hintText(d){
   var reg=regNameOf(d);
@@ -20,7 +25,7 @@ function addHintBtn(container,d,isMap){
     var reg=regNameOf(d);
     if(isMap){
       b.textContent='💡 '+reg;
-      var idxs=poolIdx().filter(function(k){return QD()[k].r===d.r&&(quizDomain==='world'?QD()[k].sub===d.sub:true);});
+      var idxs=poolIdx().filter(function(k){return QD()[k].r===d.r&&(estadoTreino.quizDomain==='world'?QD()[k].sub===d.sub:true);});
       if(idxs.length)fitScopeView(idxs);
     }else{
       b.textContent='💡 '+hintText(d);
@@ -29,3 +34,5 @@ function addHintBtn(container,d,isMap){
   };
   container.appendChild(b);
 }
+
+export { addHintBtn };

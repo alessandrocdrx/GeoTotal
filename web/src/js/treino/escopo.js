@@ -3,11 +3,22 @@
  * Camada: Treino
  * Seletor de escopo e foco do treino (regiões, combinações, revisão).
  */
+
+import { D, norm, REG } from '../dados/paises.js';
+import { avail, availCount, estadoMapa } from '../visualizacao/globo.js';
+import { $, lsSet } from '../nucleo/utilitarios.js';
+import { AMERICAS_R, estadoTreino, quiz } from './estado.js';
+import { applyDomainForScope, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
+import { estadoPartida, MEDAL, recordable, renderScore, scopeKeyFor } from './partida.js';
+import { buildModeButtons, nextQ, resetSession } from './perguntas.js';
+import { firePulseForScope } from './destaque-escopo.js';
+import { BRREG, BRS } from '../brasil/dados-estados.js';
+
 /* ---------- escopo e foco do treino ---------- */
 function applyScopeChange(newScope){
-  quizScopePrev=quizScope;
-  quizScope=newScope;
-  lsSet('globo.quiz.scope',quizScope);
+  estadoTreino.quizScopePrev=estadoTreino.quizScope;
+  estadoTreino.quizScope=newScope;
+  lsSet('globo.quiz.scope',estadoTreino.quizScope);
   applyDomainForScope();
   buildModeButtons();
   resetSession();
@@ -19,11 +30,11 @@ function applyScopeChange(newScope){
   updateScopeBackBtn();
   firePulseForScope();
 }
-$('qscopeback').onclick=function(){if(quizScopePrev){applyScopeChange(quizScopePrev);$('scopesheet').style.display='none';}};
-var scopeMultiMode=false,multiSel=[];
+let scopeMultiMode = false;
+let multiSel = [];
 /* revisão do dia: os países que você mais erra neste tipo de pergunta (até 10) */
 function reviewList(){
-  var st=QS.m[quiz.mode]||{},arr=[];
+  var st=estadoTreino.QS.m[quiz.mode]||{},arr=[];
   D.forEach(function(d){var e=st[d.cc];if(e&&e.w>0)arr.push({cc:d.cc,sc:e.w*2-e.r+(e.s===0?3:0)});});
   arr.sort(function(a,b){return b.sc-a.sc;});
   return arr.slice(0,10).map(function(x){return x.cc;});
@@ -45,7 +56,7 @@ function buildScopeList(filterStr){
     any=true;
     var b=document.createElement('button');b.className='sitem'+(level===1?' sub':level===2?' sub sub2':'');
     var a=document.createElement('span');
-    var rc=(recordable(sc)&&sc.t!=='multi')?RECS[scopeKeyFor(sc,quiz.mode)]:null;
+    var rc=(recordable(sc)&&sc.t!=='multi')?estadoPartida.RECS[scopeKeyFor(sc,quiz.mode)]:null;
     a.textContent=(rc&&rc.medal?MEDAL[rc.medal].i+' ':'')+label;
     var c=document.createElement('small');c.textContent=count+(sc.t==='br'||sc.t==='brreg'?(count===1?' estado':' estados'):(count===1?' país':' países'));
     b.appendChild(a);b.appendChild(c);
@@ -62,7 +73,7 @@ function buildScopeList(filterStr){
         updateMultiApplyBtn();buildScopeList($('scopeq').value);
       };
     }else{
-      if(sc.t===quizScope.t&&sc.r===quizScope.r&&sc.s===quizScope.s&&(sc.t!=='multi'))b.classList.add('on');
+      if(sc.t===estadoTreino.quizScope.t&&sc.r===estadoTreino.quizScope.r&&sc.s===estadoTreino.quizScope.s&&(sc.t!=='multi'))b.classList.add('on');
       b.onclick=function(){applyScopeChange(sc);};
     }
     box.appendChild(b);
@@ -72,7 +83,7 @@ function buildScopeList(filterStr){
     var rv=reviewList();
     if(rv.length)item('🧠 Revisão do dia: seus '+rv.length+' mais errados',rv.length,{t:'review',cc:rv},0);
     item('🌍 Mundo',availCount(),{t:'world'},0);
-    item('Só os que estão ligados em Filtros',on.reduce(function(a,b2){return a+b2;},0),{t:'filter'},0);
+    item('Só os que estão ligados em Filtros',estadoMapa.on.reduce(function(a,b2){return a+b2;},0),{t:'filter'},0);
   }
   header('AMÉRICAS');
   var amCount=D.filter(function(d){return AMERICAS_R.indexOf(d.r)>=0&&avail(d);}).length;
@@ -102,23 +113,28 @@ function buildScopeList(filterStr){
   $('scopeempty').style.display=any?'none':'block';
   updateMultiApplyBtn();
 }
-$('qscopeb').onclick=function(){$('scopeq').value='';buildScopeList();$('scopesheet').style.display='block';};
-$('scopeq').addEventListener('input',function(){buildScopeList(this.value);});
-$('scopeclose').onclick=function(){$('scopesheet').style.display='none';};
-$('scopesheet').addEventListener('pointerdown',function(e){if(e.target===$('scopesheet'))$('scopesheet').style.display='none';});
-$('scopeMulti').onclick=function(){
-  scopeMultiMode=!scopeMultiMode;multiSel=[];
-  this.setAttribute('aria-pressed',scopeMultiMode?'true':'false');
-  buildScopeList($('scopeq').value);
-};
-$('scopeApply').onclick=function(){
-  if(!multiSel.length)return;
-  applyScopeChange({t:'multi',items:multiSel.slice()});
-  multiSel=[];scopeMultiMode=false;$('scopeMulti').setAttribute('aria-pressed','false');
-};
-$('qfocusb').onclick=function(){
-  quizFocus=quizFocus==='mix'?'new':(quizFocus==='new'?'wrong':'mix');
-  lsSet('globo.quiz.focus',quizFocus);quiz.last=-1;resetSession();nextQ();
-};
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  $('qscopeback').onclick=function(){if(estadoTreino.quizScopePrev){applyScopeChange(estadoTreino.quizScopePrev);$('scopesheet').style.display='none';}};
+  $('qscopeb').onclick=function(){$('scopeq').value='';buildScopeList();$('scopesheet').style.display='block';};
+  $('scopeq').addEventListener('input',function(){buildScopeList(this.value);});
+  $('scopeclose').onclick=function(){$('scopesheet').style.display='none';};
+  $('scopesheet').addEventListener('pointerdown',function(e){if(e.target===$('scopesheet'))$('scopesheet').style.display='none';});
+  $('scopeMulti').onclick=function(){
+    scopeMultiMode=!scopeMultiMode;multiSel=[];
+    this.setAttribute('aria-pressed',scopeMultiMode?'true':'false');
+    buildScopeList($('scopeq').value);
+  };
+  $('scopeApply').onclick=function(){
+    if(!multiSel.length)return;
+    applyScopeChange({t:'multi',items:multiSel.slice()});
+    multiSel=[];scopeMultiMode=false;$('scopeMulti').setAttribute('aria-pressed','false');
+  };
+  $('qfocusb').onclick=function(){
+    estadoTreino.quizFocus=estadoTreino.quizFocus==='mix'?'new':(estadoTreino.quizFocus==='new'?'wrong':'mix');
+    lsSet('globo.quiz.focus',estadoTreino.quizFocus);quiz.last=-1;resetSession();nextQ();
+  };
+}
 
+export { applyScopeChange, buildScopeList, iniciar };

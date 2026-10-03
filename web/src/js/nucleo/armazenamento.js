@@ -3,6 +3,16 @@
  * Camada: Núcleo
  * Armazenamento local (IndexedDB) de textura e fronteiras importadas.
  */
+
+import { D } from '../dados/paises.js';
+import { ctx } from '../visualizacao/globo.js';
+import { afterFilter } from '../interface/filtros.js';
+import { A3, estadoRender, setStatus, setupGeo, tryLoad } from '../visualizacao/fronteiras.js';
+import { initGL, uploadTexture } from '../visualizacao/webgl.js';
+import { buildTexture, updateOpts } from '../visualizacao/textura.js';
+import { $, confirmTap } from './utilitarios.js';
+import { estadoPartida } from '../treino/partida.js';
+
 /* ---------- armazenamento local (IndexedDB) ---------- */
 function idb(){return new Promise(function(ok,no){try{var r=indexedDB.open('globo-cache',1);r.onupgradeneeded=function(){r.result.createObjectStore('kv');};r.onsuccess=function(){ok(r.result);};r.onerror=function(){no(r.error);};}catch(e){no(e);}});}
 function idbGet(k){return idb().then(function(db){return new Promise(function(ok,no){var q=db.transaction('kv','readonly').objectStore('kv').get(k);q.onsuccess=function(){ok(q.result);};q.onerror=function(){no(q.error);};});}).catch(function(){return undefined;});}
@@ -10,17 +20,19 @@ function idbSet(k,v){return idb().then(function(db){return new Promise(function(
 function idbDel(k){return idb().then(function(db){return new Promise(function(ok,no){var t=db.transaction('kv','readwrite');t.objectStore('kv').delete(k);t.oncomplete=ok;t.onerror=function(){no(t.error);};});}).catch(function(){});}
 function blobToImg(b){return new Promise(function(ok,no){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){ok(im);};im.onerror=no;im.src=fr.result;};fr.onerror=no;fr.readAsDataURL(b);});}
 function blobToTexCanvas(b){return blobToImg(b).then(function(im){var c=document.createElement('canvas');c.width=2048;c.height=1024;c.getContext('2d').drawImage(im,0,0,2048,1024);return c;});}
-var texSource='nenhuma',bordersCustom=false,texCanvas=null;
+let texSource = 'nenhuma';
+let bordersCustom = false;
+let texCanvas = null;
 function updateMapInfo(){
   var t={nenhuma:'ainda sem textura',proc:'gerada pelo app (salva neste aparelho)',custom:'imagem importada por você'}[texSource]||texSource;
-  $('minfo').textContent='Textura: '+t+' · Fronteiras: '+(feats?(bordersCustom?'arquivo importado por você':'biblioteca de mapas'):'não carregadas');
+  $('minfo').textContent='Textura: '+t+' · Fronteiras: '+(estadoRender.feats?(bordersCustom?'arquivo importado por você':'biblioteca de mapas'):'não carregadas');
 }
 function setTextureFrom(c,src){
-  if(uploadTexture(c)){useTex=true;texSource=src;texCanvas=c;updateOpts();updateMapInfo();return true;}
+  if(uploadTexture(c)){estadoRender.useTex=true;texSource=src;texCanvas=c;updateOpts();updateMapInfo();return true;}
   return false;
 }
 function genTexture(){
-  if(!gl||!feats)return;
+  if(!estadoRender.gl||!estadoRender.feats)return;
   setStatus('Gerando a textura do globo… 0%');
   buildTexture(function(tc){
     if(setTextureFrom(tc,'proc')){
@@ -30,12 +42,12 @@ function genTexture(){
   },function(p){setStatus('Gerando a textura do globo… '+p+'%');});
 }
 function setupFeatures(list){
-  feats=list;GEOM={};FEAT=D.map(function(){return null;});EXTRA=[];
+  estadoRender.feats=list;estadoPartida.GEOM={};estadoRender.FEAT=D.map(function(){return null;});estadoRender.EXTRA=[];
   var by={};D.forEach(function(d){by[A3[d.cc]]=d.i;});
   var m=0;
-  list.forEach(function(f){var i=by[f.id];if(i!==undefined&&!FEAT[i]){FEAT[i]=f;m++;}else EXTRA.push(f);});
-  proj=d3.geo.orthographic().clipAngle(90).precision(0.6);
-  gpath=d3.geo.path().projection(proj).context(ctx);
+  list.forEach(function(f){var i=by[f.id];if(i!==undefined&&!estadoRender.FEAT[i]){estadoRender.FEAT[i]=f;m++;}else estadoRender.EXTRA.push(f);});
+  estadoRender.proj=d3.geo.orthographic().clipAngle(90).precision(0.6);
+  estadoRender.gpath=d3.geo.path().projection(estadoRender.proj).context(ctx);
   return m;
 }
 function loadD3Topo(){
@@ -66,11 +78,11 @@ function startMap(){
   }).then(function(m){
     afterFilter();updateOpts();updateMapInfo();
     if(!okGL){setStatus('Fronteiras carregadas ('+m+' países com contorno). Este aparelho não suporta a textura 3D.',7000);return;}
-    if(useTex){setStatus('Pronto: fronteiras carregadas ('+m+' países com contorno).',3500);return;}
+    if(estadoRender.useTex){setStatus('Pronto: fronteiras carregadas ('+m+' países com contorno).',3500);return;}
     genTexture();
   },function(){
     updateOpts();updateMapInfo();
-    setStatus(useTex?'Textura carregada, mas não consegui carregar as fronteiras (a biblioteca de mapas não abriu).':'Não consegui carregar as fronteiras (a biblioteca de mapas não abriu). O globo segue funcionando sem elas.',9000);
+    setStatus(estadoRender.useTex?'Textura carregada, mas não consegui carregar as fronteiras (a biblioteca de mapas não abriu).':'Não consegui carregar as fronteiras (a biblioteca de mapas não abriu). O globo segue funcionando sem elas.',9000);
   });
 }
 function featA3(f){
@@ -110,47 +122,52 @@ function ingestGeo(json){
   if(m<50)throw new Error('só reconheci '+m+' países pelos códigos ISO');
   return out;
 }
-$('impBor').onchange=function(){
-  var f=this.files[0];this.value='';if(!f)return;
-  if(!window.d3||!window.topojson){setStatus('As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.',6000);return;}
-  var fr=new FileReader();
-  fr.onload=function(){
-    try{
-      var list=ingestGeo(JSON.parse(fr.result)),m=setupFeatures(list);
-      bordersCustom=true;afterFilter();updateOpts();updateMapInfo();
-      idbSet('borders',JSON.stringify({type:'FeatureCollection',features:list}));
-      setStatus('Fronteiras importadas: '+m+' países com contorno. Salvas neste aparelho.',6000);
-      if(texSource!=='custom'&&gl){idbDel('tex-proc');genTexture();}
-    }catch(e){setStatus('Não consegui usar esse arquivo: '+e.message+'. Use um GeoJSON de países com códigos ISO (por exemplo ISO_A3).',10000);}
-  };
-  fr.readAsText(f);
-};
-$('impTex').onchange=function(){
-  var f=this.files[0];this.value='';if(!f)return;
-  if(!gl){setStatus('Este aparelho não suporta a textura 3D.',5000);return;}
-  var fr=new FileReader();
-  fr.onload=function(){
-    var im=new Image();
-    im.onload=function(){
-      var ratio=im.width/im.height,c=document.createElement('canvas');c.width=2048;c.height=1024;
-      c.getContext('2d').drawImage(im,0,0,2048,1024);
-      if(setTextureFrom(c,'custom')){
-        c.toBlob(function(b){if(b)idbSet('tex-custom',b);},'image/jpeg',.92);
-        setStatus('Textura importada e salva.'+((ratio<1.9||ratio>2.1)?' A proporção não era 2:1, então a imagem foi esticada.':''),7000);
-      }else setStatus('Essa imagem não pôde ser usada como textura.',6000);
-    };
-    im.onerror=function(){setStatus('Não consegui abrir essa imagem.',6000);};
-    im.src=fr.result;
-  };
-  fr.readAsDataURL(f);
-};
-$('resetTex').onclick=function(){
-  idbDel('tex-custom').then(function(){return idbGet('tex-proc');}).then(function(b){
-    if(b)return blobToTexCanvas(b).then(function(c){setTextureFrom(c,'proc');setStatus('Voltei à textura gerada pelo app.',3500);});
-    if(feats)genTexture();else setStatus('A textura será gerada quando as fronteiras carregarem.',4000);
-  });
-};
-confirmTap($('clearData'),'Toque de novo para apagar',function(){
-  Promise.all([idbDel('tex-custom'),idbDel('tex-proc'),idbDel('borders')]).then(function(){setStatus('Dados de mapa apagados. Recarregue a página para começar do zero.',8000);});
-});
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  $('impBor').onchange=function(){
+    var f=this.files[0];this.value='';if(!f)return;
+    if(!window.d3||!window.topojson){setStatus('As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.',6000);return;}
+    var fr=new FileReader();
+    fr.onload=function(){
+      try{
+        var list=ingestGeo(JSON.parse(fr.result)),m=setupFeatures(list);
+        bordersCustom=true;afterFilter();updateOpts();updateMapInfo();
+        idbSet('borders',JSON.stringify({type:'FeatureCollection',features:list}));
+        setStatus('Fronteiras importadas: '+m+' países com contorno. Salvas neste aparelho.',6000);
+        if(texSource!=='custom'&&estadoRender.gl){idbDel('tex-proc');genTexture();}
+      }catch(e){setStatus('Não consegui usar esse arquivo: '+e.message+'. Use um GeoJSON de países com códigos ISO (por exemplo ISO_A3).',10000);}
+    };
+    fr.readAsText(f);
+  };
+  $('impTex').onchange=function(){
+    var f=this.files[0];this.value='';if(!f)return;
+    if(!estadoRender.gl){setStatus('Este aparelho não suporta a textura 3D.',5000);return;}
+    var fr=new FileReader();
+    fr.onload=function(){
+      var im=new Image();
+      im.onload=function(){
+        var ratio=im.width/im.height,c=document.createElement('canvas');c.width=2048;c.height=1024;
+        c.getContext('2d').drawImage(im,0,0,2048,1024);
+        if(setTextureFrom(c,'custom')){
+          c.toBlob(function(b){if(b)idbSet('tex-custom',b);},'image/jpeg',.92);
+          setStatus('Textura importada e salva.'+((ratio<1.9||ratio>2.1)?' A proporção não era 2:1, então a imagem foi esticada.':''),7000);
+        }else setStatus('Essa imagem não pôde ser usada como textura.',6000);
+      };
+      im.onerror=function(){setStatus('Não consegui abrir essa imagem.',6000);};
+      im.src=fr.result;
+    };
+    fr.readAsDataURL(f);
+  };
+  $('resetTex').onclick=function(){
+    idbDel('tex-custom').then(function(){return idbGet('tex-proc');}).then(function(b){
+      if(b)return blobToTexCanvas(b).then(function(c){setTextureFrom(c,'proc');setStatus('Voltei à textura gerada pelo app.',3500);});
+      if(estadoRender.feats)genTexture();else setStatus('A textura será gerada quando as fronteiras carregarem.',4000);
+    });
+  };
+  confirmTap($('clearData'),'Toque de novo para apagar',function(){
+    Promise.all([idbDel('tex-custom'),idbDel('tex-proc'),idbDel('borders')]).then(function(){setStatus('Dados de mapa apagados. Recarregue a página para começar do zero.',8000);});
+  });
+}
+
+export { fixWind, idbGet, idbSet, iniciar, startMap, texCanvas, updateMapInfo };

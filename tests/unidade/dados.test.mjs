@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 
 const dados = (f) => readFileSync(fileURLToPath(new URL(`../../web/src/js/dados/${f}`, import.meta.url)), 'utf8');
 const bloco = (texto, nome) => {
-  const m = texto.match(new RegExp('var ' + nome + '=`([\\s\\S]*?)`'));
+  const m = texto.match(new RegExp('(?:var|let|const) ' + nome + ' ?= ?`([\\s\\S]*?)`'));
   assert.ok(m, `bloco ${nome} não encontrado`);
   return m[1].trim().split('\n').map((l) => l.split('|'));
 };
@@ -58,7 +58,7 @@ test('categorias marcadas corretamente', () => {
 });
 
 test('rota dos territórios: cada um ancorado em um país que existe, uma vez só', () => {
-  const m = paisesJs.match(/var DEP_AFTER=(\{[^;]*\});/);
+  const m = paisesJs.match(/(?:var|let|const) DEP_AFTER ?= ?(\{[^;]*\});/);
   assert.ok(m, 'DEP_AFTER não encontrado');
   const ancoras = Function('return ' + m[1])();
   const base = new Set(BASE.map(codigo));
@@ -90,7 +90,7 @@ const chave = (nome) => norm(nome.split(' (')[0]);
 
 test('vizinhanças apontam para países existentes', () => {
   const nomes = new Set(TODOS.map((p) => chave(p[0])));
-  const linhas = dados('vizinhos.js').match(/var NB_RAW=`([\s\S]*?)`/)[1].trim().split('\n');
+  const linhas = dados('vizinhos.js').match(/(?:var|let|const) NB_RAW ?= ?`([\s\S]*?)`/)[1].trim().split('\n');
   for (const l of linhas) {
     const [a, viz = ''] = l.split(':');
     assert.ok(nomes.has(norm(a.trim())), `vizinhança de país desconhecido: ${a}`);

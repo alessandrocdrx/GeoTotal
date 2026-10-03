@@ -3,80 +3,97 @@
  * Camada: Interface
  * Filtros de países (chips, árvore, vizinhança) e disponibilidade das categorias.
  */
-/* ---------- Filtros ---------- */
-var nbSaved=null;
-function allOn(){return D.every(function(d){return on[d.i]||!avail(d);});}
+
+import { D, norm, REG } from '../dados/paises.js';
+import { byName, capShort, NB, short } from '../dados/vizinhos.js';
+import { avail, availCount, estadoCamera, estadoMapa } from '../visualizacao/globo.js';
+import { fitTo, flyTo, PI } from '../visualizacao/animacao.js';
+import { closeCard } from './cartao-pais.js';
+import { $ } from '../nucleo/utilitarios.js';
+import { snap } from './filtros-desfazer.js';
+import { tourStop } from './passeio.js';
+import { dflag } from '../treino/dominio.js';
+import { estadoBrasil } from '../brasil/dados-estados.js';
+import { toggleNbSt } from '../brasil/cartao-estado.js';
+import { buildChipsSt } from '../brasil/filtros.js';
+import { saveLastView } from '../app/ultima-visao.js';
+
+/** Estado compartilhado com outros módulos (leitura e escrita por estadoFiltros.nome). */
+const estadoFiltros = {
+  nbSaved: null,
+};
+
+function allOn(){return D.every(function(d){return estadoMapa.on[d.i]||!avail(d);});}
 function updateNbBtn(){
   var b=document.getElementById('nbtn');
-  if(statesMode){
-    if(stSaved){b.style.visibility='visible';b.textContent='↩ Mostrar todos';}
-    else{b.style.visibility=selSt?'visible':'hidden';b.textContent='Só vizinhos';}
+  if(estadoBrasil.statesMode){
+    if(estadoBrasil.stSaved){b.style.visibility='visible';b.textContent='↩ Mostrar todos';}
+    else{b.style.visibility=estadoBrasil.selSt?'visible':'hidden';b.textContent='Só vizinhos';}
     return;
   }
-  if(nbSaved){b.style.visibility='visible';b.textContent='↩ Mostrar todos';}
-  else{b.style.visibility=(selected&&NB[selected.i].length)?'visible':'hidden';b.textContent='Só vizinhos';}
+  if(estadoFiltros.nbSaved){b.style.visibility='visible';b.textContent='↩ Mostrar todos';}
+  else{b.style.visibility=(estadoMapa.selected&&NB[estadoMapa.selected.i].length)?'visible':'hidden';b.textContent='Só vizinhos';}
 }
 function toggleNb(){
-  if(statesMode){toggleNbSt();return;}
-  if(nbSaved){
-    snap();on=nbSaved.slice();nbSaved=null;afterFilter();
-    var vis=[];on.forEach(function(v,k){if(v)vis.push(k);});
-    if(allOn())flyTo(phi*180/PI,lam*180/PI,1);else fitTo(vis);
+  if(estadoBrasil.statesMode){toggleNbSt();return;}
+  if(estadoFiltros.nbSaved){
+    snap();estadoMapa.on=estadoFiltros.nbSaved.slice();estadoFiltros.nbSaved=null;afterFilter();
+    var vis=[];estadoMapa.on.forEach(function(v,k){if(v)vis.push(k);});
+    if(allOn())flyTo(estadoCamera.phi*180/PI,estadoCamera.lam*180/PI,1);else fitTo(vis);
     return;
   }
-  if(!selected)return;
+  if(!estadoMapa.selected)return;
   snap();
-  var i=selected.i,keep=on.slice(),idxs=[i].concat(NB[i]);
-  on=D.map(function(){return 0;});idxs.forEach(function(k){on[k]=1;});
-  nbSaved=keep;afterFilter();fitTo(idxs);
+  var i=estadoMapa.selected.i,keep=estadoMapa.on.slice(),idxs=[i].concat(NB[i]);
+  estadoMapa.on=D.map(function(){return 0;});idxs.forEach(function(k){estadoMapa.on[k]=1;});
+  estadoFiltros.nbSaved=keep;afterFilter();fitTo(idxs);
 }
-function soloOf(r){return D.every(function(d){return !avail(d)||on[d.i]===(d.r===r?1:0);});}
+function soloOf(r){return D.every(function(d){return !avail(d)||estadoMapa.on[d.i]===(d.r===r?1:0);});}
 function afterFilter(){
   tourStop();
-  D.forEach(function(d){if(!avail(d)&&(!selected||d.i!==selected.i))on[d.i]=0;});
-  if(statesMode){buildChips();updateNbBtn();return;}
+  D.forEach(function(d){if(!avail(d)&&(!estadoMapa.selected||d.i!==estadoMapa.selected.i))estadoMapa.on[d.i]=0;});
+  if(estadoBrasil.statesMode){buildChips();updateNbBtn();return;}
   buildChips();refreshTree();
-  var n=on.reduce(function(a,b){return a+b;},0);
-  var nA=availCount(),nOn=D.filter(function(d){return on[d.i]&&avail(d);}).length;
+  var nA=availCount(),nOn=D.filter(function(d){return estadoMapa.on[d.i]&&avail(d);}).length;
   document.getElementById('fbtn').textContent='🌍 '+(nOn>=nA?'Todas':nOn===0?'Nenhum':nOn+'/'+nA)+(nOn>0&&nOn<nA?' países':'');
   $('sheetcount').textContent=nA+' países e territórios disponíveis.';
   updateNbBtn();
-  if(selected&&!on[selected.i])closeCard();
+  if(estadoMapa.selected&&!estadoMapa.on[estadoMapa.selected.i])closeCard();
   saveLastView();
 }
-function setOn(idxs,val){snap();nbSaved=null;idxs.forEach(function(i){on[i]=val?1:0;});afterFilter();}
+function setOn(idxs,val){snap();estadoFiltros.nbSaved=null;idxs.forEach(function(i){estadoMapa.on[i]=val?1:0;});afterFilter();}
 function neighborsOf(i,add){
-  snap();nbSaved=null;
+  snap();estadoFiltros.nbSaved=null;
   var idxs=[i].concat(NB[i]);
-  if(!add)on=D.map(function(){return 0;});
-  idxs.forEach(function(k){on[k]=1;});
+  if(!add)estadoMapa.on=D.map(function(){return 0;});
+  idxs.forEach(function(k){estadoMapa.on[k]=1;});
   afterFilter();
-  var vis=[];on.forEach(function(v,k){if(v)vis.push(k);});
+  var vis=[];estadoMapa.on.forEach(function(v,k){if(v)vis.push(k);});
   fitTo(add?vis:idxs);
 }
 
-var chips=document.getElementById('chips');
+let chips;
 function mkChip(label,color,val,count){
   var b=document.createElement('button');b.className='chip';
   b.setAttribute('aria-pressed',(val<0?allOn():soloOf(val))?'true':'false');
   if(color){var s=document.createElement('span');s.className='dot';s.style.background=color;b.appendChild(s);}
   b.appendChild(document.createTextNode(label+' ('+count+')'));
   b.onclick=function(){
-    snap();nbSaved=null;
-    if(val<0||soloOf(val)){on=D.map(function(d){return avail(d)?1:0;});afterFilter();flyTo(phi*180/PI,lam*180/PI,1);}
-    else{on=D.map(function(d){return d.r===val&&avail(d)?1:0;});afterFilter();var g=REG[val];flyTo(g.lat,g.lng,g.z);}
+    snap();estadoFiltros.nbSaved=null;
+    if(val<0||soloOf(val)){estadoMapa.on=D.map(function(d){return avail(d)?1:0;});afterFilter();flyTo(estadoCamera.phi*180/PI,estadoCamera.lam*180/PI,1);}
+    else{estadoMapa.on=D.map(function(d){return d.r===val&&avail(d)?1:0;});afterFilter();var g=REG[val];flyTo(g.lat,g.lng,g.z);}
   };
   return b;
 }
 function buildChips(){
-  if(statesMode){buildChipsSt();return;}
+  if(estadoBrasil.statesMode){buildChipsSt();return;}
   chips.innerHTML='';
   chips.appendChild(mkChip('Todas',null,-1,availCount()));
   for(var r=0;r<REG.length;r++){var nr=D.filter(function(d){return d.r===r&&avail(d);}).length;if(nr)chips.appendChild(mkChip(REG[r].n,REG[r].c,r,nr));}
 }
 
 /* painel de filtros: continente > sub-região > país */
-var boxes=[];
+let boxes = [];
 function mkBox(idx){
   var cb=document.createElement('input');cb.type='checkbox';
   cb.addEventListener('click',function(e){e.stopPropagation();setOn(idx,cb.checked);});
@@ -121,22 +138,30 @@ function buildTree(){
 }
 function refreshTree(){
   boxes.forEach(function(b){
-    var n=0;b.idx.forEach(function(i){n+=on[i];});
+    var n=0;b.idx.forEach(function(i){n+=estadoMapa.on[i];});
     b.cb.checked=n===b.idx.length;
     b.cb.indeterminate=n>0&&n<b.idx.length;
   });
 }
-var sel=document.getElementById('nbsel');
-D.slice().sort(function(a,b){return short(a).localeCompare(short(b),'pt');}).forEach(function(d){
-  var o=document.createElement('option');o.value=d.i;o.textContent=d.flag+' '+short(d);sel.appendChild(o);
-});
-sel.value=byName[norm('Brasil')];
-var sheet=document.getElementById('sheet');
-document.getElementById('fbtn').onclick=function(){sheet.style.display='block';};
-document.getElementById('sclose').onclick=function(){sheet.style.display='none';};
-sheet.addEventListener('pointerdown',function(e){if(e.target===sheet)sheet.style.display='none';});
-document.getElementById('allon').onclick=function(){snap();nbSaved=null;on=D.map(function(d){return avail(d)?1:0;});afterFilter();};
-document.getElementById('alloff').onclick=function(){snap();nbSaved=null;on=D.map(function(){return 0;});afterFilter();};
-document.getElementById('nbsolo').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,false);};
-document.getElementById('nbadd').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,true);};
+let sel;
+let sheet;
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  chips = document.getElementById('chips');
+  sel = document.getElementById('nbsel');
+  D.slice().sort(function(a,b){return short(a).localeCompare(short(b),'pt');}).forEach(function(d){
+    var o=document.createElement('option');o.value=d.i;o.textContent=d.flag+' '+short(d);sel.appendChild(o);
+  });
+  sel.value=byName[norm('Brasil')];
+  sheet = document.getElementById('sheet');
+  document.getElementById('fbtn').onclick=function(){sheet.style.display='block';};
+  document.getElementById('sclose').onclick=function(){sheet.style.display='none';};
+  sheet.addEventListener('pointerdown',function(e){if(e.target===sheet)sheet.style.display='none';});
+  document.getElementById('allon').onclick=function(){snap();estadoFiltros.nbSaved=null;estadoMapa.on=D.map(function(d){return avail(d)?1:0;});afterFilter();};
+  document.getElementById('alloff').onclick=function(){snap();estadoFiltros.nbSaved=null;estadoMapa.on=D.map(function(){return 0;});afterFilter();};
+  document.getElementById('nbsolo').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,false);};
+  document.getElementById('nbadd').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,true);};
+}
+
+export { afterFilter, allOn, buildChips, buildTree, chips, estadoFiltros, iniciar, toggleNb, updateNbBtn };

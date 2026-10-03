@@ -3,9 +3,12 @@
  * Camada: Dados
  * Dados extras por país: população, área, idioma, moeda, fuso, DDI e domínio.
  */
+
+import { D } from './paises.js';
+
 /* ---------- Dados extras (aproximados, ~2024) ----------
    código|população (milhares)|área km²|idioma(s)|moeda|fuso|DDI */
-var INFO_RAW=`
+const INFO_RAW = `
 BR|212000|8515767|Português|Real (BRL)|UTC−3 (de −2 a −5)|+55
 GF|300|83534|Francês|Euro (EUR)|UTC−3|+594
 SR|620|163820|Holandês|Dólar surinamês (SRD)|UTC−3|+597
@@ -271,10 +274,16 @@ XT|350|4163|Russo, ucraniano e romeno|Rublo transnístrio (não conversível)|UT
 XA|245|8660|Abecázio e russo|Rublo russo (RUB)|UTC+3|+7 840 / 940
 XO|56|3900|Osseto, russo e georgiano|Rublo russo (RUB)|UTC+4|+995 34
 `;
-var INFO={};
-INFO_RAW.trim().split('\n').forEach(function(l){
-  var p=l.split('|');
-  INFO[p[0]]={pop:+p[1],area:+p[2],lang:p[3],cur:p[4],tz:p[5],dial:p[6],
-    tld:p[0]==='GB'?'.uk':p[0]==='EH'?'— (reservado)':(/^(X.|Q[M-Z]|UM|CP)$/.test(p[0]))?'— (sem domínio próprio)':'.'+p[0].toLowerCase()};
-});
-D.forEach(function(d){d.info=INFO[d.cc]||null;});
+const INFO = {};
+
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  INFO_RAW.trim().split('\n').forEach(function(l){
+    var p=l.split('|');
+    INFO[p[0]]={pop:+p[1],area:+p[2],lang:p[3],cur:p[4],tz:p[5],dial:p[6],
+      tld:p[0]==='GB'?'.uk':p[0]==='EH'?'— (reservado)':(/^(X.|Q[M-Z]|UM|CP)$/.test(p[0]))?'— (sem domínio próprio)':'.'+p[0].toLowerCase()};
+  });
+  D.forEach(function(d){d.info=INFO[d.cc]||null;});
+}
+
+export { iniciar };

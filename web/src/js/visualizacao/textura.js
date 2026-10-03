@@ -3,6 +3,19 @@
  * Camada: Visualização
  * Textura procedural com aparência de satélite (não é foto real).
  */
+
+import { D, N_DEP, N_UNI } from '../dados/paises.js';
+import { estadoMapa } from './globo.js';
+import { PI } from './animacao.js';
+import { afterFilter, buildTree } from '../interface/filtros.js';
+import { estadoRender } from './fronteiras.js';
+import { $, lsSet } from '../nucleo/utilitarios.js';
+import { quiz } from '../treino/estado.js';
+import { inScopeActive, QD, updateScopeBtn } from '../treino/dominio.js';
+import { renderScore } from '../treino/partida.js';
+import { nextQ } from '../treino/perguntas.js';
+import { buildScopeList } from '../treino/escopo.js';
+
 /* ---------- Textura procedural (aparência de satélite, NÃO é foto real) ---------- */
 function hh(x,y){var n=Math.sin(x*127.1+y*311.7)*43758.5453;return n-Math.floor(n);}
 function vn(x,y){var xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf);
@@ -10,10 +23,10 @@ function vn(x,y){var xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(
 function fbm(x,y){return (.55*vn(x,y)+.3*vn(x*2.1,y*2.1)+.15*vn(x*4.3,y*4.3));}
 function sm(a,b,x){var t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t);}
 function mix3(c,d,t){c[0]+=(d[0]-c[0])*t;c[1]+=(d[1]-c[1])*t;c[2]+=(d[2]-c[2])*t;}
-var DES=[[23,10,10,28,1],[24,45,9,12,1],[33,58,6,11,.65],[41,95,6,16,.8],[27,71,4,6,.55],[-25,132,11,15,.9],[-23,19,8,8,.85],[-22,-69,9,3,.9],[-45,-68,7,4,.5],[35,-112,6,8,.65],[28,-105,5,5,.5],[7,45,6,5,.5],[14,5,3,26,.4],[48,68,5,18,.4],[30,44,5,8,.5]];
-var FOR=[[-4,-62,8,13,.9],[0,22,7,11,.9],[0,111,9,24,.8],[5,-75,6,5,.5],[6,-3,3,10,.55],[-25,-50,8,6,.35],[35,-85,8,8,.2],[-38,146,5,6,.2]];
-var MTN=[[-20,-70,26,3.2,1],[45,-112,17,5,.85],[32,85,4,16,1.1],[34,92,4,9,.9],[46.5,10,2.2,7,.9],[58,60,10,1.5,.5],[9,39,5,4,.8],[38,-80,8,3,.4],[64,14,7,3.2,.6],[42.5,44,1.6,5.5,.8],[43,80,3,11,.85],[33,-3.5,2,8,.6],[-29,29,4,3,.5],[-30,150,12,2,.4],[-6,35,6,3,.35],[19,-100,3,7,.7],[10,-73,3,3,.5]];
-var RAMP=[[0,[203,172,118]],[.22,[178,150,98]],[.42,[139,132,76]],[.62,[88,114,54]],[.82,[46,90,44]],[1,[24,64,34]]];
+const DES = [[23,10,10,28,1],[24,45,9,12,1],[33,58,6,11,.65],[41,95,6,16,.8],[27,71,4,6,.55],[-25,132,11,15,.9],[-23,19,8,8,.85],[-22,-69,9,3,.9],[-45,-68,7,4,.5],[35,-112,6,8,.65],[28,-105,5,5,.5],[7,45,6,5,.5],[14,5,3,26,.4],[48,68,5,18,.4],[30,44,5,8,.5]];
+const FOR = [[-4,-62,8,13,.9],[0,22,7,11,.9],[0,111,9,24,.8],[5,-75,6,5,.5],[6,-3,3,10,.55],[-25,-50,8,6,.35],[35,-85,8,8,.2],[-38,146,5,6,.2]];
+const MTN = [[-20,-70,26,3.2,1],[45,-112,17,5,.85],[32,85,4,16,1.1],[34,92,4,9,.9],[46.5,10,2.2,7,.9],[58,60,10,1.5,.5],[9,39,5,4,.8],[38,-80,8,3,.4],[64,14,7,3.2,.6],[42.5,44,1.6,5.5,.8],[43,80,3,11,.85],[33,-3.5,2,8,.6],[-29,29,4,3,.5],[-30,150,12,2,.4],[-6,35,6,3,.35],[19,-100,3,7,.7],[10,-73,3,3,.5]];
+const RAMP = [[0,[203,172,118]],[.22,[178,150,98]],[.42,[139,132,76]],[.62,[88,114,54]],[.82,[46,90,44]],[1,[24,64,34]]];
 function ramp(w){for(var i=1;i<RAMP.length;i++){if(w<=RAMP[i][0]){var a=RAMP[i-1],b=RAMP[i],t=(w-a[0])/(b[0]-a[0]);return [a[1][0]+(b[1][0]-a[1][0])*t,a[1][1]+(b[1][1]-a[1][1])*t,a[1][2]+(b[1][2]-a[1][2])*t];}}return RAMP[RAMP.length-1][1].slice();}
 function dl(a,b){var d=a-b;while(d>180)d-=360;while(d<-180)d+=360;return d;}
 function buildTexture(done,progress){
@@ -62,8 +75,8 @@ function buildTexture(done,progress){
     var mk=document.createElement('canvas');mk.width=TW;mk.height=TH;
     var mx=mk.getContext('2d');mx.fillStyle='#000';mx.fillRect(0,0,TW,TH);
     var pth=d3.geo.path().projection(eq).context(mx);
-    mx.fillStyle='#fff';mx.beginPath();feats.forEach(function(f){pth(f);});mx.fill();
-    var hasAnt=feats.some(function(f){return f.id==='ATA';});
+    mx.fillStyle='#fff';mx.beginPath();estadoRender.feats.forEach(function(f){pth(f);});mx.fill();
+    var hasAnt=estadoRender.feats.some(function(f){return f.id==='ATA';});
     if(!hasAnt)mx.fillRect(0,TH*(90+72)/180,TW,TH);
     var tc=document.createElement('canvas');tc.width=TW;tc.height=TH;
     var tx=tc.getContext('2d');
@@ -73,8 +86,8 @@ function buildTexture(done,progress){
     /* plataforma continental (águas rasas) */
     var pt=d3.geo.path().projection(eq).context(tx);
     tx.save();tx.translate(-6000,0);tx.shadowOffsetX=6000;
-    tx.shadowColor='rgba(70,175,195,.55)';tx.shadowBlur=26;tx.fillStyle='#000';tx.beginPath();feats.forEach(function(f){pt(f);});tx.fill();
-    tx.shadowColor='rgba(120,215,215,.5)';tx.shadowBlur=9;tx.beginPath();feats.forEach(function(f){pt(f);});tx.fill();
+    tx.shadowColor='rgba(70,175,195,.55)';tx.shadowBlur=26;tx.fillStyle='#000';tx.beginPath();estadoRender.feats.forEach(function(f){pt(f);});tx.fill();
+    tx.shadowColor='rgba(120,215,215,.5)';tx.shadowBlur=9;tx.beginPath();estadoRender.feats.forEach(function(f){pt(f);});tx.fill();
     tx.restore();
     var cc=document.createElement('canvas');cc.width=TW;cc.height=TH;
     var cx2=cc.getContext('2d');cx2.imageSmoothingEnabled=true;cx2.drawImage(fc,0,0,TW,TH);
@@ -90,39 +103,49 @@ function buildTexture(done,progress){
   step();
 }
 
-var oTex=document.getElementById('oTex'),oBor=document.getElementById('oBor'),oFill=document.getElementById('oFill');
+let oTex;
+let oBor;
+let oFill;
 function setIncludeDisputed(v){
-  includeDisputed=v;lsSet('globo.includeDisputed',v);
+  estadoMapa.includeDisputed=v;lsSet('globo.includeDisputed',v);
   $('oDisputed').checked=v;$('oDisputedQ').checked=v;
-  if(v)D.forEach(function(d){if(d.dis)on[d.i]=1;});
+  if(v)D.forEach(function(d){if(d.dis)estadoMapa.on[d.i]=1;});
   afterFilter();
   if(quiz.open){updateScopeBtn();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}
 }
-$('oDisputed').onclick=function(){setIncludeDisputed(this.checked);};
 function setIncludeDep(v){
-  includeDep=v;lsSet('globo.includeDep',v);
+  estadoMapa.includeDep=v;lsSet('globo.includeDep',v);
   $('oDep').checked=v;$('oDepQ').checked=v;
-  if(v)D.forEach(function(d){if(d.dep)on[d.i]=1;});
+  if(v)D.forEach(function(d){if(d.dep)estadoMapa.on[d.i]=1;});
   afterFilter();
   if(quiz.open){updateScopeBtn();renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}
 }
 function setIncludeUni(v){
-  includeUni=v;lsSet('globo.includeUni',v);
+  estadoMapa.includeUni=v;lsSet('globo.includeUni',v);
   $('oUni').checked=v;$('oUniQ').checked=v;
-  if(v)D.forEach(function(d){if(d.uni)on[d.i]=1;});
+  if(v)D.forEach(function(d){if(d.uni)estadoMapa.on[d.i]=1;});
   buildTree();afterFilter();
   if(quiz.open){updateScopeBtn();renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}
 }
-$('oUni').checked=includeUni;$('oUniQ').checked=includeUni;
-$('oUni').onclick=function(){setIncludeUni(this.checked);};
-$('oUniQ').onclick=function(){setIncludeUni(this.checked);buildScopeList($('scopeq').value);};
-$('nDis').textContent='('+D.filter(function(d){return d.dis;}).length+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
-$('oDep').checked=includeDep;$('oDepQ').checked=includeDep;
-$('oDep').onclick=function(){setIncludeDep(this.checked);};
-$('oDepQ').onclick=function(){setIncludeDep(this.checked);buildScopeList($('scopeq').value);};
-$('oDisputedQ').onclick=function(){setIncludeDisputed(this.checked);buildScopeList($('scopeq').value);};
-function updateOpts(){$('oNight').disabled=!useTex;oTex.disabled=!useTex;oTex.checked=useTex&&optTex;oBor.disabled=!feats;oFill.disabled=!feats;}
-oTex.onchange=function(){optTex=oTex.checked;};
-oBor.onchange=function(){optBor=oBor.checked;};
-oFill.onchange=function(){optFill=oFill.checked;};
+function updateOpts(){$('oNight').disabled=!estadoRender.useTex;oTex.disabled=!estadoRender.useTex;oTex.checked=estadoRender.useTex&&estadoRender.optTex;oBor.disabled=!estadoRender.feats;oFill.disabled=!estadoRender.feats;}
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  oTex = document.getElementById('oTex');
+  oBor = document.getElementById('oBor');
+  oFill = document.getElementById('oFill');
+  $('oDisputed').onclick=function(){setIncludeDisputed(this.checked);};
+  $('oUni').checked=estadoMapa.includeUni;$('oUniQ').checked=estadoMapa.includeUni;
+  $('oUni').onclick=function(){setIncludeUni(this.checked);};
+  $('oUniQ').onclick=function(){setIncludeUni(this.checked);buildScopeList($('scopeq').value);};
+  $('nDis').textContent='('+D.filter(function(d){return d.dis;}).length+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
+  $('oDep').checked=estadoMapa.includeDep;$('oDepQ').checked=estadoMapa.includeDep;
+  $('oDep').onclick=function(){setIncludeDep(this.checked);};
+  $('oDepQ').onclick=function(){setIncludeDep(this.checked);buildScopeList($('scopeq').value);};
+  $('oDisputedQ').onclick=function(){setIncludeDisputed(this.checked);buildScopeList($('scopeq').value);};
+  oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
+  oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
+  oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
+}
+
+export { buildTexture, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, updateOpts };

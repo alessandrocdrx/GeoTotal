@@ -3,9 +3,10 @@
  * Camada: Dados
  * Países, territórios dependentes e desabitados (nome, capital, coordenadas, região) e a rota de vizinhança D.
  */
+
 /* ---------- Dados (ordem de vizinhança do documento) ----------
    país | capital | lat | lng | região | sub-região | observação  */
-var REG=[
+const REG = [
  {n:'América do Sul',c:'#f6c800',lat:-15,lng:-58,z:1.15},
  {n:'América Central e Caribe',c:'#ff4fa3',lat:16,lng:-78,z:1.9},
  {n:'América do Norte',c:'#2fd67f',lat:45,lng:-100,z:1.1},
@@ -15,7 +16,7 @@ var REG=[
  {n:'Oceania',c:'#22d3ee',lat:-10,lng:160,z:1.15},
  {n:'Antártida',c:'#cbd5e1',lat:-72,lng:30,z:1.2}
 ];
-var RAW=`
+const RAW = `
 Brasil|Brasília|-15.79|-47.88|0|América do Sul||BR
 Guiana Francesa|Caiena (Cayenne)|4.94|-52.33|0|América do Sul|Território ultramarino da França — não é país soberano nem membro da ONU|GF|dep
 Suriname|Paramaribo|5.85|-55.20|0|América do Sul||SR
@@ -222,7 +223,7 @@ Samoa|Apia|-13.83|-171.76|6|Polinésia||WS
 Tonga|Nuku'alofa|-21.14|-175.20|6|Polinésia||TO
 `;
 /* territórios dependentes ou administrados por outro país: desligados por padrão (campo extra |dep) */
-var RAW_DEP=`
+const RAW_DEP = `
 Porto Rico|San Juan|18.47|-66.11|1|Caribe|Território dos Estados Unidos; seus moradores são cidadãos americanos, mas não votam para presidente|PR|dep
 Ilhas Virgens Americanas|Charlotte Amalie|18.34|-64.93|1|Caribe|Território dos Estados Unidos, comprado da Dinamarca em 1917|VI|dep
 Ilhas Virgens Britânicas|Road Town|18.43|-64.62|1|Caribe|Território ultramarino do Reino Unido|VG|dep
@@ -270,7 +271,7 @@ Ilhas Cocos|West Island|-12.19|96.83|6|Austrália e Nova Zelândia|Território e
 Acrotíri e Deceleia|Episkopi|34.67|32.85|4|Europa Centro-Oriental|Bases militares soberanas do Reino Unido na ilha de Chipre|QU|dep|GB
 `;
 /* desabitados ou só com bases/cientistas, e reivindicações na Antártida: desligados por padrão (campo |uni). Sem capital: entram só em "Achar no mapa" */
-var RAW_UNI=`
+const RAW_UNI = `
 Território Britânico do Oceano Índico|Sem capital (base militar de Diego Garcia)|-7.31|72.41|5|Ásia do Sul|Território do Reino Unido sem população nativa (os chagossianos foram expulsos nos anos 1960–70); um acordo de 2025 prevê a soberania das Maurícias, mantendo a base|IO|uni
 Ilha de Clipperton|Sem capital (desabitada)|10.30|-109.22|2|América do Norte|Atol da França no Pacífico, a cerca de 1.000 km do México|CP|uni
 Ilhas Menores Distantes dos EUA|Sem capital (desabitadas)|19.29|166.62|6|Micronésia|Wake, Midway, Johnston, Baker, Howland, Jarvis, Kingman, Palmyra e Navassa: só bases e reservas naturais dos EUA|UM|uni
@@ -288,21 +289,33 @@ Dependência de Ross|Sem capital (Scott Base)|-77.85|166.76|7|Antártida|Reivind
 Ilha Pedro I|Sem capital (desabitada)|-68.78|-90.58|7|Antártida|Reivindicação da Noruega no mar de Bellingshausen, coberta de gelo|QP|uni|NO
 `;
 /* cada território entra na rota logo após o país-âncora mais próximo, continuando a sequência atual */
-var DEP_AFTER={DO:'PR VI VG AI SX MF BL',AG:'MS GP',DM:'MQ',TT:'AW CW BQ',JM:'KY',BS:'TC',US:'BM',CA:'PM GL',UY:'FK',MU:'RE',KM:'YT',CV:'SH',ES:'GI',IS:'FO',GB:'IM JE GG',FI:'AX',NO:'SJ QT',CN:'HK MO',AU:'CX CC NF QR QS',VU:'NC',PW:'GU MP UM',TV:'WF TK',WS:'AS',TO:'NU CK PF PN',MX:'CP',CY:'QU',MV:'IO'};
-var D=(function(){
-  var base=RAW.trim().split('\n'),dep={},used={},out=[];
-  (RAW_DEP.trim()+'\n'+RAW_UNI.trim()).split('\n').forEach(function(l){dep[l.split('|')[7]]=l;});
-  base.forEach(function(l){out.push(l);var a=DEP_AFTER[l.split('|')[7]];
-    if(a)a.split(' ').forEach(function(c){if(dep[c]){out.push(dep[c]);used[c]=1;}});});
-  Object.keys(dep).forEach(function(c){if(!used[c])out.push(dep[c]);});
-  return out;
-})().map(function(l,i){
-  var p=l.split('|'); var lat=+p[2]*Math.PI/180, lng=+p[3]*Math.PI/180;
-  return {i:i,name:p[0],cap:p[1],lat:+p[2],lng:+p[3],r:+p[4],sub:p[5],obs:p[6]||'',cc:p[7],flag:(function(c){return String.fromCodePoint(0x1F1E6+c.charCodeAt(0)-65,0x1F1E6+c.charCodeAt(1)-65);})(p[9]||p[7]),
-    x:Math.cos(lat)*Math.sin(lng),y:Math.sin(lat),z:Math.cos(lat)*Math.cos(lng),
-    dis:p[7].charAt(0)==='X'&&p[7].length===2,dep:p[8]==='dep',uni:p[8]==='uni',pseudo:!!p[9],
-    key:norm(p[0]+' '+p[1])};
-});
+const DEP_AFTER = {DO:'PR VI VG AI SX MF BL',AG:'MS GP',DM:'MQ',TT:'AW CW BQ',JM:'KY',BS:'TC',US:'BM',CA:'PM GL',UY:'FK',MU:'RE',KM:'YT',CV:'SH',ES:'GI',IS:'FO',GB:'IM JE GG',FI:'AX',NO:'SJ QT',CN:'HK MO',AU:'CX CC NF QR QS',VU:'NC',PW:'GU MP UM',TV:'WF TK',WS:'AS',TO:'NU CK PF PN',MX:'CP',CY:'QU',MV:'IO'};
+let D;
 function norm(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
-var N_BASE=D.filter(function(d){return !d.dep&&!d.uni;}).length,N_DEP=D.filter(function(d){return d.dep;}).length,N_UNI=D.filter(function(d){return d.uni;}).length;
-document.getElementById('count').textContent=N_BASE;
+let N_BASE;
+let N_DEP;
+let N_UNI;
+
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  D = (function(){
+    var base=RAW.trim().split('\n'),dep={},used={},out=[];
+    (RAW_DEP.trim()+'\n'+RAW_UNI.trim()).split('\n').forEach(function(l){dep[l.split('|')[7]]=l;});
+    base.forEach(function(l){out.push(l);var a=DEP_AFTER[l.split('|')[7]];
+      if(a)a.split(' ').forEach(function(c){if(dep[c]){out.push(dep[c]);used[c]=1;}});});
+    Object.keys(dep).forEach(function(c){if(!used[c])out.push(dep[c]);});
+    return out;
+  })().map(function(l,i){
+    var p=l.split('|'); var lat=+p[2]*Math.PI/180, lng=+p[3]*Math.PI/180;
+    return {i:i,name:p[0],cap:p[1],lat:+p[2],lng:+p[3],r:+p[4],sub:p[5],obs:p[6]||'',cc:p[7],flag:(function(c){return String.fromCodePoint(0x1F1E6+c.charCodeAt(0)-65,0x1F1E6+c.charCodeAt(1)-65);})(p[9]||p[7]),
+      x:Math.cos(lat)*Math.sin(lng),y:Math.sin(lat),z:Math.cos(lat)*Math.cos(lng),
+      dis:p[7].charAt(0)==='X'&&p[7].length===2,dep:p[8]==='dep',uni:p[8]==='uni',pseudo:!!p[9],
+      key:norm(p[0]+' '+p[1])};
+  });
+  N_BASE = D.filter(function(d){return !d.dep&&!d.uni;}).length;
+  N_DEP = D.filter(function(d){return d.dep;}).length;
+  N_UNI = D.filter(function(d){return d.uni;}).length;
+  document.getElementById('count').textContent=N_BASE;
+}
+
+export { D, iniciar, N_BASE, N_DEP, N_UNI, norm, REG };

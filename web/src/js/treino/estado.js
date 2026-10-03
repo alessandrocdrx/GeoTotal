@@ -3,39 +3,32 @@
  * Camada: Treino
  * Estado do treino (QS, escopo, foco, sessão) carregado do armazenamento.
  */
+
+import { norm, REG } from '../dados/paises.js';
+import { estadoMapa } from '../visualizacao/globo.js';
+import { estadoRender } from '../visualizacao/fronteiras.js';
+import { $, lsGet } from '../nucleo/utilitarios.js';
+import { BRREG } from '../brasil/dados-estados.js';
+
+/** Estado compartilhado com outros módulos (leitura e escrita por estadoTreino.nome). */
+const estadoTreino = {
+  QS: undefined,
+  quizScope: undefined,
+  quizScopePrev: null,
+  quizFocus: undefined,
+  quizDomain: 'world',
+  qMap: false,
+  qFlash: null,
+  qBadge: null,
+  qPanelH: 0,
+};
+
 /* ---------- treino ---------- */
 function freshQS(){return {best:0,m:{cap:{},pais:{},flag:{},map:{}},q:{cap:0,pais:0,flag:0,map:0}};}
-var QS=(function(){
-  var q=lsGet('globo.quiz.v1',null)||{};
-  if(!q.m){
-    q.m={cap:{},pais:{},flag:{},map:{}};
-    if(q.stats){for(var k in q.stats){var e=q.stats[k];q.m.cap[k]={r:e.r||0,w:e.w||0,s:e.s||0,l:0};}}
-  }
-  if(!q.q)q.q={cap:0,pais:0,flag:0,map:0};
-  delete q.stats;if(!q.best)q.best=0;
-  return q;
-})();
-var quizScope=(function(){var v=lsGet('globo.quiz.scope',{t:'world'});
-  if(!v||!v.t)return {t:'world'};
-  if((v.t==='reg'||v.t==='sub')&&!REG[v.r])return {t:'world'};
-  if(v.t==='multi'){if(!Array.isArray(v.items))return {t:'world'};v.items=v.items.filter(function(it){return it&&REG[it.r];});if(!v.items.length)return {t:'world'};}
-  if(v.t==='brreg'&&(v.r<0||v.r>4))return {t:'world'};
-  if(v.t==='review'&&!Array.isArray(v.cc))return {t:'world'};
-  return v;
-})();
-var quizScopePrev=null;
-var quizFocus=lsGet('globo.quiz.focus','mix');
-if(quizFocus!=='new'&&quizFocus!=='wrong')quizFocus='mix';
-var quizDomain='world';
-var quiz={open:false,mode:'cap',type:'choice',cur:-1,answered:false,ok:0,total:0,streak:0,last:-1,hinted:false,
-  sessionLen:lsGet('globo.quiz.sesslen',0),sessionAsked:0,sessionLog:[],
-  order:lsGet('globo.quiz.order2','random'),
-  timerLen:lsGet('globo.quiz.timerlen',0),timerStart:0,timerInt:null,
-  survivalMode:lsGet('globo.quiz.survival',false),lastOk:null,nbAnswer:-1};
-var qMap=false,qFlash=null,qBadge=null,qPanelH=0;
-function measureQ(){setTimeout(function(){qPanelH=quiz.open?$('quiz').querySelector('.qpanel').offsetHeight+10:0;},80);}
-function qHide(){return quiz.open&&quizDomain==='world'&&!(quiz.mode==='map'&&!feats);}
-var ACC_EXTRA={US:['eua','usa','estados unidos da america'],GB:['uk','inglaterra','gra bretanha'],CD:['rd congo','republica democratica do congo','congo kinshasa'],CG:['congo','congo brazzaville'],CZ:['republica tcheca','tchequia'],NR:['yaren'],SZ:['suazilandia'],MK:['macedonia'],CI:['costa do marfim'],MM:['birmania'],BY:['bielorussia','belarus'],TR:['turquia'],VA:['vaticano']};
+let quiz;
+function measureQ(){setTimeout(function(){estadoTreino.qPanelH=quiz.open?$('quiz').querySelector('.qpanel').offsetHeight+10:0;},80);}
+function qHide(){return quiz.open&&estadoTreino.quizDomain==='world'&&!(quiz.mode==='map'&&!estadoRender.feats);}
+const ACC_EXTRA = {US:['eua','usa','estados unidos da america'],GB:['uk','inglaterra','gra bretanha'],CD:['rd congo','republica democratica do congo','congo kinshasa'],CG:['congo','congo brazzaville'],CZ:['republica tcheca','tchequia'],NR:['yaren'],SZ:['suazilandia'],MK:['macedonia'],CI:['costa do marfim'],MM:['birmania'],BY:['bielorussia','belarus'],TR:['turquia'],VA:['vaticano']};
 function accList(str,cc,isCap){
   var out=[];
   String(str).split(/ · | \/ /).forEach(function(seg){
@@ -62,11 +55,11 @@ function matches(user,list){
   }
   return false;
 }
-var AMERICAS_R=[0,1,2];
+const AMERICAS_R = [0,1,2];
 function inScope(d){
-  var sc=quizScope;
+  var sc=estadoTreino.quizScope;
   if(sc.t==='world')return true;
-  if(sc.t==='filter')return !!on[d.i];
+  if(sc.t==='filter')return !!estadoMapa.on[d.i];
   if(sc.t==='review')return (sc.cc||[]).indexOf(d.cc)>=0;
   if(sc.t==='super')return AMERICAS_R.indexOf(d.r)>=0;
   if(sc.t==='multi')return sc.items.some(function(it){return it.s?(d.r===it.r&&d.sub===it.s):d.r===it.r;});
@@ -74,7 +67,7 @@ function inScope(d){
   return d.r===sc.r&&d.sub===sc.s;
 }
 function scopeLabel(){
-  var sc=quizScope;
+  var sc=estadoTreino.quizScope;
   if(sc.t==='world')return 'Mundo';
   if(sc.t==='review')return 'Revisão dos erros';
   if(sc.t==='filter')return 'Filtros atuais';
@@ -88,3 +81,34 @@ function scopeLabel(){
   if(sc.t==='reg')return REG[sc.r].n;
   return sc.s;
 }
+
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  estadoTreino.QS = (function(){
+    var q=lsGet('globo.quiz.v1',null)||{};
+    if(!q.m){
+      q.m={cap:{},pais:{},flag:{},map:{}};
+      if(q.stats){for(var k in q.stats){var e=q.stats[k];q.m.cap[k]={r:e.r||0,w:e.w||0,s:e.s||0,l:0};}}
+    }
+    if(!q.q)q.q={cap:0,pais:0,flag:0,map:0};
+    delete q.stats;if(!q.best)q.best=0;
+    return q;
+  })();
+  estadoTreino.quizScope = (function(){var v=lsGet('globo.quiz.scope',{t:'world'});
+    if(!v||!v.t)return {t:'world'};
+    if((v.t==='reg'||v.t==='sub')&&!REG[v.r])return {t:'world'};
+    if(v.t==='multi'){if(!Array.isArray(v.items))return {t:'world'};v.items=v.items.filter(function(it){return it&&REG[it.r];});if(!v.items.length)return {t:'world'};}
+    if(v.t==='brreg'&&(v.r<0||v.r>4))return {t:'world'};
+    if(v.t==='review'&&!Array.isArray(v.cc))return {t:'world'};
+    return v;
+  })();
+  estadoTreino.quizFocus = lsGet('globo.quiz.focus','mix');
+  if(estadoTreino.quizFocus!=='new'&&estadoTreino.quizFocus!=='wrong')estadoTreino.quizFocus='mix';
+  quiz = {open:false,mode:'cap',type:'choice',cur:-1,answered:false,ok:0,total:0,streak:0,last:-1,hinted:false,
+    sessionLen:lsGet('globo.quiz.sesslen',0),sessionAsked:0,sessionLog:[],
+    order:lsGet('globo.quiz.order2','random'),
+    timerLen:lsGet('globo.quiz.timerlen',0),timerStart:0,timerInt:null,
+    survivalMode:lsGet('globo.quiz.survival',false),lastOk:null,nbAnswer:-1};
+}
+
+export { accList, AMERICAS_R, estadoTreino, freshQS, iniciar, inScope, matches, measureQ, qHide, quiz, scopeLabel };

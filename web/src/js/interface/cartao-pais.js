@@ -3,8 +3,26 @@
  * Camada: Interface
  * Cartão do país selecionado: abrir, preencher, navegar (anterior/próximo).
  */
+
+import { D, REG } from '../dados/paises.js';
+import { NB, short } from '../dados/vizinhos.js';
+import { estadoCamera, estadoMapa } from '../visualizacao/globo.js';
+import { flyTo } from '../visualizacao/animacao.js';
+import { afterFilter, toggleNb, updateNbBtn } from './filtros.js';
+import { $ } from '../nucleo/utilitarios.js';
+import { estadoCartao, fillInfo, fmtArea, fmtPop, measureCard } from './cartao-detalhes.js';
+import { tourStop } from './passeio.js';
+import { estadoTreino, quiz } from '../treino/estado.js';
+import { dflag, qcc } from '../treino/dominio.js';
+import { countryView, zoomFor } from '../treino/partida.js';
+import { estadoBrasil } from '../brasil/dados-estados.js';
+import { updateStBtn } from '../brasil/modo-estados.js';
+import { stepSt } from '../brasil/cartao-estado.js';
+import { saveLastView } from '../app/ultima-visao.js';
+import { syncFab } from '../treino/progressao.js';
+
 /* ---------- Cartão ---------- */
-var card=document.getElementById('card');
+let card;
 function renderNear(group,cur,pick,label){
   var box=document.getElementById('cnear');box.innerHTML='';
   var others=(group||[]).filter(function(x){return x!==cur;}).slice(0,5);
@@ -16,7 +34,7 @@ function renderNear(group,cur,pick,label){
 /* desempenho no treino (todos os tipos de pergunta, desde o último "zerar progresso") */
 function renderCardStat(key,isState){
   var r=0,w=0;
-  Object.keys(QS.m).forEach(function(m){var e=QS.m[m][key];if(e){r+=e.r||0;w+=e.w||0;}});
+  Object.keys(estadoTreino.QS.m).forEach(function(m){var e=estadoTreino.QS.m[m][key];if(e){r+=e.r||0;w+=e.w||0;}});
   var box=$('cstat');box.innerHTML='';
   if(!(r+w)){box.className='cstat empty';box.textContent='🎯 Você ainda não treinou '+(isState?'este estado':'este país')+'.';return;}
   var pct=Math.round(100*r/(r+w));
@@ -35,7 +53,7 @@ function renderCardStat(key,isState){
 }
 /* linha discreta no treino: o seu histórico com este país neste tipo de pergunta */
 function fillQStat(el,o){
-  var e=(QS.m[quiz.mode]||{})[qcc(o)],r=e?(e.r||0):0,w=e?(e.w||0):0;
+  var e=(estadoTreino.QS.m[quiz.mode]||{})[qcc(o)],r=e?(e.r||0):0,w=e?(e.w||0):0;
   el.innerHTML='';
   if(!(r+w)){el.textContent='Primeira vez neste tipo de pergunta';return;}
   var pct=Math.round(100*r/(r+w));
@@ -64,8 +82,8 @@ function renderChips(title,items,empty){
 }
 function select(d,fly,group){
   if(quiz.open)return;
-  if(!on[d.i]){on[d.i]=1;afterFilter();}
-  selected=d;
+  if(!estadoMapa.on[d.i]){estadoMapa.on[d.i]=1;afterFilter();}
+  estadoMapa.selected=d;
   document.getElementById('hint').style.display='none';
   document.getElementById('cdot').style.background=REG[d.r].c;
   document.getElementById('creg').textContent=(d.sub===REG[d.r].n)?REG[d.r].n:REG[d.r].n+' · '+d.sub;
@@ -91,18 +109,24 @@ function select(d,fly,group){
   document.getElementById('cncty').hidden=true;
   fillInfo(d);setTimeout(measureCard,40);
   saveLastView();
-  if(fly===false)flyTo(d.lat,d.lng,Math.max(zoom,1.5));
+  if(fly===false)flyTo(d.lat,d.lng,Math.max(estadoCamera.zoom,1.5));
   else{var cv2=countryView(d.i);flyTo(cv2.lat,cv2.lng,zoomFor(cv2.r,5.5));}
 }
-function closeCard(){selected=null;selSt=null;card.style.display='none';cardH=0;tourStop();syncFab();}
-document.getElementById('close').onclick=closeCard;
+function closeCard(){estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;tourStop();syncFab();}
 function step(dir){
-  if(statesMode){stepSt(dir);return;}
-  if(!selected)return;
-  var i=selected.i,n=D.length;
-  for(var k=0;k<n;k++){i=(i+dir+n)%n;if(on[i]){select(D[i],true);return;}}
+  if(estadoBrasil.statesMode){stepSt(dir);return;}
+  if(!estadoMapa.selected)return;
+  var i=estadoMapa.selected.i,n=D.length;
+  for(var k=0;k<n;k++){i=(i+dir+n)%n;if(estadoMapa.on[i]){select(D[i],true);return;}}
 }
-document.getElementById('prev').onclick=function(){step(-1);};
-document.getElementById('next').onclick=function(){step(1);};
-document.getElementById('nbtn').onclick=toggleNb;
 
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  card = document.getElementById('card');
+  document.getElementById('close').onclick=closeCard;
+  document.getElementById('prev').onclick=function(){step(-1);};
+  document.getElementById('next').onclick=function(){step(1);};
+  document.getElementById('nbtn').onclick=toggleNb;
+}
+
+export { card, closeCard, fillQStat, iniciar, renderCardStat, renderChips, renderFacts, renderNear, select, step };

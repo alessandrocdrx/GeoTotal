@@ -3,8 +3,11 @@
  * Camada: Visualização
  * Formas dos marcadores por região (acessibilidade para daltonismo).
  */
+
+import { ctx } from './globo.js';
+
 /* ---------- formas dos marcadores (ajuda quem confunde cores) ---------- */
-var SHAPES=['c','d','s','t','c','s','d'];
+const SHAPES = ['c','d','s','t','c','s','d'];
 function shapePath(x,y,r,sh){
   if(sh==='d'){ctx.moveTo(x,y-r*1.25);ctx.lineTo(x+r*1.25,y);ctx.lineTo(x,y+r*1.25);ctx.lineTo(x-r*1.25,y);ctx.closePath();}
   else if(sh==='s'){ctx.rect(x-r*.95,y-r*.95,r*1.9,r*1.9);}
@@ -12,3 +15,4 @@ function shapePath(x,y,r,sh){
   else{ctx.arc(x,y,r,0,7);}
 }
 
+export { shapePath, SHAPES };

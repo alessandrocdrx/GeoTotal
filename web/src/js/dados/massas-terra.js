@@ -3,8 +3,9 @@
  * Camada: Dados
  * Contornos simplificados das massas de terra (fallback sem fronteiras reais).
  */
+
 /* ---------- Massas de terra (contornos simplificados, só para dar forma ao globo) ---------- */
-var LAND=[
+const LAND = [
 /* América do Norte */[[-168,65.5],[-162,70],[-156,71.3],[-141,69.6],[-128,70],[-115,68.5],[-105,68],[-95,71.5],[-90,68],[-85,69.5],[-82,66],[-88,64],[-94,60],[-93,57],[-85,55],[-82,52.5],[-79,51.5],[-79,55],[-77,60],[-72,62],[-65,60.3],[-61,56],[-56,52],[-60,50],[-66,50],[-64,48],[-61,46],[-66,44],[-70,43],[-70,41.5],[-74,40],[-76,38],[-76,35],[-81,31.5],[-80,27],[-80.3,25.2],[-82,26],[-82.8,29],[-85,29.7],[-89,30],[-91,29],[-94,29.5],[-97.5,27],[-97.5,22],[-96,19],[-94.5,18.2],[-91,18.8],[-90.5,21],[-87,21.5],[-88,18],[-88.5,16],[-84,15.8],[-83.3,14.8],[-83.6,11],[-82,9],[-79.5,9.4],[-77.3,8.7],[-77.9,7.2],[-79.7,7.3],[-81.5,7.8],[-83.5,8.4],[-85.7,10],[-87.5,13],[-91.4,14],[-94.5,16.2],[-97,15.8],[-101,17.3],[-105.5,20],[-106,23],[-109,25.5],[-112.5,29.5],[-114.8,31.5],[-114.2,29],[-112,26],[-110,23.2],[-112.3,24.8],[-114.3,27.5],[-116.5,30.5],[-117.2,32.6],[-118.5,34],[-120.6,34.6],[-122.5,37.5],[-124.2,40.5],[-124.1,46.2],[-124.7,48.3],[-123,49],[-127,51],[-130,54.5],[-133,57],[-137,58.7],[-141,60],[-146,60.8],[-151,59.2],[-154,57.5],[-158,56],[-163,54.7],[-158,58.7],[-162,59.8],[-165,61.5],[-166,64]],
 /* Groenlândia */[[-73,78],[-66,80.5],[-40,83.5],[-20,82],[-19,77],[-22,72],[-27,68.5],[-38,65.5],[-43,60],[-48,61],[-52,65],[-55,70],[-60,75]],
 /* Baffin */[[-80,73.5],[-72,71.5],[-62,66.5],[-65,62.5],[-72,63.5],[-78,65],[-85,70]],
@@ -46,7 +47,7 @@ var LAND=[
 /* Creta */[[23.6,35.3],[26.3,35.2],[24,35.1]],
 /* Chipre */[[32.3,35],[34.5,35.6],[33,34.6]]
 ];
-var LAKES=[[[47,45],[51,47],[53,45],[51,41.5],[54,40],[53.5,37],[50.5,37],[49,38.5],[49,40.5],[47,43]]];
+const LAKES = [[[47,45],[51,47],[53,45],[51,41.5],[54,40],[53.5,37],[50.5,37],[49,38.5],[49,40.5],[47,43]]];
 function inPoly(lng,lat,p){var c=false;for(var i=0,j=p.length-1;i<p.length;j=i++){var xi=p[i][0],yi=p[i][1],xj=p[j][0],yj=p[j][1];if(((yi>lat)!==(yj>lat))&&(lng<(xj-xi)*(lat-yi)/(yj-yi)+xi))c=!c;}return c;}
 function isLand(lng,lat){
   if(lat<-72)return true;
@@ -56,19 +57,28 @@ function isLand(lng,lat){
   for(var k=0;k<LAKES.length;k++){if(inPoly(lng,lat,LAKES[k]))return false;}
   return true;
 }
-var LX=[],LY=[],LZ=[],LLAT=[],LLNG=[];
-(function(){
-  var step=1.8;
-  for(var lat=-88;lat<=88;lat+=step){
-    var n=Math.max(1,Math.round(360*Math.cos(lat*Math.PI/180)/step));
-    for(var i=0;i<n;i++){
-      var lng=-180+(i+.5)*360/n;
-      if(isLand(lng,lat)){
-        var a=lat*Math.PI/180,b=lng*Math.PI/180;
-        LX.push(Math.cos(a)*Math.sin(b));LY.push(Math.sin(a));LZ.push(Math.cos(a)*Math.cos(b));
-        LLAT.push(lat);LLNG.push(lng);
+const LX = [];
+const LY = [];
+const LZ = [];
+const LLAT = [];
+const LLNG = [];
+
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  (function(){
+    var step=1.8;
+    for(var lat=-88;lat<=88;lat+=step){
+      var n=Math.max(1,Math.round(360*Math.cos(lat*Math.PI/180)/step));
+      for(var i=0;i<n;i++){
+        var lng=-180+(i+.5)*360/n;
+        if(isLand(lng,lat)){
+          var a=lat*Math.PI/180,b=lng*Math.PI/180;
+          LX.push(Math.cos(a)*Math.sin(b));LY.push(Math.sin(a));LZ.push(Math.cos(a)*Math.cos(b));
+          LLAT.push(lat);LLNG.push(lng);
+        }
       }
     }
-  }
-})();
+  })();
+}
 
+export { iniciar, LLAT, LLNG, LX, LY, LZ };

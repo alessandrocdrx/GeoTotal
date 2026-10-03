@@ -3,6 +3,10 @@
  * Camada: Núcleo
  * Utilitários gerais: $, localStorage (lsGet/lsSet), confirmação em dois toques.
  */
+
+import { D } from '../dados/paises.js';
+import { estadoMapa } from '../visualizacao/globo.js';
+
 /* =====================================================================
    MÓDULOS NOVOS
    ===================================================================== */
@@ -16,6 +20,7 @@ function confirmTap(btn,ask,fn){
     clearTimeout(t);armed=false;btn.textContent=orig;fn();
   };
 }
-function firstOn(){for(var i=0;i<D.length;i++)if(on[i])return i;return -1;}
-function visIdx(){var v=[];on.forEach(function(x,k){if(x)v.push(k);});return v;}
+function firstOn(){for(var i=0;i<D.length;i++)if(estadoMapa.on[i])return i;return -1;}
+function visIdx(){var v=[];estadoMapa.on.forEach(function(x,k){if(x)v.push(k);});return v;}
 
+export { $, confirmTap, firstOn, lsGet, lsSet, visIdx };
