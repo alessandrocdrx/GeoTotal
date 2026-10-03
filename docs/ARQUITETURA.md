@@ -42,12 +42,12 @@ web/src/
 └── js/                     JavaScript em módulos ES, por camada
     ├── main.js             ponto de entrada: chama o iniciar() de cada módulo, na ordem
     ├── dados/              dados puros: países, territórios, extras, religiões, línguas, vizinhos
-    ├── nucleo/             utilitários e armazenamento (localStorage, IndexedDB)
-    ├── visualizacao/       globo 3D, WebGL, textura, fronteiras, mapa 2D, dia e noite
+    ├── nucleo/             utilitários, cálculo de distância e eventos
+    ├── visualizacao/       globo 3D, WebGL, textura, fronteiras, mapa 2D, dia e noite, carregamento
     ├── interface/          gestos, cartão, filtros, busca, menu e ferramentas
-    ├── treino/             estado do treino, partida, perguntas, dicas, estatísticas, progressão
-    ├── brasil/             modo estados do Brasil
     ├── recursos/           exportação (CSV, Anki) e folha de estudo
+    ├── brasil/             modo estados do Brasil
+    ├── treino/             estado do treino, partida, perguntas, toques, dicas, estatísticas, progressão
     └── app/                compatibilidade, memória da última visão e ponto de entrada
 
 android/app/src/main/java/io/github/alessandrocdrx/geototal/
@@ -76,11 +76,29 @@ docs/                       esta documentação
 As camadas do JavaScript seguem esta direção (de baixo para cima):
 
 ```
-dados  →  nucleo  →  visualizacao  →  interface / treino / brasil / recursos  →  app
+dados → nucleo → visualizacao → interface → recursos → brasil → treino → app
 ```
 
-Uma camada pode usar as de baixo; as de baixo não deveriam conhecer as de cima. Hoje essa
-regra ainda tem exceções históricas (ver "Situação e próximos passos").
+Uma camada só importa das iguais ou de baixo; as de baixo não conhecem as de cima.
+`npm run camadas` confere isso e a CI falha se aparecer uma importação que sobe de camada.
+
+Quando uma camada de baixo precisa de algo de cima, há dois mecanismos:
+
+- **Ganchos** (*callbacks* registrados): a camada de baixo declara um objeto com funções padrão
+  e a de cima troca essas funções no seu `iniciar()`.
+  - `visualizacao/ganchos.js` (`ganchos`): o globo pergunta se o treino está aberto, a altura
+    dos painéis, se esconde marcadores, e pede para desenhar o arco de distância, o pulso do
+    escopo e o selo da resposta.
+  - `interface/ganchos.js` (`ganchosInterface`): cartão, filtros, busca, passeio e toques pedem
+    ao Brasil e ao treino o que só eles sabem (passo entre estados, desempenho no cartão,
+    responder "Achar no mapa"...). Os toques seguem uma cadeia: `toqueAntes` → `toqueEstados` →
+    `toqueNoGlobo`; o primeiro que devolver `true` trata o toque.
+- **Eventos** (`nucleo/eventos.js`, `ouvir`/`emitir`): avisos de "algo aconteceu" que podem
+  ter vários interessados: `visao-mudou`, `fronteiras-carregadas`, `categorias-mudaram`,
+  `modo-estados-abriu`.
+
+Regra prática: precisa de uma *resposta* da camada de cima → gancho; só precisa *avisar* →
+evento.
 
 ## Como um módulo é escrito
 
@@ -130,8 +148,8 @@ export { AMERICAS_R, estadoTreino, iniciar, inScope };    // a interface públic
    ESLint aponta o que sobra.
 3. **Nada executa no nível do módulo** além de declarações; o resto vai para `iniciar()`.
 4. **Um módulo novo entra em `main.js`** (import e chamada do `iniciar()`, se tiver).
-5. **Camadas só importam de camadas iguais ou de baixo** (ver abaixo). Hoje há exceções
-   históricas; `npm run camadas` mede e a CI não deixa o número aumentar.
+5. **Camadas só importam de camadas iguais ou de baixo** (ver acima); para falar com as de
+   cima, use um gancho ou um evento. `npm run camadas` confere e a CI falha se houver exceção.
 6. **Dados ficam em `js/dados/`**, no formato de texto com campos separados por `|`.
 7. **Sem internet:** o app não pode depender de nada fora do pacote. Os testes de ponta a ponta
    falham se a página tentar acessar outro endereço.
@@ -187,12 +205,10 @@ Feito:
    empacotamento com esbuild~~ (versão 1.18).
 3. ~~ESLint e testes que percorrem todas as funcionalidades~~ (versão 1.18).
 
-Próximo: **desembaraçar as dependências.** Ainda há funções na camada errada (herança do
-arquivo único: por exemplo, `setIncludeDep`, que é regra de filtro, está em
-`visualizacao/textura.js`) e por isso 70 importações sobem de camada e 35 módulos formam um
-grupo circular. O caminho, um passo por versão e sempre com os testes:
+4. ~~Desembaraçar as dependências~~ (versão 1.19): cada função foi para o módulo do seu
+   domínio, as chamadas de baixo para cima viraram ganchos e eventos, e as importações que
+   sobem de camada caíram de 70 para 0 (a CI agora exige 0).
 
-1. mover cada função para o módulo do seu domínio;
-2. onde uma camada de baixo precisa avisar uma de cima (ex.: o globo avisar o treino de um
-   toque), trocar a chamada direta por um evento ou callback registrado no `iniciar()`;
-3. a cada passo, baixar o limite de `npm run camadas` na CI.
+Próximo (opcional): ainda há dependência circular *dentro* de algumas camadas (visualização,
+interface, Brasil e treino), herança do arquivo único. Não quebra a arquitetura em camadas,
+mas dá para reduzir separando o estado compartilhado de cada camada num módulo próprio.

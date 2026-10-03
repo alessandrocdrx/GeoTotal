@@ -6,10 +6,12 @@
 
 import { D, norm } from '../dados/paises.js';
 import { byName, capShort, short } from '../dados/vizinhos.js';
-import { ctx, rot } from '../visualizacao/globo.js';
+import { haversine } from '../nucleo/geo.js';
+import { $ } from '../nucleo/utilitarios.js';
 import { fitTo } from '../visualizacao/animacao.js';
 import { setStatus } from '../visualizacao/fronteiras.js';
-import { $ } from '../nucleo/utilitarios.js';
+import { ganchos } from '../visualizacao/ganchos.js';
+import { ctx, rot } from '../visualizacao/globo.js';
 import { flat2D } from '../visualizacao/mapa-2d.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoDistancia.nome). */
@@ -38,11 +40,6 @@ function drawArc(R,cx,cy){
     if(p[2]>0.02){ctx.beginPath();ctx.arc(cx+R*p[0],cy-R*p[1],8,0,7);ctx.lineWidth=2.4;ctx.strokeStyle='#ffe066';ctx.stroke();}
   });
 }
-function haversine(a,b){
-  var r=Math.PI/180,dl=(b.lat-a.lat)*r,dn=(b.lng-a.lng)*r;
-  var h=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dn/2)*Math.sin(dn/2);
-  return 2*6371*Math.asin(Math.min(1,Math.sqrt(h)));
-}
 function fillCountrySelect(sel,first){
   D.slice().sort(function(a,b){return short(a).localeCompare(short(b),'pt');}).forEach(function(d){
     var o=document.createElement('option');o.value=d.i;o.textContent=d.flag+' '+short(d);sel.appendChild(o);
@@ -52,6 +49,7 @@ function fillCountrySelect(sel,first){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  ganchos.desenharArco = drawArc;
   fillCountrySelect($('dA'),'Brasil');fillCountrySelect($('dB'),'Japão');
   $('dgo').onclick=function(){
     var a=+$('dA').value,b=+$('dB').value;
@@ -68,4 +66,4 @@ function iniciar() {
   $('dclear').onclick=function(){estadoDistancia.arc=null;$('dres').textContent='';setStatus('');};
 }
 
-export { drawArc, estadoDistancia, fillCountrySelect, haversine, iniciar, slerp };
+export { drawArc, estadoDistancia, fillCountrySelect, iniciar, slerp };

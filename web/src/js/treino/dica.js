@@ -5,8 +5,8 @@
  */
 
 import { short } from '../dados/vizinhos.js';
-import { estadoTreino, quiz } from './estado.js';
 import { fitScopeView, poolIdx, qcapD, QD, regNameOf } from './dominio.js';
+import { estadoTreino, quiz } from './estado.js';
 
 /* ---------- dica ---------- */
 function hintText(d){

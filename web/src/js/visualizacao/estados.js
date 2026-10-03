@@ -1,21 +1,30 @@
 /**
- * @arquivo js/brasil/desenho.js
- * Camada: Brasil
- * Desenho dos estados no globo.
+ * @arquivo js/visualizacao/estados.js
+ * Camada: Visualização
+ * Estados do Brasil no globo: estado da seleção, desenho dos marcadores e contornos, enquadramento e busca por toque.
  */
 
+import { BRREG, BRS, STSHAPES } from '../dados/estados-brasil.js';
 import { D, norm, REG } from '../dados/paises.js';
 import { byName, short } from '../dados/vizinhos.js';
-import { ctx, estadoCamera, FONT, H, R0, rot, W } from '../visualizacao/globo.js';
-import { card } from '../interface/cartao-pais.js';
-import { estadoRender, hexA, inFeat, projCfg } from '../visualizacao/fronteiras.js';
-import { shapePath } from '../visualizacao/marcadores.js';
-import { estadoCartao } from '../interface/cartao-detalhes.js';
-import { estadoTreino, quiz } from '../treino/estado.js';
-import { BRREG, BRS, estadoBrasil, STSHAPES } from './dados-estados.js';
-import { selectSt } from './cartao-estado.js';
+import { flyTo, PI } from './animacao.js';
+import { featView, zoomFor } from './enquadramento.js';
+import { estadoRender, hexA, inFeat, projCfg } from './fronteiras.js';
+import { ganchos } from './ganchos.js';
+import { ctx, estadoCamera, FONT, H, R0, rot, W } from './globo.js';
+import { shapePath } from './marcadores.js';
 
-/* ---------- desenho ---------- */
+/** Estado compartilhado com outros módulos (leitura e escrita por estadoBrasil.nome). */
+const estadoBrasil = {
+  stNbC: [],
+  statesMode: false,
+  selSt: null,
+  onS: undefined,
+  stSaved: null,
+  STFEAT: undefined,
+  STGEOM: {},
+};
+
 function stBadgeMetrics(st){
   var t1=st.name,t2='Capital: '+st.cap,fs=16,maxw=W-72-64,w1;
   ctx.font='700 '+fs+'px '+FONT;w1=ctx.measureText(t1).width;
@@ -26,6 +35,7 @@ function stBadgeMetrics(st){
   if(by<6)by=st.sy+20;
   return {st:st,t1:t1,t2:t2,fs:fs,bx:bx,by:by,bw:bw,bh:bh};
 }
+
 function paintStBadge(m){
   var st=m.st,col=BRREG[st.reg].c,above=m.by<st.sy;
   var px=Math.max(m.bx+14,Math.min(st.sx,m.bx+m.bw-14));
@@ -42,9 +52,10 @@ function paintStBadge(m){
   ctx.font='700 '+m.fs+'px '+FONT;ctx.fillText(m.t1,m.bx+54,m.by+16);
   ctx.font='600 11.5px '+FONT;ctx.fillStyle='rgba(255,255,255,.72)';ctx.fillText(m.t2,m.bx+54,m.by+34);
 }
+
 function drawStates(R,cx,cy){
   if(!estadoBrasil.statesMode)return;
-  var hideMk=quiz.open&&estadoTreino.qMap&&estadoTreino.quizDomain==='br'&&estadoBrasil.STFEAT.some(function(f){return f;});
+  var hideMk=ganchos.ocultarMarcadoresEstados()&&estadoBrasil.STFEAT.some(function(f){return f;});
   var mr=Math.max(3.8,Math.min(6.5,R*0.014)),vs=[],i,st,p;
   for(i=0;i<BRS.length;i++){
     st=BRS[i];if(!estadoBrasil.onS[i])continue;
@@ -90,6 +101,7 @@ function drawStates(R,cx,cy){
   });
   if(selB)paintStBadge(selB);
 }
+
 function drawGeoStates(R,cx,cy){
   if(!estadoRender.feats)return;
   projCfg(R,cx,cy);
@@ -119,6 +131,7 @@ function drawGeoStates(R,cx,cy){
   }
   if(estadoRender.FEAT[br]){ctx.beginPath();estadoRender.gpath(estadoRender.FEAT[br]);ctx.lineWidth=hasSt?1.8:2;ctx.strokeStyle=hasSt?'rgba(255,255,255,.95)':'#ffe066';ctx.stroke();}
 }
+
 function stateAt(x,y){
   if(!estadoRender.feats||!estadoBrasil.STFEAT.some(function(f){return f;}))return null;
   projCfg(R0*estadoCamera.zoom,W/2,H*estadoCamera.cyFrac);
@@ -127,23 +140,28 @@ function stateAt(x,y){
   for(var i=0;i<BRS.length;i++)if(estadoBrasil.onS[i]&&estadoBrasil.STFEAT[i]&&inFeat(estadoBrasil.STFEAT[i],ll[0],ll[1]))return BRS[i];
   return null;
 }
-function stTap(x,y){
-  var R=R0*estadoCamera.zoom,cand=[];
-  BRS.forEach(function(st){
-    if(!estadoBrasil.onS[st.i])return;
-    var p=rot(st.x,st.y,st.z);if(p[2]<=0.05)return;
-    var sx=W/2+R*p[0],sy=H*estadoCamera.cyFrac-R*p[1],dd=(sx-x)*(sx-x)+(sy-y)*(sy-y);
-    if(dd<36*36)cand.push({s:st,dd:dd});
-  });
-  cand.sort(function(a,b){return a.dd-b.dd;});
-  var precise=cand.length&&cand[0].dd<14*14;
-  var poly=precise?null:stateAt(x,y);
-  var chosen=precise?cand[0].s:(poly||(cand.length?cand[0].s:null));
-  if(chosen){
-    var grp=cand.map(function(c){return c.s;});
-    if(grp.indexOf(chosen)<0)grp.unshift(chosen);
-    selectSt(chosen,false,grp);
-  }else if(estadoBrasil.selSt){estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;}
+
+function stateView(st){
+  if(estadoBrasil.STGEOM[st.i])return estadoBrasil.STGEOM[st.i];
+  if(estadoBrasil.STFEAT[st.i]){var v=featView(estadoBrasil.STFEAT[st.i]);if(v)return (estadoBrasil.STGEOM[st.i]=v);}
+  return {lat:st.clat,lng:st.clng,r:st.ext*Math.PI/180};
 }
 
-export { drawGeoStates, drawStates, stateAt, stTap };
+function fitStates(idxs,cidx){
+  var vs=idxs.map(function(i){return [BRS[i].x,BRS[i].y,BRS[i].z];});
+  (cidx||[]).forEach(function(k){vs.push([D[k].x,D[k].y,D[k].z]);});
+  var sx=0,sy=0,sz=0;
+  vs.forEach(function(v){sx+=v[0];sy+=v[1];sz+=v[2];});
+  var m=Math.sqrt(sx*sx+sy*sy+sz*sz)||1;sx/=m;sy/=m;sz/=m;
+  var th=0;
+  vs.forEach(function(v){var c=v[0]*sx+v[1]*sy+v[2]*sz;th=Math.max(th,Math.acos(Math.max(-1,Math.min(1,c))));});
+  flyTo(Math.asin(sy)*180/PI,Math.atan2(sx,sz)*180/PI,zoomFor(th+0.05,5));
+}
+
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  estadoBrasil.onS = BRS.map(function(){return 1;});
+  estadoBrasil.STFEAT = BRS.map(function(){return null;});
+}
+
+export { drawGeoStates, drawStates, estadoBrasil, fitStates, iniciar, stateAt, stateView };

@@ -4,11 +4,12 @@
  * Estado do treino (QS, escopo, foco, sessão) carregado do armazenamento.
  */
 
+import { BRREG } from '../dados/estados-brasil.js';
 import { norm, REG } from '../dados/paises.js';
-import { estadoMapa } from '../visualizacao/globo.js';
-import { estadoRender } from '../visualizacao/fronteiras.js';
 import { $, lsGet } from '../nucleo/utilitarios.js';
-import { BRREG } from '../brasil/dados-estados.js';
+import { estadoRender } from '../visualizacao/fronteiras.js';
+import { ganchos } from '../visualizacao/ganchos.js';
+import { estadoMapa } from '../visualizacao/globo.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoTreino.nome). */
 const estadoTreino = {
@@ -84,6 +85,12 @@ function scopeLabel(){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  /* o globo consulta o treino por aqui (ver visualizacao/ganchos.js) */
+  ganchos.treinoAberto = function(){return quiz.open;};
+  ganchos.alturaTreino = function(){return estadoTreino.qPanelH;};
+  ganchos.ocultarMarcadores = qHide;
+  ganchos.ocultarMarcadoresEstados = function(){return quiz.open&&estadoTreino.qMap&&estadoTreino.quizDomain==='br';};
+  ganchos.destaquePais = function(){return estadoTreino.qFlash;};
   estadoTreino.QS = (function(){
     var q=lsGet('globo.quiz.v1',null)||{};
     if(!q.m){

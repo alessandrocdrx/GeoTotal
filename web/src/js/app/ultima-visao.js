@@ -5,11 +5,12 @@
  */
 
 import { D } from '../dados/paises.js';
-import { estadoMapa } from '../visualizacao/globo.js';
 import { select } from '../interface/cartao-pais.js';
+import { ouvir } from '../nucleo/eventos.js';
 import { lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { quiz } from '../treino/estado.js';
-import { estadoBrasil } from '../brasil/dados-estados.js';
+import { estadoBrasil } from '../visualizacao/estados.js';
+import { estadoMapa } from '../visualizacao/globo.js';
 
 /* ---------- lembrar o país e o filtro entre sessões (só na navegação normal, fora do treino/estados) ---------- */
 function saveLastView(){
@@ -29,7 +30,8 @@ function restoreLastView(){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  ouvir('visao-mudou', saveLastView);
   restoreLastView();
 }
 
-export { iniciar, saveLastView };
+export { iniciar };

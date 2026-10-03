@@ -4,24 +4,26 @@
  * Montagem e resposta das perguntas (nextQ), tipos de pergunta e cronômetro.
  */
 
-import { D, norm } from '../dados/paises.js';
+import { exitStates } from '../brasil/modo-estados.js';
+import { BRS } from '../dados/estados-brasil.js';
+import { D, dflag, norm } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
-import { estadoCamera, estadoMapa, H, R0, resize, rot, W } from '../visualizacao/globo.js';
-import { closeCard, fillQStat } from '../interface/cartao-pais.js';
-import { estadoRender, setStatus } from '../visualizacao/fronteiras.js';
-import { $, confirmTap, lsSet } from '../nucleo/utilitarios.js';
+import { closeCard } from '../interface/cartao-pais.js';
+import { estadoDistancia, slerp } from '../interface/distancia.js';
 import { hidePick } from '../interface/lista-proximos.js';
 import { tourStop } from '../interface/passeio.js';
-import { estadoDistancia, haversine, slerp } from '../interface/distancia.js';
-import { accList, estadoTreino, freshQS, matches, measureQ, quiz, scopeLabel } from './estado.js';
-import { applyDomainForScope, dflag, emptyMsg, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
-import { estadoPartida, finishQ, makeNeighborOptions, makeOptions, optLabel, pickQ, renderScore, runPool, runRestart, saveRecs, saveRuns, showRunDone, showTarget } from './partida.js';
+import { ouvir } from '../nucleo/eventos.js';
+import { haversine } from '../nucleo/geo.js';
+import { $, confirmTap, lsSet } from '../nucleo/utilitarios.js';
 import { addHintBtn } from './dica.js';
-import { modeName } from './estatisticas.js';
-import { BRS, estadoBrasil } from '../brasil/dados-estados.js';
-import { exitStates } from '../brasil/modo-estados.js';
-import { stateAt } from '../brasil/desenho.js';
-import { addXP, syncFab } from './progressao.js';
+import { applyDomainForScope, emptyMsg, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
+import { accList, estadoTreino, freshQS, matches, measureQ, quiz, scopeLabel } from './estado.js';
+import { fillQStat, modeName } from './estatisticas.js';
+import { estadoPartida, finishQ, makeNeighborOptions, makeOptions, optLabel, pickQ, renderScore, runPool, runRestart, saveRecs, saveRuns, showRunDone, showTarget } from './partida.js';
+import { addXP } from './progressao.js';
+import { estadoBrasil, stateAt } from '../visualizacao/estados.js';
+import { estadoRender, setStatus } from '../visualizacao/fronteiras.js';
+import { estadoCamera, estadoMapa, H, R0, resize, rot, W } from '../visualizacao/globo.js';
 
 /* ---------- sessões fechadas ---------- */
 function resetSession(){quiz.sessionAsked=0;quiz.sessionLog=[];}
@@ -245,7 +247,7 @@ function quizSetMode(m){
 function quizOpen(){
   if(estadoBrasil.statesMode)exitStates(false);
   tourStop();closeCard();hidePick();
-  quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncFab();syncModeSw();
+  quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncModeSw();
   document.body.classList.add('quizing');$('quiz').classList.add('map');
   $('quiz').style.display='block';
   applyDomainForScope();
@@ -255,7 +257,6 @@ function quizOpen(){
   renderScore();quizSetMode(quiz.mode);
 }
 function quizClose(){
-  setTimeout(syncFab,0);
   quiz.open=false;estadoTreino.qMap=false;estadoTreino.qPanelH=0;estadoTreino.qFlash=null;estadoTreino.qBadge=null;syncModeSw();
   if(estadoDistancia.arc&&estadoDistancia.arc.quiz)estadoDistancia.arc=null;
   stopTimerTick();
@@ -266,6 +267,7 @@ function syncModeSw(){$('qbtn').setAttribute('aria-pressed',quiz.open?'true':'fa
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  ouvir('modo-estados-abriu',function(){if(quiz.open)quizClose();});
   $('qtimerb').onclick=function(){
     var opts=[0,30,60],idx=opts.indexOf(quiz.timerLen);
     quiz.timerLen=opts[(idx+1)%opts.length];lsSet('globo.quiz.timerlen',quiz.timerLen);
@@ -301,4 +303,4 @@ function iniciar() {
   confirmTap($('qreset'),'Toque de novo para zerar',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
 }
 
-export { buildModeButtons, iniciar, nextQ, pickStateNear, quizClose, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, resetSession, stopTimerTick, updateTrainRow };
+export { buildModeButtons, iniciar, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, resetSession, stopTimerTick, updateTrainRow };

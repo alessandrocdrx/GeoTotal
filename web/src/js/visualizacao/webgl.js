@@ -4,9 +4,9 @@
  * Esfera texturizada em WebGL.
  */
 
-import { dpr, estadoCamera } from './globo.js';
-import { estadoRender, glc, glU } from './fronteiras.js';
 import { optNight, sunVec } from './dia-noite.js';
+import { estadoRender, glc, glU } from './fronteiras.js';
+import { dpr, estadoCamera } from './globo.js';
 
 /* ---------- WebGL: esfera com textura ---------- */
 function initGL(){

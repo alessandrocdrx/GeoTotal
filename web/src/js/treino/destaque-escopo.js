@@ -4,8 +4,9 @@
  * Pulso de destaque da região do treino no globo.
  */
 
-import { ctx, rot } from '../visualizacao/globo.js';
 import { poolIdx, QD } from './dominio.js';
+import { ganchos } from '../visualizacao/ganchos.js';
+import { ctx, rot } from '../visualizacao/globo.js';
 import { flat2D } from '../visualizacao/mapa-2d.js';
 
 /* ---------- pulso de destaque do escopo no globo ---------- */
@@ -29,4 +30,9 @@ function drawScopePulse(R,cx,cy){
   ctx.restore();
 }
 
-export { drawScopePulse, firePulseForScope };
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  ganchos.desenharPulsoEscopo = drawScopePulse;
+}
+
+export { drawScopePulse, firePulseForScope, iniciar };

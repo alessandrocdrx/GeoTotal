@@ -4,9 +4,9 @@
  * Menu "⋯": navegação entre páginas e ações.
  */
 
-import { estadoMapa } from '../visualizacao/globo.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
-import { updateMapInfo } from '../nucleo/armazenamento.js';
+import { updateMapInfo } from '../visualizacao/carregamento.js';
+import { estadoMapa } from '../visualizacao/globo.js';
 
 /* ---------- menu Mais ---------- */
 let themeMode;

@@ -1,17 +1,17 @@
 /**
- * @arquivo js/nucleo/armazenamento.js
- * Camada: Núcleo
- * Armazenamento local (IndexedDB) de textura e fronteiras importadas.
+ * @arquivo js/visualizacao/carregamento.js
+ * Camada: Visualização
+ * Carregamento do mapa: bibliotecas, contornos dos países e textura, com cache no IndexedDB.
  */
 
 import { D } from '../dados/paises.js';
-import { ctx } from '../visualizacao/globo.js';
-import { afterFilter } from '../interface/filtros.js';
-import { A3, estadoRender, setStatus, setupGeo, tryLoad } from '../visualizacao/fronteiras.js';
-import { initGL, uploadTexture } from '../visualizacao/webgl.js';
-import { buildTexture, updateOpts } from '../visualizacao/textura.js';
-import { $, confirmTap } from './utilitarios.js';
-import { estadoPartida } from '../treino/partida.js';
+import { emitir } from '../nucleo/eventos.js';
+import { $, confirmTap } from '../nucleo/utilitarios.js';
+import { limparCacheVistas } from './enquadramento.js';
+import { A3, estadoRender, setStatus, setupGeo, tryLoad } from './fronteiras.js';
+import { ctx } from './globo.js';
+import { buildTexture, updateOpts } from './textura.js';
+import { initGL, uploadTexture } from './webgl.js';
 
 /* ---------- armazenamento local (IndexedDB) ---------- */
 function idb(){return new Promise(function(ok,no){try{var r=indexedDB.open('globo-cache',1);r.onupgradeneeded=function(){r.result.createObjectStore('kv');};r.onsuccess=function(){ok(r.result);};r.onerror=function(){no(r.error);};}catch(e){no(e);}});}
@@ -42,7 +42,7 @@ function genTexture(){
   },function(p){setStatus('Gerando a textura do globo… '+p+'%');});
 }
 function setupFeatures(list){
-  estadoRender.feats=list;estadoPartida.GEOM={};estadoRender.FEAT=D.map(function(){return null;});estadoRender.EXTRA=[];
+  estadoRender.feats=list;limparCacheVistas();estadoRender.FEAT=D.map(function(){return null;});estadoRender.EXTRA=[];
   var by={};D.forEach(function(d){by[A3[d.cc]]=d.i;});
   var m=0;
   list.forEach(function(f){var i=by[f.id];if(i!==undefined&&!estadoRender.FEAT[i]){estadoRender.FEAT[i]=f;m++;}else estadoRender.EXTRA.push(f);});
@@ -76,7 +76,7 @@ function startMap(){
       return loadDM().then(function(){return setupGeo();});
     });
   }).then(function(m){
-    afterFilter();updateOpts();updateMapInfo();
+    emitir('fronteiras-carregadas');updateOpts();updateMapInfo();
     if(!okGL){setStatus('Fronteiras carregadas ('+m+' países com contorno). Este aparelho não suporta a textura 3D.',7000);return;}
     if(estadoRender.useTex){setStatus('Pronto: fronteiras carregadas ('+m+' países com contorno).',3500);return;}
     genTexture();
@@ -132,7 +132,7 @@ function iniciar() {
     fr.onload=function(){
       try{
         var list=ingestGeo(JSON.parse(fr.result)),m=setupFeatures(list);
-        bordersCustom=true;afterFilter();updateOpts();updateMapInfo();
+        bordersCustom=true;emitir('fronteiras-carregadas');updateOpts();updateMapInfo();
         idbSet('borders',JSON.stringify({type:'FeatureCollection',features:list}));
         setStatus('Fronteiras importadas: '+m+' países com contorno. Salvas neste aparelho.',6000);
         if(texSource!=='custom'&&estadoRender.gl){idbDel('tex-proc');genTexture();}

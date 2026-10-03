@@ -4,22 +4,18 @@
  * Cartão do país selecionado: abrir, preencher, navegar (anterior/próximo).
  */
 
-import { D, REG } from '../dados/paises.js';
+import { D, dflag, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
-import { estadoCamera, estadoMapa } from '../visualizacao/globo.js';
-import { flyTo } from '../visualizacao/animacao.js';
-import { afterFilter, toggleNb, updateNbBtn } from './filtros.js';
-import { $ } from '../nucleo/utilitarios.js';
 import { estadoCartao, fillInfo, fmtArea, fmtPop, measureCard } from './cartao-detalhes.js';
+import { afterFilter, toggleNb, updateNbBtn } from './filtros.js';
+import { ganchosInterface } from './ganchos.js';
 import { tourStop } from './passeio.js';
-import { estadoTreino, quiz } from '../treino/estado.js';
-import { dflag, qcc } from '../treino/dominio.js';
-import { countryView, zoomFor } from '../treino/partida.js';
-import { estadoBrasil } from '../brasil/dados-estados.js';
-import { updateStBtn } from '../brasil/modo-estados.js';
-import { stepSt } from '../brasil/cartao-estado.js';
-import { saveLastView } from '../app/ultima-visao.js';
-import { syncFab } from '../treino/progressao.js';
+import { emitir } from '../nucleo/eventos.js';
+import { flyTo } from '../visualizacao/animacao.js';
+import { countryView, zoomFor } from '../visualizacao/enquadramento.js';
+import { estadoBrasil } from '../visualizacao/estados.js';
+import { ganchos } from '../visualizacao/ganchos.js';
+import { estadoCamera, estadoMapa } from '../visualizacao/globo.js';
 
 /* ---------- Cartão ---------- */
 let card;
@@ -32,36 +28,7 @@ function renderNear(group,cur,pick,label){
   box.hidden=false;
 }
 /* desempenho no treino (todos os tipos de pergunta, desde o último "zerar progresso") */
-function renderCardStat(key,isState){
-  var r=0,w=0;
-  Object.keys(estadoTreino.QS.m).forEach(function(m){var e=estadoTreino.QS.m[m][key];if(e){r+=e.r||0;w+=e.w||0;}});
-  var box=$('cstat');box.innerHTML='';
-  if(!(r+w)){box.className='cstat empty';box.textContent='🎯 Você ainda não treinou '+(isState?'este estado':'este país')+'.';return;}
-  var pct=Math.round(100*r/(r+w));
-  box.className='cstat';
-  var top=document.createElement('div');top.className='cstop';
-  var t=document.createElement('span');t.textContent='🎯 Seu treino';
-  var v=document.createElement('b');v.textContent=pct+'% de acerto';
-  top.appendChild(t);top.appendChild(v);
-  var bar=document.createElement('div');bar.className='csbar';
-  var ok=document.createElement('i');ok.className='ok';ok.style.width=pct+'%';
-  var bad=document.createElement('i');bad.className='bad';bad.style.width=(100-pct)+'%';
-  bar.appendChild(ok);bar.appendChild(bad);
-  var lg=document.createElement('div');lg.className='cslg';
-  lg.textContent='✔ '+r+' '+(r===1?'acerto':'acertos')+' · ✖ '+w+' '+(w===1?'erro':'erros');
-  box.appendChild(top);box.appendChild(bar);box.appendChild(lg);
-}
 /* linha discreta no treino: o seu histórico com este país neste tipo de pergunta */
-function fillQStat(el,o){
-  var e=(estadoTreino.QS.m[quiz.mode]||{})[qcc(o)],r=e?(e.r||0):0,w=e?(e.w||0):0;
-  el.innerHTML='';
-  if(!(r+w)){el.textContent='Primeira vez neste tipo de pergunta';return;}
-  var pct=Math.round(100*r/(r+w));
-  var bar=document.createElement('span');bar.className='qsbar';
-  var f=document.createElement('i');f.style.width=pct+'%';bar.appendChild(f);
-  var t=document.createElement('span');t.textContent=pct+'% · ✔ '+r+' · ✖ '+w;
-  el.appendChild(bar);el.appendChild(t);
-}
 function renderFacts(rows){
   var box=document.getElementById('cfacts');box.innerHTML='';
   rows.forEach(function(r){
@@ -81,7 +48,7 @@ function renderChips(title,items,empty){
   box.appendChild(w);
 }
 function select(d,fly,group){
-  if(quiz.open)return;
+  if(ganchos.treinoAberto())return;
   if(!estadoMapa.on[d.i]){estadoMapa.on[d.i]=1;afterFilter();}
   estadoMapa.selected=d;
   document.getElementById('hint').style.display='none';
@@ -95,7 +62,7 @@ function select(d,fly,group){
   dtag.textContent=d.dis?'Não reconhecido pela ONU':(d.dep?'Território dependente':(d.uni?(d.r===7?'Antártida e ilhas remotas':'Território desabitado'):''));dtag.style.display=(d.dis||d.dep||d.uni)?'inline-block':'none';dtag.classList.toggle('dep',!!(d.dep||d.uni));
   document.getElementById('ccap').textContent=d.cap;
   /* observação sobre a capital fica junto dela; o resto vira "Saiba mais" */
-  renderCardStat(d.cc,false);
+  ganchosInterface.mostrarDesempenho(d.cc,false);
   var capNote=/capital|sede|Putrajaya/i.test(d.obs);
   document.getElementById('ccapnote').textContent=capNote?d.obs:'';
   var ob=document.getElementById('cobs');ob.textContent=capNote?'':d.obs;ob.style.display=(d.obs&&!capNote)?'block':'none';
@@ -103,18 +70,18 @@ function select(d,fly,group){
   renderFacts(x?[['👥 População',fmtPop(x.pop)],['📐 Área',fmtArea(x.area)],['🗣️ Idioma',x.lang],['💰 Moeda',x.cur]]:[]);
   renderChips('Fronteiras por terra',NB[d.i].map(function(i){return {t:dflag(D[i])+' '+short(D[i]),f:function(){select(D[i],true);}};}),
     'Não faz fronteira terrestre com outro país.');
-  card.style.display='block';syncFab();
-  updateNbBtn();updateStBtn();
+  card.style.display='block';
+  updateNbBtn();ganchosInterface.atualizarBotaoEstados();
   renderNear(group,d,function(x){select(x,false,group);},function(x){return x.flag+' '+short(x);});
   document.getElementById('cncty').hidden=true;
   fillInfo(d);setTimeout(measureCard,40);
-  saveLastView();
+  emitir('visao-mudou');
   if(fly===false)flyTo(d.lat,d.lng,Math.max(estadoCamera.zoom,1.5));
   else{var cv2=countryView(d.i);flyTo(cv2.lat,cv2.lng,zoomFor(cv2.r,5.5));}
 }
-function closeCard(){estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;tourStop();syncFab();}
+function closeCard(){estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;tourStop();}
 function step(dir){
-  if(estadoBrasil.statesMode){stepSt(dir);return;}
+  if(estadoBrasil.statesMode){ganchosInterface.passoEstado(dir);return;}
   if(!estadoMapa.selected)return;
   var i=estadoMapa.selected.i,n=D.length;
   for(var k=0;k<n;k++){i=(i+dir+n)%n;if(estadoMapa.on[i]){select(D[i],true);return;}}
@@ -129,4 +96,4 @@ function iniciar() {
   document.getElementById('nbtn').onclick=toggleNb;
 }
 
-export { card, closeCard, fillQStat, iniciar, renderCardStat, renderChips, renderFacts, renderNear, select, step };
+export { card, closeCard, iniciar, renderChips, renderFacts, renderNear, select, step };

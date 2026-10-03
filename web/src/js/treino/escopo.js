@@ -4,15 +4,17 @@
  * Seletor de escopo e foco do treino (regiões, combinações, revisão).
  */
 
+import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { D, norm, REG } from '../dados/paises.js';
-import { avail, availCount, estadoMapa } from '../visualizacao/globo.js';
+import { setIncludeDep, setIncludeDisputed, setIncludeUni } from '../interface/filtros.js';
+import { ouvir } from '../nucleo/eventos.js';
 import { $, lsSet } from '../nucleo/utilitarios.js';
+import { firePulseForScope } from './destaque-escopo.js';
+import { applyDomainForScope, inScopeActive, QD, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
 import { AMERICAS_R, estadoTreino, quiz } from './estado.js';
-import { applyDomainForScope, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
 import { estadoPartida, MEDAL, recordable, renderScore, scopeKeyFor } from './partida.js';
 import { buildModeButtons, nextQ, resetSession } from './perguntas.js';
-import { firePulseForScope } from './destaque-escopo.js';
-import { BRREG, BRS } from '../brasil/dados-estados.js';
+import { avail, availCount, estadoMapa } from '../visualizacao/globo.js';
 
 /* ---------- escopo e foco do treino ---------- */
 function applyScopeChange(newScope){
@@ -116,6 +118,7 @@ function buildScopeList(filterStr){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  ouvir('categorias-mudaram',function(o){if(quiz.open){updateScopeBtn();if(o.placar)renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}});
   $('qscopeback').onclick=function(){if(estadoTreino.quizScopePrev){applyScopeChange(estadoTreino.quizScopePrev);$('scopesheet').style.display='none';}};
   $('qscopeb').onclick=function(){$('scopeq').value='';buildScopeList();$('scopesheet').style.display='block';};
   $('scopeq').addEventListener('input',function(){buildScopeList(this.value);});
@@ -135,6 +138,12 @@ function iniciar() {
     estadoTreino.quizFocus=estadoTreino.quizFocus==='mix'?'new':(estadoTreino.quizFocus==='new'?'wrong':'mix');
     lsSet('globo.quiz.focus',estadoTreino.quizFocus);quiz.last=-1;resetSession();nextQ();
   };
+  /* as mesmas categorias na folha de escopo do treino */
+  $('oUniQ').checked=estadoMapa.includeUni;
+  $('oDepQ').checked=estadoMapa.includeDep;
+  $('oUniQ').onclick=function(){setIncludeUni(this.checked);buildScopeList($('scopeq').value);};
+  $('oDepQ').onclick=function(){setIncludeDep(this.checked);buildScopeList($('scopeq').value);};
+  $('oDisputedQ').onclick=function(){setIncludeDisputed(this.checked);buildScopeList($('scopeq').value);};
 }
 
-export { applyScopeChange, buildScopeList, iniciar };
+export { applyScopeChange, iniciar };

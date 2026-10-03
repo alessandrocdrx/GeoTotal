@@ -4,9 +4,9 @@
  * Botões de ferramentas do globo (zoom, polos, rótulos).
  */
 
-import { estadoCamera, estadoMapa } from '../visualizacao/globo.js';
-import { flyTo, PI } from '../visualizacao/animacao.js';
 import { $ } from '../nucleo/utilitarios.js';
+import { flyTo, PI } from '../visualizacao/animacao.js';
+import { estadoCamera, estadoMapa } from '../visualizacao/globo.js';
 
 let spinB;
 let lp;

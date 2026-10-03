@@ -7,6 +7,7 @@
 import { appendLang, appendRel } from '../dados/linguas.js';
 import { card, step } from './cartao-pais.js';
 import { $ } from '../nucleo/utilitarios.js';
+import { ganchos } from '../visualizacao/ganchos.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoCartao.nome). */
 const estadoCartao = {
@@ -43,6 +44,7 @@ let sw = null;
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  ganchos.alturaCartao = function(){return estadoCartao.cardH;};
   $('moreb').onclick=function(){var b=$('cinfo');b.hidden=!b.hidden;$('moreb').textContent=b.hidden?'Ver mais detalhes ▾':'Ver menos ▴';setTimeout(measureCard,40);};
   card.addEventListener('pointerdown',function(e){if(e.target.closest('button')){sw=null;return;}sw={x:e.clientX,y:e.clientY};});
   card.addEventListener('pointerup',function(e){if(!sw)return;var dx=e.clientX-sw.x,dy=e.clientY-sw.y;sw=null;if(Math.abs(dx)>60&&Math.abs(dy)<45)step(dx<0?1:-1);});

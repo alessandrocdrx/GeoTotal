@@ -4,21 +4,19 @@
  * Progressão: XP, níveis, sequência de dias, meta diária e conquistas.
  */
 
+import { BRS } from '../dados/estados-brasil.js';
 import { D, N_BASE, REG } from '../dados/paises.js';
-import { resize } from '../visualizacao/globo.js';
-import { frame } from '../visualizacao/animacao.js';
-import { card } from '../interface/cartao-pais.js';
 import { afterFilter, buildTree } from '../interface/filtros.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
-import { startMap } from '../nucleo/armazenamento.js';
 import { estadoTreino, quiz } from './estado.js';
 import { openHistory } from './estatisticas.js';
-import { BRS, estadoBrasil } from '../brasil/dados-estados.js';
+import { frame } from '../visualizacao/animacao.js';
+import { startMap } from '../visualizacao/carregamento.js';
+import { resize } from '../visualizacao/globo.js';
 
 /* =====================================================================
    PROGRESSÃO: XP, níveis, sequência de dias, meta diária, conquistas
    ===================================================================== */
-function syncFab(){var f=$('fabtrain');if(!f)return;f.style.display=(card.style.display==='block'||quiz.open||estadoBrasil.statesMode)?'none':'block';}
 function pad2(n){return (n<10?'0':'')+n;}
 function dateStr(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
 function todayStr(){return dateStr(new Date());}
@@ -160,7 +158,6 @@ function iniciar() {
     var h=$('hint');h.classList.add('tip');
     setTimeout(function(){h.classList.add('out');lsSet('globo.seenhint',true);setTimeout(function(){h.style.display='none';},650);},4200);
   })();
-  syncFab();
 
   updateStreakPill();
   buildTree();afterFilter();resize();
@@ -168,4 +165,4 @@ function iniciar() {
   startMap();
 }
 
-export { addXP, celebrate, iniciar, recordProgress, syncFab, updateProgUI };
+export { addXP, celebrate, iniciar, recordProgress, updateProgUI };

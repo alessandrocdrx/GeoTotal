@@ -4,15 +4,16 @@
  * Filtros por região do Brasil.
  */
 
+import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { norm } from '../dados/paises.js';
 import { byName } from '../dados/vizinhos.js';
-import { flyTo } from '../visualizacao/animacao.js';
+import { estadoCartao } from '../interface/cartao-detalhes.js';
 import { card } from '../interface/cartao-pais.js';
 import { afterFilter, chips } from '../interface/filtros.js';
-import { estadoCartao } from '../interface/cartao-detalhes.js';
-import { countryView, zoomFor } from '../treino/partida.js';
-import { BRREG, BRS, estadoBrasil } from './dados-estados.js';
-import { fitStates } from './cartao-estado.js';
+import { ganchosInterface } from '../interface/ganchos.js';
+import { flyTo } from '../visualizacao/animacao.js';
+import { countryView, zoomFor } from '../visualizacao/enquadramento.js';
+import { estadoBrasil, fitStates } from '../visualizacao/estados.js';
 
 /* ---------- filtros por região do Brasil ---------- */
 function mkChipSt(label,color,val,count){
@@ -39,4 +40,9 @@ function buildChipsSt(){
   BRREG.forEach(function(r,ri){chips.appendChild(mkChipSt(r.n,r.c,ri,BRS.filter(function(s){return s.reg===ri;}).length));});
 }
 
-export { buildChipsSt };
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  ganchosInterface.montarChipsEstados = buildChipsSt;
+}
+
+export { iniciar };

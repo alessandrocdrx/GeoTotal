@@ -1,21 +1,10 @@
 /**
- * @arquivo js/brasil/dados-estados.js
- * Camada: Brasil
- * Estados do Brasil e regiões (dados).
+ * @arquivo js/dados/estados-brasil.js
+ * Camada: Dados
+ * Estados do Brasil e suas regiões (sigla, capital, área, população, vizinhos).
  */
 
-import { D, norm } from '../dados/paises.js';
-
-/** Estado compartilhado com outros módulos (leitura e escrita por estadoBrasil.nome). */
-const estadoBrasil = {
-  stNbC: [],
-  statesMode: false,
-  selSt: null,
-  onS: undefined,
-  stSaved: null,
-  STFEAT: undefined,
-  STGEOM: {},
-};
+import { D, norm } from './paises.js';
 
 /* =====================================================================
    BRASIL: ESTADOS E CAPITAIS
@@ -68,8 +57,6 @@ function iniciar() {
     s.nb=s.nbs.map(function(x){return BRBY[x];});
     s.cn=s.cnc.map(function(cc){for(var k=0;k<D.length;k++)if(D[k].cc===cc)return k;return -1;}).filter(function(k){return k>=0;});
   });
-  estadoBrasil.onS = BRS.map(function(){return 1;});
-  estadoBrasil.STFEAT = BRS.map(function(){return null;});
 }
 
-export { BRBY, BRREG, BRS, estadoBrasil, iniciar, STSHAPES };
+export { BRBY, BRREG, BRS, iniciar, STSHAPES };

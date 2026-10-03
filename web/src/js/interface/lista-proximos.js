@@ -4,9 +4,9 @@
  * Esconde a lista de escolha (#pick) ao tocar no globo ou iniciar um passeio.
  */
 
-import { cv } from '../visualizacao/globo.js';
-import { $ } from '../nucleo/utilitarios.js';
 import { tourStop } from './passeio.js';
+import { $ } from '../nucleo/utilitarios.js';
+import { cv } from '../visualizacao/globo.js';
 
 /* ---------- lista curta quando vários países estão colados ---------- */
 let pick;

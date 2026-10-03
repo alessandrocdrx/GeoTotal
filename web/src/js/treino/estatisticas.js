@@ -4,14 +4,15 @@
  * Estatísticas e histórico por país e região.
  */
 
-import { norm, REG } from '../dados/paises.js';
+import { BRREG } from '../dados/estados-brasil.js';
+import { dflag, norm, REG } from '../dados/paises.js';
 import { short } from '../dados/vizinhos.js';
-import { avail } from '../visualizacao/globo.js';
-import { setStatus } from '../visualizacao/fronteiras.js';
+import { ganchosInterface } from '../interface/ganchos.js';
 import { $ } from '../nucleo/utilitarios.js';
+import { inScopeActive, mstats, qcc, QD, unitWord } from './dominio.js';
 import { estadoTreino, quiz, scopeLabel } from './estado.js';
-import { dflag, inScopeActive, mstats, qcc, QD, unitWord } from './dominio.js';
-import { BRREG } from '../brasil/dados-estados.js';
+import { setStatus } from '../visualizacao/fronteiras.js';
+import { avail } from '../visualizacao/globo.js';
 
 /* ---------- estatísticas por região ---------- */
 function modeName(m){
@@ -120,8 +121,38 @@ function renderHist(){
 }
 function openHistory(){openStats();$('statsheet').style.display='block';}
 
+function renderCardStat(key,isState){
+  var r=0,w=0;
+  Object.keys(estadoTreino.QS.m).forEach(function(m){var e=estadoTreino.QS.m[m][key];if(e){r+=e.r||0;w+=e.w||0;}});
+  var box=$('cstat');box.innerHTML='';
+  if(!(r+w)){box.className='cstat empty';box.textContent='🎯 Você ainda não treinou '+(isState?'este estado':'este país')+'.';return;}
+  var pct=Math.round(100*r/(r+w));
+  box.className='cstat';
+  var top=document.createElement('div');top.className='cstop';
+  var t=document.createElement('span');t.textContent='🎯 Seu treino';
+  var v=document.createElement('b');v.textContent=pct+'% de acerto';
+  top.appendChild(t);top.appendChild(v);
+  var bar=document.createElement('div');bar.className='csbar';
+  var ok=document.createElement('i');ok.className='ok';ok.style.width=pct+'%';
+  var bad=document.createElement('i');bad.className='bad';bad.style.width=(100-pct)+'%';
+  bar.appendChild(ok);bar.appendChild(bad);
+  var lg=document.createElement('div');lg.className='cslg';
+  lg.textContent='✔ '+r+' '+(r===1?'acerto':'acertos')+' · ✖ '+w+' '+(w===1?'erro':'erros');
+  box.appendChild(top);box.appendChild(bar);box.appendChild(lg);
+}
+function fillQStat(el,o){
+  var e=(estadoTreino.QS.m[quiz.mode]||{})[qcc(o)],r=e?(e.r||0):0,w=e?(e.w||0):0;
+  el.innerHTML='';
+  if(!(r+w)){el.textContent='Primeira vez neste tipo de pergunta';return;}
+  var pct=Math.round(100*r/(r+w));
+  var bar=document.createElement('span');bar.className='qsbar';
+  var f=document.createElement('i');f.style.width=pct+'%';bar.appendChild(f);
+  var t=document.createElement('span');t.textContent=pct+'% · ✔ '+r+' · ✖ '+w;
+  el.appendChild(bar);el.appendChild(t);
+}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  ganchosInterface.mostrarDesempenho = renderCardStat;
   $('htabC').onclick=function(){histTab='c';openStats();};
   $('htabR').onclick=function(){histTab='r';openStats();};
   $('shareclose').onclick=function(){$('sharesheet').style.display='none';};
@@ -134,4 +165,4 @@ function iniciar() {
   $('statsclose').onclick=function(){$('statsheet').style.display='none';};
 }
 
-export { iniciar, modeName, openHistory };
+export { fillQStat, iniciar, modeName, openHistory };

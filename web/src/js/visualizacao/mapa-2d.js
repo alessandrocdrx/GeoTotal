@@ -4,21 +4,17 @@
  * Mapa 2D (alternativa ao globo 3D), reaproveitando câmera e gestos.
  */
 
-import { D, REG } from '../dados/paises.js';
 import { LLAT, LLNG } from '../dados/massas-terra.js';
+import { D, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
-import { avail, ctx, cv, dpr, estadoCamera, estadoMapa, FONT, H, W } from './globo.js';
-import { PI } from './animacao.js';
-import { closeCard, select } from '../interface/cartao-pais.js';
-import { estadoRender, inFeat } from './fronteiras.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
+import { PI } from './animacao.js';
+import { texCanvas } from './carregamento.js';
+import { estadoRender } from './fronteiras.js';
+import { ganchos } from './ganchos.js';
+import { avail, ctx, dpr, estadoCamera, estadoMapa, FONT, H, W } from './globo.js';
 import { shapePath, SHAPES } from './marcadores.js';
-import { hidePick } from '../interface/lista-proximos.js';
-import { haversine } from '../interface/distancia.js';
-import { texCanvas } from '../nucleo/armazenamento.js';
-import { estadoTreino, qHide, quiz } from '../treino/estado.js';
-import { drawBadge, finishQ, paintSelBadge, selBadgeMetrics } from '../treino/partida.js';
-import { quizMapAnswer } from '../treino/perguntas.js';
+import { paintSelBadge, selBadgeMetrics } from './selo.js';
 
 /* =====================================================================
    MAPA 2D (alternativa ao globo 3D) — reaproveita lam/phi/zoom como
@@ -111,7 +107,7 @@ function draw2D(){
     if(p2.x<-40||p2.x>W+40||p2.y<-40||p2.y>H+40)continue;
     d.sx=p2.x;d.sy=p2.y;d.vz=1;vis.push(d);
   }
-  if(qHide())vis=[];
+  if(ganchos.ocultarMarcadores())vis=[];
   var mr=Math.max(3.2,Math.min(6,R2*0.032));
   for(i=0;i<vis.length;i++){
     d=vis[i];
@@ -122,7 +118,7 @@ function draw2D(){
     ctx.lineWidth=d===estadoMapa.selected?2.2:1.2;ctx.strokeStyle='#fff';ctx.stroke();
   }
 
-  if((estadoCamera.zoom>=1.4||estadoMapa.selected)&&!quiz.open){
+  if((estadoCamera.zoom>=1.4||estadoMapa.selected)&&!ganchos.treinoAberto()){
     ctx.lineJoin='round';
     var used=[],selB=null;
     if(estadoMapa.selected&&estadoMapa.on[estadoMapa.selected.i]&&vis.indexOf(estadoMapa.selected)>=0){
@@ -146,51 +142,7 @@ function draw2D(){
     }
     if(selB)paintSelBadge(selB);
   }
-  drawBadge(0,cx,cy);
-}
-function tap2D(px,py){
-  var r=cv.getBoundingClientRect(),x=px-r.left,y=py-r.top,R2=R2now(),cx=W/2,cy=H*estadoCamera.cyFrac,i;
-  if(quiz.open&&!estadoTreino.qMap)return;
-  if(estadoTreino.qMap){
-    var cand=[];
-    if(!qHide()){
-      for(i=0;i<D.length;i++){
-        if(!estadoMapa.on[i])continue;
-        var d=D[i],pp=proj2D(d.lng,d.lat,R2,cx,cy),dd=(pp.x-x)*(pp.x-x)+(pp.y-y)*(pp.y-y);
-        if(dd<36*36)cand.push({d:d,dd:dd});
-      }
-      cand.sort(function(a,b){return a.dd-b.dd;});
-    }
-    var ll=inv2D(x,y,R2,cx,cy),poly=null,tg=D[quiz.cur];
-    if(tg&&!estadoRender.FEAT[tg.i]&&!quiz.answered){
-      var tq=proj2D(tg.lng,tg.lat,R2,cx,cy);
-      if((tq.x-x)*(tq.x-x)+(tq.y-y)*(tq.y-y)<44*44){quizMapAnswer(tg);return;}
-    }
-    if(estadoRender.feats)for(i=0;i<D.length;i++){if(estadoMapa.on[i]&&estadoRender.FEAT[i]&&inFeat(estadoRender.FEAT[i],ll[0],ll[1])){poly=D[i];break;}}
-    if(tg&&!estadoRender.FEAT[tg.i]&&!quiz.answered&&!cand.length&&!poly&&ll&&!isNaN(ll[0])){finishQ(false,'Você tocou a '+Math.round(haversine({lat:ll[1],lng:ll[0]},tg)).toLocaleString('pt-BR')+' km do lugar certo.');return;}
-    quizMapAnswer(cand.length?cand[0].d:poly);
-    return;
-  }
-  hidePick();
-  var cand2=[];
-  for(i=0;i<D.length;i++){
-    if(!estadoMapa.on[i])continue;
-    var d2=D[i],pp2=proj2D(d2.lng,d2.lat,R2,cx,cy),dd2=(pp2.x-x)*(pp2.x-x)+(pp2.y-y)*(pp2.y-y);
-    if(dd2<36*36)cand2.push({d:d2,dd:dd2});
-  }
-  cand2.sort(function(a,b){return a.dd-b.dd;});
-  var precise=cand2.length&&cand2[0].dd<14*14;
-  var poly2=null;
-  if(!precise&&estadoRender.feats){
-    var ll2=inv2D(x,y,R2,cx,cy);
-    for(i=0;i<D.length;i++){if(estadoMapa.on[i]&&estadoRender.FEAT[i]&&inFeat(estadoRender.FEAT[i],ll2[0],ll2[1])){poly2=D[i];break;}}
-  }
-  var chosen=precise?cand2[0].d:(poly2||(cand2.length?cand2[0].d:null));
-  if(chosen){
-    var grp=cand2.map(function(c){return c.d;});
-    if(grp.indexOf(chosen)<0)grp.unshift(chosen);
-    select(chosen,false,grp);
-  }else if(estadoMapa.selected)closeCard();
+  ganchos.desenharSeloResposta(0,cx,cy);
 }
 function setFlat2D(v){
   flat2D=v;lsSet('globo.flat2d',v);
@@ -206,4 +158,4 @@ function iniciar() {
   setFlat2D(flat2D);
 }
 
-export { draw2D, flat2D, iniciar, proj2D, R2now, setFlat2D, tap2D };
+export { draw2D, flat2D, iniciar, inv2D, proj2D, R2now, setFlat2D };

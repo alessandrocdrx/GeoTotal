@@ -4,13 +4,13 @@
  * Busca por país ou capital.
  */
 
-import { D, norm, REG } from '../dados/paises.js';
+import { BRREG, BRS } from '../dados/estados-brasil.js';
+import { D, dflag, norm, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
 import { select } from './cartao-pais.js';
+import { ganchosInterface } from './ganchos.js';
 import { tourStop } from './passeio.js';
-import { dflag } from '../treino/dominio.js';
-import { BRREG, BRS, estadoBrasil } from '../brasil/dados-estados.js';
-import { enterStates } from '../brasil/modo-estados.js';
+import { estadoBrasil } from '../visualizacao/estados.js';
 
 /* ---------- Busca ---------- */
 let q;
@@ -28,7 +28,7 @@ function iniciar() {
       items.push({dot:REG[d.r].c,name:dflag(d)+' '+short(d)+(d.dis?' ⚠':''),sub:capShort(d),fn:function(){select(d,true);}});
     });
     BRS.filter(function(st){return st.key.indexOf(s)>-1;}).slice(0,estadoBrasil.statesMode?7:3).forEach(function(st){
-      items.push({dot:BRREG[st.reg].c,name:st.sigla+' — '+st.name,sub:'Estado · '+st.cap,fn:function(){enterStates(st);}});
+      items.push({dot:BRREG[st.reg].c,name:st.sigla+' — '+st.name,sub:'Estado · '+st.cap,fn:function(){ganchosInterface.abrirEstado(st);}});
     });
     if(!items.length){res.style.display='none';return;}
     items.forEach(function(it){

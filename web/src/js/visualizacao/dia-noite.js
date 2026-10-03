@@ -4,9 +4,9 @@
  * Sombra de dia e noite em tempo real.
  */
 
+import { $ } from '../nucleo/utilitarios.js';
 import { PI } from './animacao.js';
 import { setStatus } from './fronteiras.js';
-import { $ } from '../nucleo/utilitarios.js';
 
 /* ---------- dia e noite ---------- */
 let optNight = false;

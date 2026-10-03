@@ -4,11 +4,12 @@
  * Carregar/importar contornos dos estados (amCharts/GeoJSON).
  */
 
+import { BRBY, BRS } from '../dados/estados-brasil.js';
 import { norm } from '../dados/paises.js';
-import { estadoRender, setStatus } from '../visualizacao/fronteiras.js';
 import { $ } from '../nucleo/utilitarios.js';
-import { fixWind, idbGet, idbSet } from '../nucleo/armazenamento.js';
-import { BRBY, BRS, estadoBrasil } from './dados-estados.js';
+import { fixWind, idbGet, idbSet } from '../visualizacao/carregamento.js';
+import { estadoBrasil } from '../visualizacao/estados.js';
+import { estadoRender, setStatus } from '../visualizacao/fronteiras.js';
 
 /* ---------- importar contornos dos estados (GeoJSON) ---------- */
 function stFeatIndex(f){

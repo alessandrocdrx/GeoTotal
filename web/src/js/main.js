@@ -31,7 +31,7 @@ import * as InterfaceFiltrosFavoritos from './interface/filtros-favoritos.js';
 import * as InterfacePasseio from './interface/passeio.js';
 import * as InterfaceDistancia from './interface/distancia.js';
 import * as VisualizacaoDiaNoite from './visualizacao/dia-noite.js';
-import * as NucleoArmazenamento from './nucleo/armazenamento.js';
+import * as VisualizacaoCarregamento from './visualizacao/carregamento.js';
 import * as RecursosExportar from './recursos/exportar.js';
 import * as TreinoEstado from './treino/estado.js';
 import * as TreinoDominio from './treino/dominio.js';
@@ -42,17 +42,24 @@ import * as TreinoEstatisticas from './treino/estatisticas.js';
 import * as TreinoDestaqueEscopo from './treino/destaque-escopo.js';
 import * as TreinoEscopo from './treino/escopo.js';
 import * as InterfaceMenu from './interface/menu.js';
-import * as BrasilDadosEstados from './brasil/dados-estados.js';
+import * as DadosEstadosBrasil from './dados/estados-brasil.js';
 import * as BrasilModoEstados from './brasil/modo-estados.js';
 import * as BrasilCartaoEstado from './brasil/cartao-estado.js';
 import * as BrasilFiltros from './brasil/filtros.js';
-import * as BrasilDesenho from './brasil/desenho.js';
 import * as BrasilImportarContornos from './brasil/importar-contornos.js';
 import * as BrasilMenu from './brasil/menu.js';
 import * as AppUltimaVisao from './app/ultima-visao.js';
 import * as VisualizacaoMapa2d from './visualizacao/mapa-2d.js';
 import * as TreinoProgressao from './treino/progressao.js';
 import * as AppInicio from './app/inicio.js';
+import * as NucleoGeo from './nucleo/geo.js';
+import * as VisualizacaoEnquadramento from './visualizacao/enquadramento.js';
+import * as VisualizacaoEstados from './visualizacao/estados.js';
+import * as VisualizacaoGanchos from './visualizacao/ganchos.js';
+import * as VisualizacaoSelo from './visualizacao/selo.js';
+import * as InterfaceGanchos from './interface/ganchos.js';
+import * as NucleoEventos from './nucleo/eventos.js';
+import * as TreinoToques from './treino/toques.js';
 
 /* Módulos só definem funções e estado ao carregar; a execução começa aqui, nesta ordem. */
 AppCompatEmoji.iniciar();
@@ -79,16 +86,21 @@ InterfaceFiltrosFavoritos.iniciar();
 InterfacePasseio.iniciar();
 InterfaceDistancia.iniciar();
 VisualizacaoDiaNoite.iniciar();
-NucleoArmazenamento.iniciar();
+VisualizacaoCarregamento.iniciar();
 RecursosExportar.iniciar();
 TreinoEstado.iniciar();
 TreinoPartida.iniciar();
 TreinoPerguntas.iniciar();
+TreinoToques.iniciar();
 TreinoEstatisticas.iniciar();
+TreinoDestaqueEscopo.iniciar();
 TreinoEscopo.iniciar();
 InterfaceMenu.iniciar();
-BrasilDadosEstados.iniciar();
+DadosEstadosBrasil.iniciar();
+VisualizacaoEstados.iniciar();
 BrasilModoEstados.iniciar();
+BrasilCartaoEstado.iniciar();
+BrasilFiltros.iniciar();
 BrasilImportarContornos.iniciar();
 BrasilMenu.iniciar();
 AppUltimaVisao.iniciar();
@@ -100,7 +112,7 @@ AppInicio.iniciar();
 window.setStatus = VisualizacaoFronteiras.setStatus;
 
 /* Interface de depuração e testes (tests/e2e): window.__geoTotal.nome lê o valor atual. */
-const modulos = [AppCompatEmoji, DadosPaises, DadosInfoPaises, DadosReligioes, DadosLinguas, DadosMassasTerra, DadosVizinhos, DadosOceanosPolos, VisualizacaoGlobo, VisualizacaoAnimacao, InterfaceInteracao, InterfaceCartaoPais, InterfaceFiltros, InterfaceBusca, InterfaceBotoes, VisualizacaoFronteiras, VisualizacaoWebgl, VisualizacaoTextura, NucleoUtilitarios, VisualizacaoMarcadores, InterfaceCartaoDetalhes, InterfaceFiltrosDesfazer, InterfaceListaProximos, InterfaceFiltrosFavoritos, InterfacePasseio, InterfaceDistancia, VisualizacaoDiaNoite, NucleoArmazenamento, RecursosExportar, TreinoEstado, TreinoDominio, TreinoPartida, TreinoDica, TreinoPerguntas, TreinoEstatisticas, TreinoDestaqueEscopo, TreinoEscopo, InterfaceMenu, BrasilDadosEstados, BrasilModoEstados, BrasilCartaoEstado, BrasilFiltros, BrasilDesenho, BrasilImportarContornos, BrasilMenu, AppUltimaVisao, VisualizacaoMapa2d, TreinoProgressao, AppInicio];
+const modulos = [AppCompatEmoji, DadosPaises, DadosInfoPaises, DadosReligioes, DadosLinguas, DadosMassasTerra, DadosVizinhos, DadosOceanosPolos, VisualizacaoGlobo, VisualizacaoAnimacao, InterfaceInteracao, InterfaceCartaoPais, InterfaceFiltros, InterfaceBusca, InterfaceBotoes, VisualizacaoFronteiras, VisualizacaoWebgl, VisualizacaoTextura, NucleoUtilitarios, VisualizacaoMarcadores, InterfaceCartaoDetalhes, InterfaceFiltrosDesfazer, InterfaceListaProximos, InterfaceFiltrosFavoritos, InterfacePasseio, InterfaceDistancia, VisualizacaoDiaNoite, VisualizacaoCarregamento, RecursosExportar, TreinoEstado, TreinoDominio, TreinoPartida, TreinoDica, TreinoPerguntas, TreinoEstatisticas, TreinoDestaqueEscopo, TreinoEscopo, InterfaceMenu, DadosEstadosBrasil, BrasilModoEstados, BrasilCartaoEstado, BrasilFiltros, BrasilImportarContornos, BrasilMenu, AppUltimaVisao, VisualizacaoMapa2d, TreinoProgressao, AppInicio, NucleoGeo, VisualizacaoEnquadramento, VisualizacaoEstados, VisualizacaoGanchos, VisualizacaoSelo, InterfaceGanchos, NucleoEventos, TreinoToques];
 const api = {};
 for (const mod of modulos) {
   for (const nome of Object.keys(mod)) {

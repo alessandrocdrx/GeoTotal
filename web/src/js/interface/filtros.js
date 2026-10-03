@@ -4,26 +4,23 @@
  * Filtros de países (chips, árvore, vizinhança) e disponibilidade das categorias.
  */
 
-import { D, norm, REG } from '../dados/paises.js';
+import { D, dflag, N_DEP, N_UNI, norm, REG } from '../dados/paises.js';
 import { byName, capShort, NB, short } from '../dados/vizinhos.js';
-import { avail, availCount, estadoCamera, estadoMapa } from '../visualizacao/globo.js';
-import { fitTo, flyTo, PI } from '../visualizacao/animacao.js';
 import { closeCard } from './cartao-pais.js';
-import { $ } from '../nucleo/utilitarios.js';
 import { snap } from './filtros-desfazer.js';
+import { ganchosInterface } from './ganchos.js';
 import { tourStop } from './passeio.js';
-import { dflag } from '../treino/dominio.js';
-import { estadoBrasil } from '../brasil/dados-estados.js';
-import { toggleNbSt } from '../brasil/cartao-estado.js';
-import { buildChipsSt } from '../brasil/filtros.js';
-import { saveLastView } from '../app/ultima-visao.js';
+import { emitir, ouvir } from '../nucleo/eventos.js';
+import { $, lsSet } from '../nucleo/utilitarios.js';
+import { fitTo, flyTo, PI } from '../visualizacao/animacao.js';
+import { estadoBrasil } from '../visualizacao/estados.js';
+import { allOn, avail, availCount, estadoCamera, estadoMapa } from '../visualizacao/globo.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoFiltros.nome). */
 const estadoFiltros = {
   nbSaved: null,
 };
 
-function allOn(){return D.every(function(d){return estadoMapa.on[d.i]||!avail(d);});}
 function updateNbBtn(){
   var b=document.getElementById('nbtn');
   if(estadoBrasil.statesMode){
@@ -35,7 +32,7 @@ function updateNbBtn(){
   else{b.style.visibility=(estadoMapa.selected&&NB[estadoMapa.selected.i].length)?'visible':'hidden';b.textContent='Só vizinhos';}
 }
 function toggleNb(){
-  if(estadoBrasil.statesMode){toggleNbSt();return;}
+  if(estadoBrasil.statesMode){ganchosInterface.alternarVizinhosEstado();return;}
   if(estadoFiltros.nbSaved){
     snap();estadoMapa.on=estadoFiltros.nbSaved.slice();estadoFiltros.nbSaved=null;afterFilter();
     var vis=[];estadoMapa.on.forEach(function(v,k){if(v)vis.push(k);});
@@ -59,7 +56,7 @@ function afterFilter(){
   $('sheetcount').textContent=nA+' países e territórios disponíveis.';
   updateNbBtn();
   if(estadoMapa.selected&&!estadoMapa.on[estadoMapa.selected.i])closeCard();
-  saveLastView();
+  emitir('visao-mudou');
 }
 function setOn(idxs,val){snap();estadoFiltros.nbSaved=null;idxs.forEach(function(i){estadoMapa.on[i]=val?1:0;});afterFilter();}
 function neighborsOf(i,add){
@@ -86,7 +83,7 @@ function mkChip(label,color,val,count){
   return b;
 }
 function buildChips(){
-  if(estadoBrasil.statesMode){buildChipsSt();return;}
+  if(estadoBrasil.statesMode){ganchosInterface.montarChipsEstados();return;}
   chips.innerHTML='';
   chips.appendChild(mkChip('Todas',null,-1,availCount()));
   for(var r=0;r<REG.length;r++){var nr=D.filter(function(d){return d.r===r&&avail(d);}).length;if(nr)chips.appendChild(mkChip(REG[r].n,REG[r].c,r,nr));}
@@ -146,8 +143,30 @@ function refreshTree(){
 let sel;
 let sheet;
 
+function setIncludeDisputed(v){
+  estadoMapa.includeDisputed=v;lsSet('globo.includeDisputed',v);
+  $('oDisputed').checked=v;$('oDisputedQ').checked=v;
+  if(v)D.forEach(function(d){if(d.dis)estadoMapa.on[d.i]=1;});
+  afterFilter();
+  emitir('categorias-mudaram',{placar:false});
+}
+function setIncludeDep(v){
+  estadoMapa.includeDep=v;lsSet('globo.includeDep',v);
+  $('oDep').checked=v;$('oDepQ').checked=v;
+  if(v)D.forEach(function(d){if(d.dep)estadoMapa.on[d.i]=1;});
+  afterFilter();
+  emitir('categorias-mudaram',{placar:true});
+}
+function setIncludeUni(v){
+  estadoMapa.includeUni=v;lsSet('globo.includeUni',v);
+  $('oUni').checked=v;$('oUniQ').checked=v;
+  if(v)D.forEach(function(d){if(d.uni)estadoMapa.on[d.i]=1;});
+  buildTree();afterFilter();
+  emitir('categorias-mudaram',{placar:true});
+}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  ouvir('fronteiras-carregadas',afterFilter);
   chips = document.getElementById('chips');
   sel = document.getElementById('nbsel');
   D.slice().sort(function(a,b){return short(a).localeCompare(short(b),'pt');}).forEach(function(d){
@@ -162,6 +181,13 @@ function iniciar() {
   document.getElementById('alloff').onclick=function(){snap();estadoFiltros.nbSaved=null;estadoMapa.on=D.map(function(){return 0;});afterFilter();};
   document.getElementById('nbsolo').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,false);};
   document.getElementById('nbadd').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,true);};
+  /* categorias de territórios (menu ⋯ → Mapa) */
+  $('nDis').textContent='('+D.filter(function(d){return d.dis;}).length+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
+  $('oDisputed').onclick=function(){setIncludeDisputed(this.checked);};
+  $('oUni').checked=estadoMapa.includeUni;
+  $('oUni').onclick=function(){setIncludeUni(this.checked);};
+  $('oDep').checked=estadoMapa.includeDep;
+  $('oDep').onclick=function(){setIncludeDep(this.checked);};
 }
 
-export { afterFilter, allOn, buildChips, buildTree, chips, estadoFiltros, iniciar, toggleNb, updateNbBtn };
+export { afterFilter, buildChips, buildTree, chips, estadoFiltros, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, toggleNb, updateNbBtn };

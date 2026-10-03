@@ -4,25 +4,21 @@
  * Cartão do estado selecionado.
  */
 
+import { exitStates, updateStBtn } from './modo-estados.js';
+import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { D, norm } from '../dados/paises.js';
 import { byName, short } from '../dados/vizinhos.js';
-import { estadoCamera, estadoMapa } from '../visualizacao/globo.js';
-import { flyTo, PI } from '../visualizacao/animacao.js';
-import { card, renderCardStat, renderChips, renderFacts, renderNear, select } from '../interface/cartao-pais.js';
+import { estadoCartao, fmtArea, fmtPop, measureCard } from '../interface/cartao-detalhes.js';
+import { card, renderChips, renderFacts, renderNear, select } from '../interface/cartao-pais.js';
 import { afterFilter, updateNbBtn } from '../interface/filtros.js';
+import { ganchosInterface } from '../interface/ganchos.js';
 import { $ } from '../nucleo/utilitarios.js';
-import { fmtArea, fmtPop, measureCard } from '../interface/cartao-detalhes.js';
-import { countryView, featView, zoomFor } from '../treino/partida.js';
-import { BRREG, BRS, estadoBrasil } from './dados-estados.js';
-import { exitStates, updateStBtn } from './modo-estados.js';
-import { syncFab } from '../treino/progressao.js';
+import { flyTo } from '../visualizacao/animacao.js';
+import { countryView, zoomFor } from '../visualizacao/enquadramento.js';
+import { estadoBrasil, fitStates, stateAt, stateView } from '../visualizacao/estados.js';
+import { estadoCamera, estadoMapa, H, R0, rot, W } from '../visualizacao/globo.js';
 
 /* ---------- cartão do estado ---------- */
-function stateView(st){
-  if(estadoBrasil.STGEOM[st.i])return estadoBrasil.STGEOM[st.i];
-  if(estadoBrasil.STFEAT[st.i]){var v=featView(estadoBrasil.STFEAT[st.i]);if(v)return (estadoBrasil.STGEOM[st.i]=v);}
-  return {lat:st.clat,lng:st.clng,r:st.ext*Math.PI/180};
-}
 function fillInfoSt(st){
   var box=$('cinfo');box.innerHTML='';
   [['Sigla',st.sigla],['Código IBGE',st.ibge]].forEach(function(r){
@@ -59,12 +55,12 @@ function selectSt(st,fly,group){
   var fl=$('cflag');fl.textContent=st.sigla;fl.className='flag sig';
   $('cname').textContent=st.name;
   $('ccap').textContent=st.cap;
-  $('ccapnote').textContent='';renderCardStat('BR-'+st.sigla,true);
+  $('ccapnote').textContent='';ganchosInterface.mostrarDesempenho('BR-'+st.sigla,true);
   var ob=$('cobs');ob.textContent=st.note;ob.style.display=st.note?'block':'none';
   var dens=st.pop/st.area;
   renderFacts([['👥 População',fmtPop(st.pop/1000)],['📐 Área',fmtArea(st.area)],['🏙️ Densidade',(dens<10?dens.toFixed(1):Math.round(dens)).toString().replace('.',',')+' hab./km²'],['🧭 Região',BRREG[st.reg].n]]);
   renderChips('Estados vizinhos',st.nb.map(function(k){return {t:BRS[k].sigla+' · '+BRS[k].name,f:function(){selectSt(BRS[k],true);}};}),'Não faz fronteira com outro estado.');
-  card.style.display='block';syncFab();updateNbBtn();updateStBtn();
+  card.style.display='block';updateNbBtn();updateStBtn();
   renderNear(group,st,function(x){selectSt(x,false,group);},function(x){return x.sigla+' '+x.name;});
   renderStCountries(st);
   fillInfoSt(st);setTimeout(measureCard,40);
@@ -90,15 +86,32 @@ function toggleNbSt(){
   var idx=[estadoBrasil.selSt.i].concat(estadoBrasil.selSt.nb);idx.forEach(function(k){estadoBrasil.onS[k]=1;});
   refreshNbC();afterFilter();fitStates(idx,estadoBrasil.stNbC);
 }
-function fitStates(idxs,cidx){
-  var vs=idxs.map(function(i){return [BRS[i].x,BRS[i].y,BRS[i].z];});
-  (cidx||[]).forEach(function(k){vs.push([D[k].x,D[k].y,D[k].z]);});
-  var sx=0,sy=0,sz=0;
-  vs.forEach(function(v){sx+=v[0];sy+=v[1];sz+=v[2];});
-  var m=Math.sqrt(sx*sx+sy*sy+sz*sz)||1;sx/=m;sy/=m;sz/=m;
-  var th=0;
-  vs.forEach(function(v){var c=v[0]*sx+v[1]*sy+v[2]*sz;th=Math.max(th,Math.acos(Math.max(-1,Math.min(1,c))));});
-  flyTo(Math.asin(sy)*180/PI,Math.atan2(sx,sz)*180/PI,zoomFor(th+0.05,5));
+
+function stTap(x,y){
+  var R=R0*estadoCamera.zoom,cand=[];
+  BRS.forEach(function(st){
+    if(!estadoBrasil.onS[st.i])return;
+    var p=rot(st.x,st.y,st.z);if(p[2]<=0.05)return;
+    var sx=W/2+R*p[0],sy=H*estadoCamera.cyFrac-R*p[1],dd=(sx-x)*(sx-x)+(sy-y)*(sy-y);
+    if(dd<36*36)cand.push({s:st,dd:dd});
+  });
+  cand.sort(function(a,b){return a.dd-b.dd;});
+  var precise=cand.length&&cand[0].dd<14*14;
+  var poly=precise?null:stateAt(x,y);
+  var chosen=precise?cand[0].s:(poly||(cand.length?cand[0].s:null));
+  if(chosen){
+    var grp=cand.map(function(c){return c.s;});
+    if(grp.indexOf(chosen)<0)grp.unshift(chosen);
+    selectSt(chosen,false,grp);
+  }else if(estadoBrasil.selSt){estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;}
 }
 
-export { fitStates, selectSt, stateView, stepSt, toggleNbSt };
+/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
+function iniciar() {
+  ganchosInterface.passoEstado = stepSt;
+  ganchosInterface.alternarVizinhosEstado = toggleNbSt;
+  ganchosInterface.selecionarEstado = selectSt;
+  ganchosInterface.toqueEstados = function(x,y){if(!estadoBrasil.statesMode)return false;stTap(x,y);return true;};
+}
+
+export { iniciar, selectSt };

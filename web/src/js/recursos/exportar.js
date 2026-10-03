@@ -4,18 +4,17 @@
  * Exportação CSV/Anki e folha de estudo.
  */
 
-import { D, REG } from '../dados/paises.js';
 import { langText, relText } from '../dados/linguas.js';
+import { D, qcapDisp, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
-import { estadoMapa } from '../visualizacao/globo.js';
-import { setStatus } from '../visualizacao/fronteiras.js';
-import { $ } from '../nucleo/utilitarios.js';
 import { fmtArea, fmtPop } from '../interface/cartao-detalhes.js';
+import { $ } from '../nucleo/utilitarios.js';
+import { setStatus } from '../visualizacao/fronteiras.js';
+import { estadoMapa } from '../visualizacao/globo.js';
 
 /* ---------- exportar e folha de estudo ---------- */
 let dlNS = null;
 function csvCell(v){v=String(v==null?'':v);return /[",\n;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
-function qcapDisp(d){return d.cc==='NR'?'Yaren':d.cap.split(' (')[0];}
 function buildCSV(kind){
   var rows=[],i,d,x;
   if(kind==='anki'){
@@ -76,4 +75,4 @@ function iniciar() {
   $('studyprint').onclick=function(){try{window.print();}catch(e){setStatus('Impressão indisponível aqui. Tire uma captura de tela da folha.',5000);}};
 }
 
-export { csvCell, iniciar, offerFile, qcapDisp };
+export { csvCell, iniciar, offerFile };

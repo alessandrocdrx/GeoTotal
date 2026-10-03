@@ -4,24 +4,22 @@
  * Domínio ativo (mundo ou estados do Brasil) e conjunto de perguntas (poolIdx).
  */
 
-import { D, norm, REG } from '../dados/paises.js';
+import { BRREG, BRS } from '../dados/estados-brasil.js';
+import { D, dflag, norm, qcapDisp, REG } from '../dados/paises.js';
 import { byName, NB } from '../dados/vizinhos.js';
-import { estadoMapa } from '../visualizacao/globo.js';
-import { fitTo, flyTo } from '../visualizacao/animacao.js';
-import { estadoRender } from '../visualizacao/fronteiras.js';
 import { $ } from '../nucleo/utilitarios.js';
-import { qcapDisp } from '../recursos/exportar.js';
 import { estadoTreino, inScope, quiz, scopeLabel } from './estado.js';
-import { countryView, resetView, zoomFor } from './partida.js';
 import { updateTrainRow } from './perguntas.js';
-import { BRREG, BRS, estadoBrasil } from '../brasil/dados-estados.js';
-import { fitStates } from '../brasil/cartao-estado.js';
+import { fitTo, flyTo } from '../visualizacao/animacao.js';
+import { countryView, resetView, zoomFor } from '../visualizacao/enquadramento.js';
+import { estadoBrasil, fitStates } from '../visualizacao/estados.js';
+import { estadoRender } from '../visualizacao/fronteiras.js';
+import { estadoMapa } from '../visualizacao/globo.js';
 import { flat2D, setFlat2D } from '../visualizacao/mapa-2d.js';
 
 /* ---------- domínio ativo (mundo ou Brasil/estados) ---------- */
 function QD(){return estadoTreino.quizDomain==='br'?BRS:D;}
 function qcc(o){return estadoTreino.quizDomain==='br'?('BR-'+o.sigla):o.cc;}
-function dflag(d){return d.dis?('['+d.cc+']'):d.flag;}
 function qflag(o){return estadoTreino.quizDomain==='br'?o.sigla:dflag(o);}
 function qcapD(o){return estadoTreino.quizDomain==='br'?o.cap:qcapDisp(o);}
 function unitWord(n){return estadoTreino.quizDomain==='br'?(n===1?'estado':'estados'):(n===1?'país':'países');}
@@ -100,4 +98,4 @@ function mstats(){return estadoTreino.QS.m[quiz.mode]||(estadoTreino.QS.m[quiz.m
 function gapOf(e){if(e.s===0)return 3;var g=Math.min(120,12+12*e.s);return e.w>0?Math.round(g*.6):g;}
 function tierOf(i){var e=mstats()[qcc(QD()[i])];return !e?'new':(e.s===0?'wrong':'ok');}
 
-export { applyDomainForScope, dflag, emptyMsg, fitScopeView, gapOf, inScopeActive, mstats, poolIdx, qcapD, qcc, QD, qflag, regNameOf, scopeView, TIER_P, tierOf, unitWord, updateScopeBackBtn, updateScopeBtn };
+export { applyDomainForScope, emptyMsg, fitScopeView, gapOf, inScopeActive, mstats, poolIdx, qcapD, qcc, QD, qflag, regNameOf, scopeView, TIER_P, tierOf, unitWord, updateScopeBackBtn, updateScopeBtn };

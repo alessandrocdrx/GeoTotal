@@ -4,16 +4,15 @@
  * Itens do menu específicos do Brasil.
  */
 
-import { D } from '../dados/paises.js';
-import { short } from '../dados/vizinhos.js';
-import { $ } from '../nucleo/utilitarios.js';
-import { fmtArea, fmtPop } from '../interface/cartao-detalhes.js';
-import { tourStop } from '../interface/passeio.js';
-import { fillCountrySelect } from '../interface/distancia.js';
-import { csvCell, offerFile } from '../recursos/exportar.js';
-import { dflag } from '../treino/dominio.js';
-import { BRREG, BRS } from './dados-estados.js';
 import { enterStates } from './modo-estados.js';
+import { BRREG, BRS } from '../dados/estados-brasil.js';
+import { D, dflag } from '../dados/paises.js';
+import { short } from '../dados/vizinhos.js';
+import { fmtArea, fmtPop } from '../interface/cartao-detalhes.js';
+import { fillCountrySelect } from '../interface/distancia.js';
+import { tourStop } from '../interface/passeio.js';
+import { $ } from '../nucleo/utilitarios.js';
+import { csvCell, offerFile } from '../recursos/exportar.js';
 
 function cmpRow(box,label,va,vb){
   var r=document.createElement('div');r.className='cmprow';

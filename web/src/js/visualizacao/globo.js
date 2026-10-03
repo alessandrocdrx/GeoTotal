@@ -4,24 +4,22 @@
  * Estado da câmera/seleção do globo 3D e desenho principal no canvas.
  */
 
-import { D, REG } from '../dados/paises.js';
 import { LX, LY, LZ } from '../dados/massas-terra.js';
-import { capShort, short } from '../dados/vizinhos.js';
 import { OC } from '../dados/oceanos-polos.js';
-import { drawGeo, estadoRender, glc } from './fronteiras.js';
-import { glDraw } from './webgl.js';
+import { D, REG } from '../dados/paises.js';
+import { capShort, short } from '../dados/vizinhos.js';
 import { lsGet } from '../nucleo/utilitarios.js';
-import { shapePath, SHAPES } from './marcadores.js';
-import { drawArc } from '../interface/distancia.js';
-import { qHide, quiz } from '../treino/estado.js';
-import { drawBadge, paintSelBadge, selBadgeMetrics } from '../treino/partida.js';
-import { drawScopePulse } from '../treino/destaque-escopo.js';
-import { estadoBrasil } from '../brasil/dados-estados.js';
-import { drawStates } from '../brasil/desenho.js';
+import { drawStates, estadoBrasil } from './estados.js';
+import { drawGeo, estadoRender, glc } from './fronteiras.js';
+import { ganchos } from './ganchos.js';
 import { draw2D, flat2D } from './mapa-2d.js';
+import { shapePath, SHAPES } from './marcadores.js';
+import { paintSelBadge, selBadgeMetrics } from './selo.js';
+import { glDraw } from './webgl.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoCamera.nome). */
 const estadoCamera = {
+  dragging: false,
   lam: -0.9,
   phi: 0.25,
   zoom: 1,
@@ -149,7 +147,7 @@ function draw(){
   ctx.fill();
 
   drawGeo(R,cx,cy);
-  drawArc(R,cx,cy);
+  ganchos.desenharArco(R,cx,cy);
 
   /* nomes dos oceanos */
   var fs=Math.max(9,Math.min(24,R*0.06));
@@ -174,7 +172,7 @@ function draw(){
     p=rot(d.x,d.y,d.z);
     if(p[2]>0.05){d.sx=cx+R*p[0];d.sy=cy-R*p[1];d.vz=p[2];vis.push(d);}
   }
-  if(qHide()||estadoBrasil.statesMode)vis=[];
+  if(ganchos.ocultarMarcadores()||estadoBrasil.statesMode)vis=[];
   var mr=Math.max(3.2,Math.min(6,R*0.0125));
   for(i=0;i<vis.length;i++){
     d=vis[i];
@@ -186,7 +184,7 @@ function draw(){
   }
 
   /* rótulos dos países/capitais (o selecionado ganha um selo em destaque) */
-  if((estadoCamera.zoom>=1.9||estadoMapa.selected)&&!quiz.open){
+  if((estadoCamera.zoom>=1.9||estadoMapa.selected)&&!ganchos.treinoAberto()){
     ctx.lineJoin='round';
     var used=[],selB=null;
     if(estadoMapa.selected&&estadoMapa.on[estadoMapa.selected.i]&&vis.indexOf(estadoMapa.selected)>=0){
@@ -215,13 +213,16 @@ function draw(){
   }
 
   drawStates(R,cx,cy);
-  drawScopePulse(R,cx,cy);
+  ganchos.desenharPulsoEscopo(R,cx,cy);
 
   /* polos */
   drawPole(true,R,cx,cy);drawPole(false,R,cx,cy);
-  drawBadge(R,cx,cy);
+  ganchos.desenharSeloResposta(R,cx,cy);
 }
 
+function allOn(){return D.every(function(d){return estadoMapa.on[d.i]||!avail(d);});}
+function firstOn(){for(var i=0;i<D.length;i++)if(estadoMapa.on[i])return i;return -1;}
+function visIdx(){var v=[];estadoMapa.on.forEach(function(x,k){if(x)v.push(k);});return v;}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   cv = document.getElementById('g');
@@ -235,4 +236,4 @@ function iniciar() {
   window.addEventListener('resize',resize);
 }
 
-export { avail, availCount, ctx, cv, dpr, draw, estadoCamera, estadoMapa, FONT, H, iniciar, R0, resize, rot, W };
+export { allOn, avail, availCount, ctx, cv, dpr, draw, estadoCamera, estadoMapa, firstOn, FONT, H, iniciar, R0, resize, rot, visIdx, W };

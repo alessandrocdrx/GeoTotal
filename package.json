@@ -1,6 +1,6 @@
 {
   "name": "geototal",
-  "version": "1.18.0",
+  "version": "1.19.0",
   "private": true,
   "description": "geoTotal: países, capitais e regiões num globo 3D interativo (app Android e versão web).",
   "license": "Apache-2.0",
@@ -13,7 +13,7 @@
     "build": "node scripts/build-web.mjs && node scripts/prepare-android-web.mjs",
     "check": "node scripts/build-web.mjs --check",
     "lint": "eslint .",
-    "camadas": "node scripts/verificar-camadas.mjs --max 70",
+    "camadas": "node scripts/verificar-camadas.mjs --max 0",
     "test": "node --test tests/unidade/*.test.mjs",
     "test:e2e": "npm run build && node --test --test-concurrency=1 tests/e2e/*.test.mjs",
     "test:all": "npm run check && npm run lint && npm run camadas && npm test && npm run test:e2e",

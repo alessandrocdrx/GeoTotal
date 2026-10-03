@@ -4,17 +4,9 @@
  * Textura procedural com aparência de satélite (não é foto real).
  */
 
-import { D, N_DEP, N_UNI } from '../dados/paises.js';
-import { estadoMapa } from './globo.js';
+import { $ } from '../nucleo/utilitarios.js';
 import { PI } from './animacao.js';
-import { afterFilter, buildTree } from '../interface/filtros.js';
 import { estadoRender } from './fronteiras.js';
-import { $, lsSet } from '../nucleo/utilitarios.js';
-import { quiz } from '../treino/estado.js';
-import { inScopeActive, QD, updateScopeBtn } from '../treino/dominio.js';
-import { renderScore } from '../treino/partida.js';
-import { nextQ } from '../treino/perguntas.js';
-import { buildScopeList } from '../treino/escopo.js';
 
 /* ---------- Textura procedural (aparência de satélite, NÃO é foto real) ---------- */
 function hh(x,y){var n=Math.sin(x*127.1+y*311.7)*43758.5453;return n-Math.floor(n);}
@@ -106,27 +98,6 @@ function buildTexture(done,progress){
 let oTex;
 let oBor;
 let oFill;
-function setIncludeDisputed(v){
-  estadoMapa.includeDisputed=v;lsSet('globo.includeDisputed',v);
-  $('oDisputed').checked=v;$('oDisputedQ').checked=v;
-  if(v)D.forEach(function(d){if(d.dis)estadoMapa.on[d.i]=1;});
-  afterFilter();
-  if(quiz.open){updateScopeBtn();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}
-}
-function setIncludeDep(v){
-  estadoMapa.includeDep=v;lsSet('globo.includeDep',v);
-  $('oDep').checked=v;$('oDepQ').checked=v;
-  if(v)D.forEach(function(d){if(d.dep)estadoMapa.on[d.i]=1;});
-  afterFilter();
-  if(quiz.open){updateScopeBtn();renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}
-}
-function setIncludeUni(v){
-  estadoMapa.includeUni=v;lsSet('globo.includeUni',v);
-  $('oUni').checked=v;$('oUniQ').checked=v;
-  if(v)D.forEach(function(d){if(d.uni)estadoMapa.on[d.i]=1;});
-  buildTree();afterFilter();
-  if(quiz.open){updateScopeBtn();renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}
-}
 function updateOpts(){$('oNight').disabled=!estadoRender.useTex;oTex.disabled=!estadoRender.useTex;oTex.checked=estadoRender.useTex&&estadoRender.optTex;oBor.disabled=!estadoRender.feats;oFill.disabled=!estadoRender.feats;}
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
@@ -134,18 +105,9 @@ function iniciar() {
   oTex = document.getElementById('oTex');
   oBor = document.getElementById('oBor');
   oFill = document.getElementById('oFill');
-  $('oDisputed').onclick=function(){setIncludeDisputed(this.checked);};
-  $('oUni').checked=estadoMapa.includeUni;$('oUniQ').checked=estadoMapa.includeUni;
-  $('oUni').onclick=function(){setIncludeUni(this.checked);};
-  $('oUniQ').onclick=function(){setIncludeUni(this.checked);buildScopeList($('scopeq').value);};
-  $('nDis').textContent='('+D.filter(function(d){return d.dis;}).length+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
-  $('oDep').checked=estadoMapa.includeDep;$('oDepQ').checked=estadoMapa.includeDep;
-  $('oDep').onclick=function(){setIncludeDep(this.checked);};
-  $('oDepQ').onclick=function(){setIncludeDep(this.checked);buildScopeList($('scopeq').value);};
-  $('oDisputedQ').onclick=function(){setIncludeDisputed(this.checked);buildScopeList($('scopeq').value);};
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
   oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
   oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
 }
 
-export { buildTexture, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, updateOpts };
+export { buildTexture, iniciar, updateOpts };

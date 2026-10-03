@@ -129,3 +129,43 @@ test('desabitados e Antártida: desligados por padrão e só em "Achar no mapa"'
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('ganchos do globo estão registrados pelas camadas de cima', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    const k = g.ganchos;
+    const abertoNoTreino = k.treinoAberto();
+    document.getElementById('qclose').click();
+    return {
+      abertoNoTreino,
+      abertoNoLivre: k.treinoAberto(),
+      arco: k.desenharArco === g.drawArc,
+      pulso: k.desenharPulsoEscopo === g.drawScopePulse,
+      selo: k.desenharSeloResposta === g.drawBadge,
+      ocultar: k.ocultarMarcadores === g.qHide,
+      alturaCartao: typeof k.alturaCartao() === 'number',
+    };
+  });
+  assert.deepEqual(r, { abertoNoTreino: true, abertoNoLivre: false, arco: true, pulso: true, selo: true, ocultar: true, alturaCartao: true });
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('toques e categorias passam pelos ganchos da interface', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    const k = g.ganchosInterface;
+    g.quizSetMode('cap');
+    const ignoraNoTreino = k.toqueAntes(10, 10);
+    document.getElementById('qclose').click();
+    const livre = k.toqueAntes(10, 10) || k.toqueNoGlobo(10, 10, []) || k.toqueEstados(10, 10);
+    const antes = g.availCount();
+    document.getElementById('oDep').click();
+    return { ignoraNoTreino, livre, cresceu: g.availCount() > antes, marcadaNoTreino: document.getElementById('oDepQ').checked };
+  });
+  assert.deepEqual(r, { ignoraNoTreino: true, livre: false, cresceu: true, marcadaNoTreino: true });
+  assert.deepEqual(erros, []);
+  await fechar();
+});

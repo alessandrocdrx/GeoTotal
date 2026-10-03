@@ -296,6 +296,8 @@ let N_BASE;
 let N_DEP;
 let N_UNI;
 
+function dflag(d){return d.dis?('['+d.cc+']'):d.flag;}
+function qcapDisp(d){return d.cc==='NR'?'Yaren':d.cap.split(' (')[0];}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   D = (function(){
@@ -318,4 +320,4 @@ function iniciar() {
   document.getElementById('count').textContent=N_BASE;
 }
 
-export { D, iniciar, N_BASE, N_DEP, N_UNI, norm, REG };
+export { D, dflag, iniciar, N_BASE, N_DEP, N_UNI, norm, qcapDisp, REG };

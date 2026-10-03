@@ -5,12 +5,10 @@
  */
 
 import { D, REG } from '../dados/paises.js';
-import { avail, ctx, estadoCamera, estadoMapa, H, R0, W } from './globo.js';
 import { PI } from './animacao.js';
-import { allOn } from '../interface/filtros.js';
-import { estadoTreino } from '../treino/estado.js';
-import { estadoBrasil } from '../brasil/dados-estados.js';
-import { drawGeoStates } from '../brasil/desenho.js';
+import { drawGeoStates, estadoBrasil } from './estados.js';
+import { ganchos } from './ganchos.js';
+import { allOn, avail, ctx, estadoCamera, estadoMapa, H, R0, W } from './globo.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoRender.nome). */
 const estadoRender = {
@@ -78,7 +76,7 @@ function projCfg(R,cx,cy){estadoRender.proj.scale(R).translate([cx,cy]).rotate([
 
 function drawGeo(R,cx,cy){
   if(estadoBrasil.statesMode){drawGeoStates(R,cx,cy);return;}
-  if(!estadoRender.feats||(!estadoRender.optBor&&!estadoRender.optFill&&allOn()&&!estadoMapa.selected&&!estadoTreino.qFlash))return;
+  if(!estadoRender.feats||(!estadoRender.optBor&&!estadoRender.optFill&&allOn()&&!estadoMapa.selected&&!ganchos.destaquePais()))return;
   projCfg(R,cx,cy);
   var allon=allOn(),i,r;
   if(estadoRender.optFill){
@@ -96,9 +94,9 @@ function drawGeo(R,cx,cy){
   if(estadoMapa.selected&&estadoRender.FEAT[estadoMapa.selected.i]){
     ctx.beginPath();estadoRender.gpath(estadoRender.FEAT[estadoMapa.selected.i]);ctx.fillStyle='rgba(255,224,102,.26)';ctx.fill();
   }
-  if(estadoTreino.qFlash&&estadoRender.FEAT[estadoTreino.qFlash.i]){
-    var fk=estadoTreino.qFlash.kind,fcol=fk==='ok'?['rgba(46,204,113,.45)','#2ecc71']:(fk==='ask'?['rgba(77,163,255,.40)','#4da3ff']:['rgba(255,224,102,.45)','#ffe066']);
-    ctx.beginPath();estadoRender.gpath(estadoRender.FEAT[estadoTreino.qFlash.i]);ctx.fillStyle=fcol[0];ctx.fill();
+  if(ganchos.destaquePais()&&estadoRender.FEAT[ganchos.destaquePais().i]){
+    var fk=ganchos.destaquePais().kind,fcol=fk==='ok'?['rgba(46,204,113,.45)','#2ecc71']:(fk==='ask'?['rgba(77,163,255,.40)','#4da3ff']:['rgba(255,224,102,.45)','#ffe066']);
+    ctx.beginPath();estadoRender.gpath(estadoRender.FEAT[ganchos.destaquePais().i]);ctx.fillStyle=fcol[0];ctx.fill();
     ctx.lineWidth=2.6;ctx.strokeStyle=fcol[1];ctx.stroke();
   }
   if(estadoRender.optBor){

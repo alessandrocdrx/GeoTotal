@@ -10,7 +10,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, normalize, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const CAMADAS = ['dados', 'nucleo', 'visualizacao', 'interface', 'treino', 'brasil', 'recursos', 'app'];
+const CAMADAS = ['dados', 'nucleo', 'visualizacao', 'interface', 'recursos', 'brasil', 'treino', 'app'];
 const raiz = fileURLToPath(new URL('../web/src/js/', import.meta.url));
 
 const arquivos = [];
