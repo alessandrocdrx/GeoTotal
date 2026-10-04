@@ -4,20 +4,25 @@
  * Variáveis de cor (claro/escuro), reset e estilo base do <body>.
  */
 :root{
+  /* margens das barras do sistema; o app Android zera as duas (scripts/android-shim.js), porque o
+     próprio Android já desconta as barras ao redor da página */
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
   box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
+  padding-top:var(--sat);
+  padding-bottom:var(--sab);
+  --marca:#d97706;
   --bg:#f6f7fb; --fg:#161a23; --muted:#5d6577; --card:#ffffff; --border:#dfe3ec; --chip:#e9edf5; --chip-on:#161a23; --chip-on-fg:#ffffff;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017;
+    --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017; --marca:#fbbf24;
   }
 }
 :root[data-theme="dark"]{
+  --marca:#fbbf24;
   --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017;
 }
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:var(--sat)}
 html,body{height:100%;margin:0}
 *,*::before,*::after{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Color Emoji",sans-serif;overflow:hidden;-webkit-text-size-adjust:100%}

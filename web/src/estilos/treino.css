@@ -3,8 +3,8 @@
  * Camada: Treino
  * Painel do treino, opções de resposta, feedback e modo "Achar no mapa"; regras de impressão.
  */
-#quiz{position:fixed;inset:0;display:none;z-index:70;background:var(--bg);overflow:auto;padding-top:env(safe-area-inset-top,0px)}
-.qpanel{max-width:600px;margin:0 auto;padding:14px 14px calc(20px + env(safe-area-inset-bottom,0px))}
+#quiz{position:fixed;inset:0;display:none;z-index:70;background:var(--bg);overflow:auto;padding-top:var(--sat)}
+.qpanel{max-width:600px;margin:0 auto;padding:14px 14px calc(20px + var(--sab))}
 .qtop{display:flex;align-items:center;justify-content:space-between;font-size:18px}
 .qtop button,.qgo,.qidk,.qrow button,.qfoot button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;padding:10px 14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer}
 .qscore{font-size:12.5px;color:var(--muted);margin:6px 0}

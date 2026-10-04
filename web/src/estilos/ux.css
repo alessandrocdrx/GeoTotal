@@ -118,3 +118,7 @@ header .modesw button{padding:0 10px!important}
 .morefull{width:100%;margin-top:10px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;padding:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
 #card .rowx{justify-content:flex-start;min-height:0}
 #card .rowx .pill[style*="hidden"]{display:none}
+
+/* nome do app no cabeçalho, nas cores da logo */
+h1.marca{font-size:20px;font-weight:800;letter-spacing:-.02em}
+h1.marca span{color:var(--marca)}

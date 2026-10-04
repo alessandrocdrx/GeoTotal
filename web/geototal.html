@@ -10,25 +10,30 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Globo Terrestre">
+<meta name="apple-mobile-web-app-title" content="geoTotal">
 <meta name="description" content="Aprenda os países, capitais, bandeiras e estados do Brasil brincando, com treino adaptativo e conquistas.">
-<title>Globo Terrestre: Países e Capitais</title>
+<title>geoTotal: Países e Capitais</title>
 <style>
 :root{
+  /* margens das barras do sistema; o app Android zera as duas (scripts/android-shim.js), porque o
+     próprio Android já desconta as barras ao redor da página */
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
   box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
+  padding-top:var(--sat);
+  padding-bottom:var(--sab);
+  --marca:#d97706;
   --bg:#f6f7fb; --fg:#161a23; --muted:#5d6577; --card:#ffffff; --border:#dfe3ec; --chip:#e9edf5; --chip-on:#161a23; --chip-on-fg:#ffffff;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017;
+    --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017; --marca:#fbbf24;
   }
 }
 :root[data-theme="dark"]{
+  --marca:#fbbf24;
   --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017;
 }
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:var(--sat)}
 html,body{height:100%;margin:0}
 *,*::before,*::after{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Color Emoji",sans-serif;overflow:hidden;-webkit-text-size-adjust:100%}
@@ -76,7 +81,7 @@ canvas:active{cursor:grabbing}
 #card .nb{font-size:12.5px;color:var(--fg);margin-top:6px;line-height:1.4}
 #card .nb b{color:var(--muted);font-weight:600}
 #sheet{position:fixed;inset:0;display:none;z-index:50;background:rgba(0,0,0,.45)}
-#sheet .box{position:absolute;left:0;right:0;bottom:0;max-height:84%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
+#sheet .box{position:absolute;left:0;right:0;bottom:0;max-height:84%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + var(--sab));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
 .shead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .shead b{font-size:17px}
 .shead button,.row2 button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:9px 12px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer}
@@ -122,7 +127,7 @@ canvas:active{cursor:grabbing}
 #pick button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--border);color:var(--fg);padding:10px 14px;font-size:14px;font-family:inherit;cursor:pointer;white-space:nowrap}
 #pick button:last-child{border-bottom:0}
 .ov{position:fixed;inset:0;display:none;z-index:60;background:rgba(0,0,0,.45)}
-.ov .box{position:absolute;left:0;right:0;bottom:0;max-height:88%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
+.ov .box{position:absolute;left:0;right:0;bottom:0;max-height:88%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + var(--sab));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
 .sec{border:1px solid var(--border);border-radius:12px;padding:10px;margin:10px 0}
 .sec .lab{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
 .sec select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:16px;margin-bottom:6px;font-family:inherit}
@@ -136,8 +141,8 @@ canvas:active{cursor:grabbing}
 #study table{width:100%;border-collapse:collapse}
 #study td{padding:6px 4px;border-bottom:1px solid var(--border);font-size:14px}
 #study td.fl{width:34px;font-size:20px;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
-#quiz{position:fixed;inset:0;display:none;z-index:70;background:var(--bg);overflow:auto;padding-top:env(safe-area-inset-top,0px)}
-.qpanel{max-width:600px;margin:0 auto;padding:14px 14px calc(20px + env(safe-area-inset-bottom,0px))}
+#quiz{position:fixed;inset:0;display:none;z-index:70;background:var(--bg);overflow:auto;padding-top:var(--sat)}
+.qpanel{max-width:600px;margin:0 auto;padding:14px 14px calc(20px + var(--sab))}
 .qtop{display:flex;align-items:center;justify-content:space-between;font-size:18px}
 .qtop button,.qgo,.qidk,.qrow button,.qfoot button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;padding:10px 14px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer}
 .qscore{font-size:12.5px;color:var(--muted);margin:6px 0}
@@ -401,13 +406,17 @@ header .modesw button{padding:0 10px!important}
 .morefull{width:100%;margin-top:10px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;padding:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
 #card .rowx{justify-content:flex-start;min-height:0}
 #card .rowx .pill[style*="hidden"]{display:none}
+
+/* nome do app no cabeçalho, nas cores da logo */
+h1.marca{font-size:20px;font-weight:800;letter-spacing:-.02em}
+h1.marca span{color:var(--marca)}
 </style>
 </head>
 <body>
 <div id="app">
   <header>
     <div class="htop">
-      <h1>Globo Terrestre</h1>
+      <h1 class="marca">geo<span>Total</span></h1>
       <div class="hbtns"><span id="streakpill" class="streakpill" style="display:none"></span><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
@@ -3572,9 +3581,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
           var c = ramp(w);
           mix3(c, [40, 72, 54], sm(50, 62, a) * 0.6);
           mix3(c, [126, 130, 112], sm(63, 73, a) * 0.8);
-          mix3(c, [122, 106, 92], sm(0.2, 0.7, e));
+          mix3(c, [122, 106, 92], 0.8 * sm(0.2, 0.7, e));
           var sn = sm(70, 84, a) * (0.55 + (n2 - 0.5));
-          sn = Math.max(sn, sm(0.95, 1.45, e) * (a > 12 ? 1 : 0.3));
+          var n3 = fbm(lng * 2.3 + 11, lat * 2.3 + 5);
+          sn = Math.max(sn, sm(1.3, 1.85, e) * sm(0.42, 0.62, n3) * (a > 12 ? 1 : 0.3));
           if (lat < -62) sn = Math.max(sn, sm(-62, -66, lat) * 1);
           if (lat > 59 && lng > -75 && lng < -10) sn = Math.max(sn, 0.95 * sm(59, 63, lat));
           mix3(c, [244, 247, 250], Math.max(0, Math.min(1, sn)));
@@ -3736,7 +3746,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     if (!estadoRender.gl) return false;
     var vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}";
-    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.13,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=0.60+0.58*d;\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
+    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\nfloat h3(vec3 p){p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}\nfloat vn3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);\n return mix(mix(mix(h3(i),h3(i+vec3(1.0,0.0,0.0)),f.x),mix(h3(i+vec3(0.0,1.0,0.0)),h3(i+vec3(1.0,1.0,0.0)),f.x),f.y),\n            mix(mix(h3(i+vec3(0.0,0.0,1.0)),h3(i+vec3(1.0,0.0,1.0)),f.x),mix(h3(i+vec3(0.0,1.0,1.0)),h3(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z);}\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float land=1.0-smoothstep(0.10,0.22,c.b-c.r);\n vec3 sp=vec3(x,y,z);float det=0.0;float amp=0.55;float fq=70.0;\n for(int i=0;i<4;i++){float w=smoothstep(3.0,8.0,uR/fq);if(w>0.0)det+=w*amp*(vn3(sp*fq)-0.5);fq*=2.9;amp*=0.6;}\n c*=1.0+det*(land*0.62+0.06);\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.13,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=0.60+0.58*d;\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
     function sh(t, src) {
       var s = estadoRender.gl.createShader(t);
       estadoRender.gl.shaderSource(s, src);

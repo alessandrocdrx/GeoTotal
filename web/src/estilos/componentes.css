@@ -21,7 +21,7 @@
 #card .nb{font-size:12.5px;color:var(--fg);margin-top:6px;line-height:1.4}
 #card .nb b{color:var(--muted);font-weight:600}
 #sheet{position:fixed;inset:0;display:none;z-index:50;background:rgba(0,0,0,.45)}
-#sheet .box{position:absolute;left:0;right:0;bottom:0;max-height:84%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
+#sheet .box{position:absolute;left:0;right:0;bottom:0;max-height:84%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + var(--sab));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
 .shead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .shead b{font-size:17px}
 .shead button,.row2 button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:9px 12px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer}
@@ -67,7 +67,7 @@
 #pick button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--border);color:var(--fg);padding:10px 14px;font-size:14px;font-family:inherit;cursor:pointer;white-space:nowrap}
 #pick button:last-child{border-bottom:0}
 .ov{position:fixed;inset:0;display:none;z-index:60;background:rgba(0,0,0,.45)}
-.ov .box{position:absolute;left:0;right:0;bottom:0;max-height:88%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
+.ov .box{position:absolute;left:0;right:0;bottom:0;max-height:88%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + var(--sab));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
 .sec{border:1px solid var(--border);border-radius:12px;padding:10px;margin:10px 0}
 .sec .lab{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
 .sec select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:16px;margin-bottom:6px;font-family:inherit}

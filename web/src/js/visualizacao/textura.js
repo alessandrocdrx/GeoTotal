@@ -48,9 +48,11 @@ function buildTexture(done,progress){
         var c=ramp(w);
         mix3(c,[40,72,54],sm(50,62,a)*.6);
         mix3(c,[126,130,112],sm(63,73,a)*.8);
-        mix3(c,[122,106,92],sm(.2,.7,e));
+        mix3(c,[122,106,92],.8*sm(.2,.7,e));
         var sn=sm(70,84,a)*(.55+(n2-.5));
-        sn=Math.max(sn,sm(.95,1.45,e)*(a>12?1:.3));
+        /* neve das montanhas em manchas (só onde o ruído fino deixa), não uma mancha única */
+        var n3=fbm(lng*2.3+11,lat*2.3+5);
+        sn=Math.max(sn,sm(1.3,1.85,e)*sm(.42,.62,n3)*(a>12?1:.3));
         if(lat<-62)sn=Math.max(sn,sm(-62,-66,lat)*1);
         if(lat>59&&lng>-75&&lng<-10)sn=Math.max(sn,.95*sm(59,63,lat));
         mix3(c,[244,247,250],Math.max(0,Math.min(1,sn)));

@@ -8,6 +8,11 @@
   var B=window.AndroidBridge;
   if(!B)return;
 
+  /* O Android já afasta a página das barras do sistema (ui/EdgeToEdge.java); sem isto, o WebView
+     também informa essas margens ao CSS e o cabeçalho ganha uma faixa vazia em cima. */
+  document.documentElement.style.setProperty('--sat','0px');
+  document.documentElement.style.setProperty('--sab','0px');
+
   /* "Exportar CSV" usa claude.use('downloads'); aqui o arquivo é salvo pelo seletor do Android. */
   var seq=0,pend={};
   window.__androidSaveDone=function(id,st){

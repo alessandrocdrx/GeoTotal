@@ -15,6 +15,11 @@ function initGL(){
   var vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}';
   var fs='#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n'+
   'uniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\n'+
+  /* ruído 3D sem seno (estável em GPUs de celular), para o relevo fino que aparece ao aproximar */
+  'float h3(vec3 p){p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}\n'+
+  'float vn3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);\n'+
+  ' return mix(mix(mix(h3(i),h3(i+vec3(1.0,0.0,0.0)),f.x),mix(h3(i+vec3(0.0,1.0,0.0)),h3(i+vec3(1.0,1.0,0.0)),f.x),f.y),\n'+
+  '            mix(mix(h3(i+vec3(0.0,0.0,1.0)),h3(i+vec3(1.0,0.0,1.0)),f.x),mix(h3(i+vec3(0.0,1.0,1.0)),h3(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z);}\n'+
   'void main(){\n'+
   ' vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n'+
   ' float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n'+
@@ -26,6 +31,12 @@ function initGL(){
   ' float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n'+
   ' vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n'+
   ' vec3 c=texture2D(uT,uv).rgb;\n'+
+  /* a textura tem pouca resolução: de perto, um relevo procedural dá detalhe à terra. Cada oitava
+     só entra quando seus detalhes têm alguns pixels na tela (sem cintilar de longe). */
+  ' float land=1.0-smoothstep(0.10,0.22,c.b-c.r);\n'+
+  ' vec3 sp=vec3(x,y,z);float det=0.0;float amp=0.55;float fq=70.0;\n'+
+  ' for(int i=0;i<4;i++){float w=smoothstep(3.0,8.0,uR/fq);if(w>0.0)det+=w*amp*(vn3(sp*fq)-0.5);fq*=2.9;amp*=0.6;}\n'+
+  ' c*=1.0+det*(land*0.62+0.06);\n'+
   ' float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n'+
   ' float dayf=smoothstep(-0.08,0.14,dv);\n'+
   ' c*=mix(1.0,mix(0.13,1.0,dayf),uNight);\n'+
