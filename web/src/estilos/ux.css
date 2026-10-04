@@ -201,3 +201,9 @@ h1.marca span{color:var(--marca)}
 .rfgrade{font-size:24px;letter-spacing:2px;margin:0 0 12px}
 .rfcopiar{width:100%;min-height:48px;margin-bottom:8px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:14px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer}
 .qsurpresa{background:linear-gradient(90deg,#b5179e,#f72585);color:#fff}
+/* conquistas com progresso; curiosidade; treinar a partir do cartão (v1.26) */
+.bprog{height:6px;border-radius:4px;background:var(--border);overflow:hidden;margin-top:6px}
+.bprog i{display:block;height:100%;background:linear-gradient(90deg,#ffb703,#fb8500);border-radius:4px}
+.bprogt{display:block;font-size:12px;color:var(--muted);margin-top:2px;font-weight:700}
+.qcurio{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-size:.92em;color:var(--fg)}
+.cstreinar{display:block;margin-top:8px;width:100%;min-height:44px;border:0;border-radius:12px;background:linear-gradient(90deg,#1f4fd8,#2f80ff);color:#fff;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer}

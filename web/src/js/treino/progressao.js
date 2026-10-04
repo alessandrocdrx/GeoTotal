@@ -81,16 +81,16 @@ function badgeDefs(){
     arr.push({id:'reg'+ri,title:'Domina '+rg.n,icon:'🌎',desc:'Chegue a 3 acertos seguidos em todos os países de '+rg.n+' (País → Capital).',need:function(){
       var st=estadoTreino.QS.m.cap||{},list=D.filter(function(d){return d.r===ri&&!d.dep&&!d.uni;});
       return list.length>0&&list.every(function(d){var e=st[d.cc];return e&&e.s>=3;});
-    }});
+    },prog:function(){var st=estadoTreino.QS.m.cap||{},list=D.filter(function(d){return d.r===ri&&!d.dep&&!d.uni;});return [list.filter(function(d){var e=st[d.cc];return e&&e.s>=3;}).length,list.length];}});
   });
   arr.push({id:'world',title:'Mestre do Mundo',icon:'👑',desc:'Domine os '+N_BASE+' países e territórios em País → Capital.',need:function(){
     var st=estadoTreino.QS.m.cap||{};return D.every(function(d){if(d.dep||d.uni)return true;var e=st[d.cc];return e&&e.s>=3;});
-  }});
+  },prog:function(){var st=estadoTreino.QS.m.cap||{},list=D.filter(function(d){return !d.dep&&!d.uni;});return [list.filter(function(d){var e=st[d.cc];return e&&e.s>=3;}).length,list.length];}});
   arr.push({id:'br27',title:'De Norte a Sul',icon:'🇧🇷',desc:'Domine os 27 estados do Brasil em Estado → Capital.',need:function(){
     var st=estadoTreino.QS.m.cap||{};return BRS.every(function(s){var e=st['BR-'+s.sigla];return e&&e.s>=3;});
-  }});
-  [3,7,30].forEach(function(n){arr.push({id:'streak'+n,title:'Sequência de '+n+' dia'+(n===1?'':'s'),icon:'🔥',desc:'Bata a meta diária '+n+' dias seguidos.',need:function(){return PROG.streak>=n;}});});
-  [10,100,500,1000].forEach(function(n){arr.push({id:'xp'+n,title:n+' acertos',icon:'⭐',desc:'Acerte '+n+' perguntas no total, em qualquer modo.',need:function(){return PROG.totalCorrect>=n;}});});
+  },prog:function(){var st=estadoTreino.QS.m.cap||{};return [BRS.filter(function(s){var e=st['BR-'+s.sigla];return e&&e.s>=3;}).length,BRS.length];}});
+  [3,7,30].forEach(function(n){arr.push({id:'streak'+n,title:'Sequência de '+n+' dia'+(n===1?'':'s'),icon:'🔥',desc:'Bata a meta diária '+n+' dias seguidos.',need:function(){return PROG.streak>=n;},prog:function(){return [Math.min(PROG.streak,n),n];}});});
+  [10,100,500,1000].forEach(function(n){arr.push({id:'xp'+n,title:n+' acertos',icon:'⭐',desc:'Acerte '+n+' perguntas no total, em qualquer modo.',need:function(){return PROG.totalCorrect>=n;},prog:function(){return [Math.min(PROG.totalCorrect,n),n];}});});
   return arr;
 }
 function checkBadges(){
@@ -131,6 +131,9 @@ function recordProgress(ok,hinted){
 function openBadges(){
   var box=$('badgesbody');box.innerHTML='';
   var defs=badgeDefs(),known={};PROG.badges.forEach(function(id){known[id]=1;});
+  /* conquistadas primeiro; depois as mais perto de completar (dá vontade de fechar a que falta pouco) */
+  function frac(b){if(known[b.id])return 2;var p=b.prog?b.prog():[0,1];return p[1]?p[0]/p[1]:0;}
+  defs=defs.slice().sort(function(a,b){return frac(b)-frac(a);});
   defs.forEach(function(b){
     var got=!!known[b.id];
     var row=document.createElement('div');row.className='badgerow'+(got?'':' locked');
@@ -139,6 +142,12 @@ function openBadges(){
     var t=document.createElement('div');t.className='badgetitle';t.textContent=b.title;
     var d2=document.createElement('div');d2.className='badgedesc';d2.textContent=b.desc;
     tx.appendChild(t);tx.appendChild(d2);
+    if(!got&&b.prog){
+      var pg=b.prog(),pb=document.createElement('div');pb.className='bprog';
+      var fi=document.createElement('i');fi.style.width=Math.round(100*pg[0]/Math.max(1,pg[1]))+'%';pb.appendChild(fi);
+      var pt=document.createElement('span');pt.textContent=pg[0]+' de '+pg[1];
+      tx.appendChild(pb);tx.appendChild(pt);pt.className='bprogt';
+    }
     row.appendChild(ic);row.appendChild(tx);box.appendChild(row);
   });
   var n=PROG.badges.length,tot=defs.length;

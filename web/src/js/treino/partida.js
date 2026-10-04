@@ -244,6 +244,17 @@ function mostrarCombo(){
   if(quiz.streak>=2){el.hidden=false;el.textContent='🔥 x'+quiz.streak;el.classList.remove('pulsa');void el.offsetWidth;el.classList.add('pulsa');}
   else el.hidden=true;
 }
+/** Uma curiosidade curta sobre o país, com os dados que o app já tem. */
+function curiosidade(d){
+  var x=d&&d.info;if(!x)return '';
+  var nm=short(d),op=[];
+  if(x.pop>=1000)op.push(nm+' tem cerca de '+(x.pop>=1e6?(x.pop/1e6).toFixed(1).replace('.',',')+' bilhão de':(x.pop>=10000?Math.round(x.pop/1000):(x.pop/1000).toFixed(1).replace('.',','))+' milhões de')+' habitantes.');
+  else if(x.pop>0)op.push(nm+' tem só cerca de '+(x.pop*1000).toLocaleString('pt-BR')+' habitantes.');
+  if(x.area){var vezes=8515767/x.area;op.push(vezes>=2?('Cabem uns '+Math.round(vezes).toLocaleString('pt-BR')+' '+nm+' dentro do Brasil.'):(nm+' tem '+x.area.toLocaleString('pt-BR')+' km².'));}
+  if(x.lang)op.push('Em '+nm+' se fala '+x.lang.charAt(0).toLowerCase()+x.lang.slice(1)+'.');
+  if(x.cur)op.push('A moeda de '+nm+' é '+x.cur.replace(/\s*\(.*\)$/,'').toLowerCase()+'.');
+  return op[Math.floor(Math.random()*op.length)]||'';
+}
 /** Confete leve saindo da resposta certa (só enfeite; some sozinho, respeita "reduzir movimento"). */
 function comemorarAcerto(){
   if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
@@ -271,11 +282,14 @@ function finishQ(ok,extra){
   showTarget(quiz.cur);
   if(estadoTreino.quizDomain==='world'){estadoTreino.qFlash={i:quiz.cur,kind:ok?'ok':'reveal',t:performance.now()};}
   var fb=$('qfb');fb.textContent=fbText(QD()[quiz.cur],ok,extra);fb.className=ok?'ok':'bad';
+  /* curiosidade de vez em quando (1 em 5 acertos): aprender algo novo é a recompensa */
+  var cur=ok&&quiz.mode==='cap'&&Math.random()<0.2?curiosidade(QD()[quiz.cur]):'';
   /* surpresa de vez em quando (1 em 10 acertos): só XP, nunca dinheiro nem compra */
   if(ok&&!estadoTreino.desafio&&Math.random()<0.1){addXP(10);var sp=document.createElement('span');sp.className='qcombo qsurpresa';sp.textContent='🎁 Surpresa! +10';fb.insertBefore(sp,fb.firstChild);tocar('nivel');}
   if(rapido){var rp=document.createElement('span');rp.className='qcombo qrapido';rp.textContent='⚡ Rápido!';fb.insertBefore(rp,fb.firstChild);}
   if(ok&&(quiz.streak===5||quiz.streak%10===0)){celebrate('🔥 '+quiz.streak+' acertos seguidos!');tocar('nivel');}
   mostrarCombo();
+  if(cur){var cu=document.createElement('div');cu.className='qcurio';cu.textContent='💡 '+cur;fb.appendChild(cu);}
   /* quanto ganhou nesta resposta, subindo do botão certo */
   var ganho=xpAtual()-xp0;
   if(ok&&ganho>0){var bok=document.querySelector('#qbody .okb');if(bok){var fl=document.createElement('span');fl.className='qfloat';fl.textContent='+'+ganho+' XP';bok.appendChild(fl);setTimeout(function(){fl.remove();},1100);}}
@@ -334,4 +348,4 @@ function iniciar() {
   estadoPartida.RECS = lsGet('globo.recs.v1',{});
 }
 
-export { curRun, drawBadge, estadoPartida, finishQ, fmtTime, iniciar, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget };
+export { curiosidade, curRun, drawBadge, estadoPartida, finishQ, fmtTime, iniciar, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget };

@@ -5,9 +5,10 @@
  */
 
 import { BRREG } from '../dados/estados-brasil.js';
-import { dflag, norm, REG } from '../dados/paises.js';
+import { D, dflag, norm, REG } from '../dados/paises.js';
 import { short } from '../dados/vizinhos.js';
 import { ganchosInterface } from '../interface/ganchos.js';
+import { emitir } from '../nucleo/eventos.js';
 import { $, setStatus } from '../nucleo/utilitarios.js';
 import { inScopeActive, mstats, qcc, QD, unitWord } from './dominio.js';
 import { estadoTreino, quiz, scopeLabel } from './estado.js';
@@ -124,7 +125,12 @@ function renderCardStat(key,isState){
   var r=0,w=0;
   Object.keys(estadoTreino.QS.m).forEach(function(m){var e=estadoTreino.QS.m[m][key];if(e){r+=e.r||0;w+=e.w||0;}});
   var box=$('cstat');box.innerHTML='';
-  if(!(r+w)){box.className='cstat empty';box.textContent='🎯 Você ainda não treinou '+(isState?'este estado':'este país')+'.';return;}
+  if(!(r+w)){
+    box.className='cstat empty';box.textContent='🎯 Você ainda não treinou '+(isState?'este estado':'este país')+'.';
+    var d=!isState&&D.find(function(x){return x.cc===key;});
+    if(d){var tb=document.createElement('button');tb.className='cstreinar';tb.textContent='Treinar '+REG[d.r].n+' →';tb.onclick=function(){emitir('treinar-regiao',{r:d.r});};box.appendChild(tb);}
+    return;
+  }
   var pct=Math.round(100*r/(r+w));
   box.className='cstat';
   var top=document.createElement('div');top.className='cstop';

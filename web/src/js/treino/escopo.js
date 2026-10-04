@@ -13,7 +13,7 @@ import { firePulseForScope } from './destaque-escopo.js';
 import { applyDomainForScope, inScopeActive, QD, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
 import { AMERICAS_R, estadoTreino, quiz, resetSession } from './estado.js';
 import { estadoPartida, MEDAL, recordable, renderScore, scopeKeyFor } from './partida.js';
-import { buildModeButtons, nextQ } from './perguntas.js';
+import { buildModeButtons, nextQ, quizOpen } from './perguntas.js';
 import { avail, availCount, estadoMapa } from '../visualizacao/tela.js';
 
 /* ---------- escopo e foco do treino ---------- */
@@ -118,6 +118,7 @@ function buildScopeList(filterStr){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  ouvir('treinar-regiao',function(o){if(!quiz.open)quizOpen();applyScopeChange({t:'reg',r:o.r});});
   ouvir('categorias-mudaram',function(o){if(quiz.open){updateScopeBtn();if(o.placar)renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}});
   $('qscopeback').onclick=function(){if(estadoTreino.quizScopePrev){applyScopeChange(estadoTreino.quizScopePrev);$('scopesheet').style.display='none';}};
   $('qscopeb').onclick=function(){$('scopeq').value='';buildScopeList();$('scopesheet').style.display='block';};

@@ -261,3 +261,27 @@ test('desafio do dia: 10 países iguais para todos, uma vez por dia, com resulta
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('conquistas mostram progresso; cartão leva ao treino da região; curiosidade usa dados reais', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.click('#mbtn');
+  await pagina.click('#mbadges');
+  const barras = await pagina.evaluate(() => document.querySelectorAll('#badgesbody .bprog').length);
+  assert.ok(barras >= 10, 'conquistas bloqueadas têm barra de progresso');
+  await pagina.evaluate(() => { document.getElementById('badgesclose').click(); document.getElementById('mclose').click(); document.getElementById('qclose').click(); });
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.select(g.D.find((d) => d.cc === 'JP'), true);
+    const b = document.querySelector('#cstat .cstreinar');
+    const texto = b && b.textContent;
+    b.click();
+    const jp = g.D.find((d) => d.cc === 'JP');
+    return { texto, aberto: g.quiz.open, escopo: g.estadoTreino.quizScope, regJP: jp.r, curio: g.curiosidade(jp) };
+  });
+  assert.match(r.texto, /^Treinar /);
+  assert.equal(r.aberto, true);
+  assert.deepEqual(r.escopo, { t: 'reg', r: r.regJP });
+  assert.match(r.curio, /Japão/);
+  assert.deepEqual(erros, []);
+  await fechar();
+});

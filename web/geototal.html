@@ -489,6 +489,12 @@ h1.marca span{color:var(--marca)}
 .rfgrade{font-size:24px;letter-spacing:2px;margin:0 0 12px}
 .rfcopiar{width:100%;min-height:48px;margin-bottom:8px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:14px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer}
 .qsurpresa{background:linear-gradient(90deg,#b5179e,#f72585);color:#fff}
+/* conquistas com progresso; curiosidade; treinar a partir do cartão (v1.26) */
+.bprog{height:6px;border-radius:4px;background:var(--border);overflow:hidden;margin-top:6px}
+.bprog i{display:block;height:100%;background:linear-gradient(90deg,#ffb703,#fb8500);border-radius:4px}
+.bprogt{display:block;font-size:12px;color:var(--muted);margin-top:2px;font-weight:700}
+.qcurio{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-size:.92em;color:var(--fg)}
+.cstreinar{display:block;margin-top:8px;width:100%;min-height:44px;border:0;border-radius:12px;background:linear-gradient(90deg,#1f4fd8,#2f80ff);color:#fff;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer}
 </style>
 </head>
 <body>
@@ -6591,6 +6597,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(partida_exports, {
     MEDAL: () => MEDAL,
     curRun: () => curRun,
+    curiosidade: () => curiosidade,
     drawBadge: () => drawBadge,
     estadoPartida: () => estadoPartida,
     finishQ: () => finishQ,
@@ -6861,6 +6868,18 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (!(r + w)) {
       box.className = "cstat empty";
       box.textContent = "🎯 Você ainda não treinou " + (isState ? "este estado" : "este país") + ".";
+      var d = !isState && D.find(function(x) {
+        return x.cc === key;
+      });
+      if (d) {
+        var tb = document.createElement("button");
+        tb.className = "cstreinar";
+        tb.textContent = "Treinar " + REG[d.r].n + " →";
+        tb.onclick = function() {
+          emitir("treinar-regiao", { r: d.r });
+        };
+        box.appendChild(tb);
+      }
       return;
     }
     var pct = Math.round(100 * r / (r + w));
@@ -7048,6 +7067,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
           var e = st[d.cc];
           return e && e.s >= 3;
         });
+      }, prog: function() {
+        var st = estadoTreino.QS.m.cap || {}, list = D.filter(function(d) {
+          return d.r === ri && !d.dep && !d.uni;
+        });
+        return [list.filter(function(d) {
+          var e = st[d.cc];
+          return e && e.s >= 3;
+        }).length, list.length];
       } });
     });
     arr.push({ id: "world", title: "Mestre do Mundo", icon: "👑", desc: "Domine os " + N_BASE + " países e territórios em País → Capital.", need: function() {
@@ -7057,6 +7084,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         var e = st[d.cc];
         return e && e.s >= 3;
       });
+    }, prog: function() {
+      var st = estadoTreino.QS.m.cap || {}, list = D.filter(function(d) {
+        return !d.dep && !d.uni;
+      });
+      return [list.filter(function(d) {
+        var e = st[d.cc];
+        return e && e.s >= 3;
+      }).length, list.length];
     } });
     arr.push({ id: "br27", title: "De Norte a Sul", icon: "🇧🇷", desc: "Domine os 27 estados do Brasil em Estado → Capital.", need: function() {
       var st = estadoTreino.QS.m.cap || {};
@@ -7064,15 +7099,25 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         var e = st["BR-" + s.sigla];
         return e && e.s >= 3;
       });
+    }, prog: function() {
+      var st = estadoTreino.QS.m.cap || {};
+      return [BRS.filter(function(s) {
+        var e = st["BR-" + s.sigla];
+        return e && e.s >= 3;
+      }).length, BRS.length];
     } });
     [3, 7, 30].forEach(function(n) {
       arr.push({ id: "streak" + n, title: "Sequência de " + n + " dia" + (n === 1 ? "" : "s"), icon: "🔥", desc: "Bata a meta diária " + n + " dias seguidos.", need: function() {
         return PROG.streak >= n;
+      }, prog: function() {
+        return [Math.min(PROG.streak, n), n];
       } });
     });
     [10, 100, 500, 1e3].forEach(function(n) {
       arr.push({ id: "xp" + n, title: n + " acertos", icon: "⭐", desc: "Acerte " + n + " perguntas no total, em qualquer modo.", need: function() {
         return PROG.totalCorrect >= n;
+      }, prog: function() {
+        return [Math.min(PROG.totalCorrect, n), n];
       } });
     });
     return arr;
@@ -7131,6 +7176,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     PROG.badges.forEach(function(id) {
       known[id] = 1;
     });
+    function frac(b) {
+      if (known[b.id]) return 2;
+      var p = b.prog ? b.prog() : [0, 1];
+      return p[1] ? p[0] / p[1] : 0;
+    }
+    defs = defs.slice().sort(function(a, b) {
+      return frac(b) - frac(a);
+    });
     defs.forEach(function(b) {
       var got = !!known[b.id];
       var row = document.createElement("div");
@@ -7147,6 +7200,18 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       d2.textContent = b.desc;
       tx.appendChild(t);
       tx.appendChild(d2);
+      if (!got && b.prog) {
+        var pg = b.prog(), pb = document.createElement("div");
+        pb.className = "bprog";
+        var fi = document.createElement("i");
+        fi.style.width = Math.round(100 * pg[0] / Math.max(1, pg[1])) + "%";
+        pb.appendChild(fi);
+        var pt = document.createElement("span");
+        pt.textContent = pg[0] + " de " + pg[1];
+        tx.appendChild(pb);
+        tx.appendChild(pt);
+        pt.className = "bprogt";
+      }
       row.appendChild(ic);
       row.appendChild(tx);
       box.appendChild(row);
@@ -7624,6 +7689,20 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       el.classList.add("pulsa");
     } else el.hidden = true;
   }
+  function curiosidade(d) {
+    var x = d && d.info;
+    if (!x) return "";
+    var nm = short(d), op = [];
+    if (x.pop >= 1e3) op.push(nm + " tem cerca de " + (x.pop >= 1e6 ? (x.pop / 1e6).toFixed(1).replace(".", ",") + " bilhão de" : (x.pop >= 1e4 ? Math.round(x.pop / 1e3) : (x.pop / 1e3).toFixed(1).replace(".", ",")) + " milhões de") + " habitantes.");
+    else if (x.pop > 0) op.push(nm + " tem só cerca de " + (x.pop * 1e3).toLocaleString("pt-BR") + " habitantes.");
+    if (x.area) {
+      var vezes = 8515767 / x.area;
+      op.push(vezes >= 2 ? "Cabem uns " + Math.round(vezes).toLocaleString("pt-BR") + " " + nm + " dentro do Brasil." : nm + " tem " + x.area.toLocaleString("pt-BR") + " km².");
+    }
+    if (x.lang) op.push("Em " + nm + " se fala " + x.lang.charAt(0).toLowerCase() + x.lang.slice(1) + ".");
+    if (x.cur) op.push("A moeda de " + nm + " é " + x.cur.replace(/\s*\(.*\)$/, "").toLowerCase() + ".");
+    return op[Math.floor(Math.random() * op.length)] || "";
+  }
   function comemorarAcerto() {
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     var b = document.querySelector("#qbody .okb");
@@ -7670,6 +7749,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var fb = $("qfb");
     fb.textContent = fbText(QD()[quiz.cur], ok, extra);
     fb.className = ok ? "ok" : "bad";
+    var cur = ok && quiz.mode === "cap" && Math.random() < 0.2 ? curiosidade(QD()[quiz.cur]) : "";
     if (ok && !estadoTreino.desafio && Math.random() < 0.1) {
       addXP(10);
       var sp = document.createElement("span");
@@ -7689,6 +7769,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       tocar("nivel");
     }
     mostrarCombo();
+    if (cur) {
+      var cu = document.createElement("div");
+      cu.className = "qcurio";
+      cu.textContent = "💡 " + cur;
+      fb.appendChild(cu);
+    }
     var ganho = xpAtual() - xp0;
     if (ok && ganho > 0) {
       var bok = document.querySelector("#qbody .okb");
@@ -8757,6 +8843,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     updateMultiApplyBtn();
   }
   function iniciar37() {
+    ouvir("treinar-regiao", function(o) {
+      if (!quiz.open) quizOpen();
+      applyScopeChange({ t: "reg", r: o.r });
+    });
     ouvir("categorias-mudaram", function(o) {
       if (quiz.open) {
         updateScopeBtn();
