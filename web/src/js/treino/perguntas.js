@@ -105,7 +105,6 @@ function nextQ(){
   var q=document.createElement('div');q.className='qq';
   if(quiz.mode==='cap'){
     q.textContent='Qual é a capital de '+qflag(d)+' '+short(d)+'?';
-    var hint=document.createElement('div');hint.className='qhint';hint.textContent=(estadoTreino.quizDomain==='br'?'O estado está':'O país está')+' destacado no mapa.';q.appendChild(hint);
     var cbt=document.createElement('button');cbt.className='qcenter';cbt.textContent='⌖ Centralizar';cbt.onclick=function(){showTarget(i);};q.appendChild(cbt);
     addHintBtn(q,d,false);
     showTarget(i);if(estadoTreino.quizDomain==='world')estadoTreino.qFlash={i:i,kind:'ask'};

@@ -122,3 +122,47 @@ header .modesw button{padding:0 10px!important}
 /* nome do app no cabeçalho, nas cores da logo */
 h1.marca{font-size:20px;font-weight:800;letter-spacing:-.02em}
 h1.marca span{color:var(--marca)}
+
+/* ---------- facilidade e diversão (v1.24) ---------- */
+/* telas grandes usam a largura toda */
+#app{max-width:1600px}
+/* alvos de toque de pelo menos 44px */
+.qcenter{min-height:44px;padding:8px 16px}
+/* acerto e erro também por símbolo, não só por cor (daltonismo) */
+.qopts button.okb::before{content:'✓ '}
+.qopts button.badb::before{content:'✗ '}
+.qopts button{position:relative;overflow:visible}
+.qopts button.okb{animation:qpop .35s ease-out}
+.qopts button.badb{animation:qshake .4s ease-in-out}
+@keyframes qpop{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes qshake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.confete{position:absolute;left:50%;top:50%;width:7px;height:9px;border-radius:2px;pointer-events:none;animation:qconf .85s ease-out forwards}
+@keyframes qconf{0%{transform:translate(-50%,-50%) rotate(0);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy) + 40px)) rotate(320deg);opacity:0}}
+/* combo de acertos */
+.qcombo{display:inline-block;margin-right:8px;padding:2px 9px;border-radius:999px;background:linear-gradient(90deg,#fb8500,#ffb703);color:#1b1200;font-weight:800;font-size:.9em;animation:qpop .4s ease-out}
+/* explicação curta das opções do treino */
+.mdesc{display:block;color:var(--muted);font-size:12px;margin:-2px 4px 8px;line-height:1.35}
+@media (prefers-reduced-motion: reduce){.qopts button.okb,.qopts button.badb,.qcombo{animation:none}}
+
+/* telas largas: painel do treino ao lado do globo (o globo encolhe e continua centralizado) */
+@media (min-aspect-ratio: 5/4) and (min-width: 640px){
+  :root{--qlado:min(42vw,440px)}
+  body.quizing #app{max-width:none;margin:0 var(--qlado) 0 0}
+  #quiz.map .qpanel{top:0;left:auto;right:0;bottom:0;width:var(--qlado);max-width:none;max-height:none;border-radius:0;border-top:0;border-left:1px solid var(--border);padding-top:calc(12px + var(--sat))}
+}
+
+/* boas-vindas da primeira vez */
+#welcome{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,10,25,.72);backdrop-filter:blur(3px);transition:opacity .25s}
+#welcome[hidden]{display:none}
+#welcome.out{opacity:0}
+#welcome .wbox{width:100%;max-width:400px;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:22px;padding:24px 20px 18px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.4);animation:qpop .4s ease-out}
+#welcome .wlogo{font-size:56px;line-height:1}
+#welcome h2{margin:10px 0 4px;font-size:22px}
+#welcome .marca span{color:var(--marca)}
+#welcome .wsub{margin:0 0 16px;color:var(--muted);font-size:15px}
+#welcome .wmodos{display:grid;gap:8px;margin-bottom:18px;text-align:left}
+#welcome .wmodos div{border:1px solid var(--border);border-radius:14px;padding:10px 12px;background:var(--chip)}
+#welcome .wmodos b{display:block;font-size:15px}
+#welcome .wmodos span{color:var(--muted);font-size:13.5px}
+#welcome .wgo{width:100%;min-height:52px;border:0;border-radius:14px;background:linear-gradient(90deg,#1f4fd8,#2f80ff);color:#fff;font-size:17px;font-weight:800;font-family:inherit;cursor:pointer}
+#welcome .wall{width:100%;min-height:44px;margin-top:8px;border:0;background:transparent;color:var(--muted);font-size:14.5px;font-weight:600;font-family:inherit;cursor:pointer}

@@ -27,7 +27,9 @@ const estadoTreino = {
 /* ---------- treino ---------- */
 function freshQS(){return {best:0,m:{cap:{},pais:{},flag:{},map:{}},q:{cap:0,pais:0,flag:0,map:0}};}
 let quiz;
-function measureQ(){setTimeout(function(){estadoTreino.qPanelH=quiz.open?$('quiz').querySelector('.qpanel').offsetHeight+10:0;},80);}
+/** Telas largas (celular deitado, tablet deitado, computador, TV): o painel do treino fica ao lado do globo. */
+function painelAoLado(){return !!(window.matchMedia&&window.matchMedia('(min-aspect-ratio: 5/4) and (min-width: 640px)').matches);}
+function measureQ(){setTimeout(function(){estadoTreino.qPanelH=quiz.open&&!painelAoLado()?$('quiz').querySelector('.qpanel').offsetHeight+10:0;},80);}
 function qHide(){return quiz.open&&estadoTreino.quizDomain==='world'&&!(quiz.mode==='map'&&!estadoRender.feats);}
 const ACC_EXTRA = {US:['eua','usa','estados unidos da america'],GB:['uk','inglaterra','gra bretanha'],CD:['rd congo','republica democratica do congo','congo kinshasa'],CG:['congo','congo brazzaville'],CZ:['republica tcheca','tchequia'],NR:['yaren'],SZ:['suazilandia'],MK:['macedonia'],CI:['costa do marfim'],MM:['birmania'],BY:['bielorussia','belarus'],TR:['turquia'],VA:['vaticano']};
 function accList(str,cc,isCap){
@@ -90,6 +92,7 @@ function iniciar() {
   /* o globo consulta o treino por aqui (ver visualizacao/ganchos.js) */
   ganchos.treinoAberto = function(){return quiz.open;};
   ganchos.alturaTreino = function(){return estadoTreino.qPanelH;};
+  window.addEventListener('resize',measureQ); /* girar o celular troca o painel de embaixo para o lado */
   ganchos.ocultarMarcadores = qHide;
   ganchos.ocultarMarcadoresEstados = function(){return quiz.open&&estadoTreino.qMap&&estadoTreino.quizDomain==='br';};
   ganchos.destaquePais = function(){return estadoTreino.qFlash;};

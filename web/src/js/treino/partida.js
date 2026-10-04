@@ -182,10 +182,13 @@ function makeOptions(i){
   var arr=QD(),label=optLabel(i),labels={},out=[i];labels[label]=1;
   var sc=poolIdx().filter(function(k){return k!==i;}),wd=[],k,guard;
   for(k=0;k<arr.length;k++)if(k!==i&&!arr[k].uni)wd.push(k);
+  /* alternativas plausíveis: quase sempre da mesma região, e sem lugares disputados (Tskhinvali,
+     Sukhumi...) a não ser que a resposta certa também seja um deles */
+  if(!arr[i].dis){sc=sc.filter(function(x){return !arr[x].dis;});wd=wd.filter(function(x){return !arr[x].dis;});}
   var same=sc.filter(function(x){return arr[x].r===arr[i].r;});
   guard=0;
   while(out.length<4&&guard++<400&&sc.length){
-    var src=(Math.random()<.65&&same.length)?same:sc;
+    var src=(Math.random()<.85&&same.length)?same:sc;
     var c=src[Math.floor(Math.random()*src.length)],l=optLabel(c);
     if(labels[l])continue;labels[l]=1;out.push(c);
   }
@@ -214,7 +217,7 @@ function record(i,ok,hinted){
 }
 function fbText(d,ok,extra){
   var fl=qflag(d),nm=short(d),cp=qcapD(d);
-  var base=(ok?'✔ Correto! ':'✖ Não foi dessa vez. ');
+  var base=(ok?['✔ Isso! ','✔ Boa! ','✔ Mandou bem! ','✔ Certo! '][Math.floor(Math.random()*4)]:'✖ Quase! ');
   var ans;
   if(quiz.mode==='neighbor'){
     var an=QD()[quiz.nbAnswer];
@@ -233,12 +236,34 @@ function showTarget(i){
 function sessionRecord(ok){
   var s=quiz;s.sessionLog.push({label:qflag(QD()[s.cur])+' '+short(QD()[s.cur]),ok:ok});
 }
+/** Confete leve saindo da resposta certa (só enfeite; some sozinho, respeita "reduzir movimento"). */
+function comemorarAcerto(){
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var b=document.querySelector('#qbody .okb');if(!b)return;
+  var cores=['#ffd166','#06d6a0','#4cc9f0','#f72585','#fb8500'],n=quiz.streak>=3?16:9;
+  for(var k=0;k<n;k++){
+    var p=document.createElement('i');p.className='confete';
+    var a=Math.random()*Math.PI*2,dist=40+Math.random()*50;
+    p.style.setProperty('--dx',Math.round(Math.cos(a)*dist)+'px');p.style.setProperty('--dy',Math.round(Math.sin(a)*dist-30)+'px');
+    p.style.background=cores[k%cores.length];
+    b.appendChild(p);
+    setTimeout(function(el){return function(){el.remove();};}(p),900);
+  }
+}
 function finishQ(ok,extra){
-  quiz.answered=true;quiz.lastOk=ok;tocar(ok?'acerto':'erro');record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
+  quiz.answered=true;quiz.lastOk=ok;record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
+  tocar(ok?'acerto':'erro',quiz.streak);if(ok)comemorarAcerto();
   recordProgress(ok,quiz.hinted);
+  if(estadoTreino.QS.q&&!lsGet('globo.dicaLivre',false)&&(quiz.total||0)>=4){lsSet('globo.dicaLivre',true);setTimeout(function(){celebrate('👆 Dica: toque em Livre, lá em cima, para explorar o globo à vontade.');},1300);}
   showTarget(quiz.cur);
   if(estadoTreino.quizDomain==='world'){estadoTreino.qFlash={i:quiz.cur,kind:ok?'ok':'reveal'};}
   var fb=$('qfb');fb.textContent=fbText(QD()[quiz.cur],ok,extra);fb.className=ok?'ok':'bad';
+  /* combo: 3 ou mais acertos seguidos aparecem e dão XP extra; marcos de 5 e 10 comemoram */
+  if(ok&&quiz.streak>=3){
+    var pill=document.createElement('span');pill.className='qcombo';pill.textContent='🔥 '+quiz.streak+' seguidos';fb.insertBefore(pill,fb.firstChild);
+    addXP(Math.min(quiz.streak-2,5));
+    if(quiz.streak===5||quiz.streak%10===0){celebrate('🔥 '+quiz.streak+' acertos seguidos!');tocar('nivel');}
+  }
   var qse=$('qstat');if(qse)fillQStat(qse,QD()[quiz.cur]);
   $('qnext').style.display='block';measureQ();
   sessionRecord(ok);

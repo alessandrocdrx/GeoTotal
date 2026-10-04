@@ -44,9 +44,10 @@ export async function iniciarServidor() {
 
 /**
  * Abre o app num celular simulado, usando o ambiente de iniciarServidor(). Devolve a página, a
- * lista de erros de JavaScript/CSP e a de acessos a endereços externos.
+ * lista de erros de JavaScript/CSP e a de acessos a endereços externos. novato: true abre como na
+ * primeira vez (com as boas-vindas).
  */
-export async function abrirApp(ambiente, { esperar = 5000 } = {}) {
+export async function abrirApp(ambiente, { esperar = 5000, novato = false } = {}) {
   const ctx = await ambiente.navegador.newContext({ viewport: { width: 360, height: 720 }, isMobile: true, hasTouch: true });
   const pagina = await ctx.newPage();
   const erros = [];
@@ -55,6 +56,8 @@ export async function abrirApp(ambiente, { esperar = 5000 } = {}) {
   pagina.on('console', (m) => { if (/Content Security Policy|Refused to/i.test(m.text())) erros.push('CSP: ' + m.text()); });
   pagina.on('request', (r) => { if (!/^(http:\/\/127\.0\.0\.1|data:|blob:)/.test(r.url())) externos.push(r.url()); });
   await pagina.addInitScript(() => { window.AndroidBridge = { saveFile() {}, print() {}, shareImage() {} }; });
+  // por padrão, um usuário que já viu as boas-vindas (o teste delas passa novato: true)
+  if (!novato) await pagina.addInitScript(() => { try { localStorage.setItem('globo.bv.v1', 'true'); } catch {} });
   await pagina.goto(ambiente.url);
   await pagina.waitForTimeout(esperar);
   return { pagina, erros, externos, fechar: () => ctx.close() };

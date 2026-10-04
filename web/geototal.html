@@ -410,6 +410,50 @@ header .modesw button{padding:0 10px!important}
 /* nome do app no cabeçalho, nas cores da logo */
 h1.marca{font-size:20px;font-weight:800;letter-spacing:-.02em}
 h1.marca span{color:var(--marca)}
+
+/* ---------- facilidade e diversão (v1.24) ---------- */
+/* telas grandes usam a largura toda */
+#app{max-width:1600px}
+/* alvos de toque de pelo menos 44px */
+.qcenter{min-height:44px;padding:8px 16px}
+/* acerto e erro também por símbolo, não só por cor (daltonismo) */
+.qopts button.okb::before{content:'✓ '}
+.qopts button.badb::before{content:'✗ '}
+.qopts button{position:relative;overflow:visible}
+.qopts button.okb{animation:qpop .35s ease-out}
+.qopts button.badb{animation:qshake .4s ease-in-out}
+@keyframes qpop{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes qshake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.confete{position:absolute;left:50%;top:50%;width:7px;height:9px;border-radius:2px;pointer-events:none;animation:qconf .85s ease-out forwards}
+@keyframes qconf{0%{transform:translate(-50%,-50%) rotate(0);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy) + 40px)) rotate(320deg);opacity:0}}
+/* combo de acertos */
+.qcombo{display:inline-block;margin-right:8px;padding:2px 9px;border-radius:999px;background:linear-gradient(90deg,#fb8500,#ffb703);color:#1b1200;font-weight:800;font-size:.9em;animation:qpop .4s ease-out}
+/* explicação curta das opções do treino */
+.mdesc{display:block;color:var(--muted);font-size:12px;margin:-2px 4px 8px;line-height:1.35}
+@media (prefers-reduced-motion: reduce){.qopts button.okb,.qopts button.badb,.qcombo{animation:none}}
+
+/* telas largas: painel do treino ao lado do globo (o globo encolhe e continua centralizado) */
+@media (min-aspect-ratio: 5/4) and (min-width: 640px){
+  :root{--qlado:min(42vw,440px)}
+  body.quizing #app{max-width:none;margin:0 var(--qlado) 0 0}
+  #quiz.map .qpanel{top:0;left:auto;right:0;bottom:0;width:var(--qlado);max-width:none;max-height:none;border-radius:0;border-top:0;border-left:1px solid var(--border);padding-top:calc(12px + var(--sat))}
+}
+
+/* boas-vindas da primeira vez */
+#welcome{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,10,25,.72);backdrop-filter:blur(3px);transition:opacity .25s}
+#welcome[hidden]{display:none}
+#welcome.out{opacity:0}
+#welcome .wbox{width:100%;max-width:400px;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:22px;padding:24px 20px 18px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.4);animation:qpop .4s ease-out}
+#welcome .wlogo{font-size:56px;line-height:1}
+#welcome h2{margin:10px 0 4px;font-size:22px}
+#welcome .marca span{color:var(--marca)}
+#welcome .wsub{margin:0 0 16px;color:var(--muted);font-size:15px}
+#welcome .wmodos{display:grid;gap:8px;margin-bottom:18px;text-align:left}
+#welcome .wmodos div{border:1px solid var(--border);border-radius:14px;padding:10px 12px;background:var(--chip)}
+#welcome .wmodos b{display:block;font-size:15px}
+#welcome .wmodos span{color:var(--muted);font-size:13.5px}
+#welcome .wgo{width:100%;min-height:52px;border:0;border-radius:14px;background:linear-gradient(90deg,#1f4fd8,#2f80ff);color:#fff;font-size:17px;font-weight:800;font-family:inherit;cursor:pointer}
+#welcome .wall{width:100%;min-height:44px;margin-top:8px;border:0;background:transparent;color:var(--muted);font-size:14.5px;font-weight:600;font-family:inherit;cursor:pointer}
 </style>
 </head>
 <body>
@@ -444,7 +488,7 @@ h1.marca span{color:var(--marca)}
       <button id="tour" aria-label="Passeio pela rota">▶</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
     </div>
-    <div class="hint" id="hint">Arraste para girar · toque num ponto · use Filtrar para escolher o que mostrar</div>
+    <div class="hint" id="hint">Arraste para girar · toque num país para ver os detalhes</div>
     <div id="card" role="dialog" aria-live="polite">
       <div class="chead">
         <span id="cflag" class="flag"></span>
@@ -529,10 +573,13 @@ h1.marca span{color:var(--marca)}
     <div class="qseg" id="qtypes"></div>
     <div class="mlab">Quais perguntas</div>
     <div class="qscoperow"><button id="qfocusb">Foco: tudo</button></div>
+    <small class="mdesc">Tudo, só os que você nunca viu ou só os que errou.</small>
     <div class="mlab">Rodada</div>
-  <div class="mcol"><button id="qsessionb">🧮 Sessão: livre</button><button id="qorderb">🔀 Ordem: aleatória</button>
-  <button id="qtimerb">⏱️ Cronômetro: desligado</button><button id="qsurvb">💀 Sobrevivência: desligada</button>
-  <button id="qrunreset">🔁 Recomeçar a partida</button></div>
+  <div class="mcol"><button id="qsessionb">🧮 Sessão: livre</button><small class="mdesc">Quantas perguntas por rodada (livre = sem fim).</small>
+  <button id="qorderb">🔀 Ordem: aleatória</button><small class="mdesc">Embaralhada ou sempre na mesma sequência.</small>
+  <button id="qtimerb">⏱️ Cronômetro: desligado</button><small class="mdesc">Responda o máximo que der antes do tempo acabar.</small>
+  <button id="qsurvb">💀 Sobrevivência: desligada</button><small class="mdesc">Errou uma vez, a rodada acaba. Quanto você aguenta?</small>
+  <button id="qrunreset">🔁 Recomeçar a partida</button><small class="mdesc">Zera só a região atual, para jogar do zero.</small></div>
   </div>
   <div class="mpage" id="mp-poles" data-t="Ir a um polo" hidden>
     <div class="row2"><button id="pn">▲ Polo Norte</button><button id="ps">▼ Polo Sul</button></div>
@@ -592,6 +639,17 @@ h1.marca span{color:var(--marca)}
   <button id="qnext" class="qnextb">Próxima →</button>
 </div></div>
 
+<div id="welcome" hidden><div class="wbox" role="dialog" aria-labelledby="wtitle">
+  <div class="wlogo" aria-hidden="true">🌍</div>
+  <h2 id="wtitle">Bem-vindo ao <span class="marca">geo<span>Total</span></span>!</h2>
+  <p class="wsub">Aprenda países e capitais jogando.</p>
+  <div class="wmodos">
+    <div><b>🎯 Treino</b><span>Perguntas rápidas, com pontos e medalhas</span></div>
+    <div><b>🧭 Livre</b><span>Gire o globo e toque nos países</span></div>
+  </div>
+  <button id="wgo" class="wgo">🚀 Começar pela América do Sul</button>
+  <button id="wall" class="wall">Prefiro o mundo todo</button>
+</div></div>
 <div id="scopesheet" class="ov" style="z-index:85"><div class="box">
   <div class="shead"><b>Onde você quer treinar?</b><button id="scopeclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <button id="qscopeback" class="qbackrow" hidden></button>
@@ -5387,9 +5445,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   var EFEITOS = {
     /** acerto: duas notas subindo */
-    acerto: function() {
-      nota("triangle", hz(7), 0, 0.12, 0.18);
-      nota("triangle", hz(12), 0.08, 0.22, 0.2);
+    /** acerto: duas notas subindo; com combo, sobe pela escala (cada acerto seguido soa mais alto) */
+    acerto: function(combo) {
+      var k = [0, 2, 4, 5, 7, 9, 11, 12][Math.min(7, Math.max(0, (combo || 1) - 1))];
+      nota("triangle", hz(7 + k), 0, 0.12, 0.18);
+      nota("triangle", hz(12 + k), 0.08, 0.22, 0.2);
     },
     /** erro: duas notas graves descendo, sem agressividade */
     erro: function() {
@@ -5423,12 +5483,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       });
     }
   };
-  function tocar(nome) {
+  function tocar(nome, arg) {
     if (!estadoSom.efeitos || !EFEITOS[nome]) return;
     var c = contexto();
     if (!c || c.state !== "running") return;
     try {
-      EFEITOS[nome]();
+      EFEITOS[nome](arg);
     } catch (e) {
     }
   }
@@ -6175,9 +6235,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return { best: 0, m: { cap: {}, pais: {}, flag: {}, map: {} }, q: { cap: 0, pais: 0, flag: 0, map: 0 } };
   }
   var quiz;
+  function painelAoLado() {
+    return !!(window.matchMedia && window.matchMedia("(min-aspect-ratio: 5/4) and (min-width: 640px)").matches);
+  }
   function measureQ() {
     setTimeout(function() {
-      estadoTreino.qPanelH = quiz.open ? $("quiz").querySelector(".qpanel").offsetHeight + 10 : 0;
+      estadoTreino.qPanelH = quiz.open && !painelAoLado() ? $("quiz").querySelector(".qpanel").offsetHeight + 10 : 0;
     }, 80);
   }
   function qHide() {
@@ -6264,6 +6327,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ganchos.alturaTreino = function() {
       return estadoTreino.qPanelH;
     };
+    window.addEventListener("resize", measureQ);
     ganchos.ocultarMarcadores = qHide;
     ganchos.ocultarMarcadoresEstados = function() {
       return quiz.open && estadoTreino.qMap && estadoTreino.quizDomain === "br";
@@ -6784,10 +6848,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function fillQStat(el, o) {
     var e = (estadoTreino.QS.m[quiz.mode] || {})[qcc(o)], r = e ? e.r || 0 : 0, w = e ? e.w || 0 : 0;
     el.innerHTML = "";
-    if (!(r + w)) {
-      el.textContent = "Primeira vez neste tipo de pergunta";
-      return;
-    }
+    el.hidden = !(r + w);
+    if (!(r + w)) return;
     var pct = Math.round(100 * r / (r + w));
     var bar = document.createElement("span");
     bar.className = "qsbar";
@@ -7417,12 +7479,20 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       return k2 !== i;
     }), wd = [], k, guard;
     for (k = 0; k < arr.length; k++) if (k !== i && !arr[k].uni) wd.push(k);
+    if (!arr[i].dis) {
+      sc = sc.filter(function(x) {
+        return !arr[x].dis;
+      });
+      wd = wd.filter(function(x) {
+        return !arr[x].dis;
+      });
+    }
     var same = sc.filter(function(x) {
       return arr[x].r === arr[i].r;
     });
     guard = 0;
     while (out.length < 4 && guard++ < 400 && sc.length) {
-      var src = Math.random() < 0.65 && same.length ? same : sc;
+      var src = Math.random() < 0.85 && same.length ? same : sc;
       var c = src[Math.floor(Math.random() * src.length)], l = optLabel(c);
       if (labels[l]) continue;
       labels[l] = 1;
@@ -7473,7 +7543,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   function fbText(d, ok, extra) {
     var fl = qflag(d), nm = short(d), cp = qcapD(d);
-    var base = ok ? "✔ Correto! " : "✖ Não foi dessa vez. ";
+    var base = ok ? ["✔ Isso! ", "✔ Boa! ", "✔ Mandou bem! ", "✔ Certo! "][Math.floor(Math.random() * 4)] : "✖ Quase! ";
     var ans;
     if (quiz.mode === "neighbor") {
       var an = QD()[quiz.nbAnswer];
@@ -7500,14 +7570,41 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var s = quiz;
     s.sessionLog.push({ label: qflag(QD()[s.cur]) + " " + short(QD()[s.cur]), ok });
   }
+  function comemorarAcerto() {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var b = document.querySelector("#qbody .okb");
+    if (!b) return;
+    var cores = ["#ffd166", "#06d6a0", "#4cc9f0", "#f72585", "#fb8500"], n = quiz.streak >= 3 ? 16 : 9;
+    for (var k = 0; k < n; k++) {
+      var p = document.createElement("i");
+      p.className = "confete";
+      var a = Math.random() * Math.PI * 2, dist = 40 + Math.random() * 50;
+      p.style.setProperty("--dx", Math.round(Math.cos(a) * dist) + "px");
+      p.style.setProperty("--dy", Math.round(Math.sin(a) * dist - 30) + "px");
+      p.style.background = cores[k % cores.length];
+      b.appendChild(p);
+      setTimeout(/* @__PURE__ */ (function(el) {
+        return function() {
+          el.remove();
+        };
+      })(p), 900);
+    }
+  }
   function finishQ(ok, extra) {
     quiz.answered = true;
     quiz.lastOk = ok;
-    tocar(ok ? "acerto" : "erro");
     record(quiz.cur, ok, quiz.hinted);
     runRecord(quiz.cur, ok);
     renderScore();
+    tocar(ok ? "acerto" : "erro", quiz.streak);
+    if (ok) comemorarAcerto();
     recordProgress(ok, quiz.hinted);
+    if (estadoTreino.QS.q && !lsGet("globo.dicaLivre", false) && (quiz.total || 0) >= 4) {
+      lsSet("globo.dicaLivre", true);
+      setTimeout(function() {
+        celebrate("👆 Dica: toque em Livre, lá em cima, para explorar o globo à vontade.");
+      }, 1300);
+    }
     showTarget(quiz.cur);
     if (estadoTreino.quizDomain === "world") {
       estadoTreino.qFlash = { i: quiz.cur, kind: ok ? "ok" : "reveal" };
@@ -7515,6 +7612,17 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var fb = $("qfb");
     fb.textContent = fbText(QD()[quiz.cur], ok, extra);
     fb.className = ok ? "ok" : "bad";
+    if (ok && quiz.streak >= 3) {
+      var pill = document.createElement("span");
+      pill.className = "qcombo";
+      pill.textContent = "🔥 " + quiz.streak + " seguidos";
+      fb.insertBefore(pill, fb.firstChild);
+      addXP(Math.min(quiz.streak - 2, 5));
+      if (quiz.streak === 5 || quiz.streak % 10 === 0) {
+        celebrate("🔥 " + quiz.streak + " acertos seguidos!");
+        tocar("nivel");
+      }
+    }
     var qse = $("qstat");
     if (qse) fillQStat(qse, QD()[quiz.cur]);
     $("qnext").style.display = "block";
@@ -7841,10 +7949,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     q2.className = "qq";
     if (quiz.mode === "cap") {
       q2.textContent = "Qual é a capital de " + qflag(d) + " " + short(d) + "?";
-      var hint = document.createElement("div");
-      hint.className = "qhint";
-      hint.textContent = (estadoTreino.quizDomain === "br" ? "O estado está" : "O país está") + " destacado no mapa.";
-      q2.appendChild(hint);
       var cbt = document.createElement("button");
       cbt.className = "qcenter";
       cbt.textContent = "⌖ Centralizar";
@@ -9288,6 +9392,35 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ganchosInterface.toqueNoMapa2D = toqueNoMapa2D;
   }
 
+  // web/src/js/treino/boas-vindas.js
+  var boas_vindas_exports = {};
+  __export(boas_vindas_exports, {
+    iniciar: () => iniciar46
+  });
+  function iniciar46() {
+    if (lsGet("globo.bv.v1", false)) return;
+    lsSet("globo.bv.v1", true);
+    var m = estadoTreino.QS.m || {}, jaJogou = Object.keys(m).some(function(k) {
+      return Object.keys(m[k] || {}).length > 0;
+    });
+    if (jaJogou) return;
+    var w = $("welcome");
+    w.hidden = false;
+    function fechar(escopo) {
+      w.classList.add("out");
+      setTimeout(function() {
+        w.hidden = true;
+      }, 250);
+      if (escopo) applyScopeChange(escopo);
+    }
+    $("wgo").onclick = function() {
+      fechar({ t: "reg", r: 0 });
+    };
+    $("wall").onclick = function() {
+      fechar(null);
+    };
+  }
+
   // web/src/js/main.js
   iniciar();
   iniciar2();
@@ -9334,8 +9467,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   iniciar16();
   iniciar32();
   iniciar44();
+  iniciar46();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

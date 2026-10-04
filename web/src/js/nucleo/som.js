@@ -45,7 +45,8 @@ function hz(semitonsDeLa4){return 440*Math.pow(2,semitonsDeLa4/12);}
 
 const EFEITOS = {
   /** acerto: duas notas subindo */
-  acerto: function(){nota('triangle',hz(7),0,0.12,0.18);nota('triangle',hz(12),0.08,0.22,0.2);},
+  /** acerto: duas notas subindo; com combo, sobe pela escala (cada acerto seguido soa mais alto) */
+  acerto: function(combo){var k=[0,2,4,5,7,9,11,12][Math.min(7,Math.max(0,(combo||1)-1))];nota('triangle',hz(7+k),0,0.12,0.18);nota('triangle',hz(12+k),0.08,0.22,0.2);},
   /** erro: duas notas graves descendo, sem agressividade */
   erro: function(){nota('sine',hz(-9),0,0.18,0.22);nota('sine',hz(-13),0.12,0.3,0.2);},
   /** toque num país */
@@ -58,10 +59,10 @@ const EFEITOS = {
   conquista: function(){[0,4,7,12,16].forEach(function(s,i){nota('triangle',hz(s),i*0.08,0.4,0.15);});[19,24].forEach(function(s,i){nota('sine',hz(s),0.45+i*0.12,0.7,0.05);});},
 };
 
-function tocar(nome){
+function tocar(nome,arg){
   if(!estadoSom.efeitos||!EFEITOS[nome])return;
   var c=contexto();if(!c||c.state!=='running')return;
-  try{EFEITOS[nome]();}catch(e){}
+  try{EFEITOS[nome](arg);}catch(e){}
 }
 
 /* ---------- música ambiente: notas soltas de uma escala pentatônica sobre acordes lentos ---------- */

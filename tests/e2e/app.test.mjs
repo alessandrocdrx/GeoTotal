@@ -185,3 +185,24 @@ test('som: efeitos e música ligam e desligam pelo menu, sem erros', async () =>
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('primeira vez: boas-vindas levam à América do Sul; alternativas sem lugares disputados', async () => {
+  const { pagina, erros, fechar } = await abrirApp({ novato: true });
+  assert.equal(await pagina.isVisible('#welcome'), true, 'boas-vindas aparecem na primeira vez');
+  await pagina.click('#wgo');
+  await pagina.waitForTimeout(500);
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    let disputados = 0;
+    for (let k = 0; k < 40; k++) {
+      const i = g.D.findIndex((d) => !d.dis && d.r === k % 9);
+      if (i >= 0) disputados += g.makeOptions(i).filter((x) => g.D[x].dis).length;
+    }
+    return { escopo: g.estadoTreino.quizScope, aberto: !document.getElementById('welcome').hidden, disputados };
+  });
+  assert.deepEqual(r.escopo, { t: 'reg', r: 0 });
+  assert.equal(r.aberto, false);
+  assert.equal(r.disputados, 0, 'resposta certa comum não tem alternativa disputada');
+  assert.deepEqual(erros, []);
+  await fechar();
+});

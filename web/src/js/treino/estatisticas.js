@@ -142,7 +142,7 @@ function renderCardStat(key,isState){
 function fillQStat(el,o){
   var e=(estadoTreino.QS.m[quiz.mode]||{})[qcc(o)],r=e?(e.r||0):0,w=e?(e.w||0):0;
   el.innerHTML='';
-  if(!(r+w)){el.textContent='Primeira vez neste tipo de pergunta';return;}
+  el.hidden=!(r+w);if(!(r+w))return;
   var pct=Math.round(100*r/(r+w));
   var bar=document.createElement('span');bar.className='qsbar';
   var f=document.createElement('i');f.style.width=pct+'%';bar.appendChild(f);
