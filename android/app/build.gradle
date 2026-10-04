@@ -15,8 +15,8 @@ android {
         applicationId 'io.github.alessandrocdrx.geototal'
         minSdk 26
         targetSdk 36
-        versionCode 28
-        versionName '1.22'
+        versionCode 29
+        versionName '1.23'
     }
 
     signingConfigs {

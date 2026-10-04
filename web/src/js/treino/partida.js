@@ -7,6 +7,7 @@
 import { BRS } from '../dados/estados-brasil.js';
 import { D, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
+import { tocar } from '../nucleo/som.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { gapOf, mstats, poolIdx, qcapD, qcc, QD, qflag, TIER_P, tierOf, unitWord } from './dominio.js';
 import { estadoTreino, measureQ, quiz, scopeLabel } from './estado.js';
@@ -55,7 +56,7 @@ function runRecord(i,ok){
   if(ok&&!r.fin&&poolIdx().length&&!runPool().length){
     r.fin=now;
     r.res=recFinish(r);
-    celebrate('🏁 Você zerou '+scopeLabel()+'!');addXP(50);
+    celebrate('🏁 Você zerou '+scopeLabel()+'!');tocar('conquista');addXP(50);
     if(recordable(estadoTreino.quizScope)&&r.res.newMedal)celebrate(MEDAL[r.res.medal].i+' Medalha de '+MEDAL[r.res.medal].n+'!');
   }
   saveRuns();
@@ -233,7 +234,7 @@ function sessionRecord(ok){
   var s=quiz;s.sessionLog.push({label:qflag(QD()[s.cur])+' '+short(QD()[s.cur]),ok:ok});
 }
 function finishQ(ok,extra){
-  quiz.answered=true;quiz.lastOk=ok;record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
+  quiz.answered=true;quiz.lastOk=ok;tocar(ok?'acerto':'erro');record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
   recordProgress(ok,quiz.hinted);
   showTarget(quiz.cur);
   if(estadoTreino.quizDomain==='world'){estadoTreino.qFlash={i:quiz.cur,kind:ok?'ok':'reveal'};}

@@ -4,6 +4,7 @@
  * Menu "⋯": navegação entre páginas e ações.
  */
 
+import { alternarEfeitos, alternarMusica, estadoSom } from '../nucleo/som.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { updateMapInfo } from '../visualizacao/carregamento.js';
 import { estadoMapa } from '../visualizacao/tela.js';
@@ -36,6 +37,11 @@ function iniciar() {
   Array.prototype.forEach.call(document.querySelectorAll('#mlist [data-p]'),function(b){b.onclick=function(){mShow(b.getAttribute('data-p'));};});
   $('mback').onclick=function(){mShow(null);};
   $('mthemerow').onclick=function(){$('themeb').click();};
+  /* som: efeitos e música, cada um com seu interruptor */
+  function somV(){$('msfxv').textContent=estadoSom.efeitos?'Ligados':'Desligados';$('mmusicv').textContent=estadoSom.musica?'Ligada (ambiente calma)':'Desligada';}
+  $('msfx').onclick=function(){alternarEfeitos();somV();};
+  $('mmusic').onclick=function(){alternarMusica();somV();};
+  somV();
   $('mlabels').onclick=function(){(estadoMapa.labelMode==='p'?$('lc'):$('lp')).click();updateLabelsRow();};
   updateLabelsRow();
   $('mbtn').onclick=function(){updateMapInfo();mShow(null);$('msheet').style.display='block';};

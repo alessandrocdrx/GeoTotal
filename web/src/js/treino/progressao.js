@@ -7,6 +7,7 @@
 import { BRS } from '../dados/estados-brasil.js';
 import { D, N_BASE, REG } from '../dados/paises.js';
 import { afterFilter, buildTree } from '../interface/filtros.js';
+import { tocar } from '../nucleo/som.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { estadoTreino, quiz } from './estado.js';
 import { openHistory } from './estatisticas.js';
@@ -95,7 +96,7 @@ function checkBadges(){
   var any=false;
   defs.forEach(function(b){
     if(known[b.id])return;
-    if(b.need()){PROG.badges.push(b.id);any=true;celebrate('🏆 Nova conquista: '+b.title);}
+    if(b.need()){PROG.badges.push(b.id);any=true;celebrate('🏆 Nova conquista: '+b.title);tocar('conquista');}
   });
   if(any)saveProg();
 }
@@ -103,7 +104,7 @@ function addXP(n){
   var before=levelOf(PROG.xp);
   PROG.xp+=n;
   var after=levelOf(PROG.xp);
-  if(after>before)celebrate('⬆️ Subiu para o nível '+after+'!');
+  if(after>before){celebrate('⬆️ Subiu para o nível '+after+'!');tocar('nivel');}
   saveProg();
 }
 function recordProgress(ok,hinted){
@@ -119,7 +120,7 @@ function recordProgress(ok,hinted){
     if(PROG.lastStreakDate===y)PROG.streak++;
     else if(PROG.lastStreakDate!==PROG.dailyDate)PROG.streak=1;
     PROG.lastStreakDate=PROG.dailyDate;
-    celebrate('🔥 Meta do dia batida! Sequência: '+PROG.streak+' dia'+(PROG.streak===1?'':'s'));
+    celebrate('🔥 Meta do dia batida! Sequência: '+PROG.streak+' dia'+(PROG.streak===1?'':'s'));tocar('meta');
   }
   saveProg();
   checkBadges();

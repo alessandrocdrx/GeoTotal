@@ -169,3 +169,19 @@ test('toques e categorias passam pelos ganchos da interface', async () => {
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('som: efeitos e música ligam e desligam pelo menu, sem erros', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.click('#mbtn');
+  const antes = await pagina.evaluate(() => ({ e: document.getElementById('msfxv').textContent, m: document.getElementById('mmusicv').textContent }));
+  await pagina.click('#mmusic');
+  await pagina.evaluate(() => { const g = window.__geoTotal; ['acerto', 'erro', 'toque', 'nivel', 'meta', 'conquista'].forEach(g.tocar); });
+  await pagina.waitForTimeout(3500);
+  await pagina.click('#msfx');
+  const depois = await pagina.evaluate(() => ({ e: document.getElementById('msfxv').textContent, m: document.getElementById('mmusicv').textContent, musica: window.__geoTotal.estadoSom.musica }));
+  assert.deepEqual(antes, { e: 'Ligados', m: 'Desligada' });
+  assert.equal(depois.e, 'Desligados');
+  assert.equal(depois.musica, true);
+  assert.deepEqual(erros, []);
+  await fechar();
+});

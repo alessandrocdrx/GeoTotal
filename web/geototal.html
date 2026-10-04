@@ -519,6 +519,8 @@ h1.marca span{color:var(--marca)}
     <button data-p="mp-exp"><span class="mi">📄</span><span class="mt"><b>Estudar e exportar</b><small>Folha de estudo, CSV e Anki</small></span><span class="mc">›</span></button>
     <div class="mgrp">App</div>
     <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
+    <button id="msfx"><span class="mi">🔊</span><span class="mt"><b>Efeitos sonoros</b><small id="msfxv">Ligados</small></span><span class="mc">↻</span></button>
+    <button id="mmusic"><span class="mi">🎵</span><span class="mt"><b>Música</b><small id="mmusicv">Desligada</small></span><span class="mc">↻</span></button>
     <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Textura e fronteiras</b><small>Imagem do globo e contornos</small></span><span class="mc">›</span></button>
     <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
   </nav>
@@ -4630,7 +4632,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/interacao.js
   var interacao_exports = {};
   __export(interacao_exports, {
-    iniciar: () => iniciar21,
+    iniciar: () => iniciar22,
     tap: () => tap,
     tap2D: () => tap2D
   });
@@ -5337,6 +5339,192 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
   }
 
+  // web/src/js/nucleo/som.js
+  var som_exports = {};
+  __export(som_exports, {
+    alternarEfeitos: () => alternarEfeitos,
+    alternarMusica: () => alternarMusica,
+    estadoSom: () => estadoSom,
+    iniciar: () => iniciar21,
+    tocar: () => tocar
+  });
+  var estadoSom = { efeitos: true, musica: false };
+  var ac = null;
+  var mestre = null;
+  var busMusica = null;
+  var timerMusica = 0;
+  var acorde = 0;
+  function contexto() {
+    if (ac) return ac;
+    var C = window.AudioContext || window.webkitAudioContext;
+    if (!C) return null;
+    try {
+      ac = new C();
+    } catch (e) {
+      return null;
+    }
+    mestre = ac.createGain();
+    mestre.gain.value = 0.9;
+    mestre.connect(ac.destination);
+    return ac;
+  }
+  function nota(tipo, f, t0, dur, vol, destino) {
+    var c = contexto();
+    if (!c) return;
+    var t = c.currentTime + t0, o = c.createOscillator(), g = c.createGain();
+    o.type = tipo;
+    o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(1e-4, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + Math.min(0.02, dur / 3));
+    g.gain.exponentialRampToValueAtTime(1e-4, t + dur);
+    o.connect(g);
+    g.connect(destino || mestre);
+    o.start(t);
+    o.stop(t + dur + 0.05);
+  }
+  function hz(semitonsDeLa4) {
+    return 440 * Math.pow(2, semitonsDeLa4 / 12);
+  }
+  var EFEITOS = {
+    /** acerto: duas notas subindo */
+    acerto: function() {
+      nota("triangle", hz(7), 0, 0.12, 0.18);
+      nota("triangle", hz(12), 0.08, 0.22, 0.2);
+    },
+    /** erro: duas notas graves descendo, sem agressividade */
+    erro: function() {
+      nota("sine", hz(-9), 0, 0.18, 0.22);
+      nota("sine", hz(-13), 0.12, 0.3, 0.2);
+    },
+    /** toque num país */
+    toque: function() {
+      nota("sine", hz(19), 0, 0.06, 0.06);
+    },
+    /** subiu de nível */
+    nivel: function() {
+      [3, 7, 10, 15].forEach(function(s, i) {
+        nota("triangle", hz(s), i * 0.09, 0.3, 0.16);
+      });
+    },
+    /** meta do dia */
+    meta: function() {
+      [0, 4, 7, 12].forEach(function(s, i) {
+        nota("triangle", hz(s), i * 0.1, 0.35, 0.16);
+      });
+      nota("sine", hz(24), 0.4, 0.6, 0.05);
+    },
+    /** conquista ou medalha */
+    conquista: function() {
+      [0, 4, 7, 12, 16].forEach(function(s, i) {
+        nota("triangle", hz(s), i * 0.08, 0.4, 0.15);
+      });
+      [19, 24].forEach(function(s, i) {
+        nota("sine", hz(s), 0.45 + i * 0.12, 0.7, 0.05);
+      });
+    }
+  };
+  function tocar(nome) {
+    if (!estadoSom.efeitos || !EFEITOS[nome]) return;
+    var c = contexto();
+    if (!c || c.state !== "running") return;
+    try {
+      EFEITOS[nome]();
+    } catch (e) {
+    }
+  }
+  var ACORDES = [[-12, -5, 0, 3], [-16, -9, -4, 0], [-9, -2, 3, 7], [-14, -7, -2, 2]];
+  var ESCALA = [0, 3, 5, 7, 10, 12, 15, 17, 19];
+  function montarMusica() {
+    var c = contexto();
+    if (!c || busMusica) return;
+    busMusica = c.createGain();
+    busMusica.gain.value = 1e-4;
+    var filtro = c.createBiquadFilter();
+    filtro.type = "lowpass";
+    filtro.frequency.value = 1800;
+    var eco = c.createDelay(1.5);
+    eco.delayTime.value = 0.55;
+    var retorno = c.createGain();
+    retorno.gain.value = 0.35;
+    busMusica.connect(filtro);
+    filtro.connect(mestre);
+    filtro.connect(eco);
+    eco.connect(retorno);
+    retorno.connect(eco);
+    retorno.connect(mestre);
+  }
+  function passoMusica() {
+    if (!estadoSom.musica || !ac || ac.state !== "running") return;
+    if (passoMusica.n % 4 === 0) {
+      var ac0 = ACORDES[acorde % ACORDES.length];
+      acorde++;
+      ac0.forEach(function(s2) {
+        nota("sine", hz(s2), 0, 9, 0.035, busMusica);
+      });
+    }
+    passoMusica.n++;
+    var s = ESCALA[Math.floor(Math.random() * ESCALA.length)];
+    nota("triangle", hz(s), 0.1, 2.2, 0.05, busMusica);
+    if (Math.random() < 0.35) nota("sine", hz(ESCALA[Math.floor(Math.random() * ESCALA.length)] + 12), 0.9, 1.6, 0.025, busMusica);
+    timerMusica = setTimeout(passoMusica, 2200 + Math.random() * 900);
+  }
+  passoMusica.n = 0;
+  function iniciarMusica() {
+    var c = contexto();
+    if (!c || c.state !== "running") return;
+    montarMusica();
+    busMusica.gain.cancelScheduledValues(c.currentTime);
+    busMusica.gain.setTargetAtTime(1, c.currentTime, 1.5);
+    clearTimeout(timerMusica);
+    passoMusica();
+  }
+  function pararMusica() {
+    clearTimeout(timerMusica);
+    if (ac && busMusica) {
+      busMusica.gain.cancelScheduledValues(ac.currentTime);
+      busMusica.gain.setTargetAtTime(1e-4, ac.currentTime, 0.4);
+    }
+  }
+  function alternarEfeitos() {
+    estadoSom.efeitos = !estadoSom.efeitos;
+    lsSet("globo.som.efeitos", estadoSom.efeitos);
+    if (estadoSom.efeitos) tocar("toque");
+    return estadoSom.efeitos;
+  }
+  function alternarMusica() {
+    estadoSom.musica = !estadoSom.musica;
+    lsSet("globo.som.musica", estadoSom.musica);
+    if (estadoSom.musica) {
+      var c = contexto();
+      if (c && c.state !== "running") c.resume().then(iniciarMusica);
+      else iniciarMusica();
+    } else pararMusica();
+    return estadoSom.musica;
+  }
+  function iniciar21() {
+    estadoSom.efeitos = lsGet("globo.som.efeitos", true);
+    estadoSom.musica = lsGet("globo.som.musica", false);
+    function liberar() {
+      var c = contexto();
+      if (!c) return;
+      var p = c.state === "running" ? Promise.resolve() : c.resume();
+      p.then(function() {
+        if (estadoSom.musica && !timerMusica) iniciarMusica();
+      });
+    }
+    document.addEventListener("pointerdown", liberar, { capture: true });
+    document.addEventListener("visibilitychange", function() {
+      if (!ac) return;
+      if (document.hidden) {
+        clearTimeout(timerMusica);
+        timerMusica = 0;
+        ac.suspend();
+      } else ac.resume().then(function() {
+        if (estadoSom.musica) iniciarMusica();
+      });
+    });
+  }
+
   // web/src/js/interface/interacao.js
   var ptrs = {};
   var lastX = 0;
@@ -5391,6 +5579,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         return c.d;
       });
       if (grp.indexOf(chosen) < 0) grp.unshift(chosen);
+      tocar("toque");
       select(chosen, false, grp);
     } else if (estadoMapa.selected) closeCard();
   }
@@ -5424,10 +5613,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         return c.d;
       });
       if (grp.indexOf(chosen) < 0) grp.unshift(chosen);
+      tocar("toque");
       select(chosen, false, grp);
     } else if (estadoMapa.selected) closeCard();
   }
-  function iniciar21() {
+  function iniciar22() {
     cv.addEventListener("pointerdown", function(e) {
       cv.setPointerCapture(e.pointerId);
       ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -5479,11 +5669,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/busca.js
   var busca_exports = {};
   __export(busca_exports, {
-    iniciar: () => iniciar22
+    iniciar: () => iniciar23
   });
   var q;
   var res;
-  function iniciar22() {
+  function iniciar23() {
     q = document.getElementById("q");
     res = document.getElementById("results");
     q.addEventListener("input", function() {
@@ -5543,13 +5733,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/botoes.js
   var botoes_exports = {};
   __export(botoes_exports, {
-    iniciar: () => iniciar23,
+    iniciar: () => iniciar24,
     spinB: () => spinB
   });
   var spinB;
   var lp;
   var lc;
-  function iniciar23() {
+  function iniciar24() {
     document.getElementById("zin").onclick = function() {
       estadoCamera.target = null;
       estadoCamera.zoom = Math.min(7, estadoCamera.zoom * 1.35);
@@ -5593,7 +5783,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/filtros-desfazer.js
   var filtros_desfazer_exports = {};
   __export(filtros_desfazer_exports, {
-    iniciar: () => iniciar24
+    iniciar: () => iniciar25
   });
   function undo() {
     if (!hist.length) return;
@@ -5606,7 +5796,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     else if (v.length) fitTo(v);
     setStatus("Filtro desfeito.", 1800);
   }
-  function iniciar24() {
+  function iniciar25() {
     $("ubtn").onclick = undo;
     updateUndo();
   }
@@ -5614,7 +5804,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/filtros-favoritos.js
   var filtros_favoritos_exports = {};
   __export(filtros_favoritos_exports, {
-    iniciar: () => iniciar25
+    iniciar: () => iniciar26
   });
   function favs() {
     return lsGet("globo.fav.v1", []);
@@ -5667,7 +5857,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       box.appendChild(row);
     });
   }
-  function iniciar25() {
+  function iniciar26() {
     $("favsave").onclick = function() {
       var v = visIdx();
       if (!v.length) {
@@ -5689,7 +5879,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/passeio.js
   var passeio_exports = {};
   __export(passeio_exports, {
-    iniciar: () => iniciar26
+    iniciar: () => iniciar27
   });
   function tourStart() {
     if (estadoCartao.passeio) return;
@@ -5707,7 +5897,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("tour").textContent = "⏸";
     $("tour").setAttribute("aria-label", "Parar passeio");
   }
-  function iniciar26() {
+  function iniciar27() {
     $("tour").onclick = function() {
       if (estadoCartao.passeio) tourStop();
       else tourStart();
@@ -5720,7 +5910,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     drawArc: () => drawArc,
     estadoDistancia: () => estadoDistancia,
     fillCountrySelect: () => fillCountrySelect,
-    iniciar: () => iniciar27,
+    iniciar: () => iniciar28,
     slerp: () => slerp
   });
 
@@ -5790,7 +5980,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     sel2.value = byName[norm(first)];
   }
-  function iniciar27() {
+  function iniciar28() {
     ganchos.desenharArco = drawArc;
     fillCountrySelect($("dA"), "Brasil");
     fillCountrySelect($("dB"), "Japão");
@@ -5820,7 +6010,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var exportar_exports = {};
   __export(exportar_exports, {
     csvCell: () => csvCell,
-    iniciar: () => iniciar28,
+    iniciar: () => iniciar29,
     offerFile: () => offerFile
   });
   var dlNS = null;
@@ -5898,7 +6088,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     if (!n) box.textContent = "Nenhum país ligado nos filtros.";
   }
-  function iniciar28() {
+  function iniciar29() {
     setTimeout(function() {
       try {
         if (window.claude && claude.use) claude.use("downloads").then(function(n) {
@@ -5961,7 +6151,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoTreino: () => estadoTreino,
     freshQS: () => freshQS,
     inScope: () => inScope,
-    iniciar: () => iniciar29,
+    iniciar: () => iniciar30,
     matches: () => matches,
     measureQ: () => measureQ,
     qHide: () => qHide,
@@ -6067,7 +6257,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       quiz.timerInt = null;
     }
   }
-  function iniciar29() {
+  function iniciar30() {
     ganchos.treinoAberto = function() {
       return quiz.open;
     };
@@ -6296,7 +6486,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoPartida: () => estadoPartida,
     finishQ: () => finishQ,
     fmtTime: () => fmtTime,
-    iniciar: () => iniciar32,
+    iniciar: () => iniciar33,
     makeNeighborOptions: () => makeNeighborOptions,
     makeOptions: () => makeOptions,
     medalFor: () => medalFor,
@@ -6317,7 +6507,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var estatisticas_exports = {};
   __export(estatisticas_exports, {
     fillQStat: () => fillQStat,
-    iniciar: () => iniciar30,
+    iniciar: () => iniciar31,
     modeName: () => modeName,
     openHistory: () => openHistory
   });
@@ -6609,7 +6799,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     el.appendChild(bar);
     el.appendChild(t);
   }
-  function iniciar30() {
+  function iniciar31() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
     $("htabC").onclick = function() {
       histTab = "c";
@@ -6654,7 +6844,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(progressao_exports, {
     addXP: () => addXP,
     celebrate: () => celebrate,
-    iniciar: () => iniciar31,
+    iniciar: () => iniciar32,
     recordProgress: () => recordProgress,
     updateProgUI: () => updateProgUI
   });
@@ -6798,6 +6988,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         PROG.badges.push(b.id);
         any = true;
         celebrate("🏆 Nova conquista: " + b.title);
+        tocar("conquista");
       }
     });
     if (any) saveProg();
@@ -6806,7 +6997,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var before = levelOf(PROG.xp);
     PROG.xp += n;
     var after = levelOf(PROG.xp);
-    if (after > before) celebrate("⬆️ Subiu para o nível " + after + "!");
+    if (after > before) {
+      celebrate("⬆️ Subiu para o nível " + after + "!");
+      tocar("nivel");
+    }
     saveProg();
   }
   function recordProgress(ok, hinted) {
@@ -6823,6 +7017,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       else if (PROG.lastStreakDate !== PROG.dailyDate) PROG.streak = 1;
       PROG.lastStreakDate = PROG.dailyDate;
       celebrate("🔥 Meta do dia batida! Sequência: " + PROG.streak + " dia" + (PROG.streak === 1 ? "" : "s"));
+      tocar("meta");
     }
     saveProg();
     checkBadges();
@@ -6859,7 +7054,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("badgeshead").textContent = "Conquistas (" + n + "/" + tot + ")";
     $("badgesheet").style.display = "block";
   }
-  function iniciar31() {
+  function iniciar32() {
     PROG = lsGet("globo.prog.v1", { xp: 0, totalCorrect: 0, streak: 0, lastStreakDate: null, dailyGoal: 10, dailyDate: null, dailyCount: 0, goalDoneDate: null, badges: [] });
     $("mbadges").onclick = openBadges;
     $("mhist").onclick = function() {
@@ -6965,6 +7160,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       r.fin = now;
       r.res = recFinish(r);
       celebrate("🏁 Você zerou " + scopeLabel() + "!");
+      tocar("conquista");
       addXP(50);
       if (recordable(estadoTreino.quizScope) && r.res.newMedal) celebrate(MEDAL[r.res.medal].i + " Medalha de " + MEDAL[r.res.medal].n + "!");
     }
@@ -7307,6 +7503,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function finishQ(ok, extra) {
     quiz.answered = true;
     quiz.lastOk = ok;
+    tocar(ok ? "acerto" : "erro");
     record(quiz.cur, ok, quiz.hinted);
     runRecord(quiz.cur, ok);
     renderScore();
@@ -7395,7 +7592,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.fillStyle = "#fff";
     ctx.fillText(name, bx + 44, by + bh / 2 + 1);
   }
-  function iniciar32() {
+  function iniciar33() {
     ganchos.desenharSeloResposta = drawBadge;
     estadoPartida.RUNS = lsGet("globo.runs.v1", {});
     estadoPartida.RECS = lsGet("globo.recs.v1", {});
@@ -7442,7 +7639,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var perguntas_exports = {};
   __export(perguntas_exports, {
     buildModeButtons: () => buildModeButtons,
-    iniciar: () => iniciar34,
+    iniciar: () => iniciar35,
     nextQ: () => nextQ,
     pickStateNear: () => pickStateNear,
     quizMapAnswer: () => quizMapAnswer,
@@ -7456,7 +7653,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var modo_estados_exports = {};
   __export(modo_estados_exports, {
     exitStates: () => exitStates,
-    iniciar: () => iniciar33,
+    iniciar: () => iniciar34,
     updateStBtn: () => updateStBtn
   });
   function updateStBtn() {
@@ -7475,7 +7672,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     afterFilter();
     if (goBrazil !== false) select(D[byName[norm("Brasil")]], true);
   }
-  function iniciar33() {
+  function iniciar34() {
     ganchosInterface.atualizarBotaoEstados = updateStBtn;
     $("stexit").onclick = function() {
       exitStates(true);
@@ -8014,7 +8211,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     body.appendChild(box);
     measureQ();
   }
-  function iniciar34() {
+  function iniciar35() {
     ouvir("modo-estados-abriu", function() {
       if (quiz.open) quizClose();
     });
@@ -8103,7 +8300,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(destaque_escopo_exports, {
     drawScopePulse: () => drawScopePulse,
     firePulseForScope: () => firePulseForScope,
-    iniciar: () => iniciar35
+    iniciar: () => iniciar36
   });
   var scopePulse = null;
   function firePulse(pts) {
@@ -8137,7 +8334,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     ctx.restore();
   }
-  function iniciar35() {
+  function iniciar36() {
     ganchos.desenharPulsoEscopo = drawScopePulse;
   }
 
@@ -8145,7 +8342,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var escopo_exports = {};
   __export(escopo_exports, {
     applyScopeChange: () => applyScopeChange,
-    iniciar: () => iniciar36
+    iniciar: () => iniciar37
   });
   function applyScopeChange(newScope) {
     estadoTreino.quizScopePrev = estadoTreino.quizScope;
@@ -8304,7 +8501,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("scopeempty").style.display = any ? "none" : "block";
     updateMultiApplyBtn();
   }
-  function iniciar36() {
+  function iniciar37() {
     ouvir("categorias-mudaram", function(o) {
       if (quiz.open) {
         updateScopeBtn();
@@ -8371,7 +8568,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
-    iniciar: () => iniciar37
+    iniciar: () => iniciar38
   });
   var themeMode;
   function applyTheme() {
@@ -8395,7 +8592,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function updateLabelsRow() {
     $("mlabelsv").textContent = estadoMapa.labelMode === "p" ? "Países" : "Capitais";
   }
-  function iniciar37() {
+  function iniciar38() {
     themeMode = lsGet("globo.theme", "auto");
     $("themeb").onclick = function() {
       themeMode = themeMode === "auto" ? "light" : themeMode === "light" ? "dark" : "auto";
@@ -8414,6 +8611,19 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("mthemerow").onclick = function() {
       $("themeb").click();
     };
+    function somV() {
+      $("msfxv").textContent = estadoSom.efeitos ? "Ligados" : "Desligados";
+      $("mmusicv").textContent = estadoSom.musica ? "Ligada (ambiente calma)" : "Desligada";
+    }
+    $("msfx").onclick = function() {
+      alternarEfeitos();
+      somV();
+    };
+    $("mmusic").onclick = function() {
+      alternarMusica();
+      somV();
+    };
+    somV();
     $("mlabels").onclick = function() {
       (estadoMapa.labelMode === "p" ? $("lc") : $("lp")).click();
       updateLabelsRow();
@@ -8439,14 +8649,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var cartao_estado_exports = {};
   __export(cartao_estado_exports, {
     enterStates: () => enterStates,
-    iniciar: () => iniciar39
+    iniciar: () => iniciar40
   });
 
   // web/src/js/brasil/importar-contornos.js
   var importar_contornos_exports = {};
   __export(importar_contornos_exports, {
     ensureStateShapes: () => ensureStateShapes,
-    iniciar: () => iniciar38
+    iniciar: () => iniciar39
   });
   function stFeatIndex(f) {
     var p = f.properties || {};
@@ -8591,7 +8801,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       })();
     });
   }
-  function iniciar38() {
+  function iniciar39() {
     $("impSt").onchange = function() {
       var f = this.files[0];
       this.value = "";
@@ -8786,7 +8996,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     selectSt(st || BRS[0], true);
     ensureStateShapes();
   }
-  function iniciar39() {
+  function iniciar40() {
     ganchosInterface.passoEstado = stepSt;
     ganchosInterface.alternarVizinhosEstado = toggleNbSt;
     ganchosInterface.selecionarEstado = selectSt;
@@ -8804,7 +9014,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/brasil/filtros.js
   var filtros_exports2 = {};
   __export(filtros_exports2, {
-    iniciar: () => iniciar40
+    iniciar: () => iniciar41
   });
   function mkChipSt(label, color, val, count) {
     var b = document.createElement("button");
@@ -8853,14 +9063,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       }).length));
     });
   }
-  function iniciar40() {
+  function iniciar41() {
     ganchosInterface.montarChipsEstados = buildChipsSt;
   }
 
   // web/src/js/brasil/menu.js
   var menu_exports2 = {};
   __export(menu_exports2, {
-    iniciar: () => iniciar41
+    iniciar: () => iniciar42
   });
   function cmpRow(box, label, va, vb) {
     var r = document.createElement("div");
@@ -8885,7 +9095,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function cmpRelTop(d) {
     return d.rel && d.rel.items[0] ? d.rel.items[0].n + (d.rel.items[0].p != null ? " " + d.rel.items[0].p + "%" : "") : "—";
   }
-  function iniciar41() {
+  function iniciar42() {
     BRS.forEach(function(s) {
       var o = document.createElement("option");
       o.value = s.i;
@@ -8955,7 +9165,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/app/ultima-visao.js
   var ultima_visao_exports = {};
   __export(ultima_visao_exports, {
-    iniciar: () => iniciar42
+    iniciar: () => iniciar43
   });
   function saveLastView() {
     if (quiz.open || estadoBrasil.statesMode) return;
@@ -8985,7 +9195,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (i >= 0 && estadoMapa.on[i]) select(D[i], false);
     }
   }
-  function iniciar42() {
+  function iniciar43() {
     ouvir("visao-mudou", saveLastView);
     restoreLastView();
   }
@@ -8993,16 +9203,16 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/app/inicio.js
   var inicio_exports = {};
   __export(inicio_exports, {
-    iniciar: () => iniciar43
+    iniciar: () => iniciar44
   });
-  function iniciar43() {
+  function iniciar44() {
     quizOpen();
   }
 
   // web/src/js/treino/toques.js
   var toques_exports = {};
   __export(toques_exports, {
-    iniciar: () => iniciar44
+    iniciar: () => iniciar45
   });
   function toqueAntes(x, y) {
     if (quiz.open && !estadoTreino.qMap) return true;
@@ -9072,7 +9282,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     quizMapAnswer(cand.length ? cand[0].d : poly);
     return true;
   }
-  function iniciar44() {
+  function iniciar45() {
     ganchosInterface.toqueAntes = toqueAntes;
     ganchosInterface.toqueNoGlobo = toqueNoGlobo;
     ganchosInterface.toqueNoMapa2D = toqueNoMapa2D;
@@ -9087,44 +9297,45 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   iniciar6();
   iniciar7();
   iniciar8();
-  iniciar9();
   iniciar21();
+  iniciar9();
+  iniciar22();
   iniciar17();
   iniciar19();
   iniciar18();
-  iniciar22();
   iniciar23();
+  iniciar24();
   iniciar12();
   iniciar13();
-  iniciar24();
-  iniciar20();
   iniciar25();
+  iniciar20();
   iniciar26();
   iniciar27();
+  iniciar28();
   iniciar14();
   iniciar15();
-  iniciar28();
   iniciar29();
-  iniciar32();
-  iniciar34();
-  iniciar44();
   iniciar30();
+  iniciar33();
   iniciar35();
+  iniciar45();
+  iniciar31();
   iniciar36();
   iniciar37();
+  iniciar38();
   iniciar10();
   iniciar11();
-  iniciar33();
-  iniciar39();
+  iniciar34();
   iniciar40();
-  iniciar38();
   iniciar41();
+  iniciar39();
   iniciar42();
-  iniciar16();
-  iniciar31();
   iniciar43();
+  iniciar16();
+  iniciar32();
+  iniciar44();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

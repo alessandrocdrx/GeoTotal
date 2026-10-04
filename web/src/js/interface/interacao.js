@@ -9,6 +9,7 @@ import { closeCard } from './cartao-detalhes.js';
 import { select } from './cartao-pais.js';
 import { ganchosInterface } from './ganchos.js';
 import { hidePick } from './lista-proximos.js';
+import { tocar } from '../nucleo/som.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { inv2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
@@ -57,7 +58,7 @@ function tap(px,py){
   if(chosen){
     var grp=cand.map(function(c){return c.d;});
     if(grp.indexOf(chosen)<0)grp.unshift(chosen);
-    select(chosen,false,grp);
+    tocar('toque');select(chosen,false,grp);
   }else if(estadoMapa.selected)closeCard();
 }
 
@@ -82,7 +83,7 @@ function tap2D(px,py){
   if(chosen){
     var grp=cand2.map(function(c){return c.d;});
     if(grp.indexOf(chosen)<0)grp.unshift(chosen);
-    select(chosen,false,grp);
+    tocar('toque');select(chosen,false,grp);
   }else if(estadoMapa.selected)closeCard();
 }
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
