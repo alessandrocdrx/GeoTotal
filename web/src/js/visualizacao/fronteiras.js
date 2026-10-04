@@ -57,6 +57,12 @@ function drawGeo(R,cx,cy){
       ctx.fillStyle=hexA(REG[r].c,.32);ctx.fill();
     }
   }
+  /* coleção: países dominados ficam dourados no Livre (ver o mapa se completar dá vontade de continuar) */
+  if(!ganchos.treinoAberto()&&!estadoBrasil.statesMode){
+    ctx.beginPath();var tem=false;
+    for(i=0;i<D.length;i++)if(estadoRender.FEAT[i]&&ganchos.dominado(i)){estadoRender.gpath(estadoRender.FEAT[i]);tem=true;}
+    if(tem){ctx.fillStyle='rgba(255,196,40,.5)';ctx.fill();ctx.lineWidth=1.6;ctx.strokeStyle='rgba(255,214,90,.95)';ctx.stroke();}
+  }
   if(!allon){
     ctx.beginPath();
     for(i=0;i<D.length;i++)if(!estadoMapa.on[i]&&avail(D[i])&&estadoRender.FEAT[i])estadoRender.gpath(estadoRender.FEAT[i]);

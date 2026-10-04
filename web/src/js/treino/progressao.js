@@ -25,6 +25,9 @@ function yestStr(){var d=new Date();d.setDate(d.getDate()-1);return dateStr(d);}
 let PROG;
 function saveProg(){lsSet('globo.prog.v1',PROG);}
 function levelOf(xp){return Math.floor(xp/100)+1;}
+/** Título do jogador pelo nível: quem joga passa a se ver como explorador, não como "nível 7". */
+const TITULOS = [[1,'Turista'],[3,'Mochileiro'],[6,'Viajante'],[10,'Explorador'],[15,'Navegador'],[22,'Cartógrafo'],[30,'Embaixador'],[45,'Lenda do Mapa']];
+function tituloDe(lv){var t=TITULOS[0][1];TITULOS.forEach(function(x){if(lv>=x[0])t=x[1];});return t;}
 /** XP total do jogador (para saber quanto uma resposta ou rodada rendeu). */
 function xpAtual(){return PROG.xp;}
 function displayStreak(){
@@ -43,7 +46,7 @@ function updateStreakPill(){
 function updateProgUI(){
   ensureDay();
   var lv=levelOf(PROG.xp),into=PROG.xp%100;
-  var lvEl=$('qlevel');if(lvEl)lvEl.textContent='Nível '+lv;
+  var lvEl=$('qlevel');if(lvEl)lvEl.textContent='Nv '+lv+' · '+tituloDe(lv);
   var bar=$('qxpbar');if(bar)bar.style.width=into+'%';
   var xt=$('qxptxt');if(xt)xt.textContent=into+'/100 XP';
   var ring=$('qgoalring');
@@ -106,7 +109,7 @@ function addXP(n){
   var before=levelOf(PROG.xp);
   PROG.xp+=n;
   var after=levelOf(PROG.xp);
-  if(after>before){celebrate('⬆️ Subiu para o nível '+after+'!');tocar('nivel');}
+  if(after>before){var nt=tituloDe(after);celebrate(nt!==tituloDe(before)?('🎖️ Agora você é '+nt+'! (nível '+after+')'):('⬆️ Subiu para o nível '+after+'!'));tocar(nt!==tituloDe(before)?'conquista':'nivel');}
   saveProg();
 }
 function recordProgress(ok,hinted){

@@ -285,3 +285,22 @@ test('conquistas mostram progresso; cartão leva ao treino da região; curiosida
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('título do jogador, quase-acerto pelo vizinho e países dominados no globo', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    const titulo = document.getElementById('qlevel').textContent;
+    const br = g.D.findIndex((d) => d.cc === 'BR'), ar = g.D.findIndex((d) => d.cc === 'AR');
+    g.quiz.cur = br; g.quiz.escolhido = ar;
+    const quase = g.fbText(g.D[br], false);
+    g.estadoTreino.QS.m.cap.BR = { r: 3, w: 0, s: 3 };
+    return { titulo, quase, dominado: g.ganchos.dominado(br), naoDominado: g.ganchos.dominado(ar) };
+  });
+  assert.match(r.titulo, /Nv 1 · Turista/);
+  assert.match(r.quase, /Quase! .*Argentina é vizinho/);
+  assert.equal(r.dominado, true);
+  assert.equal(r.naoDominado, false);
+  assert.deepEqual(erros, []);
+  await fechar();
+});

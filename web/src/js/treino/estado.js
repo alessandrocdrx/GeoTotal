@@ -5,7 +5,7 @@
  */
 
 import { BRREG } from '../dados/estados-brasil.js';
-import { norm, REG } from '../dados/paises.js';
+import { D, norm, REG } from '../dados/paises.js';
 import { $, lsGet } from '../nucleo/utilitarios.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { estadoRender } from '../visualizacao/projecao.js';
@@ -96,6 +96,7 @@ function iniciar() {
   ganchos.alturaTreino = function(){return estadoTreino.qPanelH;};
   window.addEventListener('resize',measureQ); /* girar o celular troca o painel de embaixo para o lado */
   ganchos.ocultarMarcadores = qHide;
+  ganchos.dominado = function(i){var e=(estadoTreino.QS.m.cap||{})[D[i].cc];return !!(e&&e.s>=3);};
   ganchos.ocultarMarcadoresEstados = function(){return quiz.open&&estadoTreino.qMap&&estadoTreino.quizDomain==='br';};
   ganchos.destaquePais = function(){return estadoTreino.qFlash;};
   estadoTreino.QS = (function(){

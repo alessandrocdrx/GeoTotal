@@ -219,7 +219,14 @@ function record(i,ok,hinted){
 }
 function fbText(d,ok,extra){
   var fl=qflag(d),nm=short(d),cp=qcapD(d);
-  var base=(ok?['✔ Isso! ','✔ Boa! ','✔ Mandou bem! ','✔ Certo! '][Math.floor(Math.random()*4)]:'✖ Quase! ');
+  var base=(ok?['✔ Isso! ','✔ Boa! ','✔ Mandou bem! ','✔ Certo! '][Math.floor(Math.random()*4)]:'✖ Ops! ');
+  /* quase-acerto: errar pelo vizinho dá vontade de tentar de novo (e ensina a vizinhança) */
+  var esc=quiz.escolhido;
+  if(!ok&&esc>=0&&esc!==quiz.cur&&estadoTreino.quizDomain==='world'){
+    var arr=QD(),ce=arr[esc];
+    if(NB[quiz.cur]&&NB[quiz.cur].indexOf(esc)>=0)base='🤏 Quase! '+qflag(ce)+' '+short(ce)+' é vizinho. ';
+    else if(ce&&ce.r===d.r)base='🤏 Quase! Mesma região. ';
+  }
   var ans;
   if(quiz.mode==='neighbor'){
     var an=QD()[quiz.nbAnswer];
@@ -348,4 +355,4 @@ function iniciar() {
   estadoPartida.RECS = lsGet('globo.recs.v1',{});
 }
 
-export { curiosidade, curRun, drawBadge, estadoPartida, finishQ, fmtTime, iniciar, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget };
+export { curiosidade, curRun, drawBadge, estadoPartida, fbText, finishQ, fmtTime, iniciar, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget };

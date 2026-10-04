@@ -35,6 +35,7 @@ function filaDoDia(num){
   return fila;
 }
 
+function faltaParaAmanha(){var a=new Date(),m=new Date(a.getFullYear(),a.getMonth(),a.getDate()+1),min=Math.ceil((m-a)/6e4);return Math.floor(min/60)+'h '+(min%60)+'min';}
 function resultadoDeHoje(){var v=lsGet('globo.desafio.v1',null);return v&&v.dia===hojeStr()?v:null;}
 
 function textoParaCompartilhar(v){
@@ -49,7 +50,7 @@ function copiar(texto){
 /** Começa o desafio de hoje (ou lembra que já foi feito). */
 function iniciarDesafio(){
   var feito=resultadoDeHoje();
-  if(feito){celebrate('✅ Desafio de hoje feito: '+feito.certas+'/10. Volte amanhã!');return;}
+  if(feito){celebrate('✅ Desafio de hoje: '+feito.certas+'/10. O próximo sai em '+faltaParaAmanha()+'.');return;}
   if(!quiz.open)quizOpen();
   if(estadoTreino.quizDomain!=='world'||estadoTreino.quizScope.t!=='world')applyScopeChange({t:'world'});
   if(quiz.mode!=='cap')quizSetMode('cap');
@@ -75,6 +76,7 @@ function aoTerminarRodada(o){
     c.onclick=function(){copiar(textoParaCompartilhar(v));};
     box.insertBefore(c,box.querySelector('.rfjogar'));
     box.querySelector('.rfjogar').textContent='▶ Continuar treinando';
+    var prox=document.createElement('div');prox.className='rfrever';prox.textContent='⏳ Próximo desafio em '+faltaParaAmanha();box.insertBefore(prox,c);
     return;
   }
   if(!resultadoDeHoje()){

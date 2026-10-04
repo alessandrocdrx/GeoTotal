@@ -18,6 +18,8 @@ const ganchos = {
   alturaCartao: () => 0,
   /** Esconder os marcadores dos países (pergunta em que eles entregariam a resposta). */
   ocultarMarcadores: () => false,
+  /** Treino: o jogador já domina este país (3 acertos seguidos)? Pinta de dourado no modo Livre. */
+  dominado: (/* indice */) => false,
   /** Esconder os marcadores dos estados (pergunta "Achar no mapa" do Brasil). */
   ocultarMarcadoresEstados: () => false,
   /** País piscando no treino: { i, kind: 'ok' | 'ask' | 'reveal' } ou null. */

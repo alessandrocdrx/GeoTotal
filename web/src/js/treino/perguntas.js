@@ -150,7 +150,7 @@ function nextQ(){
   var acoes=q.querySelectorAll(':scope > .qcenter');
   if(acoes.length){var ac=document.createElement('div');ac.className='qacoes';Array.prototype.forEach.call(acoes,function(b){ac.appendChild(b);});q.appendChild(ac);}
   var qs=document.createElement('div');qs.id='qstat';qs.className='qstat';fillQStat(qs,d);q.appendChild(qs);
-  quiz.tShown=performance.now();
+  quiz.tShown=performance.now();quiz.escolhido=-1;
   body.appendChild(q);
   if(isMap){
     var row=document.createElement('div');row.className='qrow';
@@ -184,6 +184,7 @@ function nextQ(){
       var b=document.createElement('button');b.textContent=optLabel(k);
       b.onclick=function(){
         if(quiz.answered)return;
+        quiz.escolhido=k;
         var ok=(k===i);
         Array.prototype.forEach.call(grid.children,function(x){x.disabled=true;});
         b.classList.add(ok?'okb':'badb');
