@@ -13,7 +13,7 @@ import { estadoDistancia, slerp } from '../interface/distancia.js';
 import { hidePick } from '../interface/lista-proximos.js';
 import { emitir, ouvir } from '../nucleo/eventos.js';
 import { haversine } from '../nucleo/geo.js';
-import { tocar } from '../nucleo/som.js';
+import { pausarMusica, tocar } from '../nucleo/som.js';
 import { $, confirmTap, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { addHintBtn } from './dica.js';
 import { applyDomainForScope, emptyMsg, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow } from './dominio.js';
@@ -274,7 +274,7 @@ function quizOpen(){
   if(estadoBrasil.statesMode)exitStates(false);
   tourStop();closeCard();hidePick();
   quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncModeSw();
-  document.body.classList.add('quizing');$('quiz').classList.add('map');
+  document.body.classList.add('quizing');$('quiz').classList.add('map');pausarMusica(true);
   $('quiz').style.display='block';
   applyDomainForScope();
   updateSessionBtn();updateOrderBtn();updateTimerBtn();updateSurvBtn();updateScopeBackBtn();
@@ -287,7 +287,7 @@ function quizClose(){
   if(estadoDistancia.arc&&estadoDistancia.arc.quiz)estadoDistancia.arc=null;
   stopTimerTick();
   if(estadoTreino.quizDomain==='br'){estadoBrasil.statesMode=false;estadoBrasil.selSt=null;}
-  document.body.classList.remove('quizing');$('quiz').style.display='none';setTimeout(resize,60);
+  document.body.classList.remove('quizing');$('quiz').style.display='none';setTimeout(resize,60);pausarMusica(false);
 }
 function syncModeSw(){$('qbtn').setAttribute('aria-pressed',quiz.open?'true':'false');$('qclose').setAttribute('aria-pressed',quiz.open?'false':'true');}
 

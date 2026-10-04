@@ -30,9 +30,12 @@ const TITULOS = [[1,'Turista'],[3,'Mochileiro'],[6,'Viajante'],[10,'Explorador']
 function tituloDe(lv){var t=TITULOS[0][1];TITULOS.forEach(function(x){if(lv>=x[0])t=x[1];});return t;}
 /** XP total do jogador (para saber quanto uma resposta ou rodada rendeu). */
 function xpAtual(){return PROG.xp;}
+function anteontem(){var d=new Date();d.setDate(d.getDate()-2);return dateStr(d);}
+/* congelador: um dia perdido não zera a sequência se houver congelador guardado (ganha 1 a cada 7 dias, máx. 2) */
 function displayStreak(){
   var t=todayStr(),y=yestStr();
-  return (PROG.lastStreakDate===t||PROG.lastStreakDate===y)?PROG.streak:0;
+  if(PROG.lastStreakDate===t||PROG.lastStreakDate===y)return PROG.streak;
+  return (PROG.lastStreakDate===anteontem()&&(PROG.freezes||0)>0)?PROG.streak:0;
 }
 function ensureDay(){
   var t=todayStr();
@@ -123,7 +126,9 @@ function recordProgress(ok,hinted){
     PROG.goalDoneDate=PROG.dailyDate;
     var y=yestStr();
     if(PROG.lastStreakDate===y)PROG.streak++;
+    else if(PROG.lastStreakDate===anteontem()&&(PROG.freezes||0)>0){PROG.freezes--;PROG.streak++;celebrate('🧊 O congelador salvou sua sequência!');}
     else if(PROG.lastStreakDate!==PROG.dailyDate)PROG.streak=1;
+    if(PROG.streak%7===0&&(PROG.freezes||0)<2){PROG.freezes=(PROG.freezes||0)+1;setTimeout(function(){celebrate('🧊 Você ganhou um congelador: se faltar um dia, a sequência não zera.');},2400);}
     PROG.lastStreakDate=PROG.dailyDate;
     celebrate('🔥 Meta do dia batida! Sequência: '+PROG.streak+' dia'+(PROG.streak===1?'':'s'));tocar('meta');
   }

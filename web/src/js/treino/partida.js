@@ -281,7 +281,7 @@ function finishQ(ok,extra){
   /* rápido = acertou sem dica em menos de 4 segundos */
   var rapido=ok&&!quiz.hinted&&quiz.tShown&&(performance.now()-quiz.tShown)<4000;
   record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
-  tocar(ok?'acerto':'erro',quiz.streak);if(ok)comemorarAcerto();
+  tocar(ok?'acerto':'erro',{combo:quiz.streak,regiao:estadoTreino.quizDomain==='world'?(QD()[quiz.cur]||{}).r:0});if(ok)comemorarAcerto();
   recordProgress(ok,quiz.hinted);
   if(rapido)addXP(3);
   if(ok&&quiz.streak>=2)addXP(Math.min(quiz.streak-1,5));

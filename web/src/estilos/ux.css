@@ -207,3 +207,11 @@ h1.marca span{color:var(--marca)}
 .bprogt{display:block;font-size:12px;color:var(--muted);margin-top:2px;font-weight:700}
 .qcurio{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-size:.92em;color:var(--fg)}
 .cstreinar{display:block;margin-top:8px;width:100%;min-height:44px;border:0;border-radius:12px;background:linear-gradient(90deg,#1f4fd8,#2f80ff);color:#fff;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer}
+/* menu: linhas de arquivo e link com a mesma cara dos botões; legenda dos símbolos; alvo da meta (v1.28) */
+.mlist .mrowfile,.mlist .mrowlink{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border-top:1px solid var(--border);color:var(--fg);padding:13px 4px;text-decoration:none;cursor:pointer;font-family:inherit}
+.legenda{position:absolute;left:12px;right:12px;bottom:16px;z-index:9;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:14px}
+.legenda[hidden]{display:none}
+.legitens{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0 10px}
+.legitens i{font-style:normal;font-size:16px}
+.legok{width:100%;min-height:44px;border:0;border-radius:12px;background:var(--chip-on);color:var(--chip-on-fg);font-weight:800;font-size:15px;font-family:inherit;cursor:pointer}
+.qgoalmini{min-height:32px}

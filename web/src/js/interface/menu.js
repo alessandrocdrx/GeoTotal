@@ -38,7 +38,7 @@ function iniciar() {
   $('mback').onclick=function(){mShow(null);};
   $('mthemerow').onclick=function(){$('themeb').click();};
   /* som: efeitos e música, cada um com seu interruptor */
-  function somV(){$('msfxv').textContent=estadoSom.efeitos?'Ligados':'Desligados';$('mmusicv').textContent=estadoSom.musica?'Ligada (ambiente calma)':'Desligada';}
+  function somV(){$('msfxv').textContent=estadoSom.efeitos?'Ligados':'Desligados';$('mmusicv').textContent=estadoSom.musica?'Ligada (toca no modo Livre)':'Desligada';}
   $('msfx').onclick=function(){alternarEfeitos();somV();};
   $('mmusic').onclick=function(){alternarMusica();somV();};
   somV();

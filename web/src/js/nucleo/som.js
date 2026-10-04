@@ -13,7 +13,7 @@ import { lsGet, lsSet } from './utilitarios.js';
  */
 
 /** Preferências (efeitos começam ligados, música desligada). */
-const estadoSom = { efeitos: true, musica: false };
+const estadoSom = { efeitos: true, musica: false, pausada: false };
 
 let ac = null;
 let mestre = null;
@@ -43,10 +43,25 @@ function nota(tipo,f,t0,dur,vol,destino){
 }
 function hz(semitonsDeLa4){return 440*Math.pow(2,semitonsDeLa4/12);}
 
+/* "sons do mundo": o acerto muda de timbre conforme o continente da pergunta (regiões de js/dados/paises.js) */
+const TIMBRES = {
+  padrao: {onda:'triangle',base:7,dur:0.2},
+  0: {onda:'triangle',base:9,dur:0.22,brilho:true},  /* América do Sul: violão claro */
+  1: {onda:'sine',base:12,dur:0.16,brilho:true},     /* Caribe: steel drum */
+  2: {onda:'triangle',base:5,dur:0.2},               /* América do Norte */
+  3: {onda:'sine',base:2,dur:0.3,brilho:true},       /* África: kalimba grave */
+  4: {onda:'triangle',base:7,dur:0.24},              /* Europa: sino */
+  5: {onda:'sine',base:14,dur:0.34},                 /* Ásia: pentatônica aguda */
+  6: {onda:'sine',base:10,dur:0.26,brilho:true},     /* Oceania */
+};
 const EFEITOS = {
   /** acerto: duas notas subindo */
   /** acerto: duas notas subindo; com combo, sobe pela escala (cada acerto seguido soa mais alto) */
-  acerto: function(combo){var k=[0,2,4,5,7,9,11,12][Math.min(7,Math.max(0,(combo||1)-1))];nota('triangle',hz(7+k),0,0.12,0.18);nota('triangle',hz(12+k),0.08,0.22,0.2);},
+  acerto: function(o){
+    o=o||{};var k=[0,2,4,5,7,9,11,12][Math.min(7,Math.max(0,(o.combo||1)-1))],t=TIMBRES[o.regiao]||TIMBRES.padrao;
+    nota(t.onda,hz(t.base+k),0,t.dur,0.18);nota(t.onda,hz(t.base+5+k),0.08,t.dur*1.6,0.2);
+    if(t.brilho)nota('sine',hz(t.base+24+k),0.08,t.dur,0.05);
+  },
   /** erro: duas notas graves descendo, sem agressividade */
   erro: function(){nota('sine',hz(-9),0,0.18,0.22);nota('sine',hz(-13),0.12,0.3,0.2);},
   /** toque num país */
@@ -79,7 +94,7 @@ function montarMusica(){
   filtro.connect(eco);eco.connect(retorno);retorno.connect(eco);retorno.connect(mestre);
 }
 function passoMusica(){
-  if(!estadoSom.musica||!ac||ac.state!=='running')return;
+  if(!estadoSom.musica||estadoSom.pausada||!ac||ac.state!=='running')return;
   /* a cada 4 passos troca o acorde de fundo (pad longo e baixo) */
   if(passoMusica.n%4===0){
     var ac0=ACORDES[acorde%ACORDES.length];acorde++;
@@ -95,7 +110,7 @@ function passoMusica(){
 passoMusica.n=0;
 
 function iniciarMusica(){
-  var c=contexto();if(!c||c.state!=='running')return;
+  var c=contexto();if(!c||c.state!=='running'||estadoSom.pausada)return;
   montarMusica();
   busMusica.gain.cancelScheduledValues(c.currentTime);
   busMusica.gain.setTargetAtTime(1,c.currentTime,1.5);
@@ -106,6 +121,12 @@ function pararMusica(){
   if(ac&&busMusica){busMusica.gain.cancelScheduledValues(ac.currentTime);busMusica.gain.setTargetAtTime(0.0001,ac.currentTime,0.4);}
 }
 
+/** A música toca no modo Livre; no treino fica em silêncio para não tirar a concentração (como no Duolingo). */
+function pausarMusica(sim){
+  if(estadoSom.pausada===!!sim)return;
+  estadoSom.pausada=!!sim;
+  if(sim)pararMusica();else if(estadoSom.musica)iniciarMusica();
+}
 function alternarEfeitos(){estadoSom.efeitos=!estadoSom.efeitos;lsSet('globo.som.efeitos',estadoSom.efeitos);if(estadoSom.efeitos)tocar('toque');return estadoSom.efeitos;}
 function alternarMusica(){
   estadoSom.musica=!estadoSom.musica;lsSet('globo.som.musica',estadoSom.musica);
@@ -133,4 +154,4 @@ function iniciar() {
   });
 }
 
-export { alternarEfeitos, alternarMusica, estadoSom, iniciar, tocar };
+export { alternarEfeitos, alternarMusica, estadoSom, iniciar, pausarMusica, tocar };

@@ -304,3 +304,34 @@ test('título do jogador, quase-acerto pelo vizinho e países dominados no globo
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('progresso: salvar e restaurar; música pausa no treino; legenda no Livre', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.evaluate(() => localStorage.removeItem('globo.legenda.vista'));
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    // progresso: o arquivo leva as chaves globo.* e volta igual
+    localStorage.setItem('globo.teste', 'x1');
+    const arquivo = JSON.stringify({ tipo: 'geoTotal-progresso', versao: 1, dados: { 'globo.teste': 'restaurado' } });
+    const ruim = g.restaurarDeTexto('{"oi":1}');
+    const bom = g.restaurarDeTexto(arquivo);
+    return {
+      ruim, bom, valor: localStorage.getItem('globo.teste'),
+      pausadaNoTreino: g.estadoSom.pausada,
+    };
+  });
+  assert.match(r.ruim, /não é um progresso/);
+  assert.equal(r.bom, '');
+  assert.equal(r.valor, 'restaurado');
+  assert.equal(r.pausadaNoTreino, true, 'no treino a música fica pausada');
+  await pagina.click('#qclose');
+  await pagina.waitForTimeout(900);
+  const livre = await pagina.evaluate(() => ({ pausada: window.__geoTotal.estadoSom.pausada, legenda: !document.getElementById('legenda').hidden, itens: document.querySelectorAll('#legitens span').length }));
+  assert.equal(livre.pausada, false, 'no Livre a música pode tocar');
+  assert.equal(livre.legenda, true, 'legenda aparece na primeira visita ao Livre');
+  assert.equal(livre.itens, 7);
+  await pagina.click('#legok');
+  assert.equal(await pagina.evaluate(() => document.getElementById('legenda').hidden), true);
+  assert.deepEqual(erros, []);
+  await fechar();
+});

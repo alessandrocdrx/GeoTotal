@@ -495,6 +495,14 @@ h1.marca span{color:var(--marca)}
 .bprogt{display:block;font-size:12px;color:var(--muted);margin-top:2px;font-weight:700}
 .qcurio{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-size:.92em;color:var(--fg)}
 .cstreinar{display:block;margin-top:8px;width:100%;min-height:44px;border:0;border-radius:12px;background:linear-gradient(90deg,#1f4fd8,#2f80ff);color:#fff;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer}
+/* menu: linhas de arquivo e link com a mesma cara dos botões; legenda dos símbolos; alvo da meta (v1.28) */
+.mlist .mrowfile,.mlist .mrowlink{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border-top:1px solid var(--border);color:var(--fg);padding:13px 4px;text-decoration:none;cursor:pointer;font-family:inherit}
+.legenda{position:absolute;left:12px;right:12px;bottom:16px;z-index:9;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:14px}
+.legenda[hidden]{display:none}
+.legitens{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0 10px}
+.legitens i{font-style:normal;font-size:16px}
+.legok{width:100%;min-height:44px;border:0;border-radius:12px;background:var(--chip-on);color:var(--chip-on-fg);font-weight:800;font-size:15px;font-family:inherit;cursor:pointer}
+.qgoalmini{min-height:32px}
 </style>
 </head>
 <body>
@@ -529,6 +537,7 @@ h1.marca span{color:var(--marca)}
       <button id="tour" aria-label="Passeio pela rota">▶</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
     </div>
+    <div id="legenda" class="legenda" hidden><b>Cada forma é um continente</b><div id="legitens" class="legitens"></div><button id="legok" class="legok">Entendi</button></div>
     <div class="hint" id="hint">Arraste para girar · toque num país para ver os detalhes</div>
     <div id="card" role="dialog" aria-live="polite">
       <div class="chead">
@@ -607,6 +616,9 @@ h1.marca span{color:var(--marca)}
     <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
     <button id="msfx"><span class="mi">🔊</span><span class="mt"><b>Efeitos sonoros</b><small id="msfxv">Ligados</small></span><span class="mc">↻</span></button>
     <button id="mmusic"><span class="mi">🎵</span><span class="mt"><b>Música</b><small id="mmusicv">Desligada</small></span><span class="mc">↻</span></button>
+    <button id="msave"><span class="mi">💾</span><span class="mt"><b>Salvar meu progresso</b><small>Guarde o arquivo (no Drive, por exemplo) para trocar de celular</small></span><span class="mc">↓</span></button>
+    <label class="mrowfile"><span class="mi">📂</span><span class="mt"><b>Restaurar progresso</b><small>Abra um arquivo salvo antes</small></span><span class="mc">›</span><input id="mload" type="file" accept=".json,application/json" hidden></label>
+    <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Textura e fronteiras</b><small>Imagem do globo e contornos</small></span><span class="mc">›</span></button>
     <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
   </nav>
@@ -5470,9 +5482,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     alternarMusica: () => alternarMusica,
     estadoSom: () => estadoSom,
     iniciar: () => iniciar21,
+    pausarMusica: () => pausarMusica,
     tocar: () => tocar
   });
-  var estadoSom = { efeitos: true, musica: false };
+  var estadoSom = { efeitos: true, musica: false, pausada: false };
   var ac = null;
   var mestre = null;
   var busMusica = null;
@@ -5509,13 +5522,32 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function hz(semitonsDeLa4) {
     return 440 * Math.pow(2, semitonsDeLa4 / 12);
   }
+  var TIMBRES = {
+    padrao: { onda: "triangle", base: 7, dur: 0.2 },
+    0: { onda: "triangle", base: 9, dur: 0.22, brilho: true },
+    /* América do Sul: violão claro */
+    1: { onda: "sine", base: 12, dur: 0.16, brilho: true },
+    /* Caribe: steel drum */
+    2: { onda: "triangle", base: 5, dur: 0.2 },
+    /* América do Norte */
+    3: { onda: "sine", base: 2, dur: 0.3, brilho: true },
+    /* África: kalimba grave */
+    4: { onda: "triangle", base: 7, dur: 0.24 },
+    /* Europa: sino */
+    5: { onda: "sine", base: 14, dur: 0.34 },
+    /* Ásia: pentatônica aguda */
+    6: { onda: "sine", base: 10, dur: 0.26, brilho: true }
+    /* Oceania */
+  };
   var EFEITOS = {
     /** acerto: duas notas subindo */
     /** acerto: duas notas subindo; com combo, sobe pela escala (cada acerto seguido soa mais alto) */
-    acerto: function(combo) {
-      var k = [0, 2, 4, 5, 7, 9, 11, 12][Math.min(7, Math.max(0, (combo || 1) - 1))];
-      nota("triangle", hz(7 + k), 0, 0.12, 0.18);
-      nota("triangle", hz(12 + k), 0.08, 0.22, 0.2);
+    acerto: function(o) {
+      o = o || {};
+      var k = [0, 2, 4, 5, 7, 9, 11, 12][Math.min(7, Math.max(0, (o.combo || 1) - 1))], t = TIMBRES[o.regiao] || TIMBRES.padrao;
+      nota(t.onda, hz(t.base + k), 0, t.dur, 0.18);
+      nota(t.onda, hz(t.base + 5 + k), 0.08, t.dur * 1.6, 0.2);
+      if (t.brilho) nota("sine", hz(t.base + 24 + k), 0.08, t.dur, 0.05);
     },
     /** erro: duas notas graves descendo, sem agressividade */
     erro: function() {
@@ -5580,7 +5612,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     retorno.connect(mestre);
   }
   function passoMusica() {
-    if (!estadoSom.musica || !ac || ac.state !== "running") return;
+    if (!estadoSom.musica || estadoSom.pausada || !ac || ac.state !== "running") return;
     if (passoMusica.n % 4 === 0) {
       var ac0 = ACORDES[acorde % ACORDES.length];
       acorde++;
@@ -5597,7 +5629,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   passoMusica.n = 0;
   function iniciarMusica() {
     var c = contexto();
-    if (!c || c.state !== "running") return;
+    if (!c || c.state !== "running" || estadoSom.pausada) return;
     montarMusica();
     busMusica.gain.cancelScheduledValues(c.currentTime);
     busMusica.gain.setTargetAtTime(1, c.currentTime, 1.5);
@@ -5610,6 +5642,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       busMusica.gain.cancelScheduledValues(ac.currentTime);
       busMusica.gain.setTargetAtTime(1e-4, ac.currentTime, 0.4);
     }
+  }
+  function pausarMusica(sim) {
+    if (estadoSom.pausada === !!sim) return;
+    estadoSom.pausada = !!sim;
+    if (sim) pararMusica();
+    else if (estadoSom.musica) iniciarMusica();
   }
   function alternarEfeitos() {
     estadoSom.efeitos = !estadoSom.efeitos;
@@ -7019,9 +7057,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function xpAtual() {
     return PROG.xp;
   }
+  function anteontem() {
+    var d = /* @__PURE__ */ new Date();
+    d.setDate(d.getDate() - 2);
+    return dateStr(d);
+  }
   function displayStreak() {
     var t = todayStr(), y = yestStr();
-    return PROG.lastStreakDate === t || PROG.lastStreakDate === y ? PROG.streak : 0;
+    if (PROG.lastStreakDate === t || PROG.lastStreakDate === y) return PROG.streak;
+    return PROG.lastStreakDate === anteontem() && (PROG.freezes || 0) > 0 ? PROG.streak : 0;
   }
   function ensureDay() {
     var t = todayStr();
@@ -7191,7 +7235,17 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       PROG.goalDoneDate = PROG.dailyDate;
       var y = yestStr();
       if (PROG.lastStreakDate === y) PROG.streak++;
-      else if (PROG.lastStreakDate !== PROG.dailyDate) PROG.streak = 1;
+      else if (PROG.lastStreakDate === anteontem() && (PROG.freezes || 0) > 0) {
+        PROG.freezes--;
+        PROG.streak++;
+        celebrate("🧊 O congelador salvou sua sequência!");
+      } else if (PROG.lastStreakDate !== PROG.dailyDate) PROG.streak = 1;
+      if (PROG.streak % 7 === 0 && (PROG.freezes || 0) < 2) {
+        PROG.freezes = (PROG.freezes || 0) + 1;
+        setTimeout(function() {
+          celebrate("🧊 Você ganhou um congelador: se faltar um dia, a sequência não zera.");
+        }, 2400);
+      }
       PROG.lastStreakDate = PROG.dailyDate;
       celebrate("🔥 Meta do dia batida! Sequência: " + PROG.streak + " dia" + (PROG.streak === 1 ? "" : "s"));
       tocar("meta");
@@ -7768,7 +7822,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     record(quiz.cur, ok, quiz.hinted);
     runRecord(quiz.cur, ok);
     renderScore();
-    tocar(ok ? "acerto" : "erro", quiz.streak);
+    tocar(ok ? "acerto" : "erro", { combo: quiz.streak, regiao: estadoTreino.quizDomain === "world" ? (QD()[quiz.cur] || {}).r : 0 });
     if (ok) comemorarAcerto();
     recordProgress(ok, quiz.hinted);
     if (rapido) addXP(3);
@@ -8475,6 +8529,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     syncModeSw();
     document.body.classList.add("quizing");
     $("quiz").classList.add("map");
+    pausarMusica(true);
     $("quiz").style.display = "block";
     applyDomainForScope();
     updateSessionBtn();
@@ -8507,6 +8562,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     document.body.classList.remove("quizing");
     $("quiz").style.display = "none";
     setTimeout(resize, 60);
+    pausarMusica(false);
   }
   function syncModeSw() {
     $("qbtn").setAttribute("aria-pressed", quiz.open ? "true" : "false");
@@ -8997,7 +9053,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     };
     function somV() {
       $("msfxv").textContent = estadoSom.efeitos ? "Ligados" : "Desligados";
-      $("mmusicv").textContent = estadoSom.musica ? "Ligada (ambiente calma)" : "Desligada";
+      $("mmusicv").textContent = estadoSom.musica ? "Ligada (toca no modo Livre)" : "Desligada";
     }
     $("msfx").onclick = function() {
       alternarEfeitos();
@@ -9839,6 +9895,108 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     };
   }
 
+  // web/src/js/interface/legenda.js
+  var legenda_exports = {};
+  __export(legenda_exports, {
+    iniciar: () => iniciar48
+  });
+  var SIMBOLO = { c: "●", d: "◆", s: "■", t: "▲" };
+  function mostrarLegenda() {
+    if (lsGet("globo.legenda.vista", false) || $("card").style.display === "block") return;
+    var box = $("legitens");
+    box.innerHTML = "";
+    REG.forEach(function(rg, ri) {
+      if (!SHAPES[ri]) return;
+      var it = document.createElement("span");
+      var f = document.createElement("i");
+      f.textContent = SIMBOLO[SHAPES[ri]];
+      f.style.color = rg.c;
+      it.appendChild(f);
+      it.appendChild(document.createTextNode(" " + rg.n));
+      box.appendChild(it);
+    });
+    $("legenda").hidden = false;
+  }
+  function iniciar48() {
+    $("legok").onclick = function() {
+      lsSet("globo.legenda.vista", true);
+      $("legenda").hidden = true;
+    };
+    $("qclose").addEventListener("click", function() {
+      setTimeout(mostrarLegenda, 600);
+    });
+    $("qbtn").addEventListener("click", function() {
+      $("legenda").hidden = true;
+    });
+    $("g").addEventListener("pointerdown", function() {
+      if (!$("legenda").hidden) {
+        lsSet("globo.legenda.vista", true);
+        $("legenda").hidden = true;
+      }
+    });
+  }
+
+  // web/src/js/recursos/progresso.js
+  var progresso_exports = {};
+  __export(progresso_exports, {
+    iniciar: () => iniciar49,
+    restaurarDeTexto: () => restaurarDeTexto
+  });
+  var MARCA = "geoTotal-progresso";
+  function coletar() {
+    var dados = {};
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("globo.") === 0) dados[k] = localStorage.getItem(k);
+      }
+    } catch (e) {
+    }
+    return dados;
+  }
+  function salvarProgresso() {
+    var d = /* @__PURE__ */ new Date(), dia = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    offerFile("geototal-progresso-" + dia + ".json", JSON.stringify({ tipo: MARCA, versao: 1, data: dia, dados: coletar() }));
+  }
+  function restaurarDeTexto(texto) {
+    var o;
+    try {
+      o = JSON.parse(texto);
+    } catch (e) {
+      return "Este arquivo não é um progresso do geoTotal.";
+    }
+    if (!o || o.tipo !== MARCA || !o.dados || typeof o.dados !== "object") return "Este arquivo não é um progresso do geoTotal.";
+    try {
+      Object.keys(o.dados).forEach(function(k) {
+        if (k.indexOf("globo.") === 0 && typeof o.dados[k] === "string") localStorage.setItem(k, o.dados[k]);
+      });
+    } catch (e) {
+      return "Não consegui gravar o progresso neste aparelho.";
+    }
+    return "";
+  }
+  function iniciar49() {
+    $("msave").onclick = salvarProgresso;
+    $("mload").onchange = function() {
+      var f = this.files && this.files[0];
+      this.value = "";
+      if (!f) return;
+      var r = new FileReader();
+      r.onload = function() {
+        var erro = restaurarDeTexto(String(r.result || ""));
+        if (erro) {
+          setStatus(erro, 5e3);
+          return;
+        }
+        setStatus("Progresso restaurado! Abrindo de novo…", 2e3);
+        setTimeout(function() {
+          location.reload();
+        }, 900);
+      };
+      r.readAsText(f);
+    };
+  }
+
   // web/src/js/main.js
   iniciar();
   iniciar2();
@@ -9887,8 +10045,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   iniciar44();
   iniciar46();
   iniciar47();
+  iniciar49();
+  iniciar48();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

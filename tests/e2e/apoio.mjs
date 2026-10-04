@@ -57,7 +57,7 @@ export async function abrirApp(ambiente, { esperar = 5000, novato = false } = {}
   pagina.on('request', (r) => { if (!/^(http:\/\/127\.0\.0\.1|data:|blob:)/.test(r.url())) externos.push(r.url()); });
   await pagina.addInitScript(() => { window.AndroidBridge = { saveFile() {}, print() {}, shareImage() {} }; });
   // por padrão, um usuário que já viu as boas-vindas (o teste delas passa novato: true)
-  if (!novato) await pagina.addInitScript(() => { try { localStorage.setItem('globo.bv.v1', 'true'); } catch {} });
+  if (!novato) await pagina.addInitScript(() => { try { localStorage.setItem('globo.bv.v1', 'true'); localStorage.setItem('globo.legenda.vista', 'true'); } catch {} });
   await pagina.goto(ambiente.url);
   await pagina.waitForTimeout(esperar);
   return { pagina, erros, externos, fechar: () => ctx.close() };
