@@ -12,7 +12,7 @@ import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { gapOf, mstats, poolIdx, qcapD, qcc, QD, qflag, TIER_P, tierOf, unitWord } from './dominio.js';
 import { estadoTreino, measureQ, quiz, scopeLabel } from './estado.js';
 import { fillQStat, modeName } from './estatisticas.js';
-import { addXP, celebrate, recordProgress, updateProgUI } from './progressao.js';
+import { addXP, celebrate, recordProgress, updateProgUI, xpAtual } from './progressao.js';
 import { flyTo } from '../visualizacao/animacao.js';
 import { showCountry, zoomFor } from '../visualizacao/enquadramento.js';
 import { estadoBrasil, stateView } from '../visualizacao/estados.js';
@@ -97,6 +97,8 @@ function rndInt(n){
 }
 function shuffled(a){a=a.slice();for(var k=a.length-1;k>0;k--){var z=rndInt(k+1),t=a[k];a[k]=a[z];a[z]=t;}return a;}
 function pickQ(){
+  /* desafio do dia: a fila do dia, na ordem, igual para todo mundo */
+  if(estadoTreino.desafio){var fd=estadoTreino.desafio.fila;return fd[Math.min(quiz.sessionAsked,fd.length-1)];}
   var pool=runPool();if(!pool.length)return -1;
   if(quiz.order==='seq')return pickQFrom(pool);
   var arr=QD(),cand=pool;
@@ -203,7 +205,7 @@ function makeOptions(i){
 function renderScore(){
   updateProgUI();
   var n=poolIdx().length,r=curRun(),done=n?n-runPool().length:0;
-  $('qruntxt').textContent=n?(done+' de '+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'')):'';
+  $('qruntxt').textContent=estadoTreino.desafio?('🗓️ Desafio do dia · '+Math.min(quiz.sessionAsked,10)+'/10'):n?(done+' de '+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'')):'';
   $('qrunbar').style.display=n?'block':'none';
   $('qrunfill').style.width=(n?Math.round(100*done/n):0)+'%';
 }
@@ -233,8 +235,14 @@ function showTarget(i){
   if(estadoTreino.quizDomain==='br'){estadoBrasil.statesMode=true;estadoBrasil.selSt=BRS[i];var v=stateView(BRS[i]);flyTo(v.lat,v.lng,zoomFor(v.r,3.4));}
   else{estadoTreino.qBadge=i;showCountry(i);}
 }
-function sessionRecord(ok){
-  var s=quiz;s.sessionLog.push({label:qflag(QD()[s.cur])+' '+short(QD()[s.cur]),ok:ok});
+function sessionRecord(ok,ganho,rapido){
+  var s=quiz;s.sessionLog.push({label:qflag(QD()[s.cur])+' '+short(QD()[s.cur]),ok:ok,xp:ganho||0,rapido:!!rapido,combo:s.streak});
+}
+/** Contador de acertos seguidos, sempre à vista no placar a partir do 2º. */
+function mostrarCombo(){
+  var el=$('qcomb');if(!el)return;
+  if(quiz.streak>=2){el.hidden=false;el.textContent='🔥 x'+quiz.streak;el.classList.remove('pulsa');void el.offsetWidth;el.classList.add('pulsa');}
+  else el.hidden=true;
 }
 /** Confete leve saindo da resposta certa (só enfeite; some sozinho, respeita "reduzir movimento"). */
 function comemorarAcerto(){
@@ -251,22 +259,29 @@ function comemorarAcerto(){
   }
 }
 function finishQ(ok,extra){
-  quiz.answered=true;quiz.lastOk=ok;record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
+  quiz.answered=true;quiz.lastOk=ok;var xp0=xpAtual();
+  /* rápido = acertou sem dica em menos de 4 segundos */
+  var rapido=ok&&!quiz.hinted&&quiz.tShown&&(performance.now()-quiz.tShown)<4000;
+  record(quiz.cur,ok,quiz.hinted);runRecord(quiz.cur,ok);renderScore();
   tocar(ok?'acerto':'erro',quiz.streak);if(ok)comemorarAcerto();
   recordProgress(ok,quiz.hinted);
+  if(rapido)addXP(3);
+  if(ok&&quiz.streak>=2)addXP(Math.min(quiz.streak-1,5));
   if(estadoTreino.QS.q&&!lsGet('globo.dicaLivre',false)&&(quiz.total||0)>=4){lsSet('globo.dicaLivre',true);setTimeout(function(){celebrate('👆 Dica: toque em Livre, lá em cima, para explorar o globo à vontade.');},1300);}
   showTarget(quiz.cur);
-  if(estadoTreino.quizDomain==='world'){estadoTreino.qFlash={i:quiz.cur,kind:ok?'ok':'reveal'};}
+  if(estadoTreino.quizDomain==='world'){estadoTreino.qFlash={i:quiz.cur,kind:ok?'ok':'reveal',t:performance.now()};}
   var fb=$('qfb');fb.textContent=fbText(QD()[quiz.cur],ok,extra);fb.className=ok?'ok':'bad';
-  /* combo: 3 ou mais acertos seguidos aparecem e dão XP extra; marcos de 5 e 10 comemoram */
-  if(ok&&quiz.streak>=3){
-    var pill=document.createElement('span');pill.className='qcombo';pill.textContent='🔥 '+quiz.streak+' seguidos';fb.insertBefore(pill,fb.firstChild);
-    addXP(Math.min(quiz.streak-2,5));
-    if(quiz.streak===5||quiz.streak%10===0){celebrate('🔥 '+quiz.streak+' acertos seguidos!');tocar('nivel');}
-  }
+  /* surpresa de vez em quando (1 em 10 acertos): só XP, nunca dinheiro nem compra */
+  if(ok&&!estadoTreino.desafio&&Math.random()<0.1){addXP(10);var sp=document.createElement('span');sp.className='qcombo qsurpresa';sp.textContent='🎁 Surpresa! +10';fb.insertBefore(sp,fb.firstChild);tocar('nivel');}
+  if(rapido){var rp=document.createElement('span');rp.className='qcombo qrapido';rp.textContent='⚡ Rápido!';fb.insertBefore(rp,fb.firstChild);}
+  if(ok&&(quiz.streak===5||quiz.streak%10===0)){celebrate('🔥 '+quiz.streak+' acertos seguidos!');tocar('nivel');}
+  mostrarCombo();
+  /* quanto ganhou nesta resposta, subindo do botão certo */
+  var ganho=xpAtual()-xp0;
+  if(ok&&ganho>0){var bok=document.querySelector('#qbody .okb');if(bok){var fl=document.createElement('span');fl.className='qfloat';fl.textContent='+'+ganho+' XP';bok.appendChild(fl);setTimeout(function(){fl.remove();},1100);}}
   var qse=$('qstat');if(qse)fillQStat(qse,QD()[quiz.cur]);
   $('qnext').style.display='block';measureQ();
-  sessionRecord(ok);
+  sessionRecord(ok,ganho,rapido);
   /* acertou: passa sozinho para a próxima; errou: espera o toque em "Próxima" */
   clearTimeout(quiz.autoT);
   if(ok){

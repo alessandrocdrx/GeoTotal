@@ -11,8 +11,9 @@ import { NB, short } from '../dados/vizinhos.js';
 import { closeCard, tourStop } from '../interface/cartao-detalhes.js';
 import { estadoDistancia, slerp } from '../interface/distancia.js';
 import { hidePick } from '../interface/lista-proximos.js';
-import { ouvir } from '../nucleo/eventos.js';
+import { emitir, ouvir } from '../nucleo/eventos.js';
 import { haversine } from '../nucleo/geo.js';
+import { tocar } from '../nucleo/som.js';
 import { $, confirmTap, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { addHintBtn } from './dica.js';
 import { applyDomainForScope, emptyMsg, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow } from './dominio.js';
@@ -49,34 +50,59 @@ function showRoundSummary(reason){
   stopTimerTick();
   var body=$('qbody'),fb=$('qfb');fb.textContent='';fb.className='';$('qnext').style.display='none';
   body.innerHTML='';
-  var log=quiz.sessionLog,okc=log.filter(function(x){return x.ok;}).length;
-  var title=reason==='time'?('Tempo esgotado: '+okc+' '+(okc===1?'acerto':'acertos')+' em '+quiz.timerLen+'s'):
-            reason==='survival'?('Você errou! Sequência: '+okc):
-            ('Rodada concluída: '+okc+'/'+log.length);
-  var h=document.createElement('div');h.className='qq';h.style.fontSize='19px';h.textContent=title;
-  body.appendChild(h);
+  var log=quiz.sessionLog,okc=log.filter(function(x){return x.ok;}).length,n=log.length||1;
+  var xp=log.reduce(function(t,x){return t+(x.xp||0);},0);
+  var rap=log.filter(function(x){return x.rapido;}).length;
+  var comboMax=log.reduce(function(m,x){return Math.max(m,x.combo||0);},0);
+  /* estrelas pela taxa de acerto: 100% = 3, 70% = 2, 40% = 1 */
+  var pct=okc/n,est=pct>=1?3:pct>=.7?2:pct>=.4?1:0;
+  var box=document.createElement('div');box.className='rodadafim';
+  var st=document.createElement('div');st.className='estrelas';
+  for(var k=0;k<3;k++){var e=document.createElement('span');e.textContent='★';if(k<est){e.className='on';e.style.animationDelay=(0.15+k*0.22)+'s';}st.appendChild(e);}
+  box.appendChild(st);
+  var h=document.createElement('div');h.className='rftit';
+  h.textContent=reason==='time'?'⏱️ Tempo esgotado!':reason==='survival'?'💀 Fim da sobrevivência!':['Bora de novo? 💪','Bom começo! 👍','Muito bem! 🎉','Perfeito! 🏆'][est];
+  box.appendChild(h);
+  var sub=document.createElement('div');sub.className='rfsub';sub.textContent=okc+' de '+log.length+' certas';box.appendChild(sub);
+  var stats=document.createElement('div');stats.className='rfstats';
+  [['+'+xp,'XP'],['🔥 '+comboMax,'seguidos'],['⚡ '+rap,'rápidas']].forEach(function(p){
+    var c=document.createElement('div');var v=document.createElement('b');v.textContent=p[0];var l=document.createElement('span');l.textContent=p[1];c.appendChild(v);c.appendChild(l);stats.appendChild(c);
+  });
+  box.appendChild(stats);
   var miss=log.filter(function(x){return !x.ok;});
-  if(miss.length){
-    var mh=document.createElement('div');mh.className='qhint';mh.style.marginBottom='8px';mh.textContent='Para rever: '+miss.map(function(x){return x.label;}).join(', ');
-    body.appendChild(mh);
-  }
-  var row=document.createElement('div');row.className='qrow';
-  var again=document.createElement('button');again.textContent='Nova rodada';
+  if(miss.length){var mh=document.createElement('div');mh.className='rfrever';mh.textContent='Para rever: '+miss.map(function(x){return x.label;}).join(', ');box.appendChild(mh);}
+  var again=document.createElement('button');again.className='rfjogar';again.textContent='▶ Jogar de novo';
   again.onclick=function(){resetSession();if(quiz.timerLen)startTimerTick();nextQ();};
-  var free=document.createElement('button');free.textContent='Continuar sem limite';
+  box.appendChild(again);
+  var row=document.createElement('div');row.className='rfmais';
+  if(miss.length){
+    var rev=document.createElement('button');rev.textContent='Revisar os erros';
+    rev.onclick=function(){estadoTreino.quizFocus='wrong';lsSet('globo.quiz.focus','wrong');updateScopeBtn();resetSession();if(quiz.timerLen)startTimerTick();nextQ();};
+    row.appendChild(rev);
+  }
+  var free=document.createElement('button');free.textContent='Jogar sem parar';
   free.onclick=function(){
     quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);updateSessionBtn();
     quiz.timerLen=0;lsSet('globo.quiz.timerlen',0);updateTimerBtn();stopTimerTick();updateTimerDisplay();
     quiz.survivalMode=false;lsSet('globo.quiz.survival',false);updateSurvBtn();
     resetSession();nextQ();
   };
-  row.appendChild(again);row.appendChild(free);
-  if(miss.length){
-    var rev=document.createElement('button');rev.textContent='Só revisar erros';
-    rev.onclick=function(){estadoTreino.quizFocus='wrong';lsSet('globo.quiz.focus','wrong');resetSession();if(quiz.timerLen)startTimerTick();nextQ();};
-    row.appendChild(rev);
+  row.appendChild(free);box.appendChild(row);
+  body.appendChild(box);
+  emitir('rodada-terminou',{caixa:box,log:log});
+  tocar(est===3?'conquista':'meta');
+  if(est>=2)celebrarTela(est===3?28:16);
+  measureQ();
+}
+/** Confete caindo no painel (fim de rodada boa). */
+function celebrarTela(n){
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var host=$('quiz').querySelector('.qpanel'),cores=['#ffd166','#06d6a0','#4cc9f0','#f72585','#fb8500'];
+  for(var k=0;k<n;k++){
+    var p=document.createElement('i');p.className='confete chuva';
+    p.style.left=(5+Math.random()*90)+'%';p.style.background=cores[k%cores.length];p.style.animationDelay=(Math.random()*0.5)+'s';
+    host.appendChild(p);setTimeout(function(el){return function(){el.remove();};}(p),2200);
   }
-  body.appendChild(row);
 }
 function updateSessionBtn(){updateTrainRow();
   $('qsessionb').textContent='🧮 Sessão: '+(quiz.sessionLen?quiz.sessionLen+' perguntas':'livre');
@@ -120,7 +146,11 @@ function nextQ(){
     showTarget(i);if(estadoTreino.quizDomain==='world')estadoTreino.qFlash={i:i,kind:'ask'};
   }
   else{q.textContent='Toque no mapa: onde fica '+qflag(d)+' '+short(d)+'?';}
+  /* Centralizar e Dica numa linha só deles, embaixo da pergunta */
+  var acoes=q.querySelectorAll(':scope > .qcenter');
+  if(acoes.length){var ac=document.createElement('div');ac.className='qacoes';Array.prototype.forEach.call(acoes,function(b){ac.appendChild(b);});q.appendChild(ac);}
   var qs=document.createElement('div');qs.id='qstat';qs.className='qstat';fillQStat(qs,d);q.appendChild(qs);
+  quiz.tShown=performance.now();
   body.appendChild(q);
   if(isMap){
     var row=document.createElement('div');row.className='qrow';

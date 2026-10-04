@@ -13,6 +13,7 @@
  *   fronteiras-carregadas  contornos dos países prontos ou trocados (interface/filtros atualiza)
  *   categorias-mudaram     territórios incluídos ou excluídos; dados: { placar } (treino atualiza)
  *   modo-estados-abriu     entrou no mapa dos estados do Brasil (treino fecha o painel)
+ *   rodada-terminou        fim de uma rodada do treino; dados: { caixa, log } (o desafio do dia completa a tela)
  */
 const ouvintes = {};
 

@@ -25,6 +25,8 @@ function yestStr(){var d=new Date();d.setDate(d.getDate()-1);return dateStr(d);}
 let PROG;
 function saveProg(){lsSet('globo.prog.v1',PROG);}
 function levelOf(xp){return Math.floor(xp/100)+1;}
+/** XP total do jogador (para saber quanto uma resposta ou rodada rendeu). */
+function xpAtual(){return PROG.xp;}
 function displayStreak(){
   var t=todayStr(),y=yestStr();
   return (PROG.lastStreakDate===t||PROG.lastStreakDate===y)?PROG.streak:0;
@@ -166,4 +168,4 @@ function iniciar() {
   startMap();
 }
 
-export { addXP, celebrate, iniciar, recordProgress, updateProgUI };
+export { addXP, celebrate, iniciar, recordProgress, updateProgUI, xpAtual };

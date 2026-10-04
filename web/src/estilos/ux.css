@@ -166,3 +166,38 @@ h1.marca span{color:var(--marca)}
 #welcome .wmodos span{color:var(--muted);font-size:13.5px}
 #welcome .wgo{width:100%;min-height:52px;border:0;border-radius:14px;background:linear-gradient(90deg,#1f4fd8,#2f80ff);color:#fff;font-size:17px;font-weight:800;font-family:inherit;cursor:pointer}
 #welcome .wall{width:100%;min-height:44px;margin-top:8px;border:0;background:transparent;color:var(--muted);font-size:14.5px;font-weight:600;font-family:inherit;cursor:pointer}
+
+/* ---------- diversão (v1.25) ---------- */
+.qacoes{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.qacoes .qcenter,.qacoes .qhintbtn{margin:0}
+/* combo sempre à vista no placar */
+.qcomb{flex:none;margin-left:8px;padding:1px 9px;border-radius:999px;background:linear-gradient(90deg,#fb8500,#ffb703);color:#1b1200;font-weight:800;font-size:12.5px}
+.qcomb.pulsa{animation:qpop .45s ease-out}
+.qrapido{background:linear-gradient(90deg,#4cc9f0,#4361ee);color:#fff}
+/* +XP subindo da resposta certa */
+.qfloat{position:absolute;left:50%;top:0;transform:translate(-50%,-20%);font-weight:900;font-size:16px;color:#ffd166;text-shadow:0 2px 6px rgba(0,0,0,.55);pointer-events:none;animation:qsobe 1.05s ease-out forwards;white-space:nowrap}
+@keyframes qsobe{0%{opacity:0;transform:translate(-50%,10%) scale(.8)}20%{opacity:1;transform:translate(-50%,-40%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-190%) scale(1)}}
+/* fim de rodada */
+.rodadafim{text-align:center;padding:6px 0 4px}
+.estrelas{display:flex;justify-content:center;gap:10px;font-size:52px;line-height:1;margin:4px 0 6px}
+.estrelas span{color:var(--border);filter:grayscale(1)}
+.estrelas span.on{color:#ffc93c;filter:none;text-shadow:0 0 18px rgba(255,201,60,.55);animation:estrela .5s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes estrela{0%{transform:scale(0) rotate(-40deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.rftit{font-size:22px;font-weight:800;margin:2px 0}
+.rfsub{color:var(--muted);font-size:15px;margin-bottom:12px}
+.rfstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.rfstats div{border:1px solid var(--border);background:var(--chip);border-radius:14px;padding:8px 4px}
+.rfstats b{display:block;font-size:19px}
+.rfstats span{color:var(--muted);font-size:12px}
+.rfrever{color:var(--muted);font-size:13px;margin:0 0 12px}
+.rfjogar{width:100%;min-height:56px;border:0;border-radius:16px;background:linear-gradient(90deg,#1fa85a,#2ecc71);color:#fff;font-size:19px;font-weight:900;font-family:inherit;cursor:pointer;box-shadow:0 6px 18px rgba(46,204,113,.35);animation:qpop .5s .6s ease-out both}
+.rfmais{display:flex;gap:8px;margin-top:8px}
+.rfmais button{flex:1;min-height:44px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+.qpanel{position:relative}
+.confete.chuva{top:-10px;left:50%;animation:chuva 2s ease-in forwards}
+@keyframes chuva{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(420px) rotate(540deg);opacity:0}}
+@media (prefers-reduced-motion: reduce){.qcomb.pulsa,.estrelas span.on,.rfjogar,.qfloat{animation:none}}
+/* desafio do dia e surpresa */
+.rfgrade{font-size:24px;letter-spacing:2px;margin:0 0 12px}
+.rfcopiar{width:100%;min-height:48px;margin-bottom:8px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:14px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer}
+.qsurpresa{background:linear-gradient(90deg,#b5179e,#f72585);color:#fff}

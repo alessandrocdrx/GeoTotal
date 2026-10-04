@@ -67,8 +67,12 @@ function drawGeo(R,cx,cy){
   }
   if(ganchos.destaquePais()&&estadoRender.FEAT[ganchos.destaquePais().i]){
     var fk=ganchos.destaquePais().kind,fcol=fk==='ok'?['rgba(46,204,113,.45)','#2ecc71']:(fk==='ask'?['rgba(77,163,255,.40)','#4da3ff']:['rgba(255,224,102,.45)','#ffe066']);
+    /* logo após a resposta, o contorno pulsa e brilha por um instante */
+    var t0=ganchos.destaquePais().t,pulso=t0?Math.max(0,1-(performance.now()-t0)/1000):0;
     ctx.beginPath();estadoRender.gpath(estadoRender.FEAT[ganchos.destaquePais().i]);ctx.fillStyle=fcol[0];ctx.fill();
-    ctx.lineWidth=2.6;ctx.strokeStyle=fcol[1];ctx.stroke();
+    if(pulso>0){ctx.save();ctx.shadowColor=fcol[1];ctx.shadowBlur=28*pulso;}
+    ctx.lineWidth=2.6+5*pulso;ctx.strokeStyle=fcol[1];ctx.stroke();
+    if(pulso>0)ctx.restore();
   }
   if(estadoRender.optBor){
     ctx.beginPath();

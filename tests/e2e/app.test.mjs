@@ -206,3 +206,58 @@ test('primeira vez: boas-vindas levam à América do Sul; alternativas sem lugar
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('rodada de 10: termina com estrelas, XP e "Jogar de novo"', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    for (let k = 0; k < 10; k++) { g.quiz.answered = false; g.finishQ(true); if (k < 9) g.nextQ(); }
+    document.getElementById('qnext').click();
+    const fim = document.querySelector('.rodadafim');
+    return {
+      len: g.quiz.sessionLen,
+      fim: !!fim,
+      estrelas: fim ? fim.querySelectorAll('.estrelas .on').length : -1,
+      combo: document.getElementById('qcomb').textContent,
+      jogar: !!document.querySelector('.rfjogar'),
+    };
+  });
+  assert.equal(r.len, 10, 'rodadas de 10 por padrão');
+  assert.equal(r.fim, true, 'tela de fim de rodada aparece');
+  assert.equal(r.estrelas, 3, '10 de 10 = 3 estrelas');
+  assert.equal(r.combo, '🔥 x10');
+  assert.equal(r.jogar, true);
+  await pagina.click('.rfjogar');
+  assert.equal(await pagina.evaluate(() => !!document.querySelector('.rodadafim')), false, '"Jogar de novo" começa outra rodada');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('desafio do dia: 10 países iguais para todos, uma vez por dia, com resultado para copiar', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.click('#mbtn');
+  await pagina.click('#mdesafio');
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    const fila = g.estadoTreino.desafio.fila.slice();
+    const vistos = [];
+    for (let k = 0; k < 10; k++) { vistos.push(g.quiz.cur); g.quiz.answered = false; g.finishQ(k % 3 !== 0); if (k < 9) g.nextQ(); }
+    document.getElementById('qnext').click();
+    return {
+      mesmaFila: JSON.stringify(fila) === JSON.stringify(vistos),
+      titulo: document.querySelector('.rftit').textContent,
+      grade: document.querySelector('.rfgrade').textContent,
+      copiar: !!document.querySelector('.rfcopiar'),
+      encerrou: g.estadoTreino.desafio === null,
+      salvo: JSON.parse(localStorage.getItem('globo.desafio.v1')).certas,
+    };
+  });
+  assert.equal(r.mesmaFila, true, 'as perguntas seguem a fila do dia');
+  assert.match(r.titulo, /Desafio do dia #\d+/);
+  assert.equal(r.grade, '🟥🟩🟩🟥🟩🟩🟥🟩🟩🟥');
+  assert.equal(r.copiar, true);
+  assert.equal(r.encerrou, true);
+  assert.equal(r.salvo, 6);
+  assert.deepEqual(erros, []);
+  await fechar();
+});

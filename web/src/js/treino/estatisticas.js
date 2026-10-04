@@ -140,14 +140,10 @@ function renderCardStat(key,isState){
   box.appendChild(top);box.appendChild(bar);box.appendChild(lg);
 }
 function fillQStat(el,o){
-  var e=(estadoTreino.QS.m[quiz.mode]||{})[qcc(o)],r=e?(e.r||0):0,w=e?(e.w||0):0;
-  el.innerHTML='';
-  el.hidden=!(r+w);if(!(r+w))return;
-  var pct=Math.round(100*r/(r+w));
-  var bar=document.createElement('span');bar.className='qsbar';
-  var f=document.createElement('i');f.style.width=pct+'%';bar.appendChild(f);
-  var t=document.createElement('span');t.textContent=pct+'% · ✔ '+r+' · ✖ '+w;
-  el.appendChild(bar);el.appendChild(t);
+  /* só fala quando ajuda: se você já errou este país, avisa para prestar atenção */
+  var e=(estadoTreino.QS.m[quiz.mode]||{})[qcc(o)],w=e?(e.w||0):0;
+  el.innerHTML='';el.hidden=!w;
+  if(w)el.textContent='🔁 Você já errou este '+w+(w===1?' vez':' vezes');
 }
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {

@@ -20,6 +20,8 @@ const estadoTreino = {
   quizDomain: 'world',
   qMap: false,
   qFlash: null,
+  /** Desafio do dia em andamento: { dia, num, fila (10 países do dia) } ou null. */
+  desafio: null,
   qBadge: null,
   qPanelH: 0,
 };
@@ -117,7 +119,7 @@ function iniciar() {
   estadoTreino.quizFocus = lsGet('globo.quiz.focus','mix');
   if(estadoTreino.quizFocus!=='new'&&estadoTreino.quizFocus!=='wrong')estadoTreino.quizFocus='mix';
   quiz = {open:false,mode:'cap',type:'choice',cur:-1,answered:false,ok:0,total:0,streak:0,last:-1,hinted:false,
-    sessionLen:lsGet('globo.quiz.sesslen',0),sessionAsked:0,sessionLog:[],
+    sessionLen:lsGet('globo.quiz.sesslen',10),sessionAsked:0,sessionLog:[],
     order:lsGet('globo.quiz.order2','random'),
     timerLen:lsGet('globo.quiz.timerlen',0),timerStart:0,timerInt:null,
     survivalMode:lsGet('globo.quiz.survival',false),lastOk:null,nbAnswer:-1};
