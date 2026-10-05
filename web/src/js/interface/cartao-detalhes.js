@@ -5,7 +5,7 @@
  */
 
 import { appendLang, appendRel } from '../dados/linguas.js';
-import { $ } from '../nucleo/utilitarios.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { estadoMapa } from '../visualizacao/tela.js';
@@ -15,6 +15,8 @@ const estadoCartao = {
   cardH: 0,
   /** Intervalo do passeio automático pela rota (null = parado). */
   passeio: null,
+  /** Passeio continua sem mostrar o cartão (a pessoa fechou o cartão durante o passeio). */
+  semCartao: false,
 };
 
 /* ---------- cartão: dados extras, recolher, deslizar ---------- */
@@ -45,8 +47,11 @@ function fillInfo(d){
 function measureCard(){estadoCartao.cardH=card.style.display==='block'?card.offsetHeight+10:0;}
 
 let card;
-function closeCard(){estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;tourStop();}
-function tourStop(){if(!estadoCartao.passeio)return;clearInterval(estadoCartao.passeio);estadoCartao.passeio=null;$('tour').textContent='🎬';$('tour').setAttribute('aria-label','Passeio pelos países');}
+function closeCard(){
+  /* durante o passeio, fechar o cartão só esconde o cartão: o passeio continua pelo mapa */
+  if(estadoCartao.passeio&&estadoMapa.selected){card.style.display='none';estadoCartao.cardH=0;estadoCartao.semCartao=true;setStatus('🎬 O passeio continua sem o cartão. Toque em ⏹ para parar.',3000);return;}
+  estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;tourStop();}
+function tourStop(){if(!estadoCartao.passeio)return;clearInterval(estadoCartao.passeio);estadoCartao.passeio=null;estadoCartao.semCartao=false;$('tour').textContent='🎬';$('tour').setAttribute('aria-label','Passeio pelos países');}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   card = document.getElementById('card');

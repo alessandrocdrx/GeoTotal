@@ -375,3 +375,50 @@ test('giro e passeio: escondidos no Treino; no Livre explicam o que fazem', asyn
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('passeio continua ao fechar o cartão; giro funciona no mapa plano', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.click('#qclose');
+  await pagina.waitForTimeout(400);
+  await pagina.click('#tour');
+  await pagina.waitForTimeout(600);
+  await pagina.click('#close');
+  const antes = await pagina.evaluate(() => window.__geoTotal.estadoMapa.selected.cc);
+  await pagina.waitForTimeout(4800);
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    return { passeio: !!g.estadoCartao.passeio, depois: g.estadoMapa.selected.cc, cartao: document.getElementById('card').style.display };
+  });
+  assert.equal(r.passeio, true, 'passeio segue depois de fechar o cartão');
+  assert.notEqual(r.depois, antes, 'foi para o próximo país');
+  assert.equal(r.cartao, 'none', 'sem o cartão');
+  await pagina.click('#tour');
+  await pagina.evaluate(() => { const g = window.__geoTotal; g.estadoMapa.selected = null; g.estadoCamera.auto = true; g.estadoCamera.lastInteract = 0; document.getElementById('flat2d').click(); });
+  const l0 = await pagina.evaluate(() => window.__geoTotal.estadoCamera.lam);
+  await pagina.waitForTimeout(1500);
+  const l1 = await pagina.evaluate(() => window.__geoTotal.estadoCamera.lam);
+  assert.notEqual(l1, l0, 'o mapa plano desliza com o giro automático');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('zerou a região: duas próximas paradas e entra sozinho na primeira', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quiz.sessionLen = 0;
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    for (let k = 0; k < 40 && g.runPool().length; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+  });
+  await pagina.waitForTimeout(300);
+  const r = await pagina.evaluate(() => ({ botoes: [...document.querySelectorAll('.proxbtn b')].map((b) => b.textContent), cont: (document.querySelector('.proxcont') || {}).textContent }));
+  assert.equal(r.botoes.length, 2, 'duas sugestões: ' + r.botoes.join(', '));
+  assert.ok(!r.botoes.includes('América do Sul'), 'não sugere a região que acabou de zerar');
+  assert.match(r.cont, /começa em \d+s/);
+  await pagina.waitForTimeout(12500); // 1,2 s do avanço automático da última resposta + 10 s de contagem
+  const depois = await pagina.evaluate(() => window.__geoTotal.estadoTreino.quizScope);
+  assert.equal(depois.t, 'reg');
+  assert.notEqual(depois.r, 0, 'entrou sozinho na próxima região');
+  assert.deepEqual(erros, []);
+  await fechar();
+});

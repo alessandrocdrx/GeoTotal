@@ -7,7 +7,7 @@
 import { BRS } from '../dados/estados-brasil.js';
 import { D } from '../dados/paises.js';
 import { spinB } from './botoes.js';
-import { estadoCartao, tourStop } from './cartao-detalhes.js';
+import { card, estadoCartao, tourStop } from './cartao-detalhes.js';
 import { select, step } from './cartao-pais.js';
 import { ganchosInterface } from './ganchos.js';
 import { $, setStatus } from '../nucleo/utilitarios.js';
@@ -21,7 +21,7 @@ function tourStart(){
   estadoCamera.auto=false;spinB.setAttribute('aria-pressed','false');spinB.style.opacity=.5;
   if(estadoBrasil.statesMode){if(!estadoBrasil.selSt||!estadoBrasil.onS[estadoBrasil.selSt.i])ganchosInterface.selecionarEstado(BRS[f],true);}
   else if(!estadoMapa.selected||!estadoMapa.on[estadoMapa.selected.i])select(D[f],true);
-  estadoCartao.passeio=setInterval(function(){step(1);},4200);
+  estadoCartao.passeio=setInterval(function(){step(1);if(estadoCartao.semCartao){card.style.display='none';estadoCartao.cardH=0;}},4200);
   $('tour').textContent='⏹';$('tour').setAttribute('aria-label','Parar passeio');
   setStatus('🎬 Passeio: mostro um país a cada 4 segundos. Toque em ⏹ para parar.',3500);
 }

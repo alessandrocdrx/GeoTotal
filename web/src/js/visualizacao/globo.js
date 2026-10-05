@@ -177,7 +177,7 @@ function frame(){
     var dl=shortest(estadoCamera.lam,estadoCamera.target.lam),dp=estadoCamera.target.phi-estadoCamera.phi,dz=estadoCamera.target.zoom-estadoCamera.zoom;
     estadoCamera.lam+=dl*.14;estadoCamera.phi+=dp*.14;estadoCamera.zoom+=dz*.14;
     if(Math.abs(dl)<.0008&&Math.abs(dp)<.0008&&Math.abs(dz)<.004)estadoCamera.target=null;
-  }else if(estadoCamera.auto&&!estadoCamera.dragging&&!estadoMapa.selected&&!ganchos.treinoAberto()&&!estadoBrasil.statesMode&&!estadoBrasil.selSt&&!estadoCamera.plano2D&&(performance.now()-estadoCamera.lastInteract>2500)){
+  }else if(estadoCamera.auto&&!estadoCamera.dragging&&!estadoMapa.selected&&!ganchos.treinoAberto()&&!estadoBrasil.statesMode&&!estadoBrasil.selSt&&(performance.now()-estadoCamera.lastInteract>2500)){
     estadoCamera.lam+=0.0022;
   }
   var wantCy=((estadoMapa.selected||estadoBrasil.selSt)&&!ganchos.treinoAberto())?Math.max(.26,Math.min(.5,(H-ganchos.alturaCartao())/(2*H))):(ganchos.treinoAberto()?Math.max(.24,Math.min(.5,(H-ganchos.alturaTreino())/(2*H))):.5);estadoCamera.cyFrac+=(wantCy-estadoCamera.cyFrac)*.15;

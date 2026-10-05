@@ -276,3 +276,18 @@ body.quizing #spin,body.quizing #tour{display:none}
 .tools button{font-size:18px}
 /* avisos (giro, passeio, salvar…) no alto do globo, acima do cartão, sem cobrir os botões da direita */
 #status{top:10px;bottom:auto;right:64px;z-index:20;font-size:13.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+/* cartão do país translúcido: dá para ver o mapa por baixo */
+#card{background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#card .nav{background:color-mix(in srgb,var(--card) 88%,transparent)}
+#card .fact,#card .ccap,#card .cstat{background:color-mix(in srgb,var(--chip) 55%,transparent)}
+/* fim de região: próximas paradas, com contagem na primeira */
+.proxtit{margin:14px 0 6px;font-weight:800;font-size:14px;color:var(--muted)}
+.proxreg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.proxbtn{--cor:#4da3ff;position:relative;overflow:hidden;min-height:58px;padding:8px 10px;border:2px solid var(--cor);border-radius:14px;background:linear-gradient(140deg,color-mix(in srgb,var(--cor) 25%,transparent),transparent 80%);color:var(--fg);font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.proxbtn b{font-size:15px}
+.proxcont{color:var(--muted);font-size:12px;font-weight:700}
+.proxbtn.auto::after{content:'';position:absolute;left:0;bottom:0;height:4px;width:100%;background:var(--cor);transform-origin:left;animation:proxbarra 10s linear forwards}
+@keyframes proxbarra{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+/* placar numa linha só: o lado direito (nível, meta) encolhe com reticências */
+.qstrip #qruntxt{white-space:nowrap;flex:0 0 auto}
+.qstrip .qgoalmini{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

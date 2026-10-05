@@ -611,6 +611,21 @@ body.quizing #spin,body.quizing #tour{display:none}
 .tools button{font-size:18px}
 /* avisos (giro, passeio, salvar…) no alto do globo, acima do cartão, sem cobrir os botões da direita */
 #status{top:10px;bottom:auto;right:64px;z-index:20;font-size:13.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+/* cartão do país translúcido: dá para ver o mapa por baixo */
+#card{background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#card .nav{background:color-mix(in srgb,var(--card) 88%,transparent)}
+#card .fact,#card .ccap,#card .cstat{background:color-mix(in srgb,var(--chip) 55%,transparent)}
+/* fim de região: próximas paradas, com contagem na primeira */
+.proxtit{margin:14px 0 6px;font-weight:800;font-size:14px;color:var(--muted)}
+.proxreg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.proxbtn{--cor:#4da3ff;position:relative;overflow:hidden;min-height:58px;padding:8px 10px;border:2px solid var(--cor);border-radius:14px;background:linear-gradient(140deg,color-mix(in srgb,var(--cor) 25%,transparent),transparent 80%);color:var(--fg);font-family:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.proxbtn b{font-size:15px}
+.proxcont{color:var(--muted);font-size:12px;font-weight:700}
+.proxbtn.auto::after{content:'';position:absolute;left:0;bottom:0;height:4px;width:100%;background:var(--cor);transform-origin:left;animation:proxbarra 10s linear forwards}
+@keyframes proxbarra{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+/* placar numa linha só: o lado direito (nível, meta) encolhe com reticências */
+.qstrip #qruntxt{white-space:nowrap;flex:0 0 auto}
+.qstrip .qgoalmini{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -4873,7 +4888,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       estadoCamera.phi += dp * 0.14;
       estadoCamera.zoom += dz * 0.14;
       if (Math.abs(dl2) < 8e-4 && Math.abs(dp) < 8e-4 && Math.abs(dz) < 4e-3) estadoCamera.target = null;
-    } else if (estadoCamera.auto && !estadoCamera.dragging && !estadoMapa.selected && !ganchos.treinoAberto() && !estadoBrasil.statesMode && !estadoBrasil.selSt && !estadoCamera.plano2D && performance.now() - estadoCamera.lastInteract > 2500) {
+    } else if (estadoCamera.auto && !estadoCamera.dragging && !estadoMapa.selected && !ganchos.treinoAberto() && !estadoBrasil.statesMode && !estadoBrasil.selSt && performance.now() - estadoCamera.lastInteract > 2500) {
       estadoCamera.lam += 22e-4;
     }
     var wantCy = (estadoMapa.selected || estadoBrasil.selSt) && !ganchos.treinoAberto() ? Math.max(0.26, Math.min(0.5, (H - ganchos.alturaCartao()) / (2 * H))) : ganchos.treinoAberto() ? Math.max(0.24, Math.min(0.5, (H - ganchos.alturaTreino()) / (2 * H))) : 0.5;
@@ -4908,7 +4923,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var estadoCartao = {
     cardH: 0,
     /** Intervalo do passeio automático pela rota (null = parado). */
-    passeio: null
+    passeio: null,
+    /** Passeio continua sem mostrar o cartão (a pessoa fechou o cartão durante o passeio). */
+    semCartao: false
   };
   function fmtPop(p) {
     if (!p) return "Sem população permanente";
@@ -4954,6 +4971,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   var card;
   function closeCard() {
+    if (estadoCartao.passeio && estadoMapa.selected) {
+      card.style.display = "none";
+      estadoCartao.cardH = 0;
+      estadoCartao.semCartao = true;
+      setStatus("🎬 O passeio continua sem o cartão. Toque em ⏹ para parar.", 3e3);
+      return;
+    }
     estadoMapa.selected = null;
     estadoBrasil.selSt = null;
     card.style.display = "none";
@@ -4964,6 +4988,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (!estadoCartao.passeio) return;
     clearInterval(estadoCartao.passeio);
     estadoCartao.passeio = null;
+    estadoCartao.semCartao = false;
     $("tour").textContent = "🎬";
     $("tour").setAttribute("aria-label", "Passeio pelos países");
   }
@@ -6177,6 +6202,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     } else if (!estadoMapa.selected || !estadoMapa.on[estadoMapa.selected.i]) select(D[f], true);
     estadoCartao.passeio = setInterval(function() {
       step(1);
+      if (estadoCartao.semCartao) {
+        card.style.display = "none";
+        estadoCartao.cardH = 0;
+      }
     }, 4200);
     $("tour").textContent = "⏹";
     $("tour").setAttribute("aria-label", "Parar passeio");
@@ -8707,6 +8736,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     body.innerHTML = "";
     var box = document.createElement("div");
     box.className = "rundone";
+    $("qcomb").hidden = true;
     var rec = recordable(estadoTreino.quizScope);
     if (rec) {
       var md = document.createElement("div");
@@ -8761,12 +8791,94 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     row.appendChild(other);
     row.appendChild(sh);
     box.appendChild(row);
+    var prox = proximasRegioes();
+    if (prox.length) {
+      var ph = document.createElement("div");
+      ph.className = "proxtit";
+      ph.textContent = "Próxima parada:";
+      box.appendChild(ph);
+      var pr = document.createElement("div");
+      pr.className = "proxreg";
+      prox.forEach(function(ri, k) {
+        var b = document.createElement("button");
+        b.className = "proxbtn" + (k === 0 ? " auto" : "");
+        b.style.setProperty("--cor", REG[ri].c);
+        var t = document.createElement("b");
+        t.textContent = REG[ri].n;
+        b.appendChild(t);
+        if (k === 0) {
+          var c = document.createElement("small");
+          c.className = "proxcont";
+          b.appendChild(c);
+        }
+        b.onclick = function() {
+          pararContagem();
+          emitir("treinar-regiao", { r: ri });
+        };
+        pr.appendChild(b);
+      });
+      box.appendChild(pr);
+      iniciarContagem(prox[0], box);
+    }
     var tip = document.createElement("div");
     tip.className = "inote";
     tip.textContent = "Cada tipo de pergunta tem a sua própria partida e a sua medalha.";
     box.appendChild(tip);
     body.appendChild(box);
     measureQ();
+    Array.prototype.forEach.call(row.children, function(b) {
+      b.addEventListener("click", pararContagem);
+    });
+  }
+  var ORDEM_REGIOES = [0, 2, 1, 4, 5, 3, 6];
+  function proximasRegioes() {
+    var sc = estadoTreino.quizScope, atual = sc.t === "reg" ? sc.r : -1;
+    var lista = ORDEM_REGIOES.filter(function(ri) {
+      return ri !== atual;
+    });
+    var sem = lista.filter(function(ri) {
+      var rec = estadoPartida.RECS[scopeKeyFor({ t: "reg", r: ri }, quiz.mode)];
+      return !(rec && rec.medal);
+    });
+    var pos = ORDEM_REGIOES.indexOf(atual);
+    if (sem.length < 2) sem = sem.concat(lista.filter(function(ri) {
+      return sem.indexOf(ri) < 0;
+    }));
+    sem.sort(function(a, b) {
+      var da = (ORDEM_REGIOES.indexOf(a) - pos + 7) % 7, db = (ORDEM_REGIOES.indexOf(b) - pos + 7) % 7;
+      return da - db;
+    });
+    return sem.slice(0, 2);
+  }
+  var contagemT = 0;
+  function pararContagem() {
+    clearInterval(contagemT);
+    contagemT = 0;
+    var c = document.querySelector(".proxcont");
+    if (c) c.textContent = "";
+    var a = document.querySelector(".proxbtn.auto");
+    if (a) a.classList.remove("auto");
+  }
+  function iniciarContagem(ri, box) {
+    pararContagem();
+    var s = 10, el = box.querySelector(".proxcont"), a = box.querySelector(".proxbtn");
+    if (a) a.classList.add("auto");
+    function mostra() {
+      if (el) el.textContent = "começa em " + s + "s";
+    }
+    mostra();
+    contagemT = setInterval(function() {
+      if (!quiz.open || !document.body.contains(box)) {
+        pararContagem();
+        return;
+      }
+      s--;
+      mostra();
+      if (s <= 0) {
+        pararContagem();
+        emitir("treinar-regiao", { r: ri });
+      }
+    }, 1e3);
   }
   function iniciar35() {
     ouvir("modo-estados-abriu", function() {
