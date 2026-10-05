@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- geoTotal — Copyright 2026 alessandrocdrx · SPDX-License-Identifier: Apache-2.0
+     Backup automático do Android (até Android 11): leva só o progresso do jogo, que a página guarda
+     no armazenamento do WebView (localStorage). Assim, ao trocar de celular ou reinstalar com a
+     mesma conta Google, o XP, a sequência, as conquistas e o histórico voltam sozinhos. -->
+<full-backup-content>
+    <include domain="root" path="app_webview/Default/Local Storage/" />
+    <include domain="root" path="app_webview/Local Storage/" />
+</full-backup-content>

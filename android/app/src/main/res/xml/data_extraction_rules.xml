@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- geoTotal — Copyright 2026 alessandrocdrx · SPDX-License-Identifier: Apache-2.0
+     Backup na nuvem e transferência para um celular novo (Android 12+): só o progresso do jogo
+     (localStorage do WebView). Ver backup_rules.xml para Android 11 e anteriores. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="root" path="app_webview/Default/Local Storage/" />
+        <include domain="root" path="app_webview/Local Storage/" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="root" path="app_webview/Default/Local Storage/" />
+        <include domain="root" path="app_webview/Local Storage/" />
+    </device-transfer>
+</data-extraction-rules>
