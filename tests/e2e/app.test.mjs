@@ -442,6 +442,28 @@ test('voltar a uma região já zerada começa uma partida nova, sem a tela antig
   await fechar();
 });
 
+test('conquistas: medalha da região zerada aparece e a barra de domínio anda a cada acerto', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quiz.sessionLen = 0;
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    for (let k = 0; k < 40 && g.runPool().length; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+  });
+  await pagina.waitForTimeout(300);
+  await pagina.click('#mbtn');
+  await pagina.click('#mbadges');
+  const r = await pagina.evaluate(() => {
+    const sec = document.querySelector('#badgesbody .medsec');
+    const dom = [...document.querySelectorAll('#badgesbody .badgerow')].find((x) => /Domina América do Sul/.test(x.textContent));
+    return { med: sec ? sec.textContent : '', dom: dom ? dom.querySelector('.bprogt').textContent : '' };
+  });
+  assert.match(r.med, /🥇América do Sul/, 'medalha de ouro na lista');
+  assert.match(r.dom, /0 de 13 países dominados · 13 de 39 acertos/);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
 test('estados do Brasil: o treino não entrega a resposta (etiqueta sem capital, pergunta sem sigla)', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(() => {

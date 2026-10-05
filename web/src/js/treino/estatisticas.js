@@ -15,8 +15,8 @@ import { estadoTreino, quiz, scopeLabel } from './estado.js';
 import { avail } from '../visualizacao/tela.js';
 
 /* ---------- estatísticas por região ---------- */
-function modeName(m){
-  var w=estadoTreino.quizDomain==='br';
+function modeName(m,dom){
+  var w=(dom||estadoTreino.quizDomain)==='br';
   return {cap:w?'Estado → Capital':'País → Capital',pais:w?'Capital → Estado':'Capital → País',flag:'Bandeira → País',neighbor:w?'Estado → Vizinho':'País → Vizinho',code:w?'Estado → Sigla':'País → Sigla',map:'Achar no mapa'}[m]||m;
 }
 function computeRegionStats(){
