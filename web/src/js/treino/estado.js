@@ -82,6 +82,7 @@ function scopeLabel(){
   if(sc.t==='br')return 'Brasil (todos os estados)';
   if(sc.t==='brreg')return BRREG[sc.r].n+' (Brasil)';
   if(sc.t==='multi'){
+    if(sc.items.length===2&&!sc.items[0].s&&!sc.items[1].s&&sc.items[0].r+sc.items[1].r===3&&sc.items[0].r*sc.items[1].r===2)return 'América Central e do Norte';
     var names=sc.items.map(function(it){return it.s||REG[it.r].n;});
     return names.length<=2?names.join(' + '):names.length+' regiões combinadas';
   }

@@ -49,14 +49,14 @@ function updateMultiApplyBtn(){
   btn.textContent='Aplicar ('+n+' regi'+(n===1?'ão':'ões')+' · '+cnt+' países)';
 }
 /* cartões grandes: o caminho principal da tela; sub-regiões e o resto ficam em "Mais opções" */
-const EMOJI_REG = ['🌎','🏝️','🦅','🦁','🏰','🐼','🦘'];
+const EMOJI_REG = ['🦜','🏝️','🦅','🦁','🏰','🐼','🦘'];
 function buildScopeTiles(){
   var box=$('scopetiles');box.innerHTML='';
   function tile(icone,nome,count,sc,cor,unid){
     var b=document.createElement('button');b.className='stile';
     if(cor)b.style.setProperty('--cor',cor);
     var atual=estadoTreino.quizScope;
-    if(sc.t===atual.t&&sc.r===atual.r&&!sc.s&&!atual.s)b.classList.add('on');
+    if(sc.t===atual.t&&sc.r===atual.r&&!sc.s&&!atual.s&&(sc.t!=='multi'||JSON.stringify(sc.items)===JSON.stringify(atual.items)))b.classList.add('on');
     var rc=recordable(sc)?estadoPartida.RECS[scopeKeyFor(sc,quiz.mode)]:null;
     var i=document.createElement('span');i.className='stico';i.textContent=icone;
     var n=document.createElement('b');n.textContent=nome;
@@ -69,13 +69,38 @@ function buildScopeTiles(){
   if(rv.length)tile('🧠','Revisão dos seus erros',rv.length,{t:'review',cc:rv},'#f72585');
   tile('🌍','Mundo todo',availCount(),{t:'world'},'#9aa3b5');
   REG.forEach(function(rg,ri){
+    if(ri===1||ri===2){
+      /* América do Norte tem só 3 países: junta com a Central e o Caribe num cartão só */
+      if(ri===1)tile('🦅','América Central e do Norte',D.filter(function(d){return (d.r===1||d.r===2)&&avail(d);}).length,{t:'multi',items:[{r:1},{r:2}]},REG[2].c);
+      return;
+    }
     var n=D.filter(function(d){return d.r===ri&&avail(d);}).length;
     if(n&&EMOJI_REG[ri])tile(EMOJI_REG[ri],rg.n,n,{t:'reg',r:ri},rg.c);
   });
   tile('🇧🇷','Estados do Brasil',BRS.length,{t:'br'},'#1fa85a','estados');
 }
+/** Lista das categorias especiais, com bandeira e o que cada lugar é (ultramarino de quem, etc.). */
+function buildCatList(){
+  var box=$('catbody');if(!box||box.dataset.ok)return;box.dataset.ok='1';
+  function grupo(titulo,lista){
+    var h=document.createElement('div');h.className='cath';h.textContent=titulo+' ('+lista.length+')';box.appendChild(h);
+    lista.forEach(function(d){
+      var r=document.createElement('div');r.className='catrow';
+      var f=document.createElement('span');f.className='catflag';f.textContent=d.dis?'🏳️':d.flag;
+      var t=document.createElement('div');var n=document.createElement('b');n.textContent=d.name;
+      var o=document.createElement('small');o.textContent=(d.obs||'').split(/[;—]/)[0].trim();
+      var ultra=/ultramarin/i.test(d.obs||'');
+      if(ultra){var u=document.createElement('em');u.className='catultra';u.textContent='ultramarino';n.appendChild(u);}
+      t.appendChild(n);t.appendChild(o);r.appendChild(f);r.appendChild(t);box.appendChild(r);
+    });
+  }
+  grupo('⚠️ Não reconhecidos pela ONU',D.filter(function(d){return d.dis;}));
+  grupo('◇ Territórios dependentes',D.filter(function(d){return d.dep;}));
+  grupo('❄️ Desabitados e Antártida',D.filter(function(d){return d.uni;}));
+}
 function buildScopeList(filterStr){
   buildScopeTiles();
+  buildCatList();
   var box=$('scopelist');box.innerHTML='';
   var q2=norm((filterStr||'').trim());
   function match(label){return !q2||norm(label).indexOf(q2)>=0;}

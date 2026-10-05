@@ -109,7 +109,7 @@ function iniciar() {
   oFill = document.getElementById('oFill');
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
   /* botão do cabeçalho: realista com dia e noite → realista sem noite → simples */
-  var VIS=[['🌍','🌍 Visual realista, com dia e noite'],['🌎','🌎 Visual realista, sem a sombra da noite'],['🗺️','🗺️ Visual simples (mais leve)']];
+  var VIS=[['🌗','🌗 Globo realista com dia e noite'],['☀️','☀️ Globo realista, sempre de dia'],['🗺️','🗺️ Globo simples (mais leve)']];
   function visAtual(){return !estadoRender.optTex?2:($('oNight').checked?0:1);}
   function visMostra(){var v=visAtual();$('mvisual').textContent=VIS[v][0];}
   $('mvisual').onclick=function(){

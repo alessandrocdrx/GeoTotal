@@ -27,7 +27,7 @@ test('abre no Treino, sem erros e sem acessar a internet', async () => {
   });
   assert.equal(estado.treino, true);
   assert.equal(estado.treinoMarcado, 'true');
-  assert.equal(estado.paises, 203, 'países disponíveis por padrão');
+  assert.equal(estado.paises, 204, 'países disponíveis por padrão (inclui a Guiana Francesa)');
   assert.ok(estado.fronteiras, 'fronteiras dos países carregadas do próprio app');
   assert.deepEqual(erros, []);
   assert.deepEqual(externos, [], 'o app não deve acessar nada fora do próprio pacote');
@@ -122,8 +122,8 @@ test('desabitados e Antártida: desligados por padrão e só em "Achar no mapa"'
     const noMapa = g.poolIdx().filter((i) => g.D[i].uni).length;
     return { antes, depois: g.availCount(), naCapital, noMapa };
   });
-  assert.equal(r.antes, 203);
-  assert.equal(r.depois, 218);
+  assert.equal(r.antes, 204);
+  assert.equal(r.depois, 219);
   assert.equal(r.naCapital, false, 'sem perguntas de capital para lugares sem capital');
   assert.equal(r.noMapa, 15);
   assert.deepEqual(erros, []);
@@ -508,6 +508,27 @@ test('cartão mostra a hora agora e a diferença para Brasília (país e estado)
   assert.match(r.jp, /\+12h em relação a Brasília/);
   assert.match(r.am, /−1h em relação a Brasília/);
   assert.equal(r.brAgora, 'mesma hora de Brasília');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('"Onde treinar?": Guiana Francesa na América do Sul, Américas Central e do Norte juntas, lista das categorias', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.click('#qscopeb');
+  const r = await pagina.evaluate(() => {
+    const tiles = [...document.querySelectorAll('.stile b')].map((b) => b.textContent);
+    document.getElementById('scopeadv').open = true;
+    document.getElementById('catlista').open = true;
+    const ultra = [...document.querySelectorAll('.catrow')].filter((x) => x.querySelector('.catultra')).length;
+    const g = window.__geoTotal;
+    return { tiles, ultra, sul: g.D.filter((d) => d.r === 0 && g.avail(d)).map((d) => d.cc).includes('GF') };
+  });
+  assert.ok(r.tiles.includes('América Central e do Norte'));
+  assert.ok(!r.tiles.includes('América do Norte'));
+  assert.ok(r.sul, 'Guiana Francesa entra na América do Sul');
+  assert.ok(r.ultra >= 5, 'territórios ultramarinos marcados');
+  await pagina.click('.stile:nth-child(3)');
+  assert.equal(await pagina.evaluate(() => window.__geoTotal.scopeLabel()), 'América Central e do Norte');
   assert.deepEqual(erros, []);
   await fechar();
 });

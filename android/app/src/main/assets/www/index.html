@@ -644,6 +644,18 @@ button.streakpill{cursor:pointer;font-family:inherit;font-weight:800}
 h1.marca{flex:none}
 @media (max-width:460px){h1.marca{font-size:0;overflow:visible}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}.hbtns{gap:4px}.hsom{width:34px;height:34px}.streakpill{padding:0 8px}}
 @media (max-width:380px){header .modesw button{padding:0 8px!important;font-size:13px!important}.hsom{width:32px}.streakpill{padding:0 6px;font-size:12px}header{padding-left:10px;padding-right:10px}}
+/* lista das categorias especiais */
+.catlista{margin:4px 0 10px}
+.catlista summary{cursor:pointer;font-weight:700;padding:8px 2px;color:var(--fg)}
+.cath{font-weight:800;margin:12px 0 4px;font-size:14px}
+.catrow{display:flex;gap:10px;align-items:flex-start;padding:6px 2px;border-top:1px solid var(--border)}
+.catflag{font-size:24px;line-height:1;flex:none;width:30px;text-align:center}
+.catrow b{display:block;font-size:14px}
+.catrow small{color:var(--muted);font-size:12.5px}
+.catultra{font-style:normal;margin-left:6px;padding:1px 7px;border-radius:999px;background:rgba(77,163,255,.18);color:#6aa8ff;font-size:11px;font-weight:800}
+/* atalhos do cabeçalho mais visíveis */
+.hsom{background:linear-gradient(140deg,rgba(77,163,255,.25),rgba(77,163,255,.08));border-color:rgba(77,163,255,.5)}
+#mvisual{background:linear-gradient(140deg,rgba(255,201,60,.25),rgba(255,201,60,.08));border-color:rgba(255,201,60,.5)}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -652,7 +664,7 @@ h1.marca{flex:none}
   <header>
     <div class="htop">
       <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
-      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Visual do globo" title="Visual do globo">🌍</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Visual do globo" title="Visual do globo">🌗</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -874,6 +886,7 @@ h1.marca{flex:none}
   <input id="scopeq" type="search" placeholder="Buscar continente, sub-região ou Brasil…" autocomplete="off">
   <div class="row2"><button id="scopeMulti" aria-pressed="false">➕ Combinar regiões</button></div>
   <div class="tgrow"><span class="tglab">Incluir:</span><label class="tgchip"><input type="checkbox" id="oDisputedQ" checked><span>⚠ Não reconhecidos</span></label><label class="tgchip"><input type="checkbox" id="oDepQ"><span>◇ Dependentes</span></label><label class="tgchip"><input type="checkbox" id="oUniQ"><span>❄ Desabitados</span></label></div>
+  <details id="catlista" class="catlista"><summary>📋 Ver quem são (com bandeira e a quem pertencem)</summary><div id="catbody"></div></details>
   <div id="scopelist"></div>
   <div id="scopeempty" class="inote" style="display:none">Nada encontrado.</div>
   </details>
@@ -971,7 +984,7 @@ h1.marca{flex:none}
   ];
   var RAW = `
 Brasil|Brasília|-15.79|-47.88|0|América do Sul||BR
-Guiana Francesa|Caiena (Cayenne)|4.94|-52.33|0|América do Sul|Território ultramarino da França — não é país soberano nem membro da ONU|GF|dep
+Guiana Francesa|Caiena (Cayenne)|4.94|-52.33|0|América do Sul|Território ultramarino da França — não é país soberano nem membro da ONU|GF
 Suriname|Paramaribo|5.85|-55.20|0|América do Sul||SR
 Guiana|Georgetown|6.80|-58.16|0|América do Sul||GY
 Venezuela|Caracas|10.48|-66.90|0|América do Sul||VE
@@ -4005,7 +4018,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     oTex.onchange = function() {
       estadoRender.optTex = oTex.checked;
     };
-    var VIS = [["🌍", "🌍 Visual realista, com dia e noite"], ["🌎", "🌎 Visual realista, sem a sombra da noite"], ["🗺️", "🗺️ Visual simples (mais leve)"]];
+    var VIS = [["🌗", "🌗 Globo realista com dia e noite"], ["☀️", "☀️ Globo realista, sempre de dia"], ["🗺️", "🗺️ Globo simples (mais leve)"]];
     function visAtual() {
       return !estadoRender.optTex ? 2 : $("oNight").checked ? 0 : 1;
     }
@@ -6962,6 +6975,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (sc.t === "br") return "Brasil (todos os estados)";
     if (sc.t === "brreg") return BRREG[sc.r].n + " (Brasil)";
     if (sc.t === "multi") {
+      if (sc.items.length === 2 && !sc.items[0].s && !sc.items[1].s && sc.items[0].r + sc.items[1].r === 3 && sc.items[0].r * sc.items[1].r === 2) return "América Central e do Norte";
       var names = sc.items.map(function(it) {
         return it.s || REG[it.r].n;
       });
@@ -9479,7 +9493,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     btn.style.display = n ? "flex" : "none";
     btn.textContent = "Aplicar (" + n + " regi" + (n === 1 ? "ão" : "ões") + " · " + cnt + " países)";
   }
-  var EMOJI_REG = ["🌎", "🏝️", "🦅", "🦁", "🏰", "🐼", "🦘"];
+  var EMOJI_REG = ["🦜", "🏝️", "🦅", "🦁", "🏰", "🐼", "🦘"];
   function buildScopeTiles() {
     var box = $("scopetiles");
     box.innerHTML = "";
@@ -9488,7 +9502,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       b.className = "stile";
       if (cor) b.style.setProperty("--cor", cor);
       var atual = estadoTreino.quizScope;
-      if (sc.t === atual.t && sc.r === atual.r && !sc.s && !atual.s) b.classList.add("on");
+      if (sc.t === atual.t && sc.r === atual.r && !sc.s && !atual.s && (sc.t !== "multi" || JSON.stringify(sc.items) === JSON.stringify(atual.items))) b.classList.add("on");
       var rc = recordable(sc) ? estadoPartida.RECS[scopeKeyFor(sc, quiz.mode)] : null;
       var i = document.createElement("span");
       i.className = "stico";
@@ -9509,6 +9523,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (rv.length) tile("🧠", "Revisão dos seus erros", rv.length, { t: "review", cc: rv }, "#f72585");
     tile("🌍", "Mundo todo", availCount(), { t: "world" }, "#9aa3b5");
     REG.forEach(function(rg, ri) {
+      if (ri === 1 || ri === 2) {
+        if (ri === 1) tile("🦅", "América Central e do Norte", D.filter(function(d) {
+          return (d.r === 1 || d.r === 2) && avail(d);
+        }).length, { t: "multi", items: [{ r: 1 }, { r: 2 }] }, REG[2].c);
+        return;
+      }
       var n = D.filter(function(d) {
         return d.r === ri && avail(d);
       }).length;
@@ -9516,8 +9536,53 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     tile("🇧🇷", "Estados do Brasil", BRS.length, { t: "br" }, "#1fa85a", "estados");
   }
+  function buildCatList() {
+    var box = $("catbody");
+    if (!box || box.dataset.ok) return;
+    box.dataset.ok = "1";
+    function grupo(titulo, lista) {
+      var h = document.createElement("div");
+      h.className = "cath";
+      h.textContent = titulo + " (" + lista.length + ")";
+      box.appendChild(h);
+      lista.forEach(function(d) {
+        var r = document.createElement("div");
+        r.className = "catrow";
+        var f = document.createElement("span");
+        f.className = "catflag";
+        f.textContent = d.dis ? "🏳️" : d.flag;
+        var t = document.createElement("div");
+        var n = document.createElement("b");
+        n.textContent = d.name;
+        var o = document.createElement("small");
+        o.textContent = (d.obs || "").split(/[;—]/)[0].trim();
+        var ultra = /ultramarin/i.test(d.obs || "");
+        if (ultra) {
+          var u = document.createElement("em");
+          u.className = "catultra";
+          u.textContent = "ultramarino";
+          n.appendChild(u);
+        }
+        t.appendChild(n);
+        t.appendChild(o);
+        r.appendChild(f);
+        r.appendChild(t);
+        box.appendChild(r);
+      });
+    }
+    grupo("⚠️ Não reconhecidos pela ONU", D.filter(function(d) {
+      return d.dis;
+    }));
+    grupo("◇ Territórios dependentes", D.filter(function(d) {
+      return d.dep;
+    }));
+    grupo("❄️ Desabitados e Antártida", D.filter(function(d) {
+      return d.uni;
+    }));
+  }
   function buildScopeList(filterStr) {
     buildScopeTiles();
+    buildCatList();
     var box = $("scopelist");
     box.innerHTML = "";
     var q2 = norm((filterStr || "").trim());

@@ -18,7 +18,7 @@ const REG = [
 ];
 const RAW = `
 Brasil|Brasília|-15.79|-47.88|0|América do Sul||BR
-Guiana Francesa|Caiena (Cayenne)|4.94|-52.33|0|América do Sul|Território ultramarino da França — não é país soberano nem membro da ONU|GF|dep
+Guiana Francesa|Caiena (Cayenne)|4.94|-52.33|0|América do Sul|Território ultramarino da França — não é país soberano nem membro da ONU|GF
 Suriname|Paramaribo|5.85|-55.20|0|América do Sul||SR
 Guiana|Georgetown|6.80|-58.16|0|América do Sul||GY
 Venezuela|Caracas|10.48|-66.90|0|América do Sul||VE

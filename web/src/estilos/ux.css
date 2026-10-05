@@ -309,3 +309,15 @@ button.streakpill{cursor:pointer;font-family:inherit;font-weight:800}
 h1.marca{flex:none}
 @media (max-width:460px){h1.marca{font-size:0;overflow:visible}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}.hbtns{gap:4px}.hsom{width:34px;height:34px}.streakpill{padding:0 8px}}
 @media (max-width:380px){header .modesw button{padding:0 8px!important;font-size:13px!important}.hsom{width:32px}.streakpill{padding:0 6px;font-size:12px}header{padding-left:10px;padding-right:10px}}
+/* lista das categorias especiais */
+.catlista{margin:4px 0 10px}
+.catlista summary{cursor:pointer;font-weight:700;padding:8px 2px;color:var(--fg)}
+.cath{font-weight:800;margin:12px 0 4px;font-size:14px}
+.catrow{display:flex;gap:10px;align-items:flex-start;padding:6px 2px;border-top:1px solid var(--border)}
+.catflag{font-size:24px;line-height:1;flex:none;width:30px;text-align:center}
+.catrow b{display:block;font-size:14px}
+.catrow small{color:var(--muted);font-size:12.5px}
+.catultra{font-style:normal;margin-left:6px;padding:1px 7px;border-radius:999px;background:rgba(77,163,255,.18);color:#6aa8ff;font-size:11px;font-weight:800}
+/* atalhos do cabeçalho mais visíveis */
+.hsom{background:linear-gradient(140deg,rgba(77,163,255,.25),rgba(77,163,255,.08));border-color:rgba(77,163,255,.5)}
+#mvisual{background:linear-gradient(140deg,rgba(255,201,60,.25),rgba(255,201,60,.08));border-color:rgba(255,201,60,.5)}
