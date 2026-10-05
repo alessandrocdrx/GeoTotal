@@ -4,7 +4,7 @@
  * Textura procedural com aparência de satélite (não é foto real).
  */
 
-import { $ } from '../nucleo/utilitarios.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
 import { estadoRender } from './projecao.js';
 import { PI } from './tela.js';
 
@@ -108,6 +108,18 @@ function iniciar() {
   oBor = document.getElementById('oBor');
   oFill = document.getElementById('oFill');
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
+  /* botão do cabeçalho: realista com dia e noite → realista sem noite → simples */
+  var VIS=[['🌍','🌍 Visual realista, com dia e noite'],['🌎','🌎 Visual realista, sem a sombra da noite'],['🗺️','🗺️ Visual simples (mais leve)']];
+  function visAtual(){return !estadoRender.optTex?2:($('oNight').checked?0:1);}
+  function visMostra(){var v=visAtual();$('mvisual').textContent=VIS[v][0];}
+  $('mvisual').onclick=function(){
+    var v=(visAtual()+1)%3,noite=$('oNight');
+    estadoRender.optTex=v!==2;oTex.checked=estadoRender.optTex;
+    if(noite.checked!==(v===0)){noite.checked=(v===0);noite.dispatchEvent(new Event('change'));}
+    visMostra();setStatus(VIS[v][1],2200);
+  };
+  $('oNight').addEventListener('change',visMostra);oTex.addEventListener('change',visMostra);
+  setTimeout(visMostra,0);
   oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
   oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
 }

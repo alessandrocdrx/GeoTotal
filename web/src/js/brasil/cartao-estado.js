@@ -51,6 +51,8 @@ function renderStCountries(st){
   box.hidden=false;
 }
 function selectSt(st,fly,group){
+  /* o selo de país (não reconhecido, dependente…) não vale para estados */
+  var dtag=document.getElementById('cdis');if(dtag)dtag.style.display='none';
   if(!estadoBrasil.onS[st.i]){estadoBrasil.onS[st.i]=1;afterFilter();}
   estadoBrasil.selSt=st;estadoMapa.selected=null;refreshNbC();
   $('hint').style.display='none';

@@ -476,3 +476,19 @@ test('cabeçalho: logo, botão de som; dia e noite ligado; tocar num país no tr
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('cartão de estado não herda o selo "Não reconhecido" do país anterior; foguinho explica a sequência', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.click('#qclose');
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.select(g.D.find((d) => d.dis), true);
+    const antes = document.getElementById('cdis').style.display;
+    g.enterStates(g.BRS.find((s) => s.sigla === 'RS'));
+    return { antes, depois: document.getElementById('cdis').style.display };
+  });
+  assert.notEqual(r.antes, 'none', 'país disputado mostra o selo');
+  assert.equal(r.depois, 'none', 'estado não mostra o selo');
+  assert.deepEqual(erros, []);
+  await fechar();
+});

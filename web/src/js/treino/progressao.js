@@ -166,6 +166,10 @@ function openBadges(){
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   PROG = lsGet('globo.prog.v1',{xp:0,totalCorrect:0,streak:0,lastStreakDate:null,dailyGoal:10,dailyDate:null,dailyCount:0,goalDoneDate:null,badges:[]});
+  $('streakpill').onclick=function(){
+    var n=displayStreak(),f=PROG.freezes||0;
+    celebrate('🔥 '+n+(n===1?' dia seguido':' dias seguidos')+' batendo a meta de '+PROG.dailyGoal+' respostas por dia'+(f?' · 🧊 '+f+(f===1?' congelador':' congeladores'):'')+'. Jogue amanhã para não perder!');
+  };
   $('mbadges').onclick=openBadges;$('mhist').onclick=function(){openHistory();};
   $('badgesclose').onclick=function(){$('badgesheet').style.display='none';};
   $('goalgo').onclick=function(){
