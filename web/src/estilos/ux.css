@@ -329,3 +329,5 @@ h1.marca{flex:none}
 #qmodeb{max-width:50%!important}
 .qmodesmais{grid-column:1/-1;background:transparent!important;border:1px dashed var(--border)!important;color:#6aa8ff!important;font-weight:700!important;font-size:12.5px!important}
 .qopts button.elim{opacity:.28;text-decoration:line-through}
+/* subgrupos dentro de Configurações */
+.mlist .mgrp.msub{margin:10px 0 2px 18px;font-size:11.5px}
