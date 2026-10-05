@@ -1,13 +1,12 @@
 <!-- @arquivo componentes/boas-vindas.html · Camada: Interface
-     Boas-vindas da primeira vez: o que é o app, os dois modos e por onde começar. -->
+     Boas-vindas da primeira vez: escolher Treino ou Livre (cada cartão é um botão) e, se quiser, ver o tour. -->
 <div id="welcome" hidden><div class="wbox" role="dialog" aria-labelledby="wtitle">
   <div class="wlogo" aria-hidden="true">🌍</div>
   <h2 id="wtitle">Bem-vindo ao <span class="marca">geo<span>Total</span></span>!</h2>
-  <p class="wsub">Aprenda países e capitais jogando.</p>
+  <p class="wsub">Como você quer começar?</p>
   <div class="wmodos">
-    <div><b>🎯 Treino</b><span>Perguntas rápidas, com pontos e medalhas</span></div>
-    <div><b>🧭 Livre</b><span>Gire o globo e toque nos países</span></div>
+    <button id="wtreino" class="wmodo wtreino"><b>🎯 Treino</b><span>Perguntas rápidas, com pontos e medalhas. Começa pela América do Sul.</span></button>
+    <button id="wlivre" class="wmodo wlivre"><b>🧭 Livre</b><span>Gire o globo e toque nos países para conhecer.</span></button>
   </div>
-  <button id="wgo" class="wgo">🚀 Começar pela América do Sul</button>
-  <button id="wall" class="wall">Prefiro o mundo todo</button>
+  <button id="wtour" class="wall">👀 Fazer um tour rápido (30 segundos)</button>
 </div></div>

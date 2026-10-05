@@ -215,3 +215,59 @@ h1.marca span{color:var(--marca)}
 .legitens i{font-style:normal;font-size:16px}
 .legok{width:100%;min-height:44px;border:0;border-radius:12px;background:var(--chip-on);color:var(--chip-on-fg);font-weight:800;font-size:15px;font-family:inherit;cursor:pointer}
 .qgoalmini{min-height:32px}
+
+/* ---------- boas-vindas com escolha, modo em destaque e tour (v1.29) ---------- */
+#welcome .wmodo{display:block;width:100%;text-align:left;border:2px solid var(--border);border-radius:16px;padding:12px 14px;background:var(--chip);color:var(--fg);font-family:inherit;cursor:pointer;transition:transform .12s}
+#welcome .wmodo:active{transform:scale(.98)}
+#welcome .wmodo b{display:block;font-size:17px;margin-bottom:2px}
+#welcome .wmodo span{color:var(--muted);font-size:13.5px}
+#welcome .wtreino{border-color:#2ecc71;background:linear-gradient(135deg,rgba(46,204,113,.18),rgba(46,204,113,.05))}
+#welcome .wlivre{border-color:#4da3ff;background:linear-gradient(135deg,rgba(77,163,255,.18),rgba(77,163,255,.05))}
+/* Treino e Livre com cor própria: verde = treinar, azul = explorar */
+.modesw{border-width:2px}
+.modesw #qbtn[aria-pressed="true"]{background:#1fa85a!important;color:#fff!important}
+.modesw #qclose[aria-pressed="true"]{background:#2f80ff!important;color:#fff!important}
+.modesw button{font-weight:800!important}
+/* nas primeiras visitas o seletor pulsa para chamar atenção */
+.modesw.chama{animation:chama 1.6s ease-in-out 3}
+@keyframes chama{0%,100%{box-shadow:0 0 0 0 rgba(255,201,60,0)}50%{box-shadow:0 0 0 6px rgba(255,201,60,.55)}}
+.mlist button.mdestaque{background:linear-gradient(90deg,rgba(255,201,60,.14),transparent);border-radius:12px}
+/* tour */
+#guia{position:fixed;inset:0;z-index:150}
+#guia[hidden]{display:none}
+.guialuz{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(3,8,20,.72);border:2px solid #ffd166;transition:all .3s ease;pointer-events:none}
+.guiabal{position:fixed;left:14px;right:14px;max-width:440px;margin:0 auto;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 14px 40px rgba(0,0,0,.45);transition:top .3s,bottom .3s}
+.guiabal p{margin:0 0 12px;font-size:15.5px;line-height:1.4}
+.guiarod{display:flex;align-items:center;gap:8px}
+#guiapasso{flex:1;color:var(--muted);font-size:13px;font-weight:700}
+.guiapular{min-height:44px;padding:0 14px;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:12px;font-weight:700;font-family:inherit;cursor:pointer}
+.guiaprox{min-height:44px;padding:0 18px;border:0;background:#1fa85a;color:#fff;border-radius:12px;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer}
+@media (prefers-reduced-motion: reduce){.modesw.chama{animation:none}.guialuz,.guiabal{transition:none}}
+/* "Onde você quer treinar?": cartões grandes por continente */
+.scopetiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 12px}
+.stile{--cor:#9aa3b5;position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:92px;padding:12px;border:2px solid color-mix(in srgb,var(--cor) 55%,transparent);border-radius:16px;background:linear-gradient(140deg,color-mix(in srgb,var(--cor) 22%,transparent),transparent 75%);color:var(--fg);text-align:left;font-family:inherit;cursor:pointer;transition:transform .12s}
+.stile:active{transform:scale(.97)}
+.stile.on{border-color:var(--cor);box-shadow:0 0 0 2px var(--cor) inset}
+.stile .stico{font-size:28px;line-height:1}
+.stile b{font-size:15px;line-height:1.2;margin-top:4px}
+.stile small{color:var(--muted);font-size:12.5px;font-weight:700}
+.scopeadv{border-top:1px solid var(--border);padding-top:8px}
+.scopeadv summary{cursor:pointer;font-weight:800;padding:10px 4px;list-style:none}
+.scopeadv summary::-webkit-details-marker{display:none}
+.scopeadv summary small{color:var(--muted);font-weight:600}
+.scopeadv[open] summary{margin-bottom:8px}
+/* menu ⋯: atalhos grandes em cima; o resto agrupado e fechado */
+.mtiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 10px}
+.mlist .mtiles button.mtile{flex-direction:column;align-items:flex-start;gap:4px;min-height:96px;padding:12px;border:1px solid var(--border);border-radius:16px;background:var(--chip)}
+.mlist .mtiles button.mtile:first-child{border-top:1px solid var(--border)}
+.mlist .mtile .mi{text-align:left;width:auto;font-size:26px}
+.mlist .mtile .mt b{font-size:15px}
+.mlist .mtile .mt small{font-size:12px}
+.mlist .mtile .mc{display:none}
+#mdesafio.mtile{border-color:#2f80ff;background:linear-gradient(140deg,rgba(47,128,255,.22),transparent 75%)}
+#mtour.mtile{border-color:#ffc93c;background:linear-gradient(140deg,rgba(255,201,60,.2),transparent 75%)}
+.mfold{border-top:1px solid var(--border)}
+.mfold summary{display:flex;align-items:center;gap:12px;padding:13px 4px;cursor:pointer;list-style:none}
+.mfold summary::-webkit-details-marker{display:none}
+.mfold[open] summary .mc{transform:rotate(180deg)}
+.mfold > button,.mfold > label,.mfold > a{padding-left:18px!important}

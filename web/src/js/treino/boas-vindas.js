@@ -1,17 +1,18 @@
 /**
  * @arquivo js/treino/boas-vindas.js
  * Camada: Treino
- * Boas-vindas da primeira vez: explica Treino e Livre e começa por uma região fácil.
+ * Boas-vindas da primeira vez: escolher Treino (começa pela América do Sul) ou Livre, ou ver o tour.
  */
 
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { applyScopeChange } from './escopo.js';
 import { estadoTreino } from './estado.js';
+import { iniciarTour } from './tour.js';
 
 /*
- * Quem abre o app pela primeira vez cai direto numa pergunta do mundo todo e costuma errar logo
- * de cara. Aqui ele vê em uma tela o que são os dois modos e começa pela América do Sul, onde
- * acerta rápido. Aparece uma vez só; quem já tem progresso (atualizou o app) não vê.
+ * Quem abre o app pela primeira vez escolhe direto o modo tocando no cartão dele. O Treino começa
+ * pela América do Sul, onde é fácil acertar. Aparece uma vez só; quem já tem progresso (atualizou o
+ * app) não vê. O tour continua disponível no menu ⋯ → "Como jogar".
  */
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
@@ -22,13 +23,13 @@ function iniciar() {
   var m=estadoTreino.QS.m||{},jaJogou=Object.keys(m).some(function(k){return Object.keys(m[k]||{}).length>0;});
   if(jaJogou)return;
   var w=$('welcome');w.hidden=false;
-  function fechar(escopo){
+  function fechar(depois){
     w.classList.add('out');
-    setTimeout(function(){w.hidden=true;},250);
-    if(escopo)applyScopeChange(escopo);
+    setTimeout(function(){w.hidden=true;if(depois)depois();},250);
   }
-  $('wgo').onclick=function(){fechar({t:'reg',r:0});};
-  $('wall').onclick=function(){fechar(null);};
+  $('wtreino').onclick=function(){fechar(function(){applyScopeChange({t:'reg',r:0});});};
+  $('wlivre').onclick=function(){fechar(function(){$('qclose').click();});};
+  $('wtour').onclick=function(){fechar(function(){applyScopeChange({t:'reg',r:0});iniciarTour();});};
 }
 
 export { iniciar };

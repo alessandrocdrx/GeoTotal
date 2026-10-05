@@ -3,28 +3,31 @@
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
   <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Mais</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <nav id="mlist" class="mlist">
-    <div class="mgrp">Treino</div>
+    <div class="mtiles">
+      <button class="mtile" id="mdesafio"><span class="mi">🗓️</span><span class="mt"><b>Desafio do dia</b><small>10 países, os mesmos para todo mundo hoje</small></span><span class="mc">›</span></button>
+      <button id="mtour" class="mtile"><span class="mi">❓</span><span class="mt"><b>Como jogar</b><small>Tour rápido pelos botões e menus</small></span><span class="mc">›</span></button>
+      <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos do treino</small></span><span class="mc">›</span></button>
+      <button class="mtile" id="mhist"><span class="mi">📊</span><span class="mt"><b>Seu histórico</b><small>Acertos e erros por país e por região</small></span><span class="mc">›</span></button>
+    </div>
     <button data-p="mp-train"><span class="mi">🎯</span><span class="mt"><b>Opções do treino</b><small id="mtrainv">Resposta, foco, sessão, cronômetro</small></span><span class="mc">›</span></button>
-    <button id="mdesafio"><span class="mi">🗓️</span><span class="mt"><b>Desafio do dia</b><small>10 países, os mesmos para todo mundo hoje</small></span><span class="mc">›</span></button>
-    <button id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos do treino</small></span><span class="mc">›</span></button>
-    <button id="mhist"><span class="mi">📊</span><span class="mt"><b>Seu histórico</b><small>Acertos e erros por país e por região</small></span><span class="mc">›</span></button>
-    <div class="mgrp">Mapa</div>
-    <button id="mlabels"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b><small id="mlabelsv">Países</small></span><span class="mc">↻</span></button>
-    <button data-p="mp-poles"><span class="mi">🧭</span><span class="mt"><b>Ir a um polo</b><small>Polo Norte ou Polo Sul</small></span><span class="mc">›</span></button>
-    <div class="mgrp">Explorar</div>
+    <details class="mfold"><summary><span class="mi">🧭</span><span class="mt"><b>Explorar o mapa</b><small>Brasil, comparar países, distâncias, polos, folha de estudo</small></span><span class="mc">▾</span></summary>
     <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
     <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Dois países lado a lado</small></span><span class="mc">›</span></button>
     <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Calcula e mostra no globo</small></span><span class="mc">›</span></button>
+    <button id="mlabels"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b><small id="mlabelsv">Países</small></span><span class="mc">↻</span></button>
+    <button data-p="mp-poles"><span class="mi">🧭</span><span class="mt"><b>Ir a um polo</b><small>Polo Norte ou Polo Sul</small></span><span class="mc">›</span></button>
     <button data-p="mp-exp"><span class="mi">📄</span><span class="mt"><b>Estudar e exportar</b><small>Folha de estudo, CSV e Anki</small></span><span class="mc">›</span></button>
-    <div class="mgrp">App</div>
-    <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
+    </details>
+    <details class="mfold"><summary><span class="mi">⚙️</span><span class="mt"><b>Configurações</b><small>Som, música, tema, salvar progresso, ajuda</small></span><span class="mc">▾</span></summary>
     <button id="msfx"><span class="mi">🔊</span><span class="mt"><b>Efeitos sonoros</b><small id="msfxv">Ligados</small></span><span class="mc">↻</span></button>
     <button id="mmusic"><span class="mi">🎵</span><span class="mt"><b>Música</b><small id="mmusicv">Desligada</small></span><span class="mc">↻</span></button>
+    <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
     <button id="msave"><span class="mi">💾</span><span class="mt"><b>Salvar meu progresso</b><small>Guarde o arquivo (no Drive, por exemplo) para trocar de celular</small></span><span class="mc">↓</span></button>
     <label class="mrowfile"><span class="mi">📂</span><span class="mt"><b>Restaurar progresso</b><small>Abra um arquivo salvo antes</small></span><span class="mc">›</span><input id="mload" type="file" accept=".json,application/json" hidden></label>
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Textura e fronteiras</b><small>Imagem do globo e contornos</small></span><span class="mc">›</span></button>
     <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
+    </details>
   </nav>
   <div class="mpage" id="mp-train" data-t="Opções do treino" hidden>
     <div class="mlab">Resposta</div>

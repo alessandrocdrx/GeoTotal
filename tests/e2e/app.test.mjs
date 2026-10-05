@@ -173,6 +173,7 @@ test('toques e categorias passam pelos ganchos da interface', async () => {
 test('som: efeitos e música ligam e desligam pelo menu, sem erros', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.click('#mbtn');
+  await pagina.evaluate(() => document.querySelectorAll('.mfold').forEach((d) => { d.open = true; }));
   const antes = await pagina.evaluate(() => ({ e: document.getElementById('msfxv').textContent, m: document.getElementById('mmusicv').textContent }));
   await pagina.click('#mmusic');
   await pagina.evaluate(() => { const g = window.__geoTotal; ['acerto', 'erro', 'toque', 'nivel', 'meta', 'conquista'].forEach(g.tocar); });
@@ -186,10 +187,10 @@ test('som: efeitos e música ligam e desligam pelo menu, sem erros', async () =>
   await fechar();
 });
 
-test('primeira vez: boas-vindas levam à América do Sul; alternativas sem lugares disputados', async () => {
+test('primeira vez: cartão Treino leva à América do Sul; alternativas sem lugares disputados', async () => {
   const { pagina, erros, fechar } = await abrirApp({ novato: true });
   assert.equal(await pagina.isVisible('#welcome'), true, 'boas-vindas aparecem na primeira vez');
-  await pagina.click('#wgo');
+  await pagina.click('#wtreino');
   await pagina.waitForTimeout(500);
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
@@ -332,6 +333,28 @@ test('progresso: salvar e restaurar; música pausa no treino; legenda no Livre',
   assert.equal(livre.itens, 7);
   await pagina.click('#legok');
   assert.equal(await pagina.evaluate(() => document.getElementById('legenda').hidden), true);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('boas-vindas: cartão Livre abre o Livre; tour passa por todos os passos e fica no menu', async () => {
+  const { pagina, erros, fechar } = await abrirApp({ novato: true });
+  await pagina.click('#wlivre');
+  await pagina.waitForTimeout(600);
+  assert.equal(await pagina.evaluate(() => window.__geoTotal.quiz.open), false, 'Livre aberto');
+  await pagina.click('#mbtn');
+  await pagina.click('#mtour');
+  await pagina.waitForTimeout(900);
+  assert.equal(await pagina.isVisible('#guia'), true, 'tour aparece');
+  assert.equal(await pagina.evaluate(() => window.__geoTotal.quiz.open), true, 'tour abre o Treino');
+  const passos = [];
+  for (let k = 0; k < 10 && await pagina.isVisible('#guia'); k++) {
+    passos.push(await pagina.textContent('#guiapasso'));
+    await pagina.click('#guiaprox');
+    await pagina.waitForTimeout(150);
+  }
+  assert.ok(passos.length >= 6, 'passa por pelo menos 6 passos: ' + passos.join(', '));
+  assert.equal(await pagina.isVisible('#guia'), false, 'tour fecha no fim');
   assert.deepEqual(erros, []);
   await fechar();
 });

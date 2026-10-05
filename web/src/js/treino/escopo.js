@@ -48,7 +48,34 @@ function updateMultiApplyBtn(){
   btn.style.display=n?'flex':'none';
   btn.textContent='Aplicar ('+n+' regi'+(n===1?'ão':'ões')+' · '+cnt+' países)';
 }
+/* cartões grandes: o caminho principal da tela; sub-regiões e o resto ficam em "Mais opções" */
+const EMOJI_REG = ['🌎','🏝️','🦅','🦁','🏰','🐼','🦘'];
+function buildScopeTiles(){
+  var box=$('scopetiles');box.innerHTML='';
+  function tile(icone,nome,count,sc,cor,unid){
+    var b=document.createElement('button');b.className='stile';
+    if(cor)b.style.setProperty('--cor',cor);
+    var atual=estadoTreino.quizScope;
+    if(sc.t===atual.t&&sc.r===atual.r&&!sc.s&&!atual.s)b.classList.add('on');
+    var rc=recordable(sc)?estadoPartida.RECS[scopeKeyFor(sc,quiz.mode)]:null;
+    var i=document.createElement('span');i.className='stico';i.textContent=icone;
+    var n=document.createElement('b');n.textContent=nome;
+    var c=document.createElement('small');c.textContent=count+' '+(unid||(count===1?'país':'países'))+(rc&&rc.medal?' · '+MEDAL[rc.medal].i:'');
+    b.appendChild(i);b.appendChild(n);b.appendChild(c);
+    b.onclick=function(){applyScopeChange(sc);};
+    box.appendChild(b);
+  }
+  var rv=reviewList();
+  if(rv.length)tile('🧠','Revisão dos seus erros',rv.length,{t:'review',cc:rv},'#f72585');
+  tile('🌍','Mundo todo',availCount(),{t:'world'},'#9aa3b5');
+  REG.forEach(function(rg,ri){
+    var n=D.filter(function(d){return d.r===ri&&avail(d);}).length;
+    if(n&&EMOJI_REG[ri])tile(EMOJI_REG[ri],rg.n,n,{t:'reg',r:ri},rg.c);
+  });
+  tile('🇧🇷','Estados do Brasil',BRS.length,{t:'br'},'#1fa85a','estados');
+}
 function buildScopeList(filterStr){
+  buildScopeTiles();
   var box=$('scopelist');box.innerHTML='';
   var q2=norm((filterStr||'').trim());
   function match(label){return !q2||norm(label).indexOf(q2)>=0;}
@@ -121,7 +148,7 @@ function iniciar() {
   ouvir('treinar-regiao',function(o){if(!quiz.open)quizOpen();applyScopeChange({t:'reg',r:o.r});});
   ouvir('categorias-mudaram',function(o){if(quiz.open){updateScopeBtn();if(o.placar)renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}});
   $('qscopeback').onclick=function(){if(estadoTreino.quizScopePrev){applyScopeChange(estadoTreino.quizScopePrev);$('scopesheet').style.display='none';}};
-  $('qscopeb').onclick=function(){$('scopeq').value='';buildScopeList();$('scopesheet').style.display='block';};
+  $('qscopeb').onclick=function(){$('scopeq').value='';$('scopeadv').open=false;buildScopeList();$('scopesheet').style.display='block';};
   $('scopeq').addEventListener('input',function(){buildScopeList(this.value);});
   $('scopeclose').onclick=function(){$('scopesheet').style.display='none';};
   $('scopesheet').addEventListener('pointerdown',function(e){if(e.target===$('scopesheet'))$('scopesheet').style.display='none';});
