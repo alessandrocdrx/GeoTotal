@@ -532,3 +532,24 @@ test('"Onde treinar?": Guiana Francesa na América do Sul, Américas Central e d
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('dica na múltipla escolha tira 2 erradas sem dar a letra; seletor leva às outras opções do treino', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quizSetMode('cap');
+    document.querySelector('.qhintbtn').click();
+    const certo = g.optLabel(g.quiz.cur);
+    const elim = [...document.querySelectorAll('#qbody .qopts button.elim')].map((b) => b.textContent);
+    return { elim, certo, texto: document.querySelector('.qhintbtn').textContent };
+  });
+  assert.equal(r.elim.length, 2, 'duas opções eliminadas');
+  assert.ok(!r.elim.includes(r.certo), 'a certa nunca é eliminada');
+  assert.doesNotMatch(r.texto, /começa com/);
+  await pagina.click('#qmodeb');
+  await pagina.click('.qmodesmais');
+  await pagina.waitForTimeout(300);
+  assert.equal(await pagina.evaluate(() => !document.getElementById('mp-train').hidden), true, 'abre Opções do treino');
+  assert.deepEqual(erros, []);
+  await fechar();
+});

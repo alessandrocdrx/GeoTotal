@@ -168,7 +168,7 @@ function nextQ(){
   if(isNeighbor){
     var grid2=document.createElement('div');grid2.className='qopts';
     makeNeighborOptions(i,quiz.nbAnswer).forEach(function(k){
-      var b=document.createElement('button');b.textContent=optLabel(k);
+      var b=document.createElement('button');b.textContent=optLabel(k);b.dataset.k=k;
       b.onclick=function(){
         if(quiz.answered)return;
         var ok=(k===quiz.nbAnswer);
@@ -185,7 +185,7 @@ function nextQ(){
   if(quiz.type==='choice'){
     var grid=document.createElement('div');grid.className='qopts';
     makeOptions(i).forEach(function(k){
-      var b=document.createElement('button');b.textContent=optLabel(k);
+      var b=document.createElement('button');b.textContent=optLabel(k);b.dataset.k=k;
       b.onclick=function(){
         if(quiz.answered)return;
         quiz.escolhido=k;
@@ -257,11 +257,16 @@ function pickStateNear(x,y){
 }
 function buildModeButtons(){
   var box=$('qmodes');box.innerHTML='';$('qmodev').textContent=modeName(quiz.mode);
+  $('qmodel').textContent='❓ Pergunta';
   var defs=estadoTreino.quizDomain==='br'?[['cap','Estado → Capital'],['pais','Capital → Estado'],['neighbor','Estado → Vizinho'],['code','Estado → Sigla'],['map','Achar no mapa']]:[['cap','País → Capital'],['pais','Capital → País'],['flag','Bandeira → País'],['neighbor','País → Vizinho'],['code','País → Sigla'],['map','Achar no mapa']];
   defs.forEach(function(m){
     var b=document.createElement('button');b.textContent=m[1];b.setAttribute('aria-pressed',quiz.mode===m[0]?'true':'false');
     b.onclick=function(){quizSetMode(m[0]);};box.appendChild(b);
   });
+  /* as outras opções do treino ficam no menu; este atalho mostra que elas existem */
+  var mais=document.createElement('button');mais.className='qmodesmais';mais.textContent='⚙️ Mais opções: digitar a resposta, foco, rodada, cronômetro, sobrevivência…';
+  mais.onclick=function(){$('qmodes').hidden=true;$('qmodeb').setAttribute('aria-expanded','false');$('mbtn').click();setTimeout(function(){var t=document.querySelector('[data-p="mp-train"]');if(t)t.click();},60);};
+  box.appendChild(mais);
   var t=$('qtypes');t.innerHTML='';
   [['choice','Múltipla escolha'],['type','Digitar']].forEach(function(m){
     var b=document.createElement('button');b.textContent=m[1];b.setAttribute('aria-pressed',quiz.type===m[0]?'true':'false');
