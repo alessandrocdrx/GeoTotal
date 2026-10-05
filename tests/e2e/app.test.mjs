@@ -442,6 +442,26 @@ test('voltar a uma região já zerada começa uma partida nova, sem a tela antig
   await fechar();
 });
 
+test('região zerada que ganhou um país novo recomeça inteira e mantém a medalha', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quiz.sessionLen = 0;
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    for (let k = 0; k < 40 && g.runPool().length; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    /* simula a partida antiga, zerada antes de a Guiana Francesa entrar na região */
+    const run = g.curRun(); delete run.d.GF; g.saveRuns();
+    g.applyScopeChange({ t: 'reg', r: 1 });
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    const k = Object.keys(JSON.parse(localStorage.getItem('globo.recs.v1'))).find((x) => x.includes('"r":0'));
+    return { pool: g.runPool().length, n: g.poolIdx().length, medalha: JSON.parse(localStorage.getItem('globo.recs.v1'))[k].medal };
+  });
+  assert.equal(r.pool, r.n, 'partida nova com todos os países, não só o que faltava');
+  assert.equal(r.medalha, 1, 'medalha de ouro continua guardada');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
 test('conquistas: medalha da região zerada aparece e a barra de domínio anda a cada acerto', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.evaluate(() => {

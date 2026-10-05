@@ -8861,6 +8861,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     quiz.hinted = false;
     quiz.nbAnswer = -1;
     if (estadoDistancia.arc && estadoDistancia.arc.quiz) estadoDistancia.arc = null;
+    var rk = runKey(), rr = estadoPartida.RUNS[rk];
+    if (rr && rr.fin && estadoPartida.ultimoFim !== rk) {
+      delete estadoPartida.RUNS[rk];
+      saveRuns();
+    }
     var arr = QD(), i = pickQ();
     var body = $("qbody"), fb = $("qfb");
     body.innerHTML = "";
@@ -8873,10 +8878,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (i < 0) {
       updateScopeBtn();
       if (poolIdx().length && !runPool().length) {
-        if (estadoPartida.ultimoFim !== runKey()) {
-          runRestart();
-          return;
-        }
         showRunDone();
         return;
       }

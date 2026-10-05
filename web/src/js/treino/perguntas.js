@@ -123,11 +123,15 @@ function updateOrderBtn(){
 function nextQ(){
   estadoTreino.qFlash=null;estadoTreino.qBadge=null;estadoMapa.selected=null;quiz.hinted=false;quiz.nbAnswer=-1;
   if(estadoDistancia.arc&&estadoDistancia.arc.quiz)estadoDistancia.arc=null;
+  /* partida zerada antes (em outra visita): começa outra do zero, mesmo que a região tenha ganhado um país novo
+     depois (ex.: Guiana Francesa na América do Sul); a medalha e os recordes ficam guardados em globo.recs.v1 */
+  var rk=runKey(),rr=estadoPartida.RUNS[rk];
+  if(rr&&rr.fin&&estadoPartida.ultimoFim!==rk){delete estadoPartida.RUNS[rk];saveRuns();}
   var arr=QD(),i=pickQ();
   var body=$('qbody'),fb=$('qfb');body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
   var isMap=quiz.mode==='map',isNeighbor=quiz.mode==='neighbor';
   $('qtypes').style.display=(isMap||isNeighbor)?'none':'flex';measureQ();
-  if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){if(estadoPartida.ultimoFim!==runKey()){runRestart();return;}showRunDone();return;}body.textContent=emptyMsg();$('qpool').textContent='';return;}
+  if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){showRunDone();return;}body.textContent=emptyMsg();$('qpool').textContent='';return;}
   estadoPartida.ultimoFim='';
   quiz.cur=i;quiz.last=i;quiz.answered=false;quiz.sessionAsked++;estadoTreino.QS.q[quiz.mode]=(estadoTreino.QS.q[quiz.mode]||0)+1;lsSet('globo.quiz.v1',estadoTreino.QS);
   var d=arr[i];
