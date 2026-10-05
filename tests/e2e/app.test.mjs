@@ -458,12 +458,12 @@ test('numa região a rodada não corta em 10: vai até zerar', async () => {
   await fechar();
 });
 
-test('cabeçalho: logo, botão de som; dia e noite ligado; tocar num país no treino mostra só o nome', async () => {
+test('cabeçalho: logo, botão de som; começa sempre de dia (☀️); tocar num país no treino mostra só o nome', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     const logo = getComputedStyle(document.querySelector('h1 .marca-logo')).backgroundImage.startsWith('url("data:image/png');
-    const noite = g.optNight === true && document.getElementById('oNight').checked;
+    const noite = g.optNight === false && !document.getElementById('oNight').checked && document.getElementById('mvisual').textContent === '☀️';
     document.getElementById('msom').click();
     const mudo = g.estadoSom.mudo, icone = document.getElementById('msom').textContent;
     document.getElementById('msom').click();

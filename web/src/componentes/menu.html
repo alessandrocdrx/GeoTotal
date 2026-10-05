@@ -18,16 +18,19 @@
     <button data-p="mp-poles"><span class="mi">🧭</span><span class="mt"><b>Ir a um polo</b><small>Polo Norte ou Polo Sul</small></span><span class="mc">›</span></button>
     <button data-p="mp-exp"><span class="mi">📄</span><span class="mt"><b>Estudar e exportar</b><small>Folha de estudo, CSV e Anki</small></span><span class="mc">›</span></button>
     </details>
-    <details class="mfold"><summary><span class="mi">⚙️</span><span class="mt"><b>Configurações</b><small>Som, música, tema, salvar progresso, ajuda</small></span><span class="mc">▾</span></summary>
+    <details class="mfold"><summary><span class="mi">⚙️</span><span class="mt"><b>Configurações</b><small>Som, aparência, seu progresso e ajuda</small></span><span class="mc">▾</span></summary>
+    <div class="mgrp msub">🎨 Aparência e som</div>
     <button id="msfx"><span class="mi">🔊</span><span class="mt"><b>Efeitos sonoros</b><small id="msfxv">Ligados</small></span><span class="mc">↻</span></button>
     <button id="mmusic"><span class="mi">🎵</span><span class="mt"><b>Música</b><small id="mmusicv">Desligada</small></span><span class="mc">↻</span></button>
-    <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
+    <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema claro ou escuro</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
+    <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Visual do globo</b><small>Textura, dia e noite, fronteiras</small></span><span class="mc">›</span></button>
+    <div class="mgrp msub">💾 Seu progresso</div>
     <button id="msave"><span class="mi">💾</span><span class="mt"><b>Salvar meu progresso</b><small>Guarde o arquivo (no Drive, por exemplo) para trocar de celular</small></span><span class="mc">↓</span></button>
     <label class="mrowfile"><span class="mi">📂</span><span class="mt"><b>Restaurar progresso</b><small>Abra um arquivo salvo antes</small></span><span class="mc">›</span><input id="mload" type="file" accept=".json,application/json" hidden></label>
+    <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
+    <div class="mgrp msub">❓ Ajuda</div>
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
-    <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Textura e fronteiras</b><small>Imagem do globo e contornos</small></span><span class="mc">›</span></button>
-    <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
     </details>
   </nav>
   <div class="mpage" id="mp-train" data-t="Opções do treino" hidden>
@@ -83,7 +86,7 @@
     <div class="row2"><button id="expCsv">CSV completo</button><button id="expAnki">CSV para Anki</button></div>
     <div class="row2"><button id="expStudy">Folha de estudo</button></div>
   </div>
-  <div class="mpage" id="mp-map" data-t="Mapa" hidden>
+  <div class="mpage" id="mp-map" data-t="Visual do globo" hidden>
     <div id="minfo" class="inote"></div>
     <details class="adv"><summary>⚙️ Avançado (importar textura e fronteiras)</summary><div>
     <div class="row2"><label class="filebtn">Importar textura (imagem)<input id="impTex" type="file" accept="image/*" hidden></label><button id="resetTex">Voltar à textura gerada</button></div>
