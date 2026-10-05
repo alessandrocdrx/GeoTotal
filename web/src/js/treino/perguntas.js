@@ -127,7 +127,8 @@ function nextQ(){
   var body=$('qbody'),fb=$('qfb');body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
   var isMap=quiz.mode==='map',isNeighbor=quiz.mode==='neighbor';
   $('qtypes').style.display=(isMap||isNeighbor)?'none':'flex';measureQ();
-  if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){showRunDone();return;}body.textContent=emptyMsg();$('qpool').textContent='';return;}
+  if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){if(estadoPartida.ultimoFim!==runKey()){runRestart();return;}showRunDone();return;}body.textContent=emptyMsg();$('qpool').textContent='';return;}
+  estadoPartida.ultimoFim='';
   quiz.cur=i;quiz.last=i;quiz.answered=false;quiz.sessionAsked++;estadoTreino.QS.q[quiz.mode]=(estadoTreino.QS.q[quiz.mode]||0)+1;lsSet('globo.quiz.v1',estadoTreino.QS);
   var d=arr[i];
   var n=poolIdx().length;updateScopeBtn();

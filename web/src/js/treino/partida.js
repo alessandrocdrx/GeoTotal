@@ -24,6 +24,8 @@ import { ctx, estadoCamera, FONT, rot, W } from '../visualizacao/tela.js';
 const estadoPartida = {
   RUNS: undefined,
   RECS: undefined,
+  /** partida que acabou de ser zerada agora (só ela mostra a tela "Você zerou"; ao voltar depois, começa outra) */
+  ultimoFim: '',
 };
 
 function runKey(){return estadoTreino.quizDomain+'|'+JSON.stringify(estadoTreino.quizScope)+'|'+quiz.mode;}
@@ -54,7 +56,7 @@ function runRecord(i,ok){
   if(r.deck){var di=r.deck.indexOf(cc);if(di>=0)r.deck.splice(di,1);
     if(!ok){var lo=Math.min(3,r.deck.length);r.deck.splice(lo+rndInt(r.deck.length-lo+1),0,cc);}}
   if(ok&&!r.fin&&poolIdx().length&&!runPool().length){
-    r.fin=now;
+    r.fin=now;estadoPartida.ultimoFim=runKey();
     r.res=recFinish(r);
     celebrate('🏁 Você zerou '+scopeLabel()+'!');tocar('conquista');addXP(50);
     if(recordable(estadoTreino.quizScope)&&r.res.newMedal)celebrate(MEDAL[r.res.medal].i+' Medalha de '+MEDAL[r.res.medal].n+'!');

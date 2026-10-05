@@ -423,6 +423,25 @@ test('zerou a região: duas próximas paradas e entra sozinho na primeira', asyn
   await fechar();
 });
 
+test('voltar a uma região já zerada começa uma partida nova, sem a tela antiga de "Você zerou"', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quiz.sessionLen = 0;
+    g.applyScopeChange({ t: 'reg', r: 6 });
+    for (let k = 0; k < 40 && g.runPool().length; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    const fimAgora = !!document.querySelector('.rundone');
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    g.applyScopeChange({ t: 'reg', r: 6 });
+    return { fimAgora, fimDepois: !!document.querySelector('.rundone'), pool: g.runPool().length, n: g.poolIdx().length };
+  });
+  assert.equal(r.fimAgora, true, 'logo depois de zerar mostra a tela de fim');
+  assert.equal(r.fimDepois, false, 'ao voltar depois, não mostra a tela antiga');
+  assert.equal(r.pool, r.n, 'partida nova, com todos os países de novo');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
 test('estados do Brasil: o treino não entrega a resposta (etiqueta sem capital, pergunta sem sigla)', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(() => {

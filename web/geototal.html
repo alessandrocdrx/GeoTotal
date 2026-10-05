@@ -7887,7 +7887,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/treino/partida.js
   var estadoPartida = {
     RUNS: void 0,
-    RECS: void 0
+    RECS: void 0,
+    /** partida que acabou de ser zerada agora (só ela mostra a tela "Você zerou"; ao voltar depois, começa outra) */
+    ultimoFim: ""
   };
   function runKey() {
     return estadoTreino.quizDomain + "|" + JSON.stringify(estadoTreino.quizScope) + "|" + quiz.mode;
@@ -7947,6 +7949,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     if (ok && !r.fin && poolIdx().length && !runPool().length) {
       r.fin = now;
+      estadoPartida.ultimoFim = runKey();
       r.res = recFinish(r);
       celebrate("🏁 Você zerou " + scopeLabel() + "!");
       tocar("conquista");
@@ -8810,6 +8813,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (i < 0) {
       updateScopeBtn();
       if (poolIdx().length && !runPool().length) {
+        if (estadoPartida.ultimoFim !== runKey()) {
+          runRestart();
+          return;
+        }
         showRunDone();
         return;
       }
@@ -8817,6 +8824,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       $("qpool").textContent = "";
       return;
     }
+    estadoPartida.ultimoFim = "";
     quiz.cur = i;
     quiz.last = i;
     quiz.answered = false;
