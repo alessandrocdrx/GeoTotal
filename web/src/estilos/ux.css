@@ -75,7 +75,7 @@ header .modesw button{padding:0 10px!important}
 .hok{color:#1f9d55}.hbad{color:#d64545}
 .hbar{grid-column:1/-1;height:5px;border-radius:3px;background:var(--border);overflow:hidden}
 .hbar i{display:block;height:100%;border-radius:3px}
-@media (max-width:420px){.htop .streakpill{display:none!important}}
+
 .mhead{display:flex;align-items:center;gap:8px;min-width:0}
 .mback{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;width:38px;height:38px;font-size:18px;font-weight:800;cursor:pointer;font-family:inherit;flex:none}
 .mlist{display:flex;flex-direction:column;margin-top:4px}
@@ -304,7 +304,7 @@ body.quizing #spin,body.quizing #tour{display:none}
 .sobrecred{font-size:12.5px;color:var(--muted)}
 /* foguinho clicável; cabeçalho apertado em telas pequenas */
 button.streakpill{cursor:pointer;font-family:inherit;font-weight:800}
-@media (max-width:420px){.htop .streakpill{display:flex!important}}
+
 /* telas estreitas: só a logo (sem o texto), botões mais compactos */
 h1.marca{flex:none}
 @media (max-width:460px){h1.marca{font-size:0;overflow:visible}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}.hbtns{gap:4px}.hsom{width:34px;height:34px}.streakpill{padding:0 8px}}

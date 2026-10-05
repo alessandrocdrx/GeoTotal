@@ -15,6 +15,7 @@ import { afterFilter, buildChips, updateNbBtn } from '../interface/filtros.js';
 import { ganchosInterface } from '../interface/ganchos.js';
 import { hidePick } from '../interface/lista-proximos.js';
 import { emitir } from '../nucleo/eventos.js';
+import { horaAgora } from '../nucleo/hora.js';
 import { $, setStatus } from '../nucleo/utilitarios.js';
 import { flyTo } from '../visualizacao/animacao.js';
 import { countryView, zoomFor } from '../visualizacao/enquadramento.js';
@@ -64,7 +65,8 @@ function selectSt(st,fly,group){
   $('ccapnote').textContent='';ganchosInterface.mostrarDesempenho('BR-'+st.sigla,true);
   var ob=$('cobs');ob.textContent=st.note;ob.style.display=st.note?'block':'none';
   var dens=st.pop/st.area;
-  renderFacts([['👥 População',fmtPop(st.pop/1000)],['📐 Área',fmtArea(st.area)],['🏙️ Densidade',(dens<10?dens.toFixed(1):Math.round(dens)).toString().replace('.',',')+' hab./km²'],['🧭 Região',BRREG[st.reg].n]]);
+  var hr=horaAgora('BR-'+st.sigla);
+  renderFacts((hr?[['🕐 Hora agora',hr.hora+' · '+hr.dif]]:[]).concat([['👥 População',fmtPop(st.pop/1000)],['📐 Área',fmtArea(st.area)],['🏙️ Densidade',(dens<10?dens.toFixed(1):Math.round(dens)).toString().replace('.',',')+' hab./km²'],['🧭 Região',BRREG[st.reg].n]]));
   renderChips('Estados vizinhos',st.nb.map(function(k){return {t:BRS[k].sigla+' · '+BRS[k].name,f:function(){selectSt(BRS[k],true);}};}),'Não faz fronteira com outro estado.');
   card.style.display='block';updateNbBtn();updateStBtn();
   renderNear(group,st,function(x){selectSt(x,false,group);},function(x){return x.sigla+' '+x.name;});

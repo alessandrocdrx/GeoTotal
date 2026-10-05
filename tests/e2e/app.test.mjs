@@ -492,3 +492,22 @@ test('cartão de estado não herda o selo "Não reconhecido" do país anterior; 
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('cartão mostra a hora agora e a diferença para Brasília (país e estado)', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.click('#qclose');
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.select(g.D.find((d) => d.cc === 'JP'), true);
+    const jp = document.getElementById('cfacts').textContent;
+    g.enterStates(g.BRS.find((s) => s.sigla === 'AM'));
+    const am = document.getElementById('cfacts').textContent;
+    return { jp, am, brAgora: g.horaAgora('BR').dif };
+  });
+  assert.match(r.jp, /Hora agora/);
+  assert.match(r.jp, /\+12h em relação a Brasília/);
+  assert.match(r.am, /−1h em relação a Brasília/);
+  assert.equal(r.brAgora, 'mesma hora de Brasília');
+  assert.deepEqual(erros, []);
+  await fechar();
+});

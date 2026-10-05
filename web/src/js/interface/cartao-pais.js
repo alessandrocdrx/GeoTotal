@@ -10,6 +10,7 @@ import { card, closeCard, fillInfo, fmtArea, fmtPop, measureCard, tourStop } fro
 import { afterFilter, toggleNb, updateNbBtn } from './filtros.js';
 import { ganchosInterface } from './ganchos.js';
 import { emitir } from '../nucleo/eventos.js';
+import { horaAgora } from '../nucleo/hora.js';
 import { flyTo } from '../visualizacao/animacao.js';
 import { countryView, zoomFor } from '../visualizacao/enquadramento.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
@@ -65,7 +66,9 @@ function select(d,fly,group){
   document.getElementById('ccapnote').textContent=capNote?d.obs:'';
   var ob=document.getElementById('cobs');ob.textContent=capNote?'':d.obs;ob.style.display=(d.obs&&!capNote)?'block':'none';
   var x=d.info;
-  renderFacts(x?[['👥 População',fmtPop(x.pop)],['📐 Área',fmtArea(x.area)],['🗣️ Idioma',x.lang],['💰 Moeda',x.cur]]:[]);
+  var hr=horaAgora(d.cc,x&&x.tz),varios=x&&/\(|fusos|de [−-]?\d/.test(x.tz||'');
+  var hrow=hr?[['🕐 Hora agora'+(varios?' (na capital)':''),hr.hora+(hr.dia?' de '+hr.dia:'')+' · '+hr.dif]]:[];
+  renderFacts(hrow.concat(x?[['👥 População',fmtPop(x.pop)],['📐 Área',fmtArea(x.area)],['🗣️ Idioma',x.lang],['💰 Moeda',x.cur]]:[]));
   renderChips('Fronteiras por terra',NB[d.i].map(function(i){return {t:dflag(D[i])+' '+short(D[i]),f:function(){select(D[i],true);}};}),
     'Não faz fronteira terrestre com outro país.');
   card.style.display='block';
