@@ -160,7 +160,7 @@ function optLabel(k){
   var o=QD()[k];
   if(quiz.mode==='cap')return qcapD(o);
   if(quiz.mode==='code')return estadoTreino.quizDomain==='br'?o.sigla:o.cc;
-  return qflag(o)+' '+short(o);
+  return (qflag(o)+' '+short(o)).trim();
 }
 function makeNeighborOptions(qIdx,ansIdx){
   var arr=QD(),nbSet={};(estadoTreino.quizDomain==='br'?arr[qIdx].nb:NB[qIdx]).forEach(function(k){nbSet[k]=1;});
@@ -243,7 +243,7 @@ function showTarget(i){
   else{estadoTreino.qBadge=i;showCountry(i);}
 }
 function sessionRecord(ok,ganho,rapido){
-  var s=quiz;s.sessionLog.push({label:qflag(QD()[s.cur])+' '+short(QD()[s.cur]),ok:ok,xp:ganho||0,rapido:!!rapido,combo:s.streak});
+  var s=quiz;s.sessionLog.push({label:(qflag(QD()[s.cur])+' '+short(QD()[s.cur])).trim(),ok:ok,xp:ganho||0,rapido:!!rapido,combo:s.streak});
 }
 /** Contador de acertos seguidos, sempre à vista no placar a partir do 2º. */
 function mostrarCombo(){

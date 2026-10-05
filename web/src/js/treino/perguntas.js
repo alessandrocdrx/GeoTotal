@@ -44,6 +44,10 @@ function startTimerTick(){
 }
 function roundDone(){
   if(quiz.survivalMode)return quiz.lastOk===false;
+  /* numa região (ou nos estados) a rodada vai até zerar, sem cortar no meio; rodadas de 10 só no
+     Mundo, na revisão e no desafio do dia */
+  var sc=estadoTreino.quizScope;
+  if(!estadoTreino.desafio&&sc.t!=='world'&&sc.t!=='review'&&sc.t!=='filter'&&runPool().length)return false;
   return sessionDone();
 }
 function showRoundSummary(reason){

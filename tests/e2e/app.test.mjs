@@ -422,3 +422,38 @@ test('zerou a região: duas próximas paradas e entra sozinho na primeira', asyn
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('estados do Brasil: o treino não entrega a resposta (etiqueta sem capital, pergunta sem sigla)', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.applyScopeChange({ t: 'br' });
+    g.quizSetMode('cap');
+    const st = g.QD()[g.quiz.cur];
+    const capQ = document.querySelector('#qbody .qq').firstChild.textContent;
+    const etiqueta = g.stBadgeMetrics(g.estadoBrasil.selSt);
+    g.quizSetMode('code');
+    const st2 = g.QD()[g.quiz.cur];
+    const codeQ = document.querySelector('#qbody .qq').firstChild.textContent;
+    return { capQ, cap: st.cap, t2: etiqueta.t2, codeQ, sigla: st2.sigla };
+  });
+  assert.ok(!r.capQ.includes(r.cap), 'a pergunta não mostra a capital');
+  assert.equal(r.t2, '', 'etiqueta do mapa sem "Capital: …" durante o treino');
+  assert.ok(!new RegExp('\\b' + r.sigla + '\\b').test(r.codeQ), 'a pergunta da sigla não mostra a sigla: ' + r.codeQ);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('numa região a rodada não corta em 10: vai até zerar', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.applyScopeChange({ t: 'br' });
+    for (let k = 0; k < 12; k++) { g.quiz.answered = false; g.finishQ(true); document.getElementById('qnext').click(); }
+    return { fim: !!document.querySelector('.rodadafim'), restam: g.runPool().length };
+  });
+  assert.equal(r.fim, false, 'depois de 12 respostas nos estados, não interrompeu');
+  assert.equal(r.restam, 15);
+  assert.deepEqual(erros, []);
+  await fechar();
+});

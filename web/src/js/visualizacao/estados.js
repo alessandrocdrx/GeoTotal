@@ -26,14 +26,14 @@ const estadoBrasil = {
 };
 
 function stBadgeMetrics(st){
-  var t1=st.name,t2='Capital: '+st.cap,fs=16,maxw=W-72-64,w1;
+  var treino=ganchos.treinoAberto(),t1=st.name,t2=treino?'':'Capital: '+st.cap,fs=16,maxw=W-72-64,w1;
   ctx.font='700 '+fs+'px '+FONT;w1=ctx.measureText(t1).width;
   while(w1>maxw&&fs>10){fs--;ctx.font='700 '+fs+'px '+FONT;w1=ctx.measureText(t1).width;}
   ctx.font='600 11.5px '+FONT;var w2=ctx.measureText(t2).width;
-  var bw=Math.min(W-72,Math.max(w1,w2)+64),bh=46;
+  var bw=treino?Math.min(W-72,w1+36):Math.min(W-72,Math.max(w1,w2)+64),bh=treino?38:46;
   var bx=Math.max(6,Math.min(st.sx-bw/2,W-bw-66)),by=st.sy-bh-20;
   if(by<6)by=st.sy+20;
-  return {st:st,t1:t1,t2:t2,fs:fs,bx:bx,by:by,bw:bw,bh:bh};
+  return {st:st,t1:t1,t2:t2,fs:fs,bx:bx,by:by,bw:bw,bh:bh,treino:treino};
 }
 
 function paintStBadge(m){
@@ -43,6 +43,12 @@ function paintStBadge(m){
   ctx.fillStyle='rgba(4,16,36,.93)';ctx.beginPath();
   if(ctx.roundRect)ctx.roundRect(m.bx,m.by,m.bw,m.bh,13);else ctx.rect(m.bx,m.by,m.bw,m.bh);
   ctx.fill();ctx.lineWidth=2.2;ctx.strokeStyle=col;ctx.stroke();
+  /* no treino a etiqueta mostra só o nome: capital e sigla seriam a resposta */
+  if(m.treino){
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fff';
+    ctx.font='700 '+m.fs+'px '+FONT;ctx.fillText(m.t1,m.bx+m.bw/2,m.by+m.bh/2);ctx.textAlign='left';
+    return;
+  }
   ctx.fillStyle=col;ctx.beginPath();
   if(ctx.roundRect)ctx.roundRect(m.bx+8,m.by+9,36,28,8);else ctx.rect(m.bx+8,m.by+9,36,28);
   ctx.fill();
@@ -164,4 +170,4 @@ function iniciar() {
   estadoBrasil.STFEAT = BRS.map(function(){return null;});
 }
 
-export { drawGeoStates, drawStates, estadoBrasil, fitStates, iniciar, stateAt, stateView };
+export { drawGeoStates, drawStates, estadoBrasil, fitStates, iniciar, stateAt, stateView, stBadgeMetrics };

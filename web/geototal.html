@@ -708,7 +708,7 @@ body.quizing #spin,body.quizing #tour{display:none}
     <div class="qscoperow"><button id="qfocusb">Foco: tudo</button></div>
     <small class="mdesc">Tudo, só os que você nunca viu ou só os que errou.</small>
     <div class="mlab">Rodada</div>
-  <div class="mcol"><button id="qsessionb">🧮 Sessão: livre</button><small class="mdesc">Quantas perguntas por rodada (livre = sem fim).</small>
+  <div class="mcol"><button id="qsessionb">🧮 Sessão: livre</button><small class="mdesc">Quantas perguntas por rodada no Mundo (livre = sem fim). Numa região, a rodada vai até zerar.</small>
   <button id="qorderb">🔀 Ordem: aleatória</button><small class="mdesc">Embaralhada ou sempre na mesma sequência.</small>
   <button id="qtimerb">⏱️ Cronômetro: desligado</button><small class="mdesc">Responda o máximo que der antes do tempo acabar.</small>
   <button id="qsurvb">💀 Sobrevivência: desligada</button><small class="mdesc">Errou uma vez, a rodada acaba. Quanto você aguenta?</small>
@@ -2700,6 +2700,7 @@ Brunei:Malásia
     estadoBrasil: () => estadoBrasil,
     fitStates: () => fitStates,
     iniciar: () => iniciar11,
+    stBadgeMetrics: () => stBadgeMetrics,
     stateAt: () => stateAt,
     stateView: () => stateView
   });
@@ -3021,7 +3022,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     STGEOM: {}
   };
   function stBadgeMetrics(st) {
-    var t1 = st.name, t2 = "Capital: " + st.cap, fs = 16, maxw = W - 72 - 64, w1;
+    var treino = ganchos.treinoAberto(), t1 = st.name, t2 = treino ? "" : "Capital: " + st.cap, fs = 16, maxw = W - 72 - 64, w1;
     ctx.font = "700 " + fs + "px " + FONT;
     w1 = ctx.measureText(t1).width;
     while (w1 > maxw && fs > 10) {
@@ -3031,10 +3032,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     ctx.font = "600 11.5px " + FONT;
     var w2 = ctx.measureText(t2).width;
-    var bw = Math.min(W - 72, Math.max(w1, w2) + 64), bh = 46;
+    var bw = treino ? Math.min(W - 72, w1 + 36) : Math.min(W - 72, Math.max(w1, w2) + 64), bh = treino ? 38 : 46;
     var bx = Math.max(6, Math.min(st.sx - bw / 2, W - bw - 66)), by = st.sy - bh - 20;
     if (by < 6) by = st.sy + 20;
-    return { st, t1, t2, fs, bx, by, bw, bh };
+    return { st, t1, t2, fs, bx, by, bw, bh, treino };
   }
   function paintStBadge(m) {
     var st = m.st, col = BRREG[st.reg].c, above = m.by < st.sy;
@@ -3053,6 +3054,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.lineWidth = 2.2;
     ctx.strokeStyle = col;
     ctx.stroke();
+    if (m.treino) {
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 " + m.fs + "px " + FONT;
+      ctx.fillText(m.t1, m.bx + m.bw / 2, m.by + m.bh / 2);
+      ctx.textAlign = "left";
+      return;
+    }
     ctx.fillStyle = col;
     ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(m.bx + 8, m.by + 9, 36, 28, 8);
@@ -6635,7 +6645,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return estadoTreino.quizDomain === "br" ? "BR-" + o.sigla : o.cc;
   }
   function qflag(o) {
-    return estadoTreino.quizDomain === "br" ? o.sigla : dflag(o);
+    return estadoTreino.quizDomain === "br" ? "" : dflag(o);
   }
   function qcapD(o) {
     return estadoTreino.quizDomain === "br" ? o.cap : qcapDisp(o);
@@ -7732,7 +7742,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var o = QD()[k];
     if (quiz.mode === "cap") return qcapD(o);
     if (quiz.mode === "code") return estadoTreino.quizDomain === "br" ? o.sigla : o.cc;
-    return qflag(o) + " " + short(o);
+    return (qflag(o) + " " + short(o)).trim();
   }
   function makeNeighborOptions(qIdx, ansIdx) {
     var arr = QD(), nbSet = {};
@@ -7870,7 +7880,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   function sessionRecord(ok, ganho, rapido) {
     var s = quiz;
-    s.sessionLog.push({ label: qflag(QD()[s.cur]) + " " + short(QD()[s.cur]), ok, xp: ganho || 0, rapido: !!rapido, combo: s.streak });
+    s.sessionLog.push({ label: (qflag(QD()[s.cur]) + " " + short(QD()[s.cur])).trim(), ok, xp: ganho || 0, rapido: !!rapido, combo: s.streak });
   }
   function mostrarCombo() {
     var el = $("qcomb");
@@ -8181,6 +8191,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   function roundDone() {
     if (quiz.survivalMode) return quiz.lastOk === false;
+    var sc = estadoTreino.quizScope;
+    if (!estadoTreino.desafio && sc.t !== "world" && sc.t !== "review" && sc.t !== "filter" && runPool().length) return false;
     return sessionDone();
   }
   function showRoundSummary(reason) {

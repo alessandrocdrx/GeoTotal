@@ -19,7 +19,8 @@ import { estadoCamera, estadoMapa } from '../visualizacao/tela.js';
 /* ---------- domínio ativo (mundo ou Brasil/estados) ---------- */
 function QD(){return estadoTreino.quizDomain==='br'?BRS:D;}
 function qcc(o){return estadoTreino.quizDomain==='br'?('BR-'+o.sigla):o.cc;}
-function qflag(o){return estadoTreino.quizDomain==='br'?o.sigla:dflag(o);}
+/* bandeira antes do nome; estados não têm bandeira, e a sigla entregaria a resposta de "Estado → Sigla" */
+function qflag(o){return estadoTreino.quizDomain==='br'?'':dflag(o);}
 function qcapD(o){return estadoTreino.quizDomain==='br'?o.cap:qcapDisp(o);}
 function unitWord(n){return estadoTreino.quizDomain==='br'?(n===1?'estado':'estados'):(n===1?'país':'países');}
 function regNameOf(o){return estadoTreino.quizDomain==='br'?BRREG[o.r].n:(o.sub&&o.sub!==REG[o.r].n?o.sub:REG[o.r].n);}
