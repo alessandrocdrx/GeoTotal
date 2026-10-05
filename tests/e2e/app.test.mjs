@@ -358,3 +358,20 @@ test('boas-vindas: cartão Livre abre o Livre; tour passa por todos os passos e 
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('giro e passeio: escondidos no Treino; no Livre explicam o que fazem', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  assert.equal(await pagina.isVisible('#tour'), false, 'passeio escondido no Treino');
+  assert.equal(await pagina.isVisible('#spin'), false, 'giro escondido no Treino');
+  await pagina.click('#qclose');
+  await pagina.waitForTimeout(400);
+  await pagina.click('#spin');
+  assert.match(await pagina.textContent('#status'), /Giro automático desligado/);
+  await pagina.click('#tour');
+  assert.match(await pagina.textContent('#status'), /Passeio/);
+  assert.equal(await pagina.textContent('#tour'), '⏹');
+  await pagina.click('#tour');
+  assert.equal(await pagina.textContent('#tour'), '🎬');
+  assert.deepEqual(erros, []);
+  await fechar();
+});

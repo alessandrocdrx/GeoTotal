@@ -19,7 +19,7 @@ const PASSOS = [
   { alvo: '#qscopeb', texto: '📍 Escolha a região: um continente, um país e seus vizinhos ou o mundo todo.' },
   { alvo: '#qscore', texto: '⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥.' },
   { alvo: '#qbody', texto: '👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final.' },
-  { alvo: '.tools', texto: '🌍 Controles do globo: aproximar, afastar, girar sozinho, passeio pelos países e mapa plano.' },
+  { alvo: '.tools', texto: '🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países.' },
   { alvo: '#mbtn', texto: '⋯ No menu: desafio do dia, conquistas, histórico, som, salvar progresso e este tour de novo.' },
 ];
 

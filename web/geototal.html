@@ -559,6 +559,11 @@ h1.marca span{color:var(--marca)}
 .mfold summary::-webkit-details-marker{display:none}
 .mfold[open] summary .mc{transform:rotate(180deg)}
 .mfold > button,.mfold > label,.mfold > a{padding-left:18px!important}
+/* giro automático e passeio só fazem sentido no Livre */
+body.quizing #spin,body.quizing #tour{display:none}
+.tools button{font-size:18px}
+/* avisos (giro, passeio, salvar…) no alto do globo, acima do cartão, sem cobrir os botões da direita */
+#status{top:10px;bottom:auto;right:64px;z-index:20;font-size:13.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 </style>
 </head>
 <body>
@@ -589,8 +594,8 @@ h1.marca span{color:var(--marca)}
     <div class="tools">
       <button id="zin" aria-label="Aproximar">+</button>
       <button id="zout" aria-label="Afastar">−</button>
-      <button id="spin" aria-label="Girar automaticamente" aria-pressed="true">⟳</button>
-      <button id="tour" aria-label="Passeio pela rota">▶</button>
+      <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true">🔄</button>
+      <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países">🎬</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
     </div>
     <div id="legenda" class="legenda" hidden><b>Cada forma é um continente</b><div id="legitens" class="legitens"></div><button id="legok" class="legok">Entendi</button></div>
@@ -4912,8 +4917,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (!estadoCartao.passeio) return;
     clearInterval(estadoCartao.passeio);
     estadoCartao.passeio = null;
-    $("tour").textContent = "▶";
-    $("tour").setAttribute("aria-label", "Passeio pela rota");
+    $("tour").textContent = "🎬";
+    $("tour").setAttribute("aria-label", "Passeio pelos países");
   }
   function iniciar17() {
     card = document.getElementById("card");
@@ -5996,6 +6001,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       estadoCamera.auto = !estadoCamera.auto;
       spinB.setAttribute("aria-pressed", estadoCamera.auto ? "true" : "false");
       spinB.style.opacity = estadoCamera.auto ? 1 : 0.5;
+      setStatus(estadoCamera.auto ? "🔄 Giro automático ligado: o globo gira sozinho quando você não está mexendo." : "🔄 Giro automático desligado: o globo fica parado.", 2600);
     };
     lp = document.getElementById("lp");
     lc = document.getElementById("lc");
@@ -6125,8 +6131,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoCartao.passeio = setInterval(function() {
       step(1);
     }, 4200);
-    $("tour").textContent = "⏸";
+    $("tour").textContent = "⏹";
     $("tour").setAttribute("aria-label", "Parar passeio");
+    setStatus("🎬 Passeio: mostro um país a cada 4 segundos. Toque em ⏹ para parar.", 3500);
   }
   function iniciar27() {
     $("tour").onclick = function() {
@@ -9852,7 +9859,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     { alvo: "#qscopeb", texto: "📍 Escolha a região: um continente, um país e seus vizinhos ou o mundo todo." },
     { alvo: "#qscore", texto: "⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥." },
     { alvo: "#qbody", texto: "👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final." },
-    { alvo: ".tools", texto: "🌍 Controles do globo: aproximar, afastar, girar sozinho, passeio pelos países e mapa plano." },
+    { alvo: ".tools", texto: "🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países." },
     { alvo: "#mbtn", texto: "⋯ No menu: desafio do dia, conquistas, histórico, som, salvar progresso e este tour de novo." }
   ];
   var passo = -1;

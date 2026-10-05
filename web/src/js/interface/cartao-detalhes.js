@@ -46,7 +46,7 @@ function measureCard(){estadoCartao.cardH=card.style.display==='block'?card.offs
 
 let card;
 function closeCard(){estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;tourStop();}
-function tourStop(){if(!estadoCartao.passeio)return;clearInterval(estadoCartao.passeio);estadoCartao.passeio=null;$('tour').textContent='▶';$('tour').setAttribute('aria-label','Passeio pela rota');}
+function tourStop(){if(!estadoCartao.passeio)return;clearInterval(estadoCartao.passeio);estadoCartao.passeio=null;$('tour').textContent='🎬';$('tour').setAttribute('aria-label','Passeio pelos países');}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   card = document.getElementById('card');

@@ -10,7 +10,7 @@ import { spinB } from './botoes.js';
 import { estadoCartao, tourStop } from './cartao-detalhes.js';
 import { select, step } from './cartao-pais.js';
 import { ganchosInterface } from './ganchos.js';
-import { $ } from '../nucleo/utilitarios.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { estadoCamera, estadoMapa, firstOn } from '../visualizacao/tela.js';
 
@@ -22,7 +22,8 @@ function tourStart(){
   if(estadoBrasil.statesMode){if(!estadoBrasil.selSt||!estadoBrasil.onS[estadoBrasil.selSt.i])ganchosInterface.selecionarEstado(BRS[f],true);}
   else if(!estadoMapa.selected||!estadoMapa.on[estadoMapa.selected.i])select(D[f],true);
   estadoCartao.passeio=setInterval(function(){step(1);},4200);
-  $('tour').textContent='⏸';$('tour').setAttribute('aria-label','Parar passeio');
+  $('tour').textContent='⏹';$('tour').setAttribute('aria-label','Parar passeio');
+  setStatus('🎬 Passeio: mostro um país a cada 4 segundos. Toque em ⏹ para parar.',3500);
 }
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */

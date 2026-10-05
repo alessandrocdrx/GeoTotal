@@ -4,7 +4,7 @@
  * Botões de ferramentas do globo (zoom, polos, rótulos).
  */
 
-import { $ } from '../nucleo/utilitarios.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
 import { flyTo } from '../visualizacao/animacao.js';
 import { estadoCamera, estadoMapa, PI } from '../visualizacao/tela.js';
 
@@ -21,7 +21,8 @@ function iniciar() {
   document.getElementById('ps').onclick=function(){$('msheet').style.display='none';flyTo(-90,estadoCamera.lam*180/PI,1);};
   spinB = document.getElementById('spin');
   spinB.setAttribute('aria-pressed',estadoCamera.auto?'true':'false');spinB.style.opacity=estadoCamera.auto?1:.5;
-  spinB.onclick=function(){estadoCamera.auto=!estadoCamera.auto;spinB.setAttribute('aria-pressed',estadoCamera.auto?'true':'false');spinB.style.opacity=estadoCamera.auto?1:.5;};
+  spinB.onclick=function(){estadoCamera.auto=!estadoCamera.auto;spinB.setAttribute('aria-pressed',estadoCamera.auto?'true':'false');spinB.style.opacity=estadoCamera.auto?1:.5;
+    setStatus(estadoCamera.auto?'🔄 Giro automático ligado: o globo gira sozinho quando você não está mexendo.':'🔄 Giro automático desligado: o globo fica parado.',2600);};
   lp = document.getElementById('lp');
   lc = document.getElementById('lc');
   lp.onclick=function(){estadoMapa.labelMode='p';lp.setAttribute('aria-pressed','true');lc.setAttribute('aria-pressed','false');};

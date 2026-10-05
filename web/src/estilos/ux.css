@@ -271,3 +271,8 @@ h1.marca span{color:var(--marca)}
 .mfold summary::-webkit-details-marker{display:none}
 .mfold[open] summary .mc{transform:rotate(180deg)}
 .mfold > button,.mfold > label,.mfold > a{padding-left:18px!important}
+/* giro automático e passeio só fazem sentido no Livre */
+body.quizing #spin,body.quizing #tour{display:none}
+.tools button{font-size:18px}
+/* avisos (giro, passeio, salvar…) no alto do globo, acima do cartão, sem cobrir os botões da direita */
+#status{top:10px;bottom:auto;right:64px;z-index:20;font-size:13.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.35)}
