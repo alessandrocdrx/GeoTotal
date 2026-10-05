@@ -180,9 +180,9 @@ test('som: efeitos e música ligam e desligam pelo menu, sem erros', async () =>
   await pagina.waitForTimeout(3500);
   await pagina.click('#msfx');
   const depois = await pagina.evaluate(() => ({ e: document.getElementById('msfxv').textContent, m: document.getElementById('mmusicv').textContent, musica: window.__geoTotal.estadoSom.musica }));
-  assert.deepEqual(antes, { e: 'Ligados', m: 'Desligada' });
+  assert.deepEqual(antes, { e: 'Ligados', m: 'Ligada (toca no modo Livre)' });
   assert.equal(depois.e, 'Desligados');
-  assert.equal(depois.musica, true);
+  assert.equal(depois.musica, false, 'tocar em Música desliga (começa ligada)');
   assert.deepEqual(erros, []);
   await fechar();
 });
@@ -454,6 +454,25 @@ test('numa região a rodada não corta em 10: vai até zerar', async () => {
   });
   assert.equal(r.fim, false, 'depois de 12 respostas nos estados, não interrompeu');
   assert.equal(r.restam, 15);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('cabeçalho: logo, botão de som; dia e noite ligado; tocar num país no treino mostra só o nome', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    const logo = getComputedStyle(document.querySelector('h1 .marca-logo')).backgroundImage.startsWith('url("data:image/png');
+    const noite = g.optNight === true && document.getElementById('oNight').checked;
+    document.getElementById('msom').click();
+    const mudo = g.estadoSom.mudo, icone = document.getElementById('msom').textContent;
+    document.getElementById('msom').click();
+    return { logo, noite, mudo, icone, voltou: g.estadoSom.mudo };
+  });
+  assert.deepEqual(r, { logo: true, noite: true, mudo: true, icone: '🔇', voltou: false });
+  const sobre = await pagina.evaluate(() => document.querySelector('#mp-sobre').textContent);
+  assert.match(sobre, /Criado por alessandrocdrx/);
+  assert.match(sobre, /versão \d+\.\d+/);
   assert.deepEqual(erros, []);
   await fechar();
 });

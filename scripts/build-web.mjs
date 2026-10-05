@@ -107,7 +107,9 @@ if (unused.length) fail('arquivos de web/src/ fora do index.html: ' + unused.joi
 // aviso de arquivo gerado logo após a linha de copyright do <head>
 const copyright = out.findIndex((l) => l.includes('Copyright') && l.startsWith('<!--'));
 out.splice(copyright + 1, 0, NOTICE);
-const html = out.join('\n');
+// {{VERSAO}} no HTML (tela "Sobre") vira a versão do package.json
+const versao = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).version.replace(/\.0$/, '');
+const html = out.join('\n').replace(/\{\{VERSAO\}\}/g, versao);
 
 if (checkOnly) {
   let current = '';

@@ -1,7 +1,8 @@
 // geoTotal — Copyright 2026 alessandrocdrx
 // SPDX-License-Identifier: Apache-2.0
 // Gera o ícone adaptativo do app (mipmap-*/ic_launcher_{background,foreground,monochrome}.png)
-// e as imagens da Play Store (playstore/icone-512.png e destaque-1024x500.png) a partir de
+// as imagens da Play Store (playstore/icone-512.png e destaque-1024x500.png) e a logo do cabeçalho
+// (web/src/estilos/marca.css) a partir de
 // scripts/icone/icone.html. Requer Playwright com Chromium.
 // Uso: node scripts/icone/gerar.cjs
 const path = require('node:path');
@@ -33,5 +34,13 @@ const DENS = { mdpi: 108, hdpi: 162, xhdpi: 216, xxhdpi: 324, xxxhdpi: 432 };
   }
   await shot(await p.evaluate(() => ICON.full(512)), 512, 512, path.join(ROOT, 'playstore', 'icone-512.png'));
   await shot(await p.evaluate(() => ICON.feature()), 1024, 500, path.join(ROOT, 'playstore', 'destaque-1024x500.png'));
+  // logo pequena do cabeçalho do app, embutida no CSS (o app não carrega arquivos de fora)
+  const mini = path.join(require('node:os').tmpdir(), 'geototal-logo-96.png');
+  await shot(await p.evaluate(() => ICON.full(96)), 96, 96, mini);
+  const b64 = fs.readFileSync(mini).toString('base64');
+  fs.writeFileSync(path.join(ROOT, 'web', 'src', 'estilos', 'marca.css'),
+    '/**\n * @arquivo estilos/marca.css\n * Camada: Tema\n * Logo pequena do cabeçalho (GERADO por scripts/icone/gerar.cjs a partir de icone.html).\n */\n' +
+    '.marca-logo{background-image:url(data:image/png;base64,' + b64 + ')}\n');
+  console.log('gerado web/src/estilos/marca.css');
   await b.close();
 })();

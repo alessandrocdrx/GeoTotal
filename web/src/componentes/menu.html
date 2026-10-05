@@ -25,6 +25,7 @@
     <button id="msave"><span class="mi">💾</span><span class="mt"><b>Salvar meu progresso</b><small>Guarde o arquivo (no Drive, por exemplo) para trocar de celular</small></span><span class="mc">↓</span></button>
     <label class="mrowfile"><span class="mi">📂</span><span class="mt"><b>Restaurar progresso</b><small>Abra um arquivo salvo antes</small></span><span class="mc">›</span><input id="mload" type="file" accept=".json,application/json" hidden></label>
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
+    <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
     <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Textura e fronteiras</b><small>Imagem do globo e contornos</small></span><span class="mc">›</span></button>
     <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
     </details>
@@ -41,6 +42,16 @@
   <button id="qtimerb">⏱️ Cronômetro: desligado</button><small class="mdesc">Responda o máximo que der antes do tempo acabar.</small>
   <button id="qsurvb">💀 Sobrevivência: desligada</button><small class="mdesc">Errou uma vez, a rodada acaba. Quanto você aguenta?</small>
   <button id="qrunreset">🔁 Recomeçar a partida</button><small class="mdesc">Zera só a região atual, para jogar do zero.</small></div>
+  </div>
+  <div class="mpage" id="mp-sobre" data-t="Sobre o geoTotal" hidden>
+    <div class="sobre">
+      <i class="marca-logo grande" aria-hidden="true"></i>
+      <h3 class="marca">geo<span>Total</span></h3>
+      <p class="sobrev">Países e Capitais · versão {{VERSAO}}</p>
+      <p>Criado por <b>alessandrocdrx</b>.</p>
+      <p>Gratuito, sem anúncios, funciona sem internet e não pede nenhuma permissão.</p>
+      <p class="sobrecred"><b>Créditos:</b> D3.js (BSD), TopoJSON (BSD), DataMaps (MIT) e mapa dos estados do Brasil da amCharts (licença incluída no app). Dados de países aproximados, de fontes públicas.</p>
+    </div>
   </div>
   <div class="mpage" id="mp-poles" data-t="Ir a um polo" hidden>
     <div class="row2"><button id="pn">▲ Polo Norte</button><button id="ps">▼ Polo Sul</button></div>

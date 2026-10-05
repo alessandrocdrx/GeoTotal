@@ -316,21 +316,28 @@ function finishQ(ok,extra){
   },30);
 }
 function drawBadge(R,cx,cy){
-  if(estadoTreino.qBadge==null||estadoTreino.quizDomain!=='world')return;
-  var d=D[estadoTreino.qBadge],X,Y;
+  if(estadoTreino.quizDomain!=='world')return;
+  /* país tocado durante a pergunta: nome (e bandeira) por alguns segundos, nunca a capital */
+  var e=estadoTreino.qEspia;
+  if(e&&performance.now()-e.t<2600&&e.i!==estadoTreino.qBadge)desenharSelo(D[e.i],R,cx,cy,quiz.mode!=='flag',true);
+  if(estadoTreino.qBadge!=null)desenharSelo(D[estadoTreino.qBadge],R,cx,cy,true,false);
+}
+function desenharSelo(d,R,cx,cy,comBandeira,espia){
+  var X,Y;
   if(estadoCamera.plano2D){var R2=R2now(),pp=proj2D(d.lng,d.lat,R2,cx,cy);X=pp.x;Y=pp.y;}
   else{var p=rot(d.x,d.y,d.z);if(p[2]<0.05)return;X=cx+R*p[0];Y=cy-R*p[1];}
-  ctx.beginPath();ctx.arc(X,Y,10,0,7);ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.stroke();
+  ctx.beginPath();ctx.arc(X,Y,10,0,7);ctx.lineWidth=3;ctx.strokeStyle=espia?'rgba(255,255,255,.6)':'#fff';ctx.stroke();
   ctx.beginPath();ctx.arc(X,Y,4.5,0,7);ctx.fillStyle=REG[d.r].c;ctx.fill();
-  var name=short(d),fs=15;
+  var name=short(d),fs=espia?13:15;
   ctx.font='700 '+fs+'px '+FONT;
-  var tw=ctx.measureText(name).width,bw=Math.min(W-12,tw+58),bh=40;
+  var tw=ctx.measureText(name).width,bw=Math.min(W-12,tw+(comBandeira?58:24)),bh=espia?34:40;
   var bx=Math.max(6,Math.min(X-bw/2,W-bw-6)),by=Y-bh-16;
   if(by<6)by=Y+16;
-  ctx.fillStyle='rgba(4,16,36,.9)';ctx.beginPath();
+  ctx.fillStyle=espia?'rgba(40,46,60,.88)':'rgba(4,16,36,.9)';ctx.beginPath();
   if(ctx.roundRect)ctx.roundRect(bx,by,bw,bh,12);else ctx.rect(bx,by,bw,bh);
   ctx.fill();ctx.lineWidth=1.2;ctx.strokeStyle='rgba(255,255,255,.35)';ctx.stroke();
   ctx.textAlign='left';ctx.textBaseline='middle';
+  if(!comBandeira){ctx.font='700 '+fs+'px '+FONT;ctx.fillStyle='#fff';ctx.fillText(name,bx+12,by+bh/2+1);return;}
   if(d.dis){
     ctx.fillStyle=REG[d.r].c;ctx.beginPath();
     if(ctx.roundRect)ctx.roundRect(bx+8,by+bh/2-13,28,26,7);else ctx.rect(bx+8,by+bh/2-13,28,26);

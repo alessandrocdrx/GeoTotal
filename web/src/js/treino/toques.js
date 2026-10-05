@@ -15,8 +15,20 @@ import { countryAt, estadoRender, inFeat, projCfg } from '../visualizacao/projec
 import { estadoCamera, estadoMapa, H, R0, rot, W } from '../visualizacao/tela.js';
 
 /** Antes de tudo: durante perguntas sem mapa o toque é ignorado; no "Achar no mapa" dos estados, responde. */
+/** País sob o ponto tocado (globo ou mapa plano), ou null. */
+function paisNoPonto(x,y){
+  if(!estadoCamera.plano2D)return countryAt(x,y);
+  if(!estadoRender.feats)return null;
+  var ll=inv2D(x,y,R2now(),W/2,H*estadoCamera.cyFrac);
+  for(var i=0;i<D.length;i++)if(estadoRender.FEAT[i]&&inFeat(estadoRender.FEAT[i],ll[0],ll[1]))return D[i];
+  return null;
+}
 function toqueAntes(x,y){
-  if(quiz.open&&!estadoTreino.qMap)return true;
+  /* durante a pergunta, tocar num país só mostra o nome dele (sem a capital); não responde */
+  if(quiz.open&&!estadoTreino.qMap){
+    if(estadoTreino.quizDomain==='world'){var d=paisNoPonto(x,y);if(d)estadoTreino.qEspia={i:d.i,t:performance.now()};}
+    return true;
+  }
   if(estadoTreino.qMap&&estadoTreino.quizDomain==='br'){quizMapAnswerBR(pickStateNear(x,y));return true;}
   return false;
 }
@@ -38,7 +50,7 @@ function toqueNoGlobo(x,y,cand){
 
 /** Toque no mapa 2D durante o treino; devolve true se o treino tratou o toque. */
 function toqueNoMapa2D(x,y){
-  if(quiz.open&&!estadoTreino.qMap)return true;
+  if(quiz.open&&!estadoTreino.qMap)return toqueAntes(x,y);
   if(!estadoTreino.qMap)return false;
   var R2=R2now(),cx=W/2,cy=H*estadoCamera.cyFrac,i,cand=[];
   if(!qHide()){

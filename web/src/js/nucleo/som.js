@@ -13,7 +13,7 @@ import { lsGet, lsSet } from './utilitarios.js';
  */
 
 /** Preferências (efeitos começam ligados, música desligada). */
-const estadoSom = { efeitos: true, musica: false, pausada: false };
+const estadoSom = { efeitos: true, musica: true, pausada: false, mudo: false };
 
 let ac = null;
 let mestre = null;
@@ -75,7 +75,7 @@ const EFEITOS = {
 };
 
 function tocar(nome,arg){
-  if(!estadoSom.efeitos||!EFEITOS[nome])return;
+  if(estadoSom.mudo||!estadoSom.efeitos||!EFEITOS[nome])return;
   var c=contexto();if(!c||c.state!=='running')return;
   try{EFEITOS[nome](arg);}catch(e){}
 }
@@ -94,7 +94,7 @@ function montarMusica(){
   filtro.connect(eco);eco.connect(retorno);retorno.connect(eco);retorno.connect(mestre);
 }
 function passoMusica(){
-  if(!estadoSom.musica||estadoSom.pausada||!ac||ac.state!=='running')return;
+  if(!estadoSom.musica||estadoSom.mudo||estadoSom.pausada||!ac||ac.state!=='running')return;
   /* a cada 4 passos troca o acorde de fundo (pad longo e baixo) */
   if(passoMusica.n%4===0){
     var ac0=ACORDES[acorde%ACORDES.length];acorde++;
@@ -110,7 +110,7 @@ function passoMusica(){
 passoMusica.n=0;
 
 function iniciarMusica(){
-  var c=contexto();if(!c||c.state!=='running'||estadoSom.pausada)return;
+  var c=contexto();if(!c||c.state!=='running'||estadoSom.pausada||estadoSom.mudo)return;
   montarMusica();
   busMusica.gain.cancelScheduledValues(c.currentTime);
   busMusica.gain.setTargetAtTime(1,c.currentTime,1.5);
@@ -127,6 +127,13 @@ function pausarMusica(sim){
   estadoSom.pausada=!!sim;
   if(sim)pararMusica();else if(estadoSom.musica)iniciarMusica();
 }
+/** Botão do cabeçalho: silencia tudo (efeitos e música) ou volta como estava. */
+function alternarMudo(){
+  estadoSom.mudo=!estadoSom.mudo;lsSet('globo.som.mudo',estadoSom.mudo);
+  if(estadoSom.mudo)pararMusica();
+  else{var c=contexto();if(c&&c.state!=='running')c.resume().then(function(){if(estadoSom.musica)iniciarMusica();});else if(estadoSom.musica)iniciarMusica();tocar('toque');}
+  return estadoSom.mudo;
+}
 function alternarEfeitos(){estadoSom.efeitos=!estadoSom.efeitos;lsSet('globo.som.efeitos',estadoSom.efeitos);if(estadoSom.efeitos)tocar('toque');return estadoSom.efeitos;}
 function alternarMusica(){
   estadoSom.musica=!estadoSom.musica;lsSet('globo.som.musica',estadoSom.musica);
@@ -138,7 +145,8 @@ function alternarMusica(){
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   estadoSom.efeitos = lsGet('globo.som.efeitos',true);
-  estadoSom.musica = lsGet('globo.som.musica',false);
+  estadoSom.musica = lsGet('globo.som.musica',true);
+  estadoSom.mudo = lsGet('globo.som.mudo',false);
   /* o áudio só pode começar depois de um toque */
   function liberar(){
     var c=contexto();if(!c)return;
@@ -154,4 +162,4 @@ function iniciar() {
   });
 }
 
-export { alternarEfeitos, alternarMusica, estadoSom, iniciar, pausarMusica, tocar };
+export { alternarEfeitos, alternarMudo, alternarMusica, estadoSom, iniciar, pausarMusica, tocar };

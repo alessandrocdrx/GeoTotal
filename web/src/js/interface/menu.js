@@ -4,8 +4,8 @@
  * Menu "⋯": navegação entre páginas e ações.
  */
 
-import { alternarEfeitos, alternarMusica, estadoSom } from '../nucleo/som.js';
-import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
+import { alternarEfeitos, alternarMudo, alternarMusica, estadoSom } from '../nucleo/som.js';
+import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { updateMapInfo } from '../visualizacao/carregamento.js';
 import { estadoMapa } from '../visualizacao/tela.js';
 
@@ -40,6 +40,9 @@ function iniciar() {
   /* som: efeitos e música, cada um com seu interruptor */
   function somV(){$('msfxv').textContent=estadoSom.efeitos?'Ligados':'Desligados';$('mmusicv').textContent=estadoSom.musica?'Ligada (toca no modo Livre)':'Desligada';}
   $('msfx').onclick=function(){alternarEfeitos();somV();};
+  function somH(){var b=$('msom');b.textContent=estadoSom.mudo?'🔇':'🔊';b.setAttribute('aria-label',estadoSom.mudo?'Som desligado':'Som ligado');b.classList.toggle('mudo',estadoSom.mudo);}
+  $('msom').onclick=function(){alternarMudo();somH();setStatus(estadoSom.mudo?'🔇 Som desligado':'🔊 Som ligado (a música toca no modo Livre)',2200);};
+  somH();
   $('mmusic').onclick=function(){alternarMusica();somV();};
   somV();
   $('mlabels').onclick=function(){(estadoMapa.labelMode==='p'?$('lc'):$('lp')).click();updateLabelsRow();};

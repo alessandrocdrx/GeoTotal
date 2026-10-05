@@ -20,6 +20,8 @@ const estadoTreino = {
   quizDomain: 'world',
   qMap: false,
   qFlash: null,
+  /** País tocado durante a pergunta (mostra só o nome por alguns segundos): { i, t }. */
+  qEspia: null,
   /** Desafio do dia em andamento: { dia, num, fila (10 países do dia) } ou null. */
   desafio: null,
   qBadge: null,

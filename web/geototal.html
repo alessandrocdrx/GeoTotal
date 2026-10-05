@@ -21,16 +21,16 @@
   box-sizing:border-box;
   padding-top:var(--sat);
   padding-bottom:var(--sab);
-  --marca:#d97706;
+  --marca:#1f4fd8;
   --bg:#f6f7fb; --fg:#161a23; --muted:#5d6577; --card:#ffffff; --border:#dfe3ec; --chip:#e9edf5; --chip-on:#161a23; --chip-on-fg:#ffffff;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017; --marca:#fbbf24;
+    --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017; --marca:#6aa8ff;
   }
 }
 :root[data-theme="dark"]{
-  --marca:#fbbf24;
+  --marca:#6aa8ff;
   --bg:#0d1017; --fg:#eef1f7; --muted:#9aa3b5; --card:#171b25; --border:#2a3040; --chip:#1f2431; --chip-on:#eef1f7; --chip-on-fg:#0d1017;
 }
 html{scroll-padding-top:var(--sat)}
@@ -579,14 +579,26 @@ body.quizing #spin,body.quizing #tour{display:none}
 /* placar numa linha só: o lado direito (nível, meta) encolhe com reticências */
 .qstrip #qruntxt{white-space:nowrap;flex:0 0 auto}
 .qstrip .qgoalmini{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* logo no cabeçalho e botão de som; tela Sobre (v1.33) */
+.marca-logo{display:inline-block;width:26px;height:26px;border-radius:7px;background-size:cover;vertical-align:-5px;margin-right:7px}
+.marca-logo.grande{width:72px;height:72px;border-radius:18px;margin:0 0 6px}
+.hsom{width:38px;height:38px;border:1px solid var(--border);border-radius:12px;background:var(--chip);color:var(--fg);font-size:17px;cursor:pointer;flex:none}
+.hsom.mudo{opacity:.65}
+.sobre{text-align:center;padding:6px 6px 14px}
+.sobre h3{margin:2px 0;font-size:24px}
+.sobre .marca span{color:var(--marca)}
+.sobre p{margin:8px 0;line-height:1.45}
+.sobrev{color:var(--muted);font-weight:700}
+.sobrecred{font-size:12.5px;color:var(--muted)}
+.marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
 <body>
 <div id="app">
   <header>
     <div class="htop">
-      <h1 class="marca">geo<span>Total</span></h1>
-      <div class="hbtns"><span id="streakpill" class="streakpill" style="display:none"></span><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
+      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><span id="streakpill" class="streakpill" style="display:none"></span><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -697,6 +709,7 @@ body.quizing #spin,body.quizing #tour{display:none}
     <button id="msave"><span class="mi">💾</span><span class="mt"><b>Salvar meu progresso</b><small>Guarde o arquivo (no Drive, por exemplo) para trocar de celular</small></span><span class="mc">↓</span></button>
     <label class="mrowfile"><span class="mi">📂</span><span class="mt"><b>Restaurar progresso</b><small>Abra um arquivo salvo antes</small></span><span class="mc">›</span><input id="mload" type="file" accept=".json,application/json" hidden></label>
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
+    <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
     <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Textura e fronteiras</b><small>Imagem do globo e contornos</small></span><span class="mc">›</span></button>
     <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
     </details>
@@ -713,6 +726,16 @@ body.quizing #spin,body.quizing #tour{display:none}
   <button id="qtimerb">⏱️ Cronômetro: desligado</button><small class="mdesc">Responda o máximo que der antes do tempo acabar.</small>
   <button id="qsurvb">💀 Sobrevivência: desligada</button><small class="mdesc">Errou uma vez, a rodada acaba. Quanto você aguenta?</small>
   <button id="qrunreset">🔁 Recomeçar a partida</button><small class="mdesc">Zera só a região atual, para jogar do zero.</small></div>
+  </div>
+  <div class="mpage" id="mp-sobre" data-t="Sobre o geoTotal" hidden>
+    <div class="sobre">
+      <i class="marca-logo grande" aria-hidden="true"></i>
+      <h3 class="marca">geo<span>Total</span></h3>
+      <p class="sobrev">Países e Capitais · versão 1.33</p>
+      <p>Criado por <b>alessandrocdrx</b>.</p>
+      <p>Gratuito, sem anúncios, funciona sem internet e não pede nenhuma permissão.</p>
+      <p class="sobrecred"><b>Créditos:</b> D3.js (BSD), TopoJSON (BSD), DataMaps (MIT) e mapa dos estados do Brasil da amCharts (licença incluída no app). Dados de países aproximados, de fontes públicas.</p>
+    </div>
   </div>
   <div class="mpage" id="mp-poles" data-t="Ir a um polo" hidden>
     <div class="row2"><button id="pn">▲ Polo Norte</button><button id="ps">▼ Polo Sul</button></div>
@@ -3961,8 +3984,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return [Math.cos(decl) * Math.sin(lg), Math.sin(decl), Math.cos(decl) * Math.cos(lg)];
   }
   function iniciar14() {
+    optNight = lsGet("globo.noite", true);
+    $("oNight").checked = optNight;
     $("oNight").onchange = function() {
       optNight = this.checked;
+      lsSet("globo.noite", optNight);
       if (optNight) {
         var n = /* @__PURE__ */ new Date(), p = function(x) {
           return (x < 10 ? "0" : "") + x;
@@ -3981,7 +4007,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     if (!estadoRender.gl) return false;
     var vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}";
-    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\nfloat h3(vec3 p){p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}\nfloat vn3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);\n return mix(mix(mix(h3(i),h3(i+vec3(1.0,0.0,0.0)),f.x),mix(h3(i+vec3(0.0,1.0,0.0)),h3(i+vec3(1.0,1.0,0.0)),f.x),f.y),\n            mix(mix(h3(i+vec3(0.0,0.0,1.0)),h3(i+vec3(1.0,0.0,1.0)),f.x),mix(h3(i+vec3(0.0,1.0,1.0)),h3(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z);}\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float land=1.0-smoothstep(0.10,0.22,c.b-c.r);\n vec3 sp=vec3(x,y,z);float det=0.0;float amp=0.55;float fq=70.0;\n for(int i=0;i<4;i++){float w=smoothstep(3.0,8.0,uR/fq);if(w>0.0)det+=w*amp*(vn3(sp*fq)-0.5);fq*=2.9;amp*=0.6;}\n c*=1.0+det*(land*0.62+0.06);\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.13,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=0.60+0.58*d;\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
+    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\nfloat h3(vec3 p){p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}\nfloat vn3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);\n return mix(mix(mix(h3(i),h3(i+vec3(1.0,0.0,0.0)),f.x),mix(h3(i+vec3(0.0,1.0,0.0)),h3(i+vec3(1.0,1.0,0.0)),f.x),f.y),\n            mix(mix(h3(i+vec3(0.0,0.0,1.0)),h3(i+vec3(1.0,0.0,1.0)),f.x),mix(h3(i+vec3(0.0,1.0,1.0)),h3(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z);}\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float land=1.0-smoothstep(0.10,0.22,c.b-c.r);\n vec3 sp=vec3(x,y,z);float det=0.0;float amp=0.55;float fq=70.0;\n for(int i=0;i<4;i++){float w=smoothstep(3.0,8.0,uR/fq);if(w>0.0)det+=w*amp*(vn3(sp*fq)-0.5);fq*=2.9;amp*=0.6;}\n c*=1.0+det*(land*0.62+0.06);\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.32,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=0.60+0.58*d;\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
     function sh(t, src) {
       var s = estadoRender.gl.createShader(t);
       estadoRender.gl.shaderSource(s, src);
@@ -5586,13 +5612,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var som_exports = {};
   __export(som_exports, {
     alternarEfeitos: () => alternarEfeitos,
+    alternarMudo: () => alternarMudo,
     alternarMusica: () => alternarMusica,
     estadoSom: () => estadoSom,
     iniciar: () => iniciar21,
     pausarMusica: () => pausarMusica,
     tocar: () => tocar
   });
-  var estadoSom = { efeitos: true, musica: false, pausada: false };
+  var estadoSom = { efeitos: true, musica: true, pausada: false, mudo: false };
   var ac = null;
   var mestre = null;
   var busMusica = null;
@@ -5689,7 +5716,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
   };
   function tocar(nome, arg) {
-    if (!estadoSom.efeitos || !EFEITOS[nome]) return;
+    if (estadoSom.mudo || !estadoSom.efeitos || !EFEITOS[nome]) return;
     var c = contexto();
     if (!c || c.state !== "running") return;
     try {
@@ -5719,7 +5746,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     retorno.connect(mestre);
   }
   function passoMusica() {
-    if (!estadoSom.musica || estadoSom.pausada || !ac || ac.state !== "running") return;
+    if (!estadoSom.musica || estadoSom.mudo || estadoSom.pausada || !ac || ac.state !== "running") return;
     if (passoMusica.n % 4 === 0) {
       var ac0 = ACORDES[acorde % ACORDES.length];
       acorde++;
@@ -5736,7 +5763,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   passoMusica.n = 0;
   function iniciarMusica() {
     var c = contexto();
-    if (!c || c.state !== "running" || estadoSom.pausada) return;
+    if (!c || c.state !== "running" || estadoSom.pausada || estadoSom.mudo) return;
     montarMusica();
     busMusica.gain.cancelScheduledValues(c.currentTime);
     busMusica.gain.setTargetAtTime(1, c.currentTime, 1.5);
@@ -5756,6 +5783,20 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (sim) pararMusica();
     else if (estadoSom.musica) iniciarMusica();
   }
+  function alternarMudo() {
+    estadoSom.mudo = !estadoSom.mudo;
+    lsSet("globo.som.mudo", estadoSom.mudo);
+    if (estadoSom.mudo) pararMusica();
+    else {
+      var c = contexto();
+      if (c && c.state !== "running") c.resume().then(function() {
+        if (estadoSom.musica) iniciarMusica();
+      });
+      else if (estadoSom.musica) iniciarMusica();
+      tocar("toque");
+    }
+    return estadoSom.mudo;
+  }
   function alternarEfeitos() {
     estadoSom.efeitos = !estadoSom.efeitos;
     lsSet("globo.som.efeitos", estadoSom.efeitos);
@@ -5774,7 +5815,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   function iniciar21() {
     estadoSom.efeitos = lsGet("globo.som.efeitos", true);
-    estadoSom.musica = lsGet("globo.som.musica", false);
+    estadoSom.musica = lsGet("globo.som.musica", true);
+    estadoSom.mudo = lsGet("globo.som.mudo", false);
     function liberar() {
       var c = contexto();
       if (!c) return;
@@ -6445,6 +6487,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     quizDomain: "world",
     qMap: false,
     qFlash: null,
+    /** País tocado durante a pergunta (mostra só o nome por alguns segundos): { i, t }. */
+    qEspia: null,
     /** Desafio do dia em andamento: { dia, num, fila (10 países do dia) } ou null. */
     desafio: null,
     qBadge: null,
@@ -8013,8 +8057,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }, 30);
   }
   function drawBadge(R, cx, cy) {
-    if (estadoTreino.qBadge == null || estadoTreino.quizDomain !== "world") return;
-    var d = D[estadoTreino.qBadge], X, Y;
+    if (estadoTreino.quizDomain !== "world") return;
+    var e = estadoTreino.qEspia;
+    if (e && performance.now() - e.t < 2600 && e.i !== estadoTreino.qBadge) desenharSelo(D[e.i], R, cx, cy, quiz.mode !== "flag", true);
+    if (estadoTreino.qBadge != null) desenharSelo(D[estadoTreino.qBadge], R, cx, cy, true, false);
+  }
+  function desenharSelo(d, R, cx, cy, comBandeira, espia) {
+    var X, Y;
     if (estadoCamera.plano2D) {
       var R2 = R2now(), pp = proj2D(d.lng, d.lat, R2, cx, cy);
       X = pp.x;
@@ -8028,18 +8077,18 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.beginPath();
     ctx.arc(X, Y, 10, 0, 7);
     ctx.lineWidth = 3;
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = espia ? "rgba(255,255,255,.6)" : "#fff";
     ctx.stroke();
     ctx.beginPath();
     ctx.arc(X, Y, 4.5, 0, 7);
     ctx.fillStyle = REG[d.r].c;
     ctx.fill();
-    var name = short(d), fs = 15;
+    var name = short(d), fs = espia ? 13 : 15;
     ctx.font = "700 " + fs + "px " + FONT;
-    var tw = ctx.measureText(name).width, bw = Math.min(W - 12, tw + 58), bh = 40;
+    var tw = ctx.measureText(name).width, bw = Math.min(W - 12, tw + (comBandeira ? 58 : 24)), bh = espia ? 34 : 40;
     var bx = Math.max(6, Math.min(X - bw / 2, W - bw - 6)), by = Y - bh - 16;
     if (by < 6) by = Y + 16;
-    ctx.fillStyle = "rgba(4,16,36,.9)";
+    ctx.fillStyle = espia ? "rgba(40,46,60,.88)" : "rgba(4,16,36,.9)";
     ctx.beginPath();
     if (ctx.roundRect) ctx.roundRect(bx, by, bw, bh, 12);
     else ctx.rect(bx, by, bw, bh);
@@ -8049,6 +8098,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.stroke();
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
+    if (!comBandeira) {
+      ctx.font = "700 " + fs + "px " + FONT;
+      ctx.fillStyle = "#fff";
+      ctx.fillText(name, bx + 12, by + bh / 2 + 1);
+      return;
+    }
     if (d.dis) {
       ctx.fillStyle = REG[d.r].c;
       ctx.beginPath();
@@ -9296,6 +9351,18 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       alternarEfeitos();
       somV();
     };
+    function somH() {
+      var b = $("msom");
+      b.textContent = estadoSom.mudo ? "🔇" : "🔊";
+      b.setAttribute("aria-label", estadoSom.mudo ? "Som desligado" : "Som ligado");
+      b.classList.toggle("mudo", estadoSom.mudo);
+    }
+    $("msom").onclick = function() {
+      alternarMudo();
+      somH();
+      setStatus(estadoSom.mudo ? "🔇 Som desligado" : "🔊 Som ligado (a música toca no modo Livre)", 2200);
+    };
+    somH();
     $("mmusic").onclick = function() {
       alternarMusica();
       somV();
@@ -9891,8 +9958,21 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(toques_exports, {
     iniciar: () => iniciar45
   });
+  function paisNoPonto(x, y) {
+    if (!estadoCamera.plano2D) return countryAt(x, y);
+    if (!estadoRender.feats) return null;
+    var ll = inv2D(x, y, R2now(), W / 2, H * estadoCamera.cyFrac);
+    for (var i = 0; i < D.length; i++) if (estadoRender.FEAT[i] && inFeat(estadoRender.FEAT[i], ll[0], ll[1])) return D[i];
+    return null;
+  }
   function toqueAntes(x, y) {
-    if (quiz.open && !estadoTreino.qMap) return true;
+    if (quiz.open && !estadoTreino.qMap) {
+      if (estadoTreino.quizDomain === "world") {
+        var d = paisNoPonto(x, y);
+        if (d) estadoTreino.qEspia = { i: d.i, t: performance.now() };
+      }
+      return true;
+    }
     if (estadoTreino.qMap && estadoTreino.quizDomain === "br") {
       quizMapAnswerBR(pickStateNear(x, y));
       return true;
@@ -9925,7 +10005,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return true;
   }
   function toqueNoMapa2D(x, y) {
-    if (quiz.open && !estadoTreino.qMap) return true;
+    if (quiz.open && !estadoTreino.qMap) return toqueAntes(x, y);
     if (!estadoTreino.qMap) return false;
     var R2 = R2now(), cx = W / 2, cy = H * estadoCamera.cyFrac, i, cand = [];
     if (!qHide()) {

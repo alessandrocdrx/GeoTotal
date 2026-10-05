@@ -4,7 +4,7 @@
  * Sombra de dia e noite em tempo real.
  */
 
-import { $, setStatus } from '../nucleo/utilitarios.js';
+import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { PI } from './tela.js';
 
 /* ---------- dia e noite ---------- */
@@ -20,8 +20,10 @@ function sunVec(){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  /* dia e noite ligado por padrão: o globo mostra onde é noite agora */
+  optNight=lsGet('globo.noite',true);$('oNight').checked=optNight;
   $('oNight').onchange=function(){
-    optNight=this.checked;
+    optNight=this.checked;lsSet('globo.noite',optNight);
     if(optNight){var n=new Date(),p=function(x){return (x<10?'0':'')+x;};setStatus('Noite calculada para agora ('+p(n.getUTCHours())+':'+p(n.getUTCMinutes())+' UTC). Ela acompanha o relógio do seu aparelho.',5000);}
   };
 }

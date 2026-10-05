@@ -39,7 +39,7 @@ function initGL(){
   ' c*=1.0+det*(land*0.62+0.06);\n'+
   ' float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n'+
   ' float dayf=smoothstep(-0.08,0.14,dv);\n'+
-  ' c*=mix(1.0,mix(0.13,1.0,dayf),uNight);\n'+
+  ' c*=mix(1.0,mix(0.32,1.0,dayf),uNight);\n'+
   ' float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n'+
   ' c*=0.60+0.58*d;\n'+
   ' float rim=pow(1.0-nz,2.8);\n'+
