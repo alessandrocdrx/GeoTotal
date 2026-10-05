@@ -14,39 +14,44 @@ Para baixar pelo celular: abra o arquivo no GitHub e toque em **Download raw** (
 
 - **Nome do app** (até 30): `geoTotal: Países e Capitais`
 - **Descrição curta** (até 80):
-  `Globo 3D com 203 países, capitais e regiões. Treine geografia, até sem internet.`
+  `Jogo de geografia num globo 3D: países, capitais e bandeiras. Até sem internet.`
 - **Descrição completa** (até 4000):
 
 ```
-Explore o mundo num globo 3D interativo e aprenda de vez os países, as capitais e as regiões do planeta.
+Aprenda os países, as capitais e as bandeiras do mundo jogando, num globo 3D que você gira com o dedo.
 
-🌍 GLOBO INTERATIVO
-Gire, aproxime e toque em qualquer país para ver a capital, a bandeira, os vizinhos por terra, população, área, idiomas, moeda, fuso horário e curiosidades. Veja em 3D ou como mapa 2D, com sombra de dia e noite em tempo real.
+🎯 TREINO QUE VICIA (DO JEITO BOM)
+Rodadas rápidas com estrelas no final, combo 🔥 de acertos seguidos, bônus por resposta rápida e surpresas pelo caminho. Erre pelo país vizinho e o jogo avisa: "Quase!". Perguntas de capital, bandeira, vizinhos, sigla e "ache no mapa", com dica que elimina duas opções erradas.
 
-🎯 MODO TREINO
-Pratique no seu ritmo: país → capital, capital → país, bandeiras e localização no mapa. Escolha múltipla ou digitando, com dicas, cronômetro, modo sobrevivência e estatísticas por região. Treine o mundo inteiro, um continente, uma sub-região ou só os estados do Brasil.
+🗓️ DESAFIO DO DIA
+Os mesmos 10 países para todo mundo, uma vez por dia. Compare o resultado 🟩🟥 com os amigos.
+
+🏆 SUA EVOLUÇÃO
+Suba de Turista a Lenda do Mapa, ganhe medalhas por região, conquistas com barra de progresso e uma sequência de dias com congelador para não perder nada. Os países que você domina ficam dourados no globo.
+
+🌍 EXPLORE O MUNDO
+Toque em qualquer país e veja capital, bandeira, população, área, idiomas, moeda, a hora agora (comparada com Brasília) e curiosidades. Globo realista com relevo, sombra de dia e noite em tempo real ou mapa plano. Passeio automático pelos países.
 
 🇧🇷 ESTADOS DO BRASIL
-Os 27 estados e suas capitais, com contornos no mapa, estados vizinhos e países de fronteira.
+Os 27 estados e suas capitais, com contornos, fusos horários e estados vizinhos.
 
-🧭 FERRAMENTAS
-• Filtros por continente, sub-região e vizinhança
-• Comparação entre dois países lado a lado
-• Distância entre capitais, desenhada no globo
-• Folha de estudo para imprimir ou salvar em PDF
-• Exportação em CSV, inclusive no formato do Anki
+🎵 SOM E MÚSICA
+Efeitos sonoros e música ambiente gerados pelo próprio app, que você liga ou desliga com um toque.
 
-📴 FUNCIONA SEM INTERNET
-Mapas e dados vão dentro do app. Sem cadastro, sem anúncios e sem coleta de dados.
+👋 FÁCIL DE COMEÇAR
+Tour rápido de 30 segundos e começo pela América do Sul. Funciona em celular e tablet, deitado ou em pé.
 
-203 países e territórios, incluindo territórios de reconhecimento limitado (que podem ser ocultados nos filtros), mais 46 territórios dependentes opcionais, como Porto Rico, Groenlândia, Hong Kong e Guiana Francesa, e 15 ilhas remotas e bases da Antártida para achar no mapa.
+📴 SEM INTERNET, SEM ANÚNCIOS
+Tudo vai dentro do app. Sem cadastro, sem anúncios, sem compras e sem coleta de dados. O progresso volta sozinho ao trocar de celular (backup do Android) ou por arquivo.
+
+204 países e territórios, mais 45 territórios dependentes opcionais (como Porto Rico, Groenlândia e Hong Kong), com selo de ultramarino, e 15 ilhas remotas e bases da Antártida.
 
 Código aberto (Apache 2.0), criado por alessandrocdrx: github.com/alessandrocdrx/GeoTotal
 ```
 
 ## Configurações da loja
 
-- **Categoria:** Educação
+- **Categoria:** Educação (o app está cadastrado como Jogo; se for o caso, Jogos → Educativo)
 - **Tags:** Geografia, Educação, Mapas
 - **E-mail de contato:** o seu e-mail de desenvolvedor
 - **Site:** https://github.com/alessandrocdrx/GeoTotal
