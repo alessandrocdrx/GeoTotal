@@ -20,8 +20,8 @@ function sunVec(){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
-  /* dia e noite ligado por padrão: o globo mostra onde é noite agora */
-  optNight=lsGet('globo.noite',true);$('oNight').checked=optNight;
+  /* começa sempre de dia (no treino a noite escondia países); o 🌗 do cabeçalho liga a noite */
+  optNight=lsGet('globo.noite',false);$('oNight').checked=optNight;
   $('oNight').onchange=function(){
     optNight=this.checked;lsSet('globo.noite',optNight);
     if(optNight){var n=new Date(),p=function(x){return (x<10?'0':'')+x;};setStatus('Noite calculada para agora ('+p(n.getUTCHours())+':'+p(n.getUTCMinutes())+' UTC). Ela acompanha o relógio do seu aparelho.',5000);}

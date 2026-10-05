@@ -4034,7 +4034,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return [Math.cos(decl) * Math.sin(lg), Math.sin(decl), Math.cos(decl) * Math.cos(lg)];
   }
   function iniciar14() {
-    optNight = lsGet("globo.noite", true);
+    optNight = lsGet("globo.noite", false);
     $("oNight").checked = optNight;
     $("oNight").onchange = function() {
       optNight = this.checked;
