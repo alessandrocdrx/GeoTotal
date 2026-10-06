@@ -127,7 +127,7 @@ function renderCardStat(key,isState){
   var box=$('cstat');box.innerHTML='';
   if(!(r+w)){
     box.className='cstat empty';box.textContent='🎯 Você ainda não treinou '+(isState?'este estado':'este país')+'.';
-    var d=!isState&&D.find(function(x){return x.cc===key;});
+    var d=!isState&&D.find(function(x){return x.cc===key&&!x.uni;});
     if(d){var tb=document.createElement('button');tb.className='cstreinar';tb.textContent='Treinar '+REG[d.r].n+' →';tb.onclick=function(){emitir('treinar-regiao',{r:d.r});};box.appendChild(tb);}
     return;
   }

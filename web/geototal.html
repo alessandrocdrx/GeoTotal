@@ -7466,7 +7466,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       box.className = "cstat empty";
       box.textContent = "🎯 Você ainda não treinou " + (isState ? "este estado" : "este país") + ".";
       var d = !isState && D.find(function(x) {
-        return x.cc === key;
+        return x.cc === key && !x.uni;
       });
       if (d) {
         var tb = document.createElement("button");
@@ -8881,7 +8881,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         showRunDone();
         return;
       }
-      body.textContent = emptyMsg();
+      semPerguntas(body);
       $("qpool").textContent = "";
       return;
     }
@@ -9111,6 +9111,35 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     if (cand.length) return cand[0].s;
     return stateAt(x, y);
+  }
+  function semPerguntas(body) {
+    body.innerHTML = "";
+    var arr = QD();
+    var soMapa = estadoTreino.quizDomain !== "br" && estadoTreino.quizFocus === "mix" && quiz.mode !== "map" && arr.some(function(d) {
+      return d.uni && inScopeActive(d);
+    });
+    var p = document.createElement("div");
+    p.className = "qhint";
+    p.textContent = soMapa ? scopeLabel() + ' não tem países com capital: só bases e territórios reivindicados. Dá para treinar onde ficam, no "Achar no mapa".' : emptyMsg();
+    body.appendChild(p);
+    var row = document.createElement("div");
+    row.className = "qrow";
+    if (soMapa) {
+      var m = document.createElement("button");
+      m.textContent = "📍 Achar no mapa";
+      m.onclick = function() {
+        if (!estadoMapa.includeUni) setIncludeUni(true);
+        quizSetMode("map");
+      };
+      row.appendChild(m);
+    }
+    var o = document.createElement("button");
+    o.textContent = "🌎 Outra região";
+    o.onclick = function() {
+      $("qscopeb").click();
+    };
+    row.appendChild(o);
+    body.appendChild(row);
   }
   function buildModeButtons() {
     var box = $("qmodes");

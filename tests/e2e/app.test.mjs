@@ -462,6 +462,24 @@ test('região zerada que ganhou um país novo recomeça inteira e mantém a meda
   await fechar();
 });
 
+test('Antártida (só bases, sem capital): explica e oferece "Achar no mapa"', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.applyScopeChange({ t: 'reg', r: 7 });
+    const txt = document.getElementById('qbody').textContent;
+    const b = [...document.querySelectorAll('#qbody button')].find((x) => /Achar no mapa/.test(x.textContent));
+    if (b) b.click();
+    return { txt, temBotao: !!b, modo: g.quiz.mode, pool: g.poolIdx().length };
+  });
+  assert.match(r.txt, /não tem países com capital/);
+  assert.equal(r.temBotao, true);
+  assert.equal(r.modo, 'map');
+  assert.ok(r.pool > 0, 'no Achar no mapa há o que treinar');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
 test('conquistas: medalha da região zerada aparece e a barra de domínio anda a cada acerto', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.evaluate(() => {

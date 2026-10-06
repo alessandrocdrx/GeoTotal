@@ -10,13 +10,14 @@ import { D, dflag, norm, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
 import { closeCard, tourStop } from '../interface/cartao-detalhes.js';
 import { estadoDistancia, slerp } from '../interface/distancia.js';
+import { setIncludeUni } from '../interface/filtros.js';
 import { hidePick } from '../interface/lista-proximos.js';
 import { emitir, ouvir } from '../nucleo/eventos.js';
 import { haversine } from '../nucleo/geo.js';
 import { pausarMusica, tocar } from '../nucleo/som.js';
 import { $, confirmTap, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { addHintBtn } from './dica.js';
-import { applyDomainForScope, emptyMsg, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow } from './dominio.js';
+import { applyDomainForScope, emptyMsg, inScopeActive, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow } from './dominio.js';
 import { accList, estadoTreino, freshQS, matches, measureQ, quiz, resetSession, scopeLabel, stopTimerTick } from './estado.js';
 import { fillQStat, modeName } from './estatisticas.js';
 import { curRun, estadoPartida, finishQ, fmtTime, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget } from './partida.js';
@@ -131,7 +132,7 @@ function nextQ(){
   var body=$('qbody'),fb=$('qfb');body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
   var isMap=quiz.mode==='map',isNeighbor=quiz.mode==='neighbor';
   $('qtypes').style.display=(isMap||isNeighbor)?'none':'flex';measureQ();
-  if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){showRunDone();return;}body.textContent=emptyMsg();$('qpool').textContent='';return;}
+  if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){showRunDone();return;}semPerguntas(body);$('qpool').textContent='';return;}
   estadoPartida.ultimoFim='';
   quiz.cur=i;quiz.last=i;quiz.answered=false;quiz.sessionAsked++;estadoTreino.QS.q[quiz.mode]=(estadoTreino.QS.q[quiz.mode]||0)+1;lsSet('globo.quiz.v1',estadoTreino.QS);
   var d=arr[i];
@@ -259,6 +260,19 @@ function pickStateNear(x,y){
   cand.sort(function(a,b){return a.dd-b.dd;});
   if(cand.length)return cand[0].s;
   return stateAt(x,y);
+}
+/* escopo sem perguntas neste modo: diz o porquê e oferece uma saída (ex.: Antártida só tem bases, sem capital) */
+function semPerguntas(body){
+  body.innerHTML='';
+  var arr=QD();
+  var soMapa=estadoTreino.quizDomain!=='br'&&estadoTreino.quizFocus==='mix'&&quiz.mode!=='map'&&arr.some(function(d){return d.uni&&inScopeActive(d);});
+  var p=document.createElement('div');p.className='qhint';
+  p.textContent=soMapa?(scopeLabel()+' não tem países com capital: só bases e territórios reivindicados. Dá para treinar onde ficam, no "Achar no mapa".'):emptyMsg();
+  body.appendChild(p);
+  var row=document.createElement('div');row.className='qrow';
+  if(soMapa){var m=document.createElement('button');m.textContent='📍 Achar no mapa';m.onclick=function(){if(!estadoMapa.includeUni)setIncludeUni(true);quizSetMode('map');};row.appendChild(m);}
+  var o=document.createElement('button');o.textContent='🌎 Outra região';o.onclick=function(){$('qscopeb').click();};row.appendChild(o);
+  body.appendChild(row);
 }
 function buildModeButtons(){
   var box=$('qmodes');box.innerHTML='';$('qmodev').textContent=modeName(quiz.mode);
