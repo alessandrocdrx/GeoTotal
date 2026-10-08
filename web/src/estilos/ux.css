@@ -363,3 +363,5 @@ h1.marca{flex:none}
 }
 /* telas bem estreitas (abaixo de ~386px): não cabe o nome junto dos botões; fica só a logo */
 @media (max-width:385px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
+/* painel do treino translúcido como o cartão do Livre: o mapa aparece por baixo */
+#quiz.map .qpanel{background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
