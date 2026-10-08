@@ -21,16 +21,16 @@ Para baixar pelo celular: abra o arquivo no GitHub e toque em **Download raw** (
 Aprenda os países, as capitais e as bandeiras do mundo jogando, num globo 3D que você gira com o dedo.
 
 🎯 TREINO QUE VICIA (DO JEITO BOM)
-Rodadas rápidas com estrelas no final, combo 🔥 de acertos seguidos, bônus por resposta rápida e surpresas pelo caminho. Erre pelo país vizinho e o jogo avisa: "Quase!". Perguntas de capital, bandeira, vizinhos, sigla e "ache no mapa", com dica que elimina duas opções erradas.
+Rodadas rápidas com estrelas no final, combo 🔥 de acertos seguidos, bônus por resposta rápida e surpresas pelo caminho. Erre pelo país vizinho e o jogo avisa: "Quase!". Perguntas de capital, bandeira, vizinhos e "ache no mapa", com dica que elimina duas opções erradas. O globo se mexe junto: mostra a capital, o continente da bandeira e o país da resposta.
 
 🗓️ DESAFIO DO DIA
 Os mesmos 10 países para todo mundo, uma vez por dia. Compare o resultado 🟩🟥 com os amigos.
 
 🏆 SUA EVOLUÇÃO
-Suba de Turista a Lenda do Mapa, ganhe medalhas por região, conquistas com barra de progresso e uma sequência de dias com congelador para não perder nada. Os países que você domina ficam dourados no globo.
+Suba de Turista a Lenda do Mapa, ganhe medalha de ouro, prata ou bronze em cada região que você zerar, conquistas com barra de progresso e uma sequência de dias com congelador para não perder nada. Os países que você domina ficam dourados no globo.
 
 🌍 EXPLORE O MUNDO
-Toque em qualquer país e veja capital, bandeira, população, área, idiomas, moeda, a hora agora (comparada com Brasília) e curiosidades. Globo realista com relevo, sombra de dia e noite em tempo real ou mapa plano. Passeio automático pelos países.
+Toque em qualquer país e veja capital, bandeira, população, área, idiomas, moeda, a hora agora (comparada com Brasília) e curiosidades. Escolha o visual: globo realista com dia e noite em tempo real, sempre de dia, globo cartoon 🎨 colorido ou mapa plano. Passeio automático pelos países.
 
 🇧🇷 ESTADOS DO BRASIL
 Os 27 estados e suas capitais, com contornos, fusos horários e estados vizinhos.
