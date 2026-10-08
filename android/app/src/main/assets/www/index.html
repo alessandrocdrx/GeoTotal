@@ -9529,6 +9529,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         }
       }
       if (res2.medal > 1) bits.push(res2.medal === 2 ? "Para o ouro: zere sem nenhum erro." : "Para a prata: zere com até 3 erros.");
+      if (quiz.mode === "cap") {
+        var stt = estadoTreino.QS.m.cap || {}, arr2 = QD(), menor = 3;
+        poolIdx().forEach(function(i2) {
+          var e2 = stt[qcc(arr2[i2])];
+          menor = Math.min(menor, e2 ? e2.s || 0 : 0);
+        });
+        var falta = 3 - menor;
+        bits.push(falta <= 0 ? "🏆 Você domina " + scopeLabel() + "!" : "Mais " + falta + " " + (falta === 1 ? "partida" : "partidas") + " sem errar e você domina " + scopeLabel() + ".");
+      }
       rl.textContent = bits.join(" ");
       box.appendChild(rl);
     }

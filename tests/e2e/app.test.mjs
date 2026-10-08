@@ -532,6 +532,20 @@ test('botão do visual: dia e noite → sempre de dia → cartoon → volta, e l
   await fechar();
 });
 
+test('fim da partida diz quantas partidas sem erro faltam para dominar a região', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const txt = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quiz.sessionLen = 0;
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    for (let k = 0; k < 40 && g.runPool().length; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    return document.querySelector('.rundone .recline').textContent;
+  });
+  assert.match(txt, /Mais 2 partidas sem errar e você domina América do Sul/);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
 test('conquistas: medalha da região zerada aparece e a barra de domínio anda a cada acerto', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.evaluate(() => {

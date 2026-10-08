@@ -18,7 +18,7 @@ import { pausarMusica, tocar } from '../nucleo/som.js';
 import { $, confirmTap, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { addHintBtn } from './dica.js';
 import { flyTo } from '../visualizacao/animacao.js';
-import { applyDomainForScope, emptyMsg, inScopeActive, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow } from './dominio.js';
+import { applyDomainForScope, emptyMsg, inScopeActive, poolIdx, qcapD, qcc, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow } from './dominio.js';
 import { accList, estadoTreino, freshQS, matches, measureQ, quiz, resetSession, scopeLabel, stopTimerTick } from './estado.js';
 import { fillQStat, modeName } from './estatisticas.js';
 import { curRun, estadoPartida, finishQ, fmtTime, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget } from './partida.js';
@@ -350,6 +350,13 @@ function showRunDone(){
       if(!bits.length){var R2=estadoPartida.RECS[runKey()]||{};bits.push('Seus recordes: '+fmtTime(R2.bestT)+' · '+R2.bestE+' '+(R2.bestE===1?'erro':'erros'));}
     }
     if(res.medal>1)bits.push(res.medal===2?'Para o ouro: zere sem nenhum erro.':'Para a prata: zere com até 3 erros.');
+    /* quanto falta para dominar (3 acertos seguidos em cada um): cada partida sem erro soma 1 em todos */
+    if(quiz.mode==='cap'){
+      var stt=estadoTreino.QS.m.cap||{},arr2=QD(),menor=3;
+      poolIdx().forEach(function(i2){var e2=stt[qcc(arr2[i2])];menor=Math.min(menor,e2?(e2.s||0):0);});
+      var falta=3-menor;
+      bits.push(falta<=0?('🏆 Você domina '+scopeLabel()+'!'):('Mais '+falta+' '+(falta===1?'partida':'partidas')+' sem errar e você domina '+scopeLabel()+'.'));
+    }
     rl.textContent=bits.join(' ');box.appendChild(rl);
   }
   var row=document.createElement('div');row.className='qrow';
