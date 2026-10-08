@@ -25,6 +25,8 @@ const estadoTreino = {
   /** Desafio do dia em andamento: { dia, num, fila (10 países do dia) } ou null. */
   desafio: null,
   qBadge: null,
+  /** Capital → País: índice do país cuja capital fica marcada no globo (só o ponto e o nome da cidade) */
+  qPino: null,
   qPanelH: 0,
 };
 
@@ -73,8 +75,9 @@ function inScope(d){
   if(sc.t==='reg')return d.r===sc.r;
   return d.r===sc.r&&d.sub===sc.s;
 }
-function scopeLabel(){
-  var sc=estadoTreino.quizScope;
+/** Nome da região do treino (a atual, ou a de sc). */
+function scopeLabel(sc){
+  sc=sc||estadoTreino.quizScope;
   if(sc.t==='world')return 'Mundo';
   if(sc.t==='review')return 'Revisão dos erros';
   if(sc.t==='filter')return 'Filtros atuais';

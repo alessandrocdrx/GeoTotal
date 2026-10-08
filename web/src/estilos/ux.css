@@ -331,3 +331,35 @@ h1.marca{flex:none}
 .qopts button.elim{opacity:.28;text-decoration:line-through}
 /* subgrupos dentro de Configurações */
 .mlist .mgrp.msub{margin:10px 0 2px 18px;font-size:11.5px}
+/* Conquistas: seção de medalhas das regiões zeradas */
+.medtit{font-weight:800;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 2px}
+.medsec .medtit:first-child{margin-top:4px}
+
+/* cabeçalho: logo + nome sempre visíveis; botões de som e visual do mesmo tamanho, ícone centralizado */
+.hsom{display:inline-flex!important;align-items:center;justify-content:center;width:38px;padding:0!important;font-size:18px!important;line-height:1}
+@media (max-width:460px){
+  h1.marca{font-size:16px;letter-spacing:-.03em;white-space:nowrap}
+  h1.marca .marca-logo{width:26px;height:26px;margin-right:5px;vertical-align:-7px}
+  .hsom{width:34px;height:34px;font-size:16px!important}
+  header .modesw button{padding:0 8px!important;font-size:13px!important}
+  #mbtn{padding:0 9px!important}
+}
+@media (max-width:1px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
+@media (max-width:460px){
+  .hbtns{gap:3px}
+  .hsom{width:32px;height:34px}
+  .streakpill{padding:0 7px!important}
+  header .modesw{padding:2px}
+  header .modesw button{padding:0 7px!important}
+  #mbtn{padding:0 8px!important}
+}
+@media (max-width:460px){header{padding-left:8px;padding-right:8px}}
+@media (max-width:460px){h1.marca{font-size:15px}}
+@media (max-width:1px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
+@media (max-width:460px){
+  .hsom{width:30px}
+  .streakpill{padding:0 5px!important;font-size:13px!important;gap:1px}
+  #mbtn{padding:0 7px!important}
+}
+/* telas bem estreitas (abaixo de ~386px): não cabe o nome junto dos botões; fica só a logo */
+@media (max-width:385px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}

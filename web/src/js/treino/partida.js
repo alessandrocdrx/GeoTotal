@@ -24,6 +24,8 @@ import { ctx, estadoCamera, FONT, rot, W } from '../visualizacao/tela.js';
 const estadoPartida = {
   RUNS: undefined,
   RECS: undefined,
+  /** partida que acabou de ser zerada agora (só ela mostra a tela "Você zerou"; ao voltar depois, começa outra) */
+  ultimoFim: '',
 };
 
 function runKey(){return estadoTreino.quizDomain+'|'+JSON.stringify(estadoTreino.quizScope)+'|'+quiz.mode;}
@@ -54,7 +56,7 @@ function runRecord(i,ok){
   if(r.deck){var di=r.deck.indexOf(cc);if(di>=0)r.deck.splice(di,1);
     if(!ok){var lo=Math.min(3,r.deck.length);r.deck.splice(lo+rndInt(r.deck.length-lo+1),0,cc);}}
   if(ok&&!r.fin&&poolIdx().length&&!runPool().length){
-    r.fin=now;
+    r.fin=now;estadoPartida.ultimoFim=runKey();
     r.res=recFinish(r);
     celebrate('🏁 Você zerou '+scopeLabel()+'!');tocar('conquista');addXP(50);
     if(recordable(estadoTreino.quizScope)&&r.res.newMedal)celebrate(MEDAL[r.res.medal].i+' Medalha de '+MEDAL[r.res.medal].n+'!');
@@ -160,6 +162,8 @@ function optLabel(k){
   var o=QD()[k];
   if(quiz.mode==='cap')return qcapD(o);
   if(quiz.mode==='code')return estadoTreino.quizDomain==='br'?o.sigla:o.cc;
+  /* na pergunta de bandeira, as respostas vão sem bandeira (senão é só comparar figurinhas) */
+  if(quiz.mode==='flag')return short(o);
   return (qflag(o)+' '+short(o)).trim();
 }
 function makeNeighborOptions(qIdx,ansIdx){
@@ -205,7 +209,9 @@ function makeOptions(i){
 function renderScore(){
   updateProgUI();
   var n=poolIdx().length,r=curRun(),done=n?n-runPool().length:0;
-  $('qruntxt').textContent=estadoTreino.desafio?('🗓️ Desafio do dia · '+Math.min(quiz.sessionAsked,10)+'/10'):n?(done+' de '+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'')):'';
+  /* quantas vezes você já zerou esta região neste tipo de pergunta (fica discreto, ao lado da contagem) */
+  var vezes=(estadoPartida.RECS[runKey()]||{}).n||0;
+  $('qruntxt').textContent=estadoTreino.desafio?('🗓️ Desafio do dia · '+Math.min(quiz.sessionAsked,10)+'/10'):n?(done+' de '+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'')+(vezes?' · 🏁 '+vezes+'×':'')):'';
   $('qrunbar').style.display=n?'block':'none';
   $('qrunfill').style.width=(n?Math.round(100*done/n):0)+'%';
 }
@@ -319,16 +325,17 @@ function drawBadge(R,cx,cy){
   if(estadoTreino.quizDomain!=='world')return;
   /* país tocado durante a pergunta: nome (e bandeira) por alguns segundos, nunca a capital */
   var e=estadoTreino.qEspia;
-  if(e&&performance.now()-e.t<2600&&e.i!==estadoTreino.qBadge)desenharSelo(D[e.i],R,cx,cy,quiz.mode!=='flag',true);
+  if(e&&performance.now()-e.t<2600&&e.i!==estadoTreino.qBadge)desenharSelo(D[e.i],R,cx,cy,true,true);
   if(estadoTreino.qBadge!=null)desenharSelo(D[estadoTreino.qBadge],R,cx,cy,true,false);
+  else if(estadoTreino.qPino!=null)desenharSelo(D[estadoTreino.qPino],R,cx,cy,false,false,'📍 '+qcapD(D[estadoTreino.qPino]));
 }
-function desenharSelo(d,R,cx,cy,comBandeira,espia){
+function desenharSelo(d,R,cx,cy,comBandeira,espia,rotulo){
   var X,Y;
   if(estadoCamera.plano2D){var R2=R2now(),pp=proj2D(d.lng,d.lat,R2,cx,cy);X=pp.x;Y=pp.y;}
   else{var p=rot(d.x,d.y,d.z);if(p[2]<0.05)return;X=cx+R*p[0];Y=cy-R*p[1];}
   ctx.beginPath();ctx.arc(X,Y,10,0,7);ctx.lineWidth=3;ctx.strokeStyle=espia?'rgba(255,255,255,.6)':'#fff';ctx.stroke();
   ctx.beginPath();ctx.arc(X,Y,4.5,0,7);ctx.fillStyle=REG[d.r].c;ctx.fill();
-  var name=short(d),fs=espia?13:15;
+  var name=rotulo||short(d),fs=espia?13:15;
   ctx.font='700 '+fs+'px '+FONT;
   var tw=ctx.measureText(name).width,bw=Math.min(W-12,tw+(comBandeira?58:24)),bh=espia?34:40;
   var bx=Math.max(6,Math.min(X-bw/2,W-bw-6)),by=Y-bh-16;

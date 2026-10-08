@@ -619,6 +619,38 @@ h1.marca{flex:none}
 .qopts button.elim{opacity:.28;text-decoration:line-through}
 /* subgrupos dentro de Configurações */
 .mlist .mgrp.msub{margin:10px 0 2px 18px;font-size:11.5px}
+/* Conquistas: seção de medalhas das regiões zeradas */
+.medtit{font-weight:800;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 2px}
+.medsec .medtit:first-child{margin-top:4px}
+
+/* cabeçalho: logo + nome sempre visíveis; botões de som e visual do mesmo tamanho, ícone centralizado */
+.hsom{display:inline-flex!important;align-items:center;justify-content:center;width:38px;padding:0!important;font-size:18px!important;line-height:1}
+@media (max-width:460px){
+  h1.marca{font-size:16px;letter-spacing:-.03em;white-space:nowrap}
+  h1.marca .marca-logo{width:26px;height:26px;margin-right:5px;vertical-align:-7px}
+  .hsom{width:34px;height:34px;font-size:16px!important}
+  header .modesw button{padding:0 8px!important;font-size:13px!important}
+  #mbtn{padding:0 9px!important}
+}
+@media (max-width:1px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
+@media (max-width:460px){
+  .hbtns{gap:3px}
+  .hsom{width:32px;height:34px}
+  .streakpill{padding:0 7px!important}
+  header .modesw{padding:2px}
+  header .modesw button{padding:0 7px!important}
+  #mbtn{padding:0 8px!important}
+}
+@media (max-width:460px){header{padding-left:8px;padding-right:8px}}
+@media (max-width:460px){h1.marca{font-size:15px}}
+@media (max-width:1px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
+@media (max-width:460px){
+  .hsom{width:30px}
+  .streakpill{padding:0 5px!important;font-size:13px!important;gap:1px}
+  #mbtn{padding:0 7px!important}
+}
+/* telas bem estreitas (abaixo de ~386px): não cabe o nome junto dos botões; fica só a logo */
+@media (max-width:385px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -688,7 +720,7 @@ h1.marca{flex:none}
   <div class="inote" id="sheetcount" style="margin-top:-4px"></div>
   <div class="row2"><button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶ Desfazer o último filtro</button></div>
   <div class="opts">
-    <label><input type="checkbox" id="oTex" checked disabled><span>Textura de satélite (estilizada)</span></label>
+    <label hidden><input type="checkbox" id="oTex" checked disabled><span>Textura de satélite (estilizada)</span></label>
     <label><input type="checkbox" id="oBor" checked disabled><span>Fronteiras dos países</span></label>
     <label><input type="checkbox" id="oFill" disabled><span>Colorir países por região</span></label>
     <label><input type="checkbox" id="oNight" disabled><span>Dia e noite (sombra da noite, agora)</span></label>
@@ -763,7 +795,7 @@ h1.marca{flex:none}
     <div class="sobre">
       <i class="marca-logo grande" aria-hidden="true"></i>
       <h3 class="marca">geo<span>Total</span></h3>
-      <p class="sobrev">Países e Capitais · versão 1.35</p>
+      <p class="sobrev">Países e Capitais · versão 1.36</p>
       <p>Criado por <b>alessandrocdrx</b>.</p>
       <p>Gratuito, sem anúncios, funciona sem internet e não pede nenhuma permissão.</p>
       <p class="sobrecred"><b>Créditos:</b> D3.js (BSD), TopoJSON (BSD), DataMaps (MIT) e mapa dos estados do Brasil da amCharts (licença incluída no app). Dados de países aproximados, de fontes públicas.</p>
@@ -809,7 +841,7 @@ h1.marca{flex:none}
   </div>
   <div class="mpage" id="mp-reset" data-t="Zerar progresso do treino" hidden>
     <div class="inote">Apaga o histórico de acertos e erros de cada país, as partidas em andamento, os recordes e as medalhas. Níveis, XP e conquistas continuam.</div>
-    <div class="row2"><button id="qreset" class="mdangerbtn">Zerar progresso do treino</button></div>
+    <div class="row2"><button id="qreset" class="mdangerbtn">Zerar tudo (treino, medalhas, nível e conquistas)</button></div>
   </div>
 </div></div>
 
@@ -2885,6 +2917,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     },
     /** Selo com o nome do país da resposta, depois de responder. */
     desenharSeloResposta: () => {
+    },
+    /** Liga ou desliga o globo cartoon (preenchido por visualizacao/carregamento.js). */
+    trocarCartoon: () => {
     }
   };
 
@@ -2904,6 +2939,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     glBuf: null,
     useTex: false,
     optTex: true,
+    /** Globo cartoon: textura de cores vivas e contorno grosso, sem relevo fino nem noite */
+    cartoon: false,
     optBor: true,
     optFill: false,
     feats: null,
@@ -3769,6 +3806,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/visualizacao/textura.js
   var textura_exports = {};
   __export(textura_exports, {
+    buildCartoonTexture: () => buildCartoonTexture,
     buildTexture: () => buildTexture,
     iniciar: () => iniciar13,
     updateOpts: () => updateOpts
@@ -3967,6 +4005,97 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     step2();
   }
+  function buildCartoonTexture() {
+    var TW = 2048, TH = 1024;
+    var eq = d3.geo.equirectangular().scale(TW / (2 * PI)).translate([TW / 2, TH / 2]).precision(0.2);
+    var c = document.createElement("canvas");
+    c.width = TW;
+    c.height = TH;
+    var x = c.getContext("2d"), pth = d3.geo.path().projection(eq).context(x);
+    function terra() {
+      x.beginPath();
+      estadoRender.feats.forEach(function(f) {
+        pth(f);
+      });
+    }
+    function px(lng) {
+      return (lng + 180) / 360 * TW;
+    }
+    function py(lat) {
+      return (90 - lat) / 180 * TH;
+    }
+    var og = x.createLinearGradient(0, 0, 0, TH);
+    og.addColorStop(0, "#cdeeff");
+    og.addColorStop(0.12, "#4cc3ff");
+    og.addColorStop(0.5, "#2aa8f2");
+    og.addColorStop(0.88, "#4cc3ff");
+    og.addColorStop(1, "#cdeeff");
+    x.fillStyle = og;
+    x.fillRect(0, 0, TW, TH);
+    x.save();
+    x.translate(-6e3, 0);
+    x.shadowOffsetX = 6e3;
+    x.shadowColor = "rgba(170,240,255,.95)";
+    x.shadowBlur = 22;
+    x.fillStyle = "#000";
+    terra();
+    x.fill();
+    x.restore();
+    x.fillStyle = "#7bd651";
+    terra();
+    x.fill();
+    x.save();
+    terra();
+    x.clip();
+    function mancha(lat, lng, sLat, sLng, cor, alfa) {
+      var rx = sLng * TW / 360 * 1.7, ry = sLat * TH / 180 * 1.7;
+      [-TW, 0, TW].forEach(function(dx) {
+        x.save();
+        x.translate(px(lng) + dx, py(lat));
+        x.scale(rx, ry);
+        var g = x.createRadialGradient(0, 0, 0, 0, 0, 1);
+        g.addColorStop(0, cor.replace("A", alfa));
+        g.addColorStop(0.65, cor.replace("A", alfa * 0.85));
+        g.addColorStop(1, cor.replace("A", 0));
+        x.fillStyle = g;
+        x.beginPath();
+        x.arc(0, 0, 1, 0, 7);
+        x.fill();
+        x.restore();
+      });
+    }
+    FOR.forEach(function(f) {
+      mancha(f[0], f[1], f[2], f[3], "rgba(46,160,67,A)", Math.min(1, f[4]));
+    });
+    DES.forEach(function(d) {
+      mancha(d[0], d[1], d[2], d[3], "rgba(255,214,102,A)", Math.min(1, d[4]));
+    });
+    MTN.forEach(function(m) {
+      mancha(m[0], m[1], m[2], m[3], "rgba(176,122,74,A)", Math.min(0.85, m[4] * 0.75));
+    });
+    mancha(74, -41, 9, 16, "rgba(250,253,255,A)", 1);
+    var gn = x.createLinearGradient(0, py(80), 0, py(64));
+    gn.addColorStop(0, "rgba(250,253,255,1)");
+    gn.addColorStop(1, "rgba(250,253,255,0)");
+    x.fillStyle = gn;
+    x.fillRect(0, 0, TW, py(64));
+    var gs = x.createLinearGradient(0, py(-56), 0, py(-64));
+    gs.addColorStop(0, "rgba(250,253,255,0)");
+    gs.addColorStop(1, "rgba(250,253,255,1)");
+    x.fillStyle = gs;
+    x.fillRect(0, py(-56), TW, TH - py(-56));
+    x.restore();
+    x.lineJoin = "round";
+    x.strokeStyle = "#17507e";
+    x.lineWidth = 5;
+    terra();
+    x.stroke();
+    x.strokeStyle = "rgba(255,255,255,.55)";
+    x.lineWidth = 1.4;
+    terra();
+    x.stroke();
+    return c;
+  }
   var oTex;
   var oBor;
   var oFill;
@@ -3984,9 +4113,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     oTex.onchange = function() {
       estadoRender.optTex = oTex.checked;
     };
-    var VIS = [["🌗", "🌗 Globo realista com dia e noite"], ["☀️", "☀️ Globo realista, sempre de dia"], ["🗺️", "🗺️ Globo simples (mais leve)"]];
+    var VIS = [["🌗", "🌗 Globo com dia e noite de verdade"], ["☀️", "☀️ Globo sempre de dia"], ["🎨", "🎨 Globo cartoon"]];
     function visAtual() {
-      return !estadoRender.optTex ? 2 : $("oNight").checked ? 0 : 1;
+      return estadoRender.cartoon ? 2 : $("oNight").checked ? 0 : 1;
     }
     function visMostra() {
       var v = visAtual();
@@ -3994,8 +4123,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     $("mvisual").onclick = function() {
       var v = (visAtual() + 1) % 3, noite = $("oNight");
-      estadoRender.optTex = v !== 2;
-      oTex.checked = estadoRender.optTex;
+      estadoRender.optTex = true;
+      oTex.checked = estadoRender.useTex;
+      ganchos.trocarCartoon(v === 2);
       if (noite.checked !== (v === 0)) {
         noite.checked = v === 0;
         noite.dispatchEvent(new Event("change"));
@@ -4062,7 +4192,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     if (!estadoRender.gl) return false;
     var vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}";
-    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\nfloat h3(vec3 p){p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}\nfloat vn3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);\n return mix(mix(mix(h3(i),h3(i+vec3(1.0,0.0,0.0)),f.x),mix(h3(i+vec3(0.0,1.0,0.0)),h3(i+vec3(1.0,1.0,0.0)),f.x),f.y),\n            mix(mix(h3(i+vec3(0.0,0.0,1.0)),h3(i+vec3(1.0,0.0,1.0)),f.x),mix(h3(i+vec3(0.0,1.0,1.0)),h3(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z);}\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float land=1.0-smoothstep(0.10,0.22,c.b-c.r);\n vec3 sp=vec3(x,y,z);float det=0.0;float amp=0.55;float fq=70.0;\n for(int i=0;i<4;i++){float w=smoothstep(3.0,8.0,uR/fq);if(w>0.0)det+=w*amp*(vn3(sp*fq)-0.5);fq*=2.9;amp*=0.6;}\n c*=1.0+det*(land*0.62+0.06);\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.32,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=0.60+0.58*d;\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
+    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;uniform float uToon;\nfloat h3(vec3 p){p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}\nfloat vn3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);\n return mix(mix(mix(h3(i),h3(i+vec3(1.0,0.0,0.0)),f.x),mix(h3(i+vec3(0.0,1.0,0.0)),h3(i+vec3(1.0,1.0,0.0)),f.x),f.y),\n            mix(mix(h3(i+vec3(0.0,0.0,1.0)),h3(i+vec3(1.0,0.0,1.0)),f.x),mix(h3(i+vec3(0.0,1.0,1.0)),h3(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z);}\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float land=1.0-smoothstep(0.10,0.22,c.b-c.r);\n vec3 sp=vec3(x,y,z);float det=0.0;float amp=0.55;float fq=70.0;\n for(int i=0;i<4;i++){float w=smoothstep(3.0,8.0,uR/fq);if(w>0.0)det+=w*amp*(vn3(sp*fq)-0.5);fq*=2.9;amp*=0.6;}\n c*=1.0+det*(land*0.62+0.06)*(1.0-uToon);\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.32,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=mix(0.60+0.58*d,0.84+0.24*d,uToon);\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
     function sh(t, src) {
       var s = estadoRender.gl.createShader(t);
       estadoRender.gl.shaderSource(s, src);
@@ -4087,7 +4217,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var loc = estadoRender.gl.getAttribLocation(estadoRender.glProg, "p");
     estadoRender.gl.enableVertexAttribArray(loc);
     estadoRender.gl.vertexAttribPointer(loc, 2, estadoRender.gl.FLOAT, false, 0, 0);
-    ["uT", "uC", "uR", "uH", "uRot", "uSun", "uNight"].forEach(function(n) {
+    ["uT", "uC", "uR", "uH", "uRot", "uSun", "uNight", "uToon"].forEach(function(n) {
       glU[n] = estadoRender.gl.getUniformLocation(estadoRender.glProg, n);
     });
     return true;
@@ -4121,7 +4251,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoRender.gl.uniform4f(glU.uRot, Math.cos(estadoCamera.lam), Math.sin(estadoCamera.lam), Math.cos(estadoCamera.phi), Math.sin(estadoCamera.phi));
     var sv = sunVec();
     estadoRender.gl.uniform3f(glU.uSun, sv[0], sv[1], sv[2]);
-    estadoRender.gl.uniform1f(glU.uNight, optNight ? 1 : 0);
+    estadoRender.gl.uniform1f(glU.uNight, optNight && !estadoRender.cartoon ? 1 : 0);
+    estadoRender.gl.uniform1f(glU.uToon, estadoRender.cartoon ? 1 : 0);
     estadoRender.gl.drawArrays(estadoRender.gl.TRIANGLE_STRIP, 0, 4);
   }
   var glU = {};
@@ -4218,15 +4349,36 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("minfo").textContent = "Textura: " + t + " · Fronteiras: " + (estadoRender.feats ? bordersCustom ? "arquivo importado por você" : "biblioteca de mapas" : "não carregadas");
   }
   function setTextureFrom(c, src) {
-    if (uploadTexture(c)) {
+    baseCanvas = c;
+    var usar = estadoRender.cartoon && estadoRender.feats ? texturaCartoon() : c;
+    if (uploadTexture(usar)) {
       estadoRender.useTex = true;
       texSource = src;
-      texCanvas = c;
+      texCanvas = usar;
       updateOpts();
       updateMapInfo();
       return true;
     }
     return false;
+  }
+  var baseCanvas = null;
+  var cartoonCanvas = null;
+  function texturaCartoon() {
+    if (!cartoonCanvas) cartoonCanvas = buildCartoonTexture();
+    return cartoonCanvas;
+  }
+  function trocarCartoon(ligado) {
+    estadoRender.cartoon = !!ligado;
+    lsSet("globo.cartoon", estadoRender.cartoon);
+    if (!estadoRender.gl) return;
+    if (ligado && estadoRender.feats) {
+      if (uploadTexture(texturaCartoon())) {
+        estadoRender.useTex = true;
+        texCanvas = cartoonCanvas;
+      }
+    } else if (!ligado && baseCanvas) {
+      if (uploadTexture(baseCanvas)) texCanvas = baseCanvas;
+    }
   }
   function genTexture() {
     if (!estadoRender.gl || !estadoRender.feats) return;
@@ -4315,6 +4467,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       emitir("fronteiras-carregadas");
       updateOpts();
       updateMapInfo();
+      if (estadoRender.cartoon) trocarCartoon(true);
       if (!okGL) {
         setStatus("Fronteiras carregadas (" + m + " países com contorno). Este aparelho não suporta a textura 3D.", 7e3);
         return;
@@ -4387,6 +4540,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return out;
   }
   function iniciar15() {
+    estadoRender.cartoon = lsGet("globo.cartoon", false);
+    ganchos.trocarCartoon = trocarCartoon;
     $("impBor").onchange = function() {
       var f = this.files[0];
       this.value = "";
@@ -6868,6 +7023,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     /** Desafio do dia em andamento: { dia, num, fila (10 países do dia) } ou null. */
     desafio: null,
     qBadge: null,
+    /** Capital → País: índice do país cuja capital fica marcada no globo (só o ponto e o nome da cidade) */
+    qPino: null,
     qPanelH: 0
   };
   function freshQS() {
@@ -6932,8 +7089,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (sc.t === "reg") return d.r === sc.r;
     return d.r === sc.r && d.sub === sc.s;
   }
-  function scopeLabel() {
-    var sc = estadoTreino.quizScope;
+  function scopeLabel(sc) {
+    sc = sc || estadoTreino.quizScope;
     if (sc.t === "world") return "Mundo";
     if (sc.t === "review") return "Revisão dos erros";
     if (sc.t === "filter") return "Filtros atuais";
@@ -7087,7 +7244,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         return estadoTreino.quizScope.t === "brreg" ? s.r === estadoTreino.quizScope.r ? 1 : 0 : 1;
       });
       if (quiz.mode === "flag") quiz.mode = "cap";
-    } else if (wasBR) {
+    } else {
+      if (quiz.mode === "code") quiz.mode = "cap";
+    }
+    if (estadoTreino.quizDomain !== "br" && wasBR) {
       estadoBrasil.statesMode = false;
       estadoBrasil.selSt = null;
     }
@@ -7221,8 +7381,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     modeName: () => modeName,
     openHistory: () => openHistory
   });
-  function modeName(m) {
-    var w = estadoTreino.quizDomain === "br";
+  function modeName(m, dom) {
+    var w = (dom || estadoTreino.quizDomain) === "br";
     return { cap: w ? "Estado → Capital" : "País → Capital", pais: w ? "Capital → Estado" : "Capital → País", flag: "Bandeira → País", neighbor: w ? "Estado → Vizinho" : "País → Vizinho", code: w ? "Estado → Sigla" : "País → Sigla", map: "Achar no mapa" }[m] || m;
   }
   function computeRegionStats() {
@@ -7463,7 +7623,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       box.className = "cstat empty";
       box.textContent = "🎯 Você ainda não treinou " + (isState ? "este estado" : "este país") + ".";
       var d = !isState && D.find(function(x) {
-        return x.cc === key;
+        return x.cc === key && !x.uni;
       });
       if (d) {
         var tb = document.createElement("button");
@@ -7504,10 +7664,20 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     box.appendChild(lg);
   }
   function fillQStat(el, o) {
-    var e = (estadoTreino.QS.m[quiz.mode] || {})[qcc(o)], w = e ? e.w || 0 : 0;
+    var st = estadoTreino.QS.m[quiz.mode] || {}, e = st[qcc(o)], arr = QD(), rt = 0, wt = 0;
+    poolIdx().forEach(function(i) {
+      var x = st[qcc(arr[i])];
+      if (x) {
+        rt += x.r || 0;
+        wt += x.w || 0;
+      }
+    });
+    var partes = [];
+    if (e && (e.r || e.w)) partes.push("Esta: ✔ " + (e.r || 0) + " · ✖ " + (e.w || 0));
+    if (rt + wt) partes.push(scopeLabel() + ": ✔ " + rt + " · ✖ " + wt);
     el.innerHTML = "";
-    el.hidden = !w;
-    if (w) el.textContent = "🔁 Você já errou este " + w + (w === 1 ? " vez" : " vezes");
+    el.hidden = !partes.length;
+    el.textContent = partes.join("   |   ");
   }
   function iniciar31() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
@@ -7557,7 +7727,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     iniciar: () => iniciar32,
     recordProgress: () => recordProgress,
     updateProgUI: () => updateProgUI,
-    xpAtual: () => xpAtual
+    xpAtual: () => xpAtual,
+    zerarProgresso: () => zerarProgresso
   });
   function pad2(n) {
     return (n < 10 ? "0" : "") + n;
@@ -7574,8 +7745,18 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return dateStr(d);
   }
   var PROG;
+  function progNovo() {
+    return { xp: 0, totalCorrect: 0, streak: 0, lastStreakDate: null, dailyGoal: 10, dailyDate: null, dailyCount: 0, goalDoneDate: null, badges: [] };
+  }
   function saveProg() {
     lsSet("globo.prog.v1", PROG);
+  }
+  function zerarProgresso() {
+    var meta = PROG.dailyGoal;
+    PROG = progNovo();
+    PROG.dailyGoal = meta || 10;
+    saveProg();
+    updateProgUI();
   }
   function levelOf(xp) {
     return Math.floor(xp / 100) + 1;
@@ -7661,13 +7842,22 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       }, 250);
     }, 2200);
   }
+  function progDominio(ccs, unid) {
+    var st = estadoTreino.QS.m.cap || {}, a = 0, dom = 0;
+    ccs.forEach(function(cc) {
+      var e = st[cc], s = e ? Math.min(3, e.s || 0) : 0;
+      a += s;
+      if (s >= 3) dom++;
+    });
+    return [a, ccs.length * 3, dom + " de " + ccs.length + " " + unid + " dominados · " + a + " de " + ccs.length * 3 + " acertos"];
+  }
   function badgeDefs() {
     var arr = [];
     REG.forEach(function(rg, ri) {
       if (!D.some(function(d) {
         return d.r === ri && !d.dep && !d.uni;
       })) return;
-      arr.push({ id: "reg" + ri, title: "Domina " + rg.n, icon: "🌎", desc: "Chegue a 3 acertos seguidos em todos os países de " + rg.n + " (País → Capital).", need: function() {
+      arr.push({ id: "reg" + ri, title: "Domina " + rg.n, icon: "🌎", desc: "Acerte cada país de " + rg.n + " 3 vezes seguidas, em rodadas diferentes (País → Capital).", need: function() {
         var st = estadoTreino.QS.m.cap || {}, list = D.filter(function(d) {
           return d.r === ri && !d.dep && !d.uni;
         });
@@ -7676,16 +7866,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
           return e && e.s >= 3;
         });
       }, prog: function() {
-        var st = estadoTreino.QS.m.cap || {}, list = D.filter(function(d) {
+        return progDominio(D.filter(function(d) {
           return d.r === ri && !d.dep && !d.uni;
-        });
-        return [list.filter(function(d) {
-          var e = st[d.cc];
-          return e && e.s >= 3;
-        }).length, list.length];
+        }).map(function(d) {
+          return d.cc;
+        }), "países");
       } });
     });
-    arr.push({ id: "world", title: "Mestre do Mundo", icon: "👑", desc: "Domine os " + N_BASE + " países e territórios em País → Capital.", need: function() {
+    arr.push({ id: "world", title: "Mestre do Mundo", icon: "👑", desc: "Acerte cada um dos " + N_BASE + " países e territórios 3 vezes seguidas, em rodadas diferentes (País → Capital).", need: function() {
       var st = estadoTreino.QS.m.cap || {};
       return D.every(function(d) {
         if (d.dep || d.uni) return true;
@@ -7693,26 +7881,22 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         return e && e.s >= 3;
       });
     }, prog: function() {
-      var st = estadoTreino.QS.m.cap || {}, list = D.filter(function(d) {
+      return progDominio(D.filter(function(d) {
         return !d.dep && !d.uni;
-      });
-      return [list.filter(function(d) {
-        var e = st[d.cc];
-        return e && e.s >= 3;
-      }).length, list.length];
+      }).map(function(d) {
+        return d.cc;
+      }), "países");
     } });
-    arr.push({ id: "br27", title: "De Norte a Sul", icon: "🇧🇷", desc: "Domine os 27 estados do Brasil em Estado → Capital.", need: function() {
+    arr.push({ id: "br27", title: "De Norte a Sul", icon: "🇧🇷", desc: "Acerte cada um dos 27 estados 3 vezes seguidas, em rodadas diferentes (Estado → Capital).", need: function() {
       var st = estadoTreino.QS.m.cap || {};
       return BRS.every(function(s) {
         var e = st["BR-" + s.sigla];
         return e && e.s >= 3;
       });
     }, prog: function() {
-      var st = estadoTreino.QS.m.cap || {};
-      return [BRS.filter(function(s) {
-        var e = st["BR-" + s.sigla];
-        return e && e.s >= 3;
-      }).length, BRS.length];
+      return progDominio(BRS.map(function(s) {
+        return "BR-" + s.sigla;
+      }), "estados");
     } });
     [3, 7, 30].forEach(function(n) {
       arr.push({ id: "streak" + n, title: "Sequência de " + n + " dia" + (n === 1 ? "" : "s"), icon: "🔥", desc: "Bata a meta diária " + n + " dias seguidos.", need: function() {
@@ -7788,6 +7972,59 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     checkBadges();
     updateProgUI();
   }
+  var ICONE_MEDALHA = { 1: "🥇", 2: "🥈", 3: "🥉" };
+  function blocoMedalhas() {
+    var recs = lsGet("globo.recs.v1", {}), lista = [];
+    Object.keys(recs).forEach(function(k) {
+      var r = recs[k], p = k.split("|"), sc;
+      if (!r || !r.medal || p.length < 3) return;
+      try {
+        sc = JSON.parse(p.slice(1, -1).join("|"));
+      } catch (e) {
+        return;
+      }
+      lista.push({ medal: r.medal, nome: scopeLabel(sc), modo: modeName(p[p.length - 1], p[0]), erros: r.bestE, vezes: r.n || 1 });
+    });
+    lista.sort(function(a, b) {
+      return a.medal - b.medal || a.nome.localeCompare(b.nome);
+    });
+    var sec = document.createElement("div");
+    sec.className = "medsec";
+    var h = document.createElement("div");
+    h.className = "medtit";
+    h.textContent = "Medalhas das regiões zeradas (" + lista.length + ")";
+    sec.appendChild(h);
+    if (!lista.length) {
+      var v = document.createElement("div");
+      v.className = "badgedesc";
+      v.textContent = "Zere uma região no treino (acerte todos os países dela) para ganhar a primeira medalha.";
+      sec.appendChild(v);
+    }
+    lista.forEach(function(m) {
+      var row = document.createElement("div");
+      row.className = "badgerow";
+      var ic = document.createElement("div");
+      ic.className = "badgeicon";
+      ic.textContent = ICONE_MEDALHA[m.medal] || "🏅";
+      var tx = document.createElement("div");
+      var t = document.createElement("div");
+      t.className = "badgetitle";
+      t.textContent = m.nome;
+      var d = document.createElement("div");
+      d.className = "badgedesc";
+      d.textContent = m.modo + " · melhor: " + m.erros + " " + (m.erros === 1 ? "erro" : "erros") + (m.vezes > 1 ? " · zerou " + m.vezes + " vezes" : "");
+      tx.appendChild(t);
+      tx.appendChild(d);
+      row.appendChild(ic);
+      row.appendChild(tx);
+      sec.appendChild(row);
+    });
+    var h2 = document.createElement("div");
+    h2.className = "medtit";
+    h2.textContent = "Conquistas";
+    sec.appendChild(h2);
+    return sec;
+  }
   function openBadges() {
     var box = $("badgesbody");
     box.innerHTML = "";
@@ -7826,7 +8063,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         fi.style.width = Math.round(100 * pg[0] / Math.max(1, pg[1])) + "%";
         pb.appendChild(fi);
         var pt = document.createElement("span");
-        pt.textContent = pg[0] + " de " + pg[1];
+        pt.textContent = pg[2] || pg[0] + " de " + pg[1];
         tx.appendChild(pb);
         tx.appendChild(pt);
         pt.className = "bprogt";
@@ -7835,12 +8072,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       row.appendChild(tx);
       box.appendChild(row);
     });
+    box.insertBefore(blocoMedalhas(), box.firstChild);
     var n = PROG.badges.length, tot = defs.length;
     $("badgeshead").textContent = "Conquistas (" + n + "/" + tot + ")";
     $("badgesheet").style.display = "block";
   }
   function iniciar32() {
-    PROG = lsGet("globo.prog.v1", { xp: 0, totalCorrect: 0, streak: 0, lastStreakDate: null, dailyGoal: 10, dailyDate: null, dailyCount: 0, goalDoneDate: null, badges: [] });
+    PROG = lsGet("globo.prog.v1", progNovo());
     $("streakpill").onclick = function() {
       var n = displayStreak(), f = PROG.freezes || 0;
       celebrate("🔥 " + n + (n === 1 ? " dia seguido" : " dias seguidos") + " batendo a meta de " + PROG.dailyGoal + " respostas por dia" + (f ? " · 🧊 " + f + (f === 1 ? " congelador" : " congeladores") : "") + ". Jogue amanhã para não perder!");
@@ -7887,7 +8125,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/treino/partida.js
   var estadoPartida = {
     RUNS: void 0,
-    RECS: void 0
+    RECS: void 0,
+    /** partida que acabou de ser zerada agora (só ela mostra a tela "Você zerou"; ao voltar depois, começa outra) */
+    ultimoFim: ""
   };
   function runKey() {
     return estadoTreino.quizDomain + "|" + JSON.stringify(estadoTreino.quizScope) + "|" + quiz.mode;
@@ -7947,6 +8187,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     if (ok && !r.fin && poolIdx().length && !runPool().length) {
       r.fin = now;
+      estadoPartida.ultimoFim = runKey();
       r.res = recFinish(r);
       celebrate("🏁 Você zerou " + scopeLabel() + "!");
       tocar("conquista");
@@ -8167,6 +8408,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var o = QD()[k];
     if (quiz.mode === "cap") return qcapD(o);
     if (quiz.mode === "code") return estadoTreino.quizDomain === "br" ? o.sigla : o.cc;
+    if (quiz.mode === "flag") return short(o);
     return (qflag(o) + " " + short(o)).trim();
   }
   function makeNeighborOptions(qIdx, ansIdx) {
@@ -8246,7 +8488,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function renderScore() {
     updateProgUI();
     var n = poolIdx().length, r = curRun(), done = n ? n - runPool().length : 0;
-    $("qruntxt").textContent = estadoTreino.desafio ? "🗓️ Desafio do dia · " + Math.min(quiz.sessionAsked, 10) + "/10" : n ? done + " de " + n + (r.e ? " · " + r.e + " " + (r.e === 1 ? "erro" : "erros") : "") : "";
+    var vezes = (estadoPartida.RECS[runKey()] || {}).n || 0;
+    $("qruntxt").textContent = estadoTreino.desafio ? "🗓️ Desafio do dia · " + Math.min(quiz.sessionAsked, 10) + "/10" : n ? done + " de " + n + (r.e ? " · " + r.e + " " + (r.e === 1 ? "erro" : "erros") : "") + (vezes ? " · 🏁 " + vezes + "×" : "") : "";
     $("qrunbar").style.display = n ? "block" : "none";
     $("qrunfill").style.width = (n ? Math.round(100 * done / n) : 0) + "%";
   }
@@ -8440,10 +8683,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function drawBadge(R, cx, cy) {
     if (estadoTreino.quizDomain !== "world") return;
     var e = estadoTreino.qEspia;
-    if (e && performance.now() - e.t < 2600 && e.i !== estadoTreino.qBadge) desenharSelo(D[e.i], R, cx, cy, quiz.mode !== "flag", true);
+    if (e && performance.now() - e.t < 2600 && e.i !== estadoTreino.qBadge) desenharSelo(D[e.i], R, cx, cy, true, true);
     if (estadoTreino.qBadge != null) desenharSelo(D[estadoTreino.qBadge], R, cx, cy, true, false);
+    else if (estadoTreino.qPino != null) desenharSelo(D[estadoTreino.qPino], R, cx, cy, false, false, "📍 " + qcapD(D[estadoTreino.qPino]));
   }
-  function desenharSelo(d, R, cx, cy, comBandeira, espia) {
+  function desenharSelo(d, R, cx, cy, comBandeira, espia, rotulo) {
     var X, Y;
     if (estadoCamera.plano2D) {
       var R2 = R2now(), pp = proj2D(d.lng, d.lat, R2, cx, cy);
@@ -8464,7 +8708,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.arc(X, Y, 4.5, 0, 7);
     ctx.fillStyle = REG[d.r].c;
     ctx.fill();
-    var name = short(d), fs = espia ? 13 : 15;
+    var name = rotulo || short(d), fs = espia ? 13 : 15;
     ctx.font = "700 " + fs + "px " + FONT;
     var tw = ctx.measureText(name).width, bw = Math.min(W - 12, tw + (comBandeira ? 58 : 24)), bh = espia ? 34 : 40;
     var bx = Math.max(6, Math.min(X - bw / 2, W - bw - 6)), by = Y - bh - 16;
@@ -8794,10 +9038,16 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function nextQ() {
     estadoTreino.qFlash = null;
     estadoTreino.qBadge = null;
+    estadoTreino.qPino = null;
     estadoMapa.selected = null;
     quiz.hinted = false;
     quiz.nbAnswer = -1;
     if (estadoDistancia.arc && estadoDistancia.arc.quiz) estadoDistancia.arc = null;
+    var rk = runKey(), rr = estadoPartida.RUNS[rk];
+    if (rr && rr.fin && estadoPartida.ultimoFim !== rk) {
+      delete estadoPartida.RUNS[rk];
+      saveRuns();
+    }
     var arr = QD(), i = pickQ();
     var body = $("qbody"), fb = $("qfb");
     body.innerHTML = "";
@@ -8813,10 +9063,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         showRunDone();
         return;
       }
-      body.textContent = emptyMsg();
+      semPerguntas(body);
       $("qpool").textContent = "";
       return;
     }
+    estadoPartida.ultimoFim = "";
     quiz.cur = i;
     quiz.last = i;
     quiz.answered = false;
@@ -8845,10 +9096,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (estadoTreino.quizDomain === "world") estadoTreino.qFlash = { i, kind: "ask" };
     } else if (quiz.mode === "pais") {
       q2.textContent = "Qual " + (estadoTreino.quizDomain === "br" ? "estado" : "país") + " tem como capital " + qcapD(d) + "?";
-      scopeView();
       addHintBtn(q2, d, false);
+      if (estadoTreino.quizDomain === "world") {
+        estadoTreino.qPino = i;
+        flyTo(d.lat, d.lng, Math.max(1.6, REG[d.r].z * 1.4));
+      } else scopeView();
     } else if (quiz.mode === "flag") {
-      scopeView();
+      if (estadoTreino.quizDomain === "world") flyTo(REG[d.r].lat, REG[d.r].lng, REG[d.r].z);
+      else scopeView();
       var f2 = document.createElement("div");
       f2.className = "qflag big";
       f2.textContent = d.flag;
@@ -9043,12 +9298,41 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (cand.length) return cand[0].s;
     return stateAt(x, y);
   }
+  function semPerguntas(body) {
+    body.innerHTML = "";
+    var arr = QD();
+    var soMapa = estadoTreino.quizDomain !== "br" && estadoTreino.quizFocus === "mix" && quiz.mode !== "map" && arr.some(function(d) {
+      return d.uni && inScopeActive(d);
+    });
+    var p = document.createElement("div");
+    p.className = "qhint";
+    p.textContent = soMapa ? scopeLabel() + ' não tem países com capital: só bases e territórios reivindicados. Dá para treinar onde ficam, no "Achar no mapa".' : emptyMsg();
+    body.appendChild(p);
+    var row = document.createElement("div");
+    row.className = "qrow";
+    if (soMapa) {
+      var m = document.createElement("button");
+      m.textContent = "📍 Achar no mapa";
+      m.onclick = function() {
+        if (!estadoMapa.includeUni) setIncludeUni(true);
+        quizSetMode("map");
+      };
+      row.appendChild(m);
+    }
+    var o = document.createElement("button");
+    o.textContent = "🌎 Outra região";
+    o.onclick = function() {
+      $("qscopeb").click();
+    };
+    row.appendChild(o);
+    body.appendChild(row);
+  }
   function buildModeButtons() {
     var box = $("qmodes");
     box.innerHTML = "";
     $("qmodev").textContent = modeName(quiz.mode);
     $("qmodel").textContent = "❓ Pergunta";
-    var defs = estadoTreino.quizDomain === "br" ? [["cap", "Estado → Capital"], ["pais", "Capital → Estado"], ["neighbor", "Estado → Vizinho"], ["code", "Estado → Sigla"], ["map", "Achar no mapa"]] : [["cap", "País → Capital"], ["pais", "Capital → País"], ["flag", "Bandeira → País"], ["neighbor", "País → Vizinho"], ["code", "País → Sigla"], ["map", "Achar no mapa"]];
+    var defs = estadoTreino.quizDomain === "br" ? [["cap", "Estado → Capital"], ["pais", "Capital → Estado"], ["neighbor", "Estado → Vizinho"], ["code", "Estado → Sigla"], ["map", "Achar no mapa"]] : [["cap", "País → Capital"], ["pais", "Capital → País"], ["flag", "Bandeira → País"], ["neighbor", "País → Vizinho"], ["map", "Achar no mapa"]];
     defs.forEach(function(m) {
       var b = document.createElement("button");
       b.textContent = m[1];
@@ -9388,11 +9672,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       saveRuns();
       estadoPartida.RECS = {};
       saveRecs();
+      zerarProgresso();
       quiz.ok = 0;
       quiz.total = 0;
       quiz.streak = 0;
       renderScore();
-      setStatus("Progresso do treino zerado.", 3e3);
+      setStatus("Tudo zerado: treino, medalhas, nível e conquistas.", 3e3);
     });
   }
 
@@ -10433,7 +10718,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   function toqueAntes(x, y) {
     if (quiz.open && !estadoTreino.qMap) {
-      if (estadoTreino.quizDomain === "world") {
+      if (estadoTreino.quizDomain === "world" && quiz.mode === "cap") {
         var d = paisNoPonto(x, y);
         if (d) estadoTreino.qEspia = { i: d.i, t: performance.now() };
       }

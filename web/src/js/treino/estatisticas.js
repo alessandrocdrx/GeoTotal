@@ -10,13 +10,13 @@ import { short } from '../dados/vizinhos.js';
 import { ganchosInterface } from '../interface/ganchos.js';
 import { emitir } from '../nucleo/eventos.js';
 import { $, setStatus } from '../nucleo/utilitarios.js';
-import { inScopeActive, mstats, qcc, QD, unitWord } from './dominio.js';
+import { inScopeActive, mstats, poolIdx, qcc, QD, unitWord } from './dominio.js';
 import { estadoTreino, quiz, scopeLabel } from './estado.js';
 import { avail } from '../visualizacao/tela.js';
 
 /* ---------- estatísticas por região ---------- */
-function modeName(m){
-  var w=estadoTreino.quizDomain==='br';
+function modeName(m,dom){
+  var w=(dom||estadoTreino.quizDomain)==='br';
   return {cap:w?'Estado → Capital':'País → Capital',pais:w?'Capital → Estado':'Capital → País',flag:'Bandeira → País',neighbor:w?'Estado → Vizinho':'País → Vizinho',code:w?'Estado → Sigla':'País → Sigla',map:'Achar no mapa'}[m]||m;
 }
 function computeRegionStats(){
@@ -127,7 +127,7 @@ function renderCardStat(key,isState){
   var box=$('cstat');box.innerHTML='';
   if(!(r+w)){
     box.className='cstat empty';box.textContent='🎯 Você ainda não treinou '+(isState?'este estado':'este país')+'.';
-    var d=!isState&&D.find(function(x){return x.cc===key;});
+    var d=!isState&&D.find(function(x){return x.cc===key&&!x.uni;});
     if(d){var tb=document.createElement('button');tb.className='cstreinar';tb.textContent='Treinar '+REG[d.r].n+' →';tb.onclick=function(){emitir('treinar-regiao',{r:d.r});};box.appendChild(tb);}
     return;
   }
@@ -146,10 +146,14 @@ function renderCardStat(key,isState){
   box.appendChild(top);box.appendChild(bar);box.appendChild(lg);
 }
 function fillQStat(el,o){
-  /* só fala quando ajuda: se você já errou este país, avisa para prestar atenção */
-  var e=(estadoTreino.QS.m[quiz.mode]||{})[qcc(o)],w=e?(e.w||0):0;
-  el.innerHTML='';el.hidden=!w;
-  if(w)el.textContent='🔁 Você já errou este '+w+(w===1?' vez':' vezes');
+  /* placar discreto deste tipo de pergunta: a pergunta da vez (sem dizer o nome, para não entregar) e a região toda */
+  var st=estadoTreino.QS.m[quiz.mode]||{},e=st[qcc(o)],arr=QD(),rt=0,wt=0;
+  poolIdx().forEach(function(i){var x=st[qcc(arr[i])];if(x){rt+=x.r||0;wt+=x.w||0;}});
+  var partes=[];
+  if(e&&(e.r||e.w))partes.push('Esta: ✔ '+(e.r||0)+' · ✖ '+(e.w||0));
+  if(rt+wt)partes.push(scopeLabel()+': ✔ '+rt+' · ✖ '+wt);
+  el.innerHTML='';el.hidden=!partes.length;
+  el.textContent=partes.join('   |   ');
 }
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {

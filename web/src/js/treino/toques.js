@@ -26,7 +26,7 @@ function paisNoPonto(x,y){
 function toqueAntes(x,y){
   /* durante a pergunta, tocar num país só mostra o nome dele (sem a capital); não responde */
   if(quiz.open&&!estadoTreino.qMap){
-    if(estadoTreino.quizDomain==='world'){var d=paisNoPonto(x,y);if(d)estadoTreino.qEspia={i:d.i,t:performance.now()};}
+    if(estadoTreino.quizDomain==='world'&&quiz.mode==='cap'){var d=paisNoPonto(x,y);if(d)estadoTreino.qEspia={i:d.i,t:performance.now()};}
     return true;
   }
   if(estadoTreino.qMap&&estadoTreino.quizDomain==='br'){quizMapAnswerBR(pickStateNear(x,y));return true;}

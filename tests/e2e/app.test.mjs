@@ -423,6 +423,137 @@ test('zerou a região: duas próximas paradas e entra sozinho na primeira', asyn
   await fechar();
 });
 
+test('voltar a uma região já zerada começa uma partida nova, sem a tela antiga de "Você zerou"', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quiz.sessionLen = 0;
+    g.applyScopeChange({ t: 'reg', r: 6 });
+    for (let k = 0; k < 40 && g.runPool().length; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    const fimAgora = !!document.querySelector('.rundone');
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    g.applyScopeChange({ t: 'reg', r: 6 });
+    return { fimAgora, fimDepois: !!document.querySelector('.rundone'), pool: g.runPool().length, n: g.poolIdx().length };
+  });
+  assert.equal(r.fimAgora, true, 'logo depois de zerar mostra a tela de fim');
+  assert.equal(r.fimDepois, false, 'ao voltar depois, não mostra a tela antiga');
+  assert.equal(r.pool, r.n, 'partida nova, com todos os países de novo');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('região zerada que ganhou um país novo recomeça inteira e mantém a medalha', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quiz.sessionLen = 0;
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    for (let k = 0; k < 40 && g.runPool().length; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    /* simula a partida antiga, zerada antes de a Guiana Francesa entrar na região */
+    const run = g.curRun(); delete run.d.GF; g.saveRuns();
+    g.applyScopeChange({ t: 'reg', r: 1 });
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    const k = Object.keys(JSON.parse(localStorage.getItem('globo.recs.v1'))).find((x) => x.includes('"r":0'));
+    return { pool: g.runPool().length, n: g.poolIdx().length, medalha: JSON.parse(localStorage.getItem('globo.recs.v1'))[k].medal };
+  });
+  assert.equal(r.pool, r.n, 'partida nova com todos os países, não só o que faltava');
+  assert.equal(r.medalha, 1, 'medalha de ouro continua guardada');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('Antártida (só bases, sem capital): explica e oferece "Achar no mapa"', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.applyScopeChange({ t: 'reg', r: 7 });
+    const txt = document.getElementById('qbody').textContent;
+    const b = [...document.querySelectorAll('#qbody button')].find((x) => /Achar no mapa/.test(x.textContent));
+    if (b) b.click();
+    return { txt, temBotao: !!b, modo: g.quiz.mode, pool: g.poolIdx().length };
+  });
+  assert.match(r.txt, /não tem países com capital/);
+  assert.equal(r.temBotao, true);
+  assert.equal(r.modo, 'map');
+  assert.ok(r.pool > 0, 'no Achar no mapa há o que treinar');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('treino sem entregar a resposta: bandeira sem bandeiras nas opções, capital marcada no globo, sem sigla de país', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.applyScopeChange({ t: 'world' });
+    g.quizSetMode('flag');
+    const opsFlag = [...document.querySelectorAll('#qbody .qopts button')].map((b) => b.textContent);
+    g.quizSetMode('pais');
+    const pino = g.estadoTreino.qPino === g.quiz.cur;
+    g.quizSetMode('neighbor');
+    const d = g.D.find((x) => x.cc === 'BR');
+    g.estadoTreino.qEspia = null;
+    const modos = [...document.querySelectorAll('#qmodes button')].map((b) => b.textContent);
+    return { opsFlag, pino, modos, flags: g.D.map((x) => x.flag).filter(Boolean).slice(0, 50), d: !!d };
+  });
+  assert.equal(r.opsFlag.length, 4);
+  for (const o of r.opsFlag) assert.ok(!r.flags.some((f) => o.includes(f)), 'opção sem bandeira: ' + o);
+  assert.equal(r.pino, true, 'Capital → País marca a capital no globo');
+  assert.ok(!r.modos.includes('País → Sigla'), 'sem País → Sigla');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('zerar tudo também zera nível e conquistas', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    for (let k = 0; k < 12; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+  });
+  const antes = await pagina.evaluate(() => JSON.parse(localStorage.getItem('globo.prog.v1')));
+  await pagina.evaluate(() => { const b = document.getElementById('qreset'); b.click(); b.click(); });
+  const depois = await pagina.evaluate(() => JSON.parse(localStorage.getItem('globo.prog.v1')));
+  assert.ok(antes.xp > 0 && antes.badges.length > 0, 'tinha XP e conquista');
+  assert.equal(depois.xp, 0);
+  assert.equal(depois.badges.length, 0);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('botão do visual: dia e noite → sempre de dia → cartoon → volta, e lembra a escolha', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.waitForTimeout(2500);
+  const seq = [];
+  for (let k = 0; k < 3; k++) { await pagina.click('#mvisual'); seq.push(await pagina.evaluate(() => [document.getElementById('mvisual').textContent, window.__geoTotal.estadoRender.cartoon])); }
+  assert.deepEqual(seq.map((x) => x[0]).sort(), ['☀️', '🌗', '🎨'].sort());
+  const toon = seq.find((x) => x[0] === '🎨');
+  assert.equal(toon[1], true, 'no 🎨 o globo fica cartoon');
+  assert.ok(seq.filter((x) => x[0] !== '🎨').every((x) => x[1] === false));
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('conquistas: medalha da região zerada aparece e a barra de domínio anda a cada acerto', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quiz.sessionLen = 0;
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    for (let k = 0; k < 40 && g.runPool().length; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+  });
+  await pagina.waitForTimeout(300);
+  await pagina.click('#mbtn');
+  await pagina.click('#mbadges');
+  const r = await pagina.evaluate(() => {
+    const sec = document.querySelector('#badgesbody .medsec');
+    const dom = [...document.querySelectorAll('#badgesbody .badgerow')].find((x) => /Domina América do Sul/.test(x.textContent));
+    return { med: sec ? sec.textContent : '', dom: dom ? dom.querySelector('.bprogt').textContent : '' };
+  });
+  assert.match(r.med, /🥇América do Sul/, 'medalha de ouro na lista');
+  assert.match(r.dom, /0 de 13 países dominados · 13 de 39 acertos/);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
 test('estados do Brasil: o treino não entrega a resposta (etiqueta sem capital, pergunta sem sigla)', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(() => {
