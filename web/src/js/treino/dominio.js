@@ -32,7 +32,11 @@ function applyDomainForScope(){
     estadoBrasil.statesMode=true;
     estadoBrasil.onS=BRS.map(function(s){return (estadoTreino.quizScope.t==='brreg')?(s.r===estadoTreino.quizScope.r?1:0):1;});
     if(quiz.mode==='flag')quiz.mode='cap';
-  }else if(wasBR){
+  }else{
+    /* sigla só faz sentido nos estados (SP, RJ…); a dos países (ISO) não tem graça */
+    if(quiz.mode==='code')quiz.mode='cap';
+  }
+  if(estadoTreino.quizDomain!=='br'&&wasBR){
     estadoBrasil.statesMode=false;estadoBrasil.selSt=null;
   }
 }

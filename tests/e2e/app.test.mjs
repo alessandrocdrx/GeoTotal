@@ -480,6 +480,45 @@ test('Antártida (só bases, sem capital): explica e oferece "Achar no mapa"', a
   await fechar();
 });
 
+test('treino sem entregar a resposta: bandeira sem bandeiras nas opções, capital marcada no globo, sem sigla de país', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.applyScopeChange({ t: 'world' });
+    g.quizSetMode('flag');
+    const opsFlag = [...document.querySelectorAll('#qbody .qopts button')].map((b) => b.textContent);
+    g.quizSetMode('pais');
+    const pino = g.estadoTreino.qPino === g.quiz.cur;
+    g.quizSetMode('neighbor');
+    const d = g.D.find((x) => x.cc === 'BR');
+    g.estadoTreino.qEspia = null;
+    const modos = [...document.querySelectorAll('#qmodes button')].map((b) => b.textContent);
+    return { opsFlag, pino, modos, flags: g.D.map((x) => x.flag).filter(Boolean).slice(0, 50), d: !!d };
+  });
+  assert.equal(r.opsFlag.length, 4);
+  for (const o of r.opsFlag) assert.ok(!r.flags.some((f) => o.includes(f)), 'opção sem bandeira: ' + o);
+  assert.equal(r.pino, true, 'Capital → País marca a capital no globo');
+  assert.ok(!r.modos.includes('País → Sigla'), 'sem País → Sigla');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('zerar tudo também zera nível e conquistas', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    for (let k = 0; k < 12; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+  });
+  const antes = await pagina.evaluate(() => JSON.parse(localStorage.getItem('globo.prog.v1')));
+  await pagina.evaluate(() => { const b = document.getElementById('qreset'); b.click(); b.click(); });
+  const depois = await pagina.evaluate(() => JSON.parse(localStorage.getItem('globo.prog.v1')));
+  assert.ok(antes.xp > 0 && antes.badges.length > 0, 'tinha XP e conquista');
+  assert.equal(depois.xp, 0);
+  assert.equal(depois.badges.length, 0);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
 test('conquistas: medalha da região zerada aparece e a barra de domínio anda a cada acerto', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.evaluate(() => {

@@ -108,13 +108,13 @@ function iniciar() {
   oBor = document.getElementById('oBor');
   oFill = document.getElementById('oFill');
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
-  /* botão do cabeçalho: realista com dia e noite → realista sem noite → simples */
-  var VIS=[['🌗','🌗 Globo realista com dia e noite'],['☀️','☀️ Globo realista, sempre de dia'],['🗺️','🗺️ Globo simples (mais leve)']];
-  function visAtual(){return !estadoRender.optTex?2:($('oNight').checked?0:1);}
+  /* botão do cabeçalho: alterna entre dia e noite reais e sempre de dia (o globo é sempre o realista) */
+  var VIS=[['🌗','🌗 Globo com dia e noite de verdade'],['☀️','☀️ Globo sempre de dia']];
+  function visAtual(){return $('oNight').checked?0:1;}
   function visMostra(){var v=visAtual();$('mvisual').textContent=VIS[v][0];}
   $('mvisual').onclick=function(){
-    var v=(visAtual()+1)%3,noite=$('oNight');
-    estadoRender.optTex=v!==2;oTex.checked=estadoRender.optTex;
+    var v=(visAtual()+1)%2,noite=$('oNight');
+    estadoRender.optTex=true;oTex.checked=estadoRender.useTex;
     if(noite.checked!==(v===0)){noite.checked=(v===0);noite.dispatchEvent(new Event('change'));}
     visMostra();setStatus(VIS[v][1],2200);
   };

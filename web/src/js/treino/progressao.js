@@ -23,7 +23,10 @@ function dateStr(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.g
 function todayStr(){return dateStr(new Date());}
 function yestStr(){var d=new Date();d.setDate(d.getDate()-1);return dateStr(d);}
 let PROG;
+function progNovo(){return {xp:0,totalCorrect:0,streak:0,lastStreakDate:null,dailyGoal:10,dailyDate:null,dailyCount:0,goalDoneDate:null,badges:[]};}
 function saveProg(){lsSet('globo.prog.v1',PROG);}
+/** "Zerar progresso": volta nível, XP, sequência e conquistas ao começo (mantém a meta diária escolhida). */
+function zerarProgresso(){var meta=PROG.dailyGoal;PROG=progNovo();PROG.dailyGoal=meta||10;saveProg();updateProgUI();}
 function levelOf(xp){return Math.floor(xp/100)+1;}
 /** Título do jogador pelo nível: quem joga passa a se ver como explorador, não como "nível 7". */
 const TITULOS = [[1,'Turista'],[3,'Mochileiro'],[6,'Viajante'],[10,'Explorador'],[15,'Navegador'],[22,'Cartógrafo'],[30,'Embaixador'],[45,'Lenda do Mapa']];
@@ -198,7 +201,7 @@ function openBadges(){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
-  PROG = lsGet('globo.prog.v1',{xp:0,totalCorrect:0,streak:0,lastStreakDate:null,dailyGoal:10,dailyDate:null,dailyCount:0,goalDoneDate:null,badges:[]});
+  PROG = lsGet('globo.prog.v1',progNovo());
   $('streakpill').onclick=function(){
     var n=displayStreak(),f=PROG.freezes||0;
     celebrate('🔥 '+n+(n===1?' dia seguido':' dias seguidos')+' batendo a meta de '+PROG.dailyGoal+' respostas por dia'+(f?' · 🧊 '+f+(f===1?' congelador':' congeladores'):'')+'. Jogue amanhã para não perder!');
@@ -222,4 +225,4 @@ function iniciar() {
   startMap();
 }
 
-export { addXP, celebrate, iniciar, recordProgress, updateProgUI, xpAtual };
+export { addXP, celebrate, iniciar, recordProgress, updateProgUI, xpAtual, zerarProgresso };

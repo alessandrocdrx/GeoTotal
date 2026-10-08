@@ -17,11 +17,12 @@ import { haversine } from '../nucleo/geo.js';
 import { pausarMusica, tocar } from '../nucleo/som.js';
 import { $, confirmTap, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { addHintBtn } from './dica.js';
+import { flyTo } from '../visualizacao/animacao.js';
 import { applyDomainForScope, emptyMsg, inScopeActive, poolIdx, qcapD, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow } from './dominio.js';
 import { accList, estadoTreino, freshQS, matches, measureQ, quiz, resetSession, scopeLabel, stopTimerTick } from './estado.js';
 import { fillQStat, modeName } from './estatisticas.js';
 import { curRun, estadoPartida, finishQ, fmtTime, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget } from './partida.js';
-import { addXP } from './progressao.js';
+import { addXP, zerarProgresso } from './progressao.js';
 import { estadoBrasil, stateAt } from '../visualizacao/estados.js';
 import { estadoRender } from '../visualizacao/projecao.js';
 import { estadoCamera, estadoMapa, H, R0, resize, rot, W } from '../visualizacao/tela.js';
@@ -122,7 +123,7 @@ function updateOrderBtn(){
   $('qorderb').textContent=quiz.order==='seq'?'➡️ Ordem: sequencial':'🔀 Ordem: aleatória';
 }
 function nextQ(){
-  estadoTreino.qFlash=null;estadoTreino.qBadge=null;estadoMapa.selected=null;quiz.hinted=false;quiz.nbAnswer=-1;
+  estadoTreino.qFlash=null;estadoTreino.qBadge=null;estadoTreino.qPino=null;estadoMapa.selected=null;quiz.hinted=false;quiz.nbAnswer=-1;
   if(estadoDistancia.arc&&estadoDistancia.arc.quiz)estadoDistancia.arc=null;
   /* partida zerada antes (em outra visita): começa outra do zero, mesmo que a região tenha ganhado um país novo
      depois (ex.: Guiana Francesa na América do Sul); a medalha e os recordes ficam guardados em globo.recs.v1 */
@@ -145,8 +146,14 @@ function nextQ(){
     addHintBtn(q,d,false);
     showTarget(i);if(estadoTreino.quizDomain==='world')estadoTreino.qFlash={i:i,kind:'ask'};
   }
-  else if(quiz.mode==='pais'){q.textContent='Qual '+(estadoTreino.quizDomain==='br'?'estado':'país')+' tem como capital '+qcapD(d)+'?';scopeView();addHintBtn(q,d,false);}
-  else if(quiz.mode==='flag'){scopeView();var f2=document.createElement('div');f2.className='qflag big';f2.textContent=d.flag;var t2=document.createElement('div');t2.textContent='De qual país é esta bandeira?';q.appendChild(f2);q.appendChild(t2);addHintBtn(q,d,false);}
+  else if(quiz.mode==='pais'){
+    q.textContent='Qual '+(estadoTreino.quizDomain==='br'?'estado':'país')+' tem como capital '+qcapD(d)+'?';addHintBtn(q,d,false);
+    /* o contrário de País → Capital: o globo vai até a cidade e marca só ela; o país você descobre */
+    if(estadoTreino.quizDomain==='world'){estadoTreino.qPino=i;flyTo(d.lat,d.lng,Math.max(1.6,REG[d.r].z*1.4));}else scopeView();
+  }
+  else if(quiz.mode==='flag'){
+    /* o globo gira até o continente da bandeira (as opções são do mesmo lugar, então não entrega) */
+    if(estadoTreino.quizDomain==='world')flyTo(REG[d.r].lat,REG[d.r].lng,REG[d.r].z);else scopeView();var f2=document.createElement('div');f2.className='qflag big';f2.textContent=d.flag;var t2=document.createElement('div');t2.textContent='De qual país é esta bandeira?';q.appendChild(f2);q.appendChild(t2);addHintBtn(q,d,false);}
   else if(quiz.mode==='code'){q.textContent='Qual é a sigla de '+qflag(d)+' '+short(d)+'?';scopeView();addHintBtn(q,d,false);}
   else if(isNeighbor){
     var nbIdxs=estadoTreino.quizDomain==='br'?d.nb:NB[i];
@@ -277,7 +284,7 @@ function semPerguntas(body){
 function buildModeButtons(){
   var box=$('qmodes');box.innerHTML='';$('qmodev').textContent=modeName(quiz.mode);
   $('qmodel').textContent='❓ Pergunta';
-  var defs=estadoTreino.quizDomain==='br'?[['cap','Estado → Capital'],['pais','Capital → Estado'],['neighbor','Estado → Vizinho'],['code','Estado → Sigla'],['map','Achar no mapa']]:[['cap','País → Capital'],['pais','Capital → País'],['flag','Bandeira → País'],['neighbor','País → Vizinho'],['code','País → Sigla'],['map','Achar no mapa']];
+  var defs=estadoTreino.quizDomain==='br'?[['cap','Estado → Capital'],['pais','Capital → Estado'],['neighbor','Estado → Vizinho'],['code','Estado → Sigla'],['map','Achar no mapa']]:[['cap','País → Capital'],['pais','Capital → País'],['flag','Bandeira → País'],['neighbor','País → Vizinho'],['map','Achar no mapa']];
   defs.forEach(function(m){
     var b=document.createElement('button');b.textContent=m[1];b.setAttribute('aria-pressed',quiz.mode===m[0]?'true':'false');
     b.onclick=function(){quizSetMode(m[0]);};box.appendChild(b);
@@ -434,7 +441,7 @@ function iniciar() {
   $('qbtn').onclick=function(){if(!quiz.open)quizOpen();};$('qclose').onclick=function(){if(quiz.open)quizClose();};
   confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
   $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
-  confirmTap($('qreset'),'Toque de novo para zerar',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Progresso do treino zerado.',3000);});
+  confirmTap($('qreset'),'Toque de novo para zerar',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();zerarProgresso();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Tudo zerado: treino, medalhas, nível e conquistas.',3000);});
 }
 
 export { buildModeButtons, iniciar, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, runRestart };

@@ -25,6 +25,8 @@ const estadoTreino = {
   /** Desafio do dia em andamento: { dia, num, fila (10 países do dia) } ou null. */
   desafio: null,
   qBadge: null,
+  /** Capital → País: índice do país cuja capital fica marcada no globo (só o ponto e o nome da cidade) */
+  qPino: null,
   qPanelH: 0,
 };
 
