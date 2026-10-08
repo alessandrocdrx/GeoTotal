@@ -5,6 +5,7 @@
  */
 
 import { $, setStatus } from '../nucleo/utilitarios.js';
+import { ganchos } from './ganchos.js';
 import { estadoRender } from './projecao.js';
 import { PI } from './tela.js';
 
@@ -97,6 +98,48 @@ function buildTexture(done,progress){
   step();
 }
 
+/* ---------- Textura cartoon: oceano liso, terra verde viva, desertos, florestas, montanhas e gelo ---------- */
+function buildCartoonTexture(){
+  var TW=2048,TH=1024;
+  var eq=d3.geo.equirectangular().scale(TW/(2*PI)).translate([TW/2,TH/2]).precision(0.2);
+  var c=document.createElement('canvas');c.width=TW;c.height=TH;
+  var x=c.getContext('2d'),pth=d3.geo.path().projection(eq).context(x);
+  function terra(){x.beginPath();estadoRender.feats.forEach(function(f){pth(f);});}
+  function px(lng){return (lng+180)/360*TW;}
+  function py(lat){return (90-lat)/180*TH;}
+  /* oceano: azul de piscina, mais claro perto dos polos */
+  var og=x.createLinearGradient(0,0,0,TH);
+  og.addColorStop(0,'#cdeeff');og.addColorStop(.12,'#4cc3ff');og.addColorStop(.5,'#2aa8f2');og.addColorStop(.88,'#4cc3ff');og.addColorStop(1,'#cdeeff');
+  x.fillStyle=og;x.fillRect(0,0,TW,TH);
+  /* água rasa clarinha em volta da costa */
+  x.save();x.translate(-6000,0);x.shadowOffsetX=6000;x.shadowColor='rgba(170,240,255,.95)';x.shadowBlur=22;x.fillStyle='#000';terra();x.fill();x.restore();
+  /* terra */
+  x.fillStyle='#7bd651';terra();x.fill();
+  x.save();terra();x.clip();
+  function mancha(lat,lng,sLat,sLng,cor,alfa){
+    var rx=sLng*TW/360*1.7,ry=sLat*TH/180*1.7;
+    [-TW,0,TW].forEach(function(dx){
+      x.save();x.translate(px(lng)+dx,py(lat));x.scale(rx,ry);
+      var g=x.createRadialGradient(0,0,0,0,0,1);g.addColorStop(0,cor.replace('A',alfa));g.addColorStop(.65,cor.replace('A',alfa*.85));g.addColorStop(1,cor.replace('A',0));
+      x.fillStyle=g;x.beginPath();x.arc(0,0,1,0,7);x.fill();x.restore();
+    });
+  }
+  FOR.forEach(function(f){mancha(f[0],f[1],f[2],f[3],'rgba(46,160,67,A)',Math.min(1,f[4]));});
+  DES.forEach(function(d){mancha(d[0],d[1],d[2],d[3],'rgba(255,214,102,A)',Math.min(1,d[4]));});
+  MTN.forEach(function(m){mancha(m[0],m[1],m[2],m[3],'rgba(176,122,74,A)',Math.min(.85,m[4]*.75));});
+  mancha(74,-41,9,16,'rgba(250,253,255,A)',1);
+  /* gelo nos polos */
+  var gn=x.createLinearGradient(0,py(80),0,py(64));gn.addColorStop(0,'rgba(250,253,255,1)');gn.addColorStop(1,'rgba(250,253,255,0)');
+  x.fillStyle=gn;x.fillRect(0,0,TW,py(64));
+  var gs=x.createLinearGradient(0,py(-56),0,py(-64));gs.addColorStop(0,'rgba(250,253,255,0)');gs.addColorStop(1,'rgba(250,253,255,1)');
+  x.fillStyle=gs;x.fillRect(0,py(-56),TW,TH-py(-56));
+  x.restore();
+  /* contorno grosso de desenho animado */
+  x.lineJoin='round';x.strokeStyle='#17507e';x.lineWidth=5;terra();x.stroke();
+  x.strokeStyle='rgba(255,255,255,.55)';x.lineWidth=1.4;terra();x.stroke();
+  return c;
+}
+
 let oTex;
 let oBor;
 let oFill;
@@ -109,12 +152,13 @@ function iniciar() {
   oFill = document.getElementById('oFill');
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
   /* botão do cabeçalho: alterna entre dia e noite reais e sempre de dia (o globo é sempre o realista) */
-  var VIS=[['🌗','🌗 Globo com dia e noite de verdade'],['☀️','☀️ Globo sempre de dia']];
-  function visAtual(){return $('oNight').checked?0:1;}
+  var VIS=[['🌗','🌗 Globo com dia e noite de verdade'],['☀️','☀️ Globo sempre de dia'],['🎨','🎨 Globo cartoon']];
+  function visAtual(){return estadoRender.cartoon?2:($('oNight').checked?0:1);}
   function visMostra(){var v=visAtual();$('mvisual').textContent=VIS[v][0];}
   $('mvisual').onclick=function(){
-    var v=(visAtual()+1)%2,noite=$('oNight');
+    var v=(visAtual()+1)%3,noite=$('oNight');
     estadoRender.optTex=true;oTex.checked=estadoRender.useTex;
+    ganchos.trocarCartoon(v===2);
     if(noite.checked!==(v===0)){noite.checked=(v===0);noite.dispatchEvent(new Event('change'));}
     visMostra();setStatus(VIS[v][1],2200);
   };
@@ -124,4 +168,4 @@ function iniciar() {
   oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
 }
 
-export { buildTexture, iniciar, updateOpts };
+export { buildCartoonTexture, buildTexture, iniciar, updateOpts };

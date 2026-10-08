@@ -15,6 +15,8 @@ const estadoRender = {
   glBuf: null,
   useTex: false,
   optTex: true,
+  /** Globo cartoon: textura de cores vivas e contorno grosso, sem relevo fino nem noite */
+  cartoon: false,
   optBor: true,
   optFill: false,
   feats: null,

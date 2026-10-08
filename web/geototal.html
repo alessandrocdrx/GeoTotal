@@ -2917,6 +2917,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     },
     /** Selo com o nome do país da resposta, depois de responder. */
     desenharSeloResposta: () => {
+    },
+    /** Liga ou desliga o globo cartoon (preenchido por visualizacao/carregamento.js). */
+    trocarCartoon: () => {
     }
   };
 
@@ -2936,6 +2939,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     glBuf: null,
     useTex: false,
     optTex: true,
+    /** Globo cartoon: textura de cores vivas e contorno grosso, sem relevo fino nem noite */
+    cartoon: false,
     optBor: true,
     optFill: false,
     feats: null,
@@ -3801,6 +3806,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/visualizacao/textura.js
   var textura_exports = {};
   __export(textura_exports, {
+    buildCartoonTexture: () => buildCartoonTexture,
     buildTexture: () => buildTexture,
     iniciar: () => iniciar13,
     updateOpts: () => updateOpts
@@ -3999,6 +4005,97 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     step2();
   }
+  function buildCartoonTexture() {
+    var TW = 2048, TH = 1024;
+    var eq = d3.geo.equirectangular().scale(TW / (2 * PI)).translate([TW / 2, TH / 2]).precision(0.2);
+    var c = document.createElement("canvas");
+    c.width = TW;
+    c.height = TH;
+    var x = c.getContext("2d"), pth = d3.geo.path().projection(eq).context(x);
+    function terra() {
+      x.beginPath();
+      estadoRender.feats.forEach(function(f) {
+        pth(f);
+      });
+    }
+    function px(lng) {
+      return (lng + 180) / 360 * TW;
+    }
+    function py(lat) {
+      return (90 - lat) / 180 * TH;
+    }
+    var og = x.createLinearGradient(0, 0, 0, TH);
+    og.addColorStop(0, "#cdeeff");
+    og.addColorStop(0.12, "#4cc3ff");
+    og.addColorStop(0.5, "#2aa8f2");
+    og.addColorStop(0.88, "#4cc3ff");
+    og.addColorStop(1, "#cdeeff");
+    x.fillStyle = og;
+    x.fillRect(0, 0, TW, TH);
+    x.save();
+    x.translate(-6e3, 0);
+    x.shadowOffsetX = 6e3;
+    x.shadowColor = "rgba(170,240,255,.95)";
+    x.shadowBlur = 22;
+    x.fillStyle = "#000";
+    terra();
+    x.fill();
+    x.restore();
+    x.fillStyle = "#7bd651";
+    terra();
+    x.fill();
+    x.save();
+    terra();
+    x.clip();
+    function mancha(lat, lng, sLat, sLng, cor, alfa) {
+      var rx = sLng * TW / 360 * 1.7, ry = sLat * TH / 180 * 1.7;
+      [-TW, 0, TW].forEach(function(dx) {
+        x.save();
+        x.translate(px(lng) + dx, py(lat));
+        x.scale(rx, ry);
+        var g = x.createRadialGradient(0, 0, 0, 0, 0, 1);
+        g.addColorStop(0, cor.replace("A", alfa));
+        g.addColorStop(0.65, cor.replace("A", alfa * 0.85));
+        g.addColorStop(1, cor.replace("A", 0));
+        x.fillStyle = g;
+        x.beginPath();
+        x.arc(0, 0, 1, 0, 7);
+        x.fill();
+        x.restore();
+      });
+    }
+    FOR.forEach(function(f) {
+      mancha(f[0], f[1], f[2], f[3], "rgba(46,160,67,A)", Math.min(1, f[4]));
+    });
+    DES.forEach(function(d) {
+      mancha(d[0], d[1], d[2], d[3], "rgba(255,214,102,A)", Math.min(1, d[4]));
+    });
+    MTN.forEach(function(m) {
+      mancha(m[0], m[1], m[2], m[3], "rgba(176,122,74,A)", Math.min(0.85, m[4] * 0.75));
+    });
+    mancha(74, -41, 9, 16, "rgba(250,253,255,A)", 1);
+    var gn = x.createLinearGradient(0, py(80), 0, py(64));
+    gn.addColorStop(0, "rgba(250,253,255,1)");
+    gn.addColorStop(1, "rgba(250,253,255,0)");
+    x.fillStyle = gn;
+    x.fillRect(0, 0, TW, py(64));
+    var gs = x.createLinearGradient(0, py(-56), 0, py(-64));
+    gs.addColorStop(0, "rgba(250,253,255,0)");
+    gs.addColorStop(1, "rgba(250,253,255,1)");
+    x.fillStyle = gs;
+    x.fillRect(0, py(-56), TW, TH - py(-56));
+    x.restore();
+    x.lineJoin = "round";
+    x.strokeStyle = "#17507e";
+    x.lineWidth = 5;
+    terra();
+    x.stroke();
+    x.strokeStyle = "rgba(255,255,255,.55)";
+    x.lineWidth = 1.4;
+    terra();
+    x.stroke();
+    return c;
+  }
   var oTex;
   var oBor;
   var oFill;
@@ -4016,18 +4113,19 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     oTex.onchange = function() {
       estadoRender.optTex = oTex.checked;
     };
-    var VIS = [["🌗", "🌗 Globo com dia e noite de verdade"], ["☀️", "☀️ Globo sempre de dia"]];
+    var VIS = [["🌗", "🌗 Globo com dia e noite de verdade"], ["☀️", "☀️ Globo sempre de dia"], ["🎨", "🎨 Globo cartoon"]];
     function visAtual() {
-      return $("oNight").checked ? 0 : 1;
+      return estadoRender.cartoon ? 2 : $("oNight").checked ? 0 : 1;
     }
     function visMostra() {
       var v = visAtual();
       $("mvisual").textContent = VIS[v][0];
     }
     $("mvisual").onclick = function() {
-      var v = (visAtual() + 1) % 2, noite = $("oNight");
+      var v = (visAtual() + 1) % 3, noite = $("oNight");
       estadoRender.optTex = true;
       oTex.checked = estadoRender.useTex;
+      ganchos.trocarCartoon(v === 2);
       if (noite.checked !== (v === 0)) {
         noite.checked = v === 0;
         noite.dispatchEvent(new Event("change"));
@@ -4094,7 +4192,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     if (!estadoRender.gl) return false;
     var vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}";
-    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\nfloat h3(vec3 p){p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}\nfloat vn3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);\n return mix(mix(mix(h3(i),h3(i+vec3(1.0,0.0,0.0)),f.x),mix(h3(i+vec3(0.0,1.0,0.0)),h3(i+vec3(1.0,1.0,0.0)),f.x),f.y),\n            mix(mix(h3(i+vec3(0.0,0.0,1.0)),h3(i+vec3(1.0,0.0,1.0)),f.x),mix(h3(i+vec3(0.0,1.0,1.0)),h3(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z);}\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float land=1.0-smoothstep(0.10,0.22,c.b-c.r);\n vec3 sp=vec3(x,y,z);float det=0.0;float amp=0.55;float fq=70.0;\n for(int i=0;i<4;i++){float w=smoothstep(3.0,8.0,uR/fq);if(w>0.0)det+=w*amp*(vn3(sp*fq)-0.5);fq*=2.9;amp*=0.6;}\n c*=1.0+det*(land*0.62+0.06);\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.32,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=0.60+0.58*d;\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
+    var fs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\nuniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;uniform float uToon;\nfloat h3(vec3 p){p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}\nfloat vn3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);\n return mix(mix(mix(h3(i),h3(i+vec3(1.0,0.0,0.0)),f.x),mix(h3(i+vec3(0.0,1.0,0.0)),h3(i+vec3(1.0,1.0,0.0)),f.x),f.y),\n            mix(mix(h3(i+vec3(0.0,0.0,1.0)),h3(i+vec3(1.0,0.0,1.0)),f.x),mix(h3(i+vec3(0.0,1.0,1.0)),h3(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z);}\nvoid main(){\n vec2 q=(vec2(gl_FragCoord.x,uH-gl_FragCoord.y)-uC)/uR;\n float nx=q.x;float ny=-q.y;float r2=nx*nx+ny*ny;\n if(r2>=1.0){gl_FragColor=vec4(0.0);return;}\n float nz=sqrt(1.0-r2);\n float cL=uRot.x;float sL=uRot.y;float cP=uRot.z;float sP=uRot.w;\n float y=ny*cP+nz*sP;float z1=-ny*sP+nz*cP;\n float x=nx*cL+z1*sL;float z=-nx*sL+z1*cL;\n float lat=asin(clamp(y,-1.0,1.0));float lng=atan(x,z);\n vec2 uv=vec2(lng/6.28318531+0.5,0.5-lat/3.14159265);\n vec3 c=texture2D(uT,uv).rgb;\n float land=1.0-smoothstep(0.10,0.22,c.b-c.r);\n vec3 sp=vec3(x,y,z);float det=0.0;float amp=0.55;float fq=70.0;\n for(int i=0;i<4;i++){float w=smoothstep(3.0,8.0,uR/fq);if(w>0.0)det+=w*amp*(vn3(sp*fq)-0.5);fq*=2.9;amp*=0.6;}\n c*=1.0+det*(land*0.62+0.06)*(1.0-uToon);\n float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n float dayf=smoothstep(-0.08,0.14,dv);\n c*=mix(1.0,mix(0.32,1.0,dayf),uNight);\n float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n c*=mix(0.60+0.58*d,0.84+0.24*d,uToon);\n float rim=pow(1.0-nz,2.8);\n c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n gl_FragColor=vec4(c*a,a);\n}";
     function sh(t, src) {
       var s = estadoRender.gl.createShader(t);
       estadoRender.gl.shaderSource(s, src);
@@ -4119,7 +4217,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var loc = estadoRender.gl.getAttribLocation(estadoRender.glProg, "p");
     estadoRender.gl.enableVertexAttribArray(loc);
     estadoRender.gl.vertexAttribPointer(loc, 2, estadoRender.gl.FLOAT, false, 0, 0);
-    ["uT", "uC", "uR", "uH", "uRot", "uSun", "uNight"].forEach(function(n) {
+    ["uT", "uC", "uR", "uH", "uRot", "uSun", "uNight", "uToon"].forEach(function(n) {
       glU[n] = estadoRender.gl.getUniformLocation(estadoRender.glProg, n);
     });
     return true;
@@ -4153,7 +4251,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoRender.gl.uniform4f(glU.uRot, Math.cos(estadoCamera.lam), Math.sin(estadoCamera.lam), Math.cos(estadoCamera.phi), Math.sin(estadoCamera.phi));
     var sv = sunVec();
     estadoRender.gl.uniform3f(glU.uSun, sv[0], sv[1], sv[2]);
-    estadoRender.gl.uniform1f(glU.uNight, optNight ? 1 : 0);
+    estadoRender.gl.uniform1f(glU.uNight, optNight && !estadoRender.cartoon ? 1 : 0);
+    estadoRender.gl.uniform1f(glU.uToon, estadoRender.cartoon ? 1 : 0);
     estadoRender.gl.drawArrays(estadoRender.gl.TRIANGLE_STRIP, 0, 4);
   }
   var glU = {};
@@ -4250,15 +4349,36 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("minfo").textContent = "Textura: " + t + " · Fronteiras: " + (estadoRender.feats ? bordersCustom ? "arquivo importado por você" : "biblioteca de mapas" : "não carregadas");
   }
   function setTextureFrom(c, src) {
-    if (uploadTexture(c)) {
+    baseCanvas = c;
+    var usar = estadoRender.cartoon && estadoRender.feats ? texturaCartoon() : c;
+    if (uploadTexture(usar)) {
       estadoRender.useTex = true;
       texSource = src;
-      texCanvas = c;
+      texCanvas = usar;
       updateOpts();
       updateMapInfo();
       return true;
     }
     return false;
+  }
+  var baseCanvas = null;
+  var cartoonCanvas = null;
+  function texturaCartoon() {
+    if (!cartoonCanvas) cartoonCanvas = buildCartoonTexture();
+    return cartoonCanvas;
+  }
+  function trocarCartoon(ligado) {
+    estadoRender.cartoon = !!ligado;
+    lsSet("globo.cartoon", estadoRender.cartoon);
+    if (!estadoRender.gl) return;
+    if (ligado && estadoRender.feats) {
+      if (uploadTexture(texturaCartoon())) {
+        estadoRender.useTex = true;
+        texCanvas = cartoonCanvas;
+      }
+    } else if (!ligado && baseCanvas) {
+      if (uploadTexture(baseCanvas)) texCanvas = baseCanvas;
+    }
   }
   function genTexture() {
     if (!estadoRender.gl || !estadoRender.feats) return;
@@ -4347,6 +4467,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       emitir("fronteiras-carregadas");
       updateOpts();
       updateMapInfo();
+      if (estadoRender.cartoon) trocarCartoon(true);
       if (!okGL) {
         setStatus("Fronteiras carregadas (" + m + " países com contorno). Este aparelho não suporta a textura 3D.", 7e3);
         return;
@@ -4419,6 +4540,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return out;
   }
   function iniciar15() {
+    estadoRender.cartoon = lsGet("globo.cartoon", false);
+    ganchos.trocarCartoon = trocarCartoon;
     $("impBor").onchange = function() {
       var f = this.files[0];
       this.value = "";

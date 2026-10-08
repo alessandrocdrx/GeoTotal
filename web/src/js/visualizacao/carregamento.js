@@ -6,12 +6,13 @@
 
 import { D } from '../dados/paises.js';
 import { emitir } from '../nucleo/eventos.js';
-import { $, confirmTap, setStatus } from '../nucleo/utilitarios.js';
+import { $, confirmTap, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
+import { ganchos } from './ganchos.js';
 import { limparCacheVistas } from './enquadramento.js';
 import { A3, setupGeo, tryLoad } from './fronteiras.js';
 import { estadoRender } from './projecao.js';
 import { ctx } from './tela.js';
-import { buildTexture, updateOpts } from './textura.js';
+import { buildCartoonTexture, buildTexture, updateOpts } from './textura.js';
 import { initGL, uploadTexture } from './webgl.js';
 
 /* ---------- armazenamento local (IndexedDB) ---------- */
@@ -29,8 +30,20 @@ function updateMapInfo(){
   $('minfo').textContent='Textura: '+t+' · Fronteiras: '+(estadoRender.feats?(bordersCustom?'arquivo importado por você':'biblioteca de mapas'):'não carregadas');
 }
 function setTextureFrom(c,src){
-  if(uploadTexture(c)){estadoRender.useTex=true;texSource=src;texCanvas=c;updateOpts();updateMapInfo();return true;}
+  baseCanvas=c;
+  var usar=estadoRender.cartoon&&estadoRender.feats?texturaCartoon():c;
+  if(uploadTexture(usar)){estadoRender.useTex=true;texSource=src;texCanvas=usar;updateOpts();updateMapInfo();return true;}
   return false;
+}
+/* globo cartoon: a textura é desenhada uma vez (rápido, só formas) e guardada; a realista fica em baseCanvas */
+let baseCanvas = null;
+let cartoonCanvas = null;
+function texturaCartoon(){if(!cartoonCanvas)cartoonCanvas=buildCartoonTexture();return cartoonCanvas;}
+function trocarCartoon(ligado){
+  estadoRender.cartoon=!!ligado;lsSet('globo.cartoon',estadoRender.cartoon);
+  if(!estadoRender.gl)return;
+  if(ligado&&estadoRender.feats){if(uploadTexture(texturaCartoon())){estadoRender.useTex=true;texCanvas=cartoonCanvas;}}
+  else if(!ligado&&baseCanvas){if(uploadTexture(baseCanvas))texCanvas=baseCanvas;}
 }
 function genTexture(){
   if(!estadoRender.gl||!estadoRender.feats)return;
@@ -78,6 +91,7 @@ function startMap(){
     });
   }).then(function(m){
     emitir('fronteiras-carregadas');updateOpts();updateMapInfo();
+    if(estadoRender.cartoon)trocarCartoon(true);
     if(!okGL){setStatus('Fronteiras carregadas ('+m+' países com contorno). Este aparelho não suporta a textura 3D.',7000);return;}
     if(estadoRender.useTex){setStatus('Pronto: fronteiras carregadas ('+m+' países com contorno).',3500);return;}
     genTexture();
@@ -126,6 +140,8 @@ function ingestGeo(json){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  estadoRender.cartoon = lsGet('globo.cartoon',false);
+  ganchos.trocarCartoon = trocarCartoon;
   $('impBor').onchange=function(){
     var f=this.files[0];this.value='';if(!f)return;
     if(!window.d3||!window.topojson){setStatus('As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.',6000);return;}

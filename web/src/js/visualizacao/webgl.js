@@ -14,7 +14,7 @@ function initGL(){
   if(!estadoRender.gl)return false;
   var vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}';
   var fs='#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n'+
-  'uniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;\n'+
+  'uniform sampler2D uT;uniform vec2 uC;uniform float uR;uniform float uH;uniform vec4 uRot;uniform vec3 uSun;uniform float uNight;uniform float uToon;\n'+
   /* ruído 3D sem seno (estável em GPUs de celular), para o relevo fino que aparece ao aproximar */
   'float h3(vec3 p){p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}\n'+
   'float vn3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);\n'+
@@ -36,12 +36,12 @@ function initGL(){
   ' float land=1.0-smoothstep(0.10,0.22,c.b-c.r);\n'+
   ' vec3 sp=vec3(x,y,z);float det=0.0;float amp=0.55;float fq=70.0;\n'+
   ' for(int i=0;i<4;i++){float w=smoothstep(3.0,8.0,uR/fq);if(w>0.0)det+=w*amp*(vn3(sp*fq)-0.5);fq*=2.9;amp*=0.6;}\n'+
-  ' c*=1.0+det*(land*0.62+0.06);\n'+
+  ' c*=1.0+det*(land*0.62+0.06)*(1.0-uToon);\n'+
   ' float dv=x*uSun.x+y*uSun.y+z*uSun.z;\n'+
   ' float dayf=smoothstep(-0.08,0.14,dv);\n'+
   ' c*=mix(1.0,mix(0.32,1.0,dayf),uNight);\n'+
   ' float d=max(0.0,dot(vec3(nx,ny,nz),normalize(vec3(-0.35,0.45,0.82))));\n'+
-  ' c*=0.60+0.58*d;\n'+
+  ' c*=mix(0.60+0.58*d,0.84+0.24*d,uToon);\n'+
   ' float rim=pow(1.0-nz,2.8);\n'+
   ' c=mix(c,vec3(0.30,0.56,1.0),rim*0.7);\n'+
   ' float a=clamp((1.0-sqrt(r2))*uR,0.0,1.0);\n'+
@@ -56,7 +56,7 @@ function initGL(){
   estadoRender.glBuf=estadoRender.gl.createBuffer();estadoRender.gl.bindBuffer(estadoRender.gl.ARRAY_BUFFER,estadoRender.glBuf);
   estadoRender.gl.bufferData(estadoRender.gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),estadoRender.gl.STATIC_DRAW);
   var loc=estadoRender.gl.getAttribLocation(estadoRender.glProg,'p');estadoRender.gl.enableVertexAttribArray(loc);estadoRender.gl.vertexAttribPointer(loc,2,estadoRender.gl.FLOAT,false,0,0);
-  ['uT','uC','uR','uH','uRot','uSun','uNight'].forEach(function(n){glU[n]=estadoRender.gl.getUniformLocation(estadoRender.glProg,n);});
+  ['uT','uC','uR','uH','uRot','uSun','uNight','uToon'].forEach(function(n){glU[n]=estadoRender.gl.getUniformLocation(estadoRender.glProg,n);});
   return true;
 }
 function uploadTexture(cvs){
@@ -82,7 +82,7 @@ function glDraw(tex,R,cx,cy){
   estadoRender.gl.uniform1f(glU.uR,R*dpr);
   estadoRender.gl.uniform1f(glU.uH,glc.height);
   estadoRender.gl.uniform4f(glU.uRot,Math.cos(estadoCamera.lam),Math.sin(estadoCamera.lam),Math.cos(estadoCamera.phi),Math.sin(estadoCamera.phi));
-  var sv=sunVec();estadoRender.gl.uniform3f(glU.uSun,sv[0],sv[1],sv[2]);estadoRender.gl.uniform1f(glU.uNight,optNight?1:0);
+  var sv=sunVec();estadoRender.gl.uniform3f(glU.uSun,sv[0],sv[1],sv[2]);estadoRender.gl.uniform1f(glU.uNight,optNight&&!estadoRender.cartoon?1:0);estadoRender.gl.uniform1f(glU.uToon,estadoRender.cartoon?1:0);
   estadoRender.gl.drawArrays(estadoRender.gl.TRIANGLE_STRIP,0,4);
 }
 
