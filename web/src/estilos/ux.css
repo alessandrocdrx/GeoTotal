@@ -376,3 +376,10 @@ h1.marca{flex:none}
 .qresp button{flex:1;padding:8px!important;font-size:13px!important}
 /* recomeçar só a partida (não mexe em placar, medalhas nem conquistas) */
 .qrestart{border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:999px;font-size:11.5px;font-weight:700;font-family:inherit;line-height:1.2;white-space:nowrap;padding:3px 9px;cursor:pointer;margin-left:6px;flex:none}
+
+/* recomeçar a partida: botão claro na tela de região, longe do placar */
+.restartrow{display:block;width:100%;margin:0 0 12px;padding:12px;border-radius:14px;border:1px solid var(--border);background:var(--chip);color:var(--fg);font-size:14px;font-weight:700;font-family:inherit;text-align:left;cursor:pointer}
+.restartrow.armado{background:#e5484d;border-color:#e5484d;color:#fff}
+/* "Mais ajustes" afastado do resto, para não ser tocado sem querer */
+.qmodesmais{margin:10px 0 6px}
+#qmodes{margin-bottom:10px}

@@ -213,7 +213,6 @@ function renderScore(){
   var vezes=(estadoPartida.RECS[runKey()]||{}).n||0;
   $('qruntxt').textContent=estadoTreino.desafio?('🗓️ Desafio do dia · '+Math.min(quiz.sessionAsked,10)+'/10'):n?(done+' de '+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'')+(vezes?' · 🏁 '+vezes+'×':'')):'';
   $('qrunbar').style.display=n?'block':'none';
-  var rb=$('qrestart');if(rb)rb.hidden=!(n&&!estadoTreino.desafio&&(done>0||r.e>0)&&!r.fin);
   $('qrunfill').style.width=(n?Math.round(100*done/n):0)+'%';
 }
 function record(i,ok,hinted){

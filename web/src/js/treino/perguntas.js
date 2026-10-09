@@ -460,7 +460,6 @@ function iniciar() {
   $('qbtn').onclick=function(){if(!quiz.open)quizOpen();};$('qclose').onclick=function(){if(quiz.open)quizClose();};
   confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
   $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
-  confirmTap($('qrestart'),'↺ Recomeçar?',function(){runRestart();setStatus('Partida recomeçada do zero. Medalhas e conquistas continuam.',3000);});
   confirmTap($('qreset'),'Toque de novo para zerar',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();zerarProgresso();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Tudo zerado: treino, medalhas, nível e conquistas.',3000);});
 }
 

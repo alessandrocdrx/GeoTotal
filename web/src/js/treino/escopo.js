@@ -8,12 +8,12 @@ import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { D, norm, REG } from '../dados/paises.js';
 import { setIncludeDep, setIncludeDisputed, setIncludeUni } from '../interface/filtros.js';
 import { ouvir } from '../nucleo/eventos.js';
-import { $, lsSet } from '../nucleo/utilitarios.js';
+import { $, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { firePulseForScope } from './destaque-escopo.js';
-import { applyDomainForScope, inScopeActive, QD, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
-import { AMERICAS_R, estadoTreino, quiz, resetSession } from './estado.js';
-import { estadoPartida, MEDAL, recordable, renderScore, scopeKeyFor } from './partida.js';
-import { buildModeButtons, nextQ, quizOpen } from './perguntas.js';
+import { applyDomainForScope, inScopeActive, poolIdx, QD, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
+import { AMERICAS_R, estadoTreino, quiz, resetSession, scopeLabel } from './estado.js';
+import { curRun, estadoPartida, MEDAL, recordable, renderScore, runPool, scopeKeyFor } from './partida.js';
+import { buildModeButtons, nextQ, quizOpen, runRestart } from './perguntas.js';
 import { avail, availCount, estadoMapa } from '../visualizacao/tela.js';
 
 /* ---------- escopo e foco do treino ---------- */
@@ -151,12 +151,25 @@ function buildScopeList(filterStr){
   updateMultiApplyBtn();
 }
 
+/* recomeçar só a partida da região atual (placar, medalhas e conquistas ficam) */
+function mostrarRecomecar(){
+  var b=$('qrestart'),n=poolIdx().length,r=curRun(),feitos=n?n-runPool().length:0;
+  b.classList.remove('armado');
+  b.hidden=!(n&&!estadoTreino.desafio&&(feitos>0||r.e>0)&&!r.fin);
+  b.textContent='↺ Recomeçar '+scopeLabel()+' do zero ('+feitos+' de '+n+' feitos)';
+}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ouvir('treinar-regiao',function(o){if(!quiz.open)quizOpen();applyScopeChange({t:'reg',r:o.r});});
   ouvir('categorias-mudaram',function(o){if(quiz.open){updateScopeBtn();if(o.placar)renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}});
   $('qscopeback').onclick=function(){if(estadoTreino.quizScopePrev){applyScopeChange(estadoTreino.quizScopePrev);$('scopesheet').style.display='none';}};
-  $('qscopeb').onclick=function(){$('scopeq').value='';$('scopeadv').open=false;buildScopeList();$('scopesheet').style.display='block';};
+  $('qscopeb').onclick=function(){$('scopeq').value='';$('scopeadv').open=false;buildScopeList();mostrarRecomecar();$('scopesheet').style.display='block';};
+  $('qrestart').onclick=function(){
+    var b=$('qrestart');
+    if(!b.classList.contains('armado')){b.classList.add('armado');b.textContent='Toque de novo para recomeçar '+scopeLabel()+' do zero';clearTimeout(b._t);b._t=setTimeout(mostrarRecomecar,4000);return;}
+    clearTimeout(b._t);$('scopesheet').style.display='none';runRestart();
+    setStatus('Partida recomeçada do zero. Medalhas e conquistas continuam.',3000);
+  };
   $('scopeq').addEventListener('input',function(){buildScopeList(this.value);});
   $('scopeclose').onclick=function(){$('scopesheet').style.display='none';};
   $('scopesheet').addEventListener('pointerdown',function(e){if(e.target===$('scopesheet'))$('scopesheet').style.display='none';});

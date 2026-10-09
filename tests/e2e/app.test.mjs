@@ -553,12 +553,16 @@ test('recomeçar só a partida: volta a contagem a zero e mantém XP, medalhas e
     g.applyScopeChange({ t: 'reg', r: 0 });
     for (let k = 0; k < 4; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
     const xp = JSON.parse(localStorage.getItem('globo.prog.v1')).xp;
+    document.getElementById('qscopeb').click();
     const b = document.getElementById('qrestart');
     const visivel = !b.hidden;
-    b.click(); b.click();
-    return { visivel, pool: g.runPool().length, n: g.poolIdx().length, xp, xp2: JSON.parse(localStorage.getItem('globo.prog.v1')).xp };
+    b.click();
+    const armado = g.runPool().length < g.poolIdx().length;
+    b.click();
+    return { visivel, armado, pool: g.runPool().length, n: g.poolIdx().length, xp, xp2: JSON.parse(localStorage.getItem('globo.prog.v1')).xp };
   });
-  assert.equal(r.visivel, true, 'botão aparece depois de responder');
+  assert.equal(r.visivel, true, 'botão aparece na tela de região depois de responder');
+  assert.equal(r.armado, true, 'o primeiro toque só pede confirmação');
   assert.equal(r.pool, r.n, 'partida voltou ao começo');
   assert.equal(r.xp2, r.xp, 'XP continua');
   assert.deepEqual(erros, []);
