@@ -117,6 +117,9 @@ function iniciar() {
   })();
   estadoTreino.quizScope = (function(){var v=lsGet('globo.quiz.scope',{t:'world'});
     if(!v||!v.t)return {t:'world'};
+    /* 1.37: América do Norte entrou na região 1 (América Central e do Norte) */
+    if(v.t==='multi'&&v.items&&v.items.length===2&&!v.items[0].s&&!v.items[1].s&&v.items[0].r+v.items[1].r===3&&v.items[0].r*v.items[1].r===2)return {t:'reg',r:1};
+    if((v.t==='reg'||v.t==='sub')&&v.r===2)v.r=1;
     if((v.t==='reg'||v.t==='sub')&&!REG[v.r])return {t:'world'};
     if(v.t==='multi'){if(!Array.isArray(v.items))return {t:'world'};v.items=v.items.filter(function(it){return it&&REG[it.r];});if(!v.items.length)return {t:'world'};}
     if(v.t==='brreg'&&(v.r<0||v.r>4))return {t:'world'};

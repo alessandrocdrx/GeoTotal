@@ -213,6 +213,7 @@ function renderScore(){
   var vezes=(estadoPartida.RECS[runKey()]||{}).n||0;
   $('qruntxt').textContent=estadoTreino.desafio?('🗓️ Desafio do dia · '+Math.min(quiz.sessionAsked,10)+'/10'):n?(done+' de '+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'')+(vezes?' · 🏁 '+vezes+'×':'')):'';
   $('qrunbar').style.display=n?'block':'none';
+  var rb=$('qrestart');if(rb)rb.hidden=!(n&&!estadoTreino.desafio&&(done>0||r.e>0)&&!r.fin);
   $('qrunfill').style.width=(n?Math.round(100*done/n):0)+'%';
 }
 function record(i,ok,hinted){
@@ -367,6 +368,21 @@ function iniciar() {
   estadoPartida.RUNS = lsGet('globo.runs.v1',{});
   /* recordes e medalhas de cada partida zerada (por região + tipo de pergunta) */
   estadoPartida.RECS = lsGet('globo.recs.v1',{});
+  migrarAmericas();
+}
+/* 1.37: "América Central e Caribe" + "América do Norte" viraram uma região só (r 1). O cartão antigo jogava
+   as duas combinadas; os recordes e a partida dele passam a valer para a região nova. */
+function migrarAmericas(){
+  var velho='{"t":"multi","items":[{"r":1},{"r":2}]}',novo='{"t":"reg","r":1}',mudou=false;
+  [estadoPartida.RUNS,estadoPartida.RECS].forEach(function(obj){
+    Object.keys(obj).forEach(function(k){
+      if(k.indexOf(velho)<0)return;
+      var k2=k.replace(velho,novo);
+      if(obj===estadoPartida.RECS||!obj[k2])obj[k2]=obj[k];
+      delete obj[k];mudou=true;
+    });
+  });
+  if(mudou){saveRuns();saveRecs();}
 }
 
 export { curiosidade, curRun, drawBadge, estadoPartida, fbText, finishQ, fmtTime, iniciar, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget };

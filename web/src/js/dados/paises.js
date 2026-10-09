@@ -8,7 +8,8 @@
    país | capital | lat | lng | região | sub-região | observação  */
 const REG = [
  {n:'América do Sul',c:'#f6c800',lat:-15,lng:-58,z:1.15},
- {n:'América Central e Caribe',c:'#ff4fa3',lat:16,lng:-78,z:1.9},
+ {n:'América Central e do Norte',c:'#2fd67f',lat:28,lng:-92,z:1.0},
+ /* sem países desde a 1.37 (foi junto com a de cima); fica só para ler recordes antigos */
  {n:'América do Norte',c:'#2fd67f',lat:45,lng:-100,z:1.1},
  {n:'África',c:'#ff6b2c',lat:3,lng:20,z:1.05},
  {n:'Europa',c:'#4da3ff',lat:50,lng:15,z:1.7},
@@ -309,7 +310,7 @@ function iniciar() {
     return out;
   })().map(function(l,i){
     var p=l.split('|'); var lat=+p[2]*Math.PI/180, lng=+p[3]*Math.PI/180;
-    return {i:i,name:p[0],cap:p[1],lat:+p[2],lng:+p[3],r:+p[4],sub:p[5],obs:p[6]||'',cc:p[7],flag:(function(c){return String.fromCodePoint(0x1F1E6+c.charCodeAt(0)-65,0x1F1E6+c.charCodeAt(1)-65);})(p[9]||p[7]),
+    return {i:i,name:p[0],cap:p[1],lat:+p[2],lng:+p[3],r:(+p[4]===2?1:+p[4]),sub:p[5],obs:p[6]||'',cc:p[7],flag:(function(c){return String.fromCodePoint(0x1F1E6+c.charCodeAt(0)-65,0x1F1E6+c.charCodeAt(1)-65);})(p[9]||p[7]),
       x:Math.cos(lat)*Math.sin(lng),y:Math.sin(lat),z:Math.cos(lat)*Math.cos(lng),
       dis:p[7].charAt(0)==='X'&&p[7].length===2,dep:p[8]==='dep',uni:p[8]==='uni',pseudo:!!p[9],
       key:norm(p[0]+' '+p[1])};

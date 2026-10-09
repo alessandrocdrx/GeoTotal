@@ -284,13 +284,25 @@ function semPerguntas(body){
 function buildModeButtons(){
   var box=$('qmodes');box.innerHTML='';$('qmodev').textContent=modeName(quiz.mode);
   $('qmodel').textContent='❓ Pergunta';
-  var defs=estadoTreino.quizDomain==='br'?[['cap','Estado → Capital'],['pais','Capital → Estado'],['neighbor','Estado → Vizinho'],['code','Estado → Sigla'],['map','Achar no mapa']]:[['cap','País → Capital'],['pais','Capital → País'],['flag','Bandeira → País'],['neighbor','País → Vizinho'],['map','Achar no mapa']];
+  var defs=estadoTreino.quizDomain==='br'?[['cap','🏛️','Estado → Capital','Qual é a capital da Bahia?'],['pais','🏙️','Capital → Estado','Salvador é capital de qual estado?'],['neighbor','🤝','Vizinhos','Quem faz divisa com a Bahia?'],['code','🔤','Siglas','Qual é a sigla da Bahia?'],['map','📍','Achar no mapa','Toque onde fica a Bahia']]
+    :[['cap','🏛️','País → Capital','Qual é a capital do Peru?'],['pais','🏙️','Capital → País','Lima é capital de qual país?'],['flag','🚩','Bandeiras','De quem é esta bandeira?'],['neighbor','🤝','Vizinhos','Quem faz fronteira com o Peru?'],['map','📍','Achar no mapa','Toque onde fica o Peru']];
   defs.forEach(function(m){
-    var b=document.createElement('button');b.textContent=m[1];b.setAttribute('aria-pressed',quiz.mode===m[0]?'true':'false');
+    var b=document.createElement('button');b.className='mcard';b.setAttribute('aria-pressed',quiz.mode===m[0]?'true':'false');
+    var t=document.createElement('b');t.textContent=m[1]+' '+m[2];var ex=document.createElement('small');ex.textContent=m[3];
+    b.appendChild(t);b.appendChild(ex);
     b.onclick=function(){quizSetMode(m[0]);};box.appendChild(b);
   });
+  /* jeito de responder: escolher entre 4 ou digitar (vizinhos e mapa são sempre de tocar) */
+  var resp=document.createElement('div');resp.className='qresp';
+  var rl=document.createElement('span');rl.textContent='Responder:';resp.appendChild(rl);
+  [['choice','👆 Escolher'],['type','⌨️ Digitar']].forEach(function(t2){
+    var b=document.createElement('button');b.textContent=t2[1];b.setAttribute('aria-pressed',quiz.type===t2[0]?'true':'false');
+    b.onclick=function(){quiz.type=t2[0];$('qmodes').hidden=true;$('qmodeb').setAttribute('aria-expanded','false');buildModeButtons();resetSession();nextQ();};
+    resp.appendChild(b);
+  });
+  box.appendChild(resp);
   /* as outras opções do treino ficam no menu; este atalho mostra que elas existem */
-  var mais=document.createElement('button');mais.className='qmodesmais';mais.textContent='⚙️ Mais opções: digitar a resposta, foco, rodada, cronômetro, sobrevivência…';
+  var mais=document.createElement('button');mais.className='qmodesmais';mais.textContent='⚙️ Mais ajustes (cronômetro, tamanho da rodada…)';
   mais.onclick=function(){$('qmodes').hidden=true;$('qmodeb').setAttribute('aria-expanded','false');$('mbtn').click();setTimeout(function(){var t=document.querySelector('[data-p="mp-train"]');if(t)t.click();},60);};
   box.appendChild(mais);
   var t=$('qtypes');t.innerHTML='';
@@ -388,7 +400,7 @@ function showRunDone(){
   Array.prototype.forEach.call(row.children,function(b){b.addEventListener('click',pararContagem);});
 }
 /* ordem das regiões, das mais fáceis para as mais difíceis (índices de REG em js/dados/paises.js) */
-const ORDEM_REGIOES = [0, 2, 1, 4, 5, 3, 6];
+const ORDEM_REGIOES = [0, 1, 4, 5, 3, 6];
 /** Duas próximas regiões ainda sem medalha neste tipo de pergunta (ou as seguintes na ordem, se todas tiverem). */
 function proximasRegioes(){
   var sc=estadoTreino.quizScope,atual=sc.t==='reg'?sc.r:-1;
@@ -448,6 +460,7 @@ function iniciar() {
   $('qbtn').onclick=function(){if(!quiz.open)quizOpen();};$('qclose').onclick=function(){if(quiz.open)quizClose();};
   confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
   $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
+  confirmTap($('qrestart'),'↺ Recomeçar?',function(){runRestart();setStatus('Partida recomeçada do zero. Medalhas e conquistas continuam.',3000);});
   confirmTap($('qreset'),'Toque de novo para zerar',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();zerarProgresso();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Tudo zerado: treino, medalhas, nível e conquistas.',3000);});
 }
 

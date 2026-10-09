@@ -330,7 +330,7 @@ test('progresso: salvar e restaurar; música pausa no treino; legenda no Livre',
   const livre = await pagina.evaluate(() => ({ pausada: window.__geoTotal.estadoSom.pausada, legenda: !document.getElementById('legenda').hidden, itens: document.querySelectorAll('#legitens span').length }));
   assert.equal(livre.pausada, false, 'no Livre a música pode tocar');
   assert.equal(livre.legenda, true, 'legenda aparece na primeira visita ao Livre');
-  assert.equal(livre.itens, 7);
+  assert.equal(livre.itens, 6, 'as 6 regiões com países (Américas: Sul e Central e do Norte)');
   await pagina.click('#legok');
   assert.equal(await pagina.evaluate(() => document.getElementById('legenda').hidden), true);
   assert.deepEqual(erros, []);
@@ -542,6 +542,43 @@ test('fim da partida diz quantas partidas sem erro faltam para dominar a região
     return document.querySelector('.rundone .recline').textContent;
   });
   assert.match(txt, /Mais 2 partidas sem errar e você domina América do Sul/);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('recomeçar só a partida: volta a contagem a zero e mantém XP, medalhas e conquistas', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    for (let k = 0; k < 4; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    const xp = JSON.parse(localStorage.getItem('globo.prog.v1')).xp;
+    const b = document.getElementById('qrestart');
+    const visivel = !b.hidden;
+    b.click(); b.click();
+    return { visivel, pool: g.runPool().length, n: g.poolIdx().length, xp, xp2: JSON.parse(localStorage.getItem('globo.prog.v1')).xp };
+  });
+  assert.equal(r.visivel, true, 'botão aparece depois de responder');
+  assert.equal(r.pool, r.n, 'partida voltou ao começo');
+  assert.equal(r.xp2, r.xp, 'XP continua');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('Américas: só América do Sul e América Central e do Norte, com os 23 países juntos', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    document.getElementById('qscopeb').click();
+    const cartoes = [...document.querySelectorAll('#scopetiles .stile b')].map((b) => b.textContent);
+    const lista = document.getElementById('scopelist').textContent;
+    g.applyScopeChange({ t: 'reg', r: 1 });
+    return { cartoes, temCaribeSeparado: /América Central e Caribe/.test(lista), n: g.poolIdx().length, eua: g.D.find((d) => d.cc === 'US').r };
+  });
+  assert.ok(r.cartoes.includes('América do Sul') && r.cartoes.includes('América Central e do Norte'));
+  assert.equal(r.temCaribeSeparado, false);
+  assert.equal(r.eua, 1, 'Estados Unidos na região 1');
+  assert.equal(r.n, 23);
   assert.deepEqual(erros, []);
   await fechar();
 });

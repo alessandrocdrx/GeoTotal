@@ -365,3 +365,14 @@ h1.marca{flex:none}
 @media (max-width:385px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
 /* painel do treino translúcido como o cartão do Livre: o mapa aparece por baixo */
 #quiz.map .qpanel{background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+
+/* seletor de pergunta: cartões com ícone e exemplo */
+#qmodes .mcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:9px 11px!important}
+#qmodes .mcard b{font-size:13.5px}
+#qmodes .mcard small{font-size:11.5px;font-weight:500;color:var(--muted);line-height:1.25}
+#qmodes .mcard[aria-pressed="true"] small{color:inherit;opacity:.85}
+.qresp{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin-top:2px}
+.qresp span{font-size:12.5px;font-weight:700;color:var(--muted)}
+.qresp button{flex:1;padding:8px!important;font-size:13px!important}
+/* recomeçar só a partida (não mexe em placar, medalhas nem conquistas) */
+.qrestart{border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:999px;font-size:11.5px;font-weight:700;font-family:inherit;line-height:1.2;white-space:nowrap;padding:3px 9px;cursor:pointer;margin-left:6px;flex:none}

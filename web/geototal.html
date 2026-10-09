@@ -653,6 +653,17 @@ h1.marca{flex:none}
 @media (max-width:385px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
 /* painel do treino translúcido como o cartão do Livre: o mapa aparece por baixo */
 #quiz.map .qpanel{background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+
+/* seletor de pergunta: cartões com ícone e exemplo */
+#qmodes .mcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:9px 11px!important}
+#qmodes .mcard b{font-size:13.5px}
+#qmodes .mcard small{font-size:11.5px;font-weight:500;color:var(--muted);line-height:1.25}
+#qmodes .mcard[aria-pressed="true"] small{color:inherit;opacity:.85}
+.qresp{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin-top:2px}
+.qresp span{font-size:12.5px;font-weight:700;color:var(--muted)}
+.qresp button{flex:1;padding:8px!important;font-size:13px!important}
+/* recomeçar só a partida (não mexe em placar, medalhas nem conquistas) */
+.qrestart{border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:999px;font-size:11.5px;font-weight:700;font-family:inherit;line-height:1.2;white-space:nowrap;padding:3px 9px;cursor:pointer;margin-left:6px;flex:none}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -853,7 +864,7 @@ h1.marca{flex:none}
     <button id="qscopeb" class="qpick"><small>🗺️ Região</small><span id="qscopev">📍 Mundo</span><i>Trocar ▾</i></button>
   </div>
   <div class="qseg" id="qmodes" hidden></div>
-  <div id="qscore" class="qscore"><div class="qstrip"><span id="qruntxt"></span><span id="qcomb" class="qcomb" hidden></span><span id="qtimer"></span><button id="goalgo" class="qgoalmini" title="Toque para mudar a meta diária"><span id="qlevel">Nível 1</span> · <span id="qgoaltxt">0/10 hoje</span></button></div><span class="runbar" id="qrunbar"><i id="qrunfill"></i></span></div>
+  <div id="qscore" class="qscore"><div class="qstrip"><span id="qruntxt"></span><button id="qrestart" class="qrestart" hidden title="Recomeçar esta partida do zero (medalhas e conquistas ficam)" aria-label="Recomeçar esta partida">↺</button><span id="qcomb" class="qcomb" hidden></span><span id="qtimer"></span><button id="goalgo" class="qgoalmini" title="Toque para mudar a meta diária"><span id="qlevel">Nível 1</span> · <span id="qgoaltxt">0/10 hoje</span></button></div><span class="runbar" id="qrunbar"><i id="qrunfill"></i></span></div>
   <div hidden><div id="qxpbar"></div><div id="qxptxt"></div><svg><circle id="qgoalring"/></svg></div>
   <div id="qpool" class="inote"></div>
   <div id="qbody"></div>
@@ -882,11 +893,11 @@ h1.marca{flex:none}
   <div class="shead"><b>Onde você quer treinar?</b><button id="scopeclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <button id="qscopeback" class="qbackrow" hidden></button>
   <div id="scopetiles" class="scopetiles"></div>
-  <details id="scopeadv" class="scopeadv"><summary>⚙️ Mais opções <small>(sub-regiões, busca, combinar)</small></summary>
+  <details id="scopeadv" class="scopeadv"><summary>🔎 Partes de um continente <small>(Caribe, Escandinávia, regiões do Brasil…)</small></summary>
   <input id="scopeq" type="search" placeholder="Buscar continente, sub-região ou Brasil…" autocomplete="off">
-  <div class="row2"><button id="scopeMulti" aria-pressed="false">➕ Combinar regiões</button></div>
-  <div class="tgrow"><span class="tglab">Incluir:</span><label class="tgchip"><input type="checkbox" id="oDisputedQ" checked><span>⚠ Não reconhecidos</span></label><label class="tgchip"><input type="checkbox" id="oDepQ"><span>◇ Dependentes</span></label><label class="tgchip"><input type="checkbox" id="oUniQ"><span>❄ Desabitados</span></label></div>
-  <details id="catlista" class="catlista"><summary>📋 Ver quem são (com bandeira e a quem pertencem)</summary><div id="catbody"></div></details>
+  <div class="row2" hidden><button id="scopeMulti" aria-pressed="false">➕ Combinar regiões</button></div>
+  <div class="tgrow"><span class="tglab">Incluir também:</span><label class="tgchip"><input type="checkbox" id="oDisputedQ" checked><span>⚠ Países disputados</span></label><label class="tgchip"><input type="checkbox" id="oDepQ"><span>◇ Territórios de outros países</span></label><label class="tgchip"><input type="checkbox" id="oUniQ"><span>❄ Ilhas e bases sem moradores</span></label></div>
+  <details id="catlista" class="catlista"><summary>📋 Quais são esses lugares?</summary><div id="catbody"></div></details>
   <div id="scopelist"></div>
   <div id="scopeempty" class="inote" style="display:none">Nada encontrado.</div>
   </details>
@@ -974,7 +985,8 @@ h1.marca{flex:none}
   });
   var REG = [
     { n: "América do Sul", c: "#f6c800", lat: -15, lng: -58, z: 1.15 },
-    { n: "América Central e Caribe", c: "#ff4fa3", lat: 16, lng: -78, z: 1.9 },
+    { n: "América Central e do Norte", c: "#2fd67f", lat: 28, lng: -92, z: 1 },
+    /* sem países desde a 1.37 (foi junto com a de cima); fica só para ler recordes antigos */
     { n: "América do Norte", c: "#2fd67f", lat: 45, lng: -100, z: 1.1 },
     { n: "África", c: "#ff6b2c", lat: 3, lng: 20, z: 1.05 },
     { n: "Europa", c: "#4da3ff", lat: 50, lng: 15, z: 1.7 },
@@ -1295,7 +1307,7 @@ Ilha Pedro I|Sem capital (desabitada)|-68.78|-90.58|7|Antártida|Reivindicação
         cap: p[1],
         lat: +p[2],
         lng: +p[3],
-        r: +p[4],
+        r: +p[4] === 2 ? 1 : +p[4],
         sub: p[5],
         obs: p[6] || "",
         cc: p[7],
@@ -7157,6 +7169,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoTreino.quizScope = (function() {
       var v = lsGet("globo.quiz.scope", { t: "world" });
       if (!v || !v.t) return { t: "world" };
+      if (v.t === "multi" && v.items && v.items.length === 2 && !v.items[0].s && !v.items[1].s && v.items[0].r + v.items[1].r === 3 && v.items[0].r * v.items[1].r === 2) return { t: "reg", r: 1 };
+      if ((v.t === "reg" || v.t === "sub") && v.r === 2) v.r = 1;
       if ((v.t === "reg" || v.t === "sub") && !REG[v.r]) return { t: "world" };
       if (v.t === "multi") {
         if (!Array.isArray(v.items)) return { t: "world" };
@@ -8493,6 +8507,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var vezes = (estadoPartida.RECS[runKey()] || {}).n || 0;
     $("qruntxt").textContent = estadoTreino.desafio ? "🗓️ Desafio do dia · " + Math.min(quiz.sessionAsked, 10) + "/10" : n ? done + " de " + n + (r.e ? " · " + r.e + " " + (r.e === 1 ? "erro" : "erros") : "") + (vezes ? " · 🏁 " + vezes + "×" : "") : "";
     $("qrunbar").style.display = n ? "block" : "none";
+    var rb = $("qrestart");
+    if (rb) rb.hidden = !(n && !estadoTreino.desafio && (done > 0 || r.e > 0) && !r.fin);
     $("qrunfill").style.width = (n ? Math.round(100 * done / n) : 0) + "%";
   }
   function record(i, ok, hinted) {
@@ -8755,6 +8771,23 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ganchos.desenharSeloResposta = drawBadge;
     estadoPartida.RUNS = lsGet("globo.runs.v1", {});
     estadoPartida.RECS = lsGet("globo.recs.v1", {});
+    migrarAmericas();
+  }
+  function migrarAmericas() {
+    var velho = '{"t":"multi","items":[{"r":1},{"r":2}]}', novo = '{"t":"reg","r":1}', mudou = false;
+    [estadoPartida.RUNS, estadoPartida.RECS].forEach(function(obj) {
+      Object.keys(obj).forEach(function(k) {
+        if (k.indexOf(velho) < 0) return;
+        var k2 = k.replace(velho, novo);
+        if (obj === estadoPartida.RECS || !obj[k2]) obj[k2] = obj[k];
+        delete obj[k];
+        mudou = true;
+      });
+    });
+    if (mudou) {
+      saveRuns();
+      saveRecs();
+    }
   }
 
   // web/src/js/treino/dica.js
@@ -9334,19 +9367,45 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     box.innerHTML = "";
     $("qmodev").textContent = modeName(quiz.mode);
     $("qmodel").textContent = "❓ Pergunta";
-    var defs = estadoTreino.quizDomain === "br" ? [["cap", "Estado → Capital"], ["pais", "Capital → Estado"], ["neighbor", "Estado → Vizinho"], ["code", "Estado → Sigla"], ["map", "Achar no mapa"]] : [["cap", "País → Capital"], ["pais", "Capital → País"], ["flag", "Bandeira → País"], ["neighbor", "País → Vizinho"], ["map", "Achar no mapa"]];
+    var defs = estadoTreino.quizDomain === "br" ? [["cap", "🏛️", "Estado → Capital", "Qual é a capital da Bahia?"], ["pais", "🏙️", "Capital → Estado", "Salvador é capital de qual estado?"], ["neighbor", "🤝", "Vizinhos", "Quem faz divisa com a Bahia?"], ["code", "🔤", "Siglas", "Qual é a sigla da Bahia?"], ["map", "📍", "Achar no mapa", "Toque onde fica a Bahia"]] : [["cap", "🏛️", "País → Capital", "Qual é a capital do Peru?"], ["pais", "🏙️", "Capital → País", "Lima é capital de qual país?"], ["flag", "🚩", "Bandeiras", "De quem é esta bandeira?"], ["neighbor", "🤝", "Vizinhos", "Quem faz fronteira com o Peru?"], ["map", "📍", "Achar no mapa", "Toque onde fica o Peru"]];
     defs.forEach(function(m) {
       var b = document.createElement("button");
-      b.textContent = m[1];
+      b.className = "mcard";
       b.setAttribute("aria-pressed", quiz.mode === m[0] ? "true" : "false");
+      var t2 = document.createElement("b");
+      t2.textContent = m[1] + " " + m[2];
+      var ex = document.createElement("small");
+      ex.textContent = m[3];
+      b.appendChild(t2);
+      b.appendChild(ex);
       b.onclick = function() {
         quizSetMode(m[0]);
       };
       box.appendChild(b);
     });
+    var resp = document.createElement("div");
+    resp.className = "qresp";
+    var rl = document.createElement("span");
+    rl.textContent = "Responder:";
+    resp.appendChild(rl);
+    [["choice", "👆 Escolher"], ["type", "⌨️ Digitar"]].forEach(function(t2) {
+      var b = document.createElement("button");
+      b.textContent = t2[1];
+      b.setAttribute("aria-pressed", quiz.type === t2[0] ? "true" : "false");
+      b.onclick = function() {
+        quiz.type = t2[0];
+        $("qmodes").hidden = true;
+        $("qmodeb").setAttribute("aria-expanded", "false");
+        buildModeButtons();
+        resetSession();
+        nextQ();
+      };
+      resp.appendChild(b);
+    });
+    box.appendChild(resp);
     var mais = document.createElement("button");
     mais.className = "qmodesmais";
-    mais.textContent = "⚙️ Mais opções: digitar a resposta, foco, rodada, cronômetro, sobrevivência…";
+    mais.textContent = "⚙️ Mais ajustes (cronômetro, tamanho da rodada…)";
     mais.onclick = function() {
       $("qmodes").hidden = true;
       $("qmodeb").setAttribute("aria-expanded", "false");
@@ -9557,7 +9616,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       b.addEventListener("click", pararContagem);
     });
   }
-  var ORDEM_REGIOES = [0, 2, 1, 4, 5, 3, 6];
+  var ORDEM_REGIOES = [0, 1, 4, 5, 3, 6];
   function proximasRegioes() {
     var sc = estadoTreino.quizScope, atual = sc.t === "reg" ? sc.r : -1;
     var lista = ORDEM_REGIOES.filter(function(ri) {
@@ -9676,6 +9735,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (roundDone()) showRoundSummary(quiz.survivalMode ? "survival" : "count");
       else nextQ();
     };
+    confirmTap($("qrestart"), "↺ Recomeçar?", function() {
+      runRestart();
+      setStatus("Partida recomeçada do zero. Medalhas e conquistas continuam.", 3e3);
+    });
     confirmTap($("qreset"), "Toque de novo para zerar", function() {
       estadoTreino.QS = freshQS();
       lsSet("globo.quiz.v1", estadoTreino.QS);
@@ -9786,7 +9849,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     btn.style.display = n ? "flex" : "none";
     btn.textContent = "Aplicar (" + n + " regi" + (n === 1 ? "ão" : "ões") + " · " + cnt + " países)";
   }
-  var EMOJI_REG = ["🦜", "🏝️", "🦅", "🦁", "🏰", "🐼", "🦘"];
+  var EMOJI_REG = ["🦜", "🦅", null, "🦁", "🏰", "🐼", "🦘"];
   function buildScopeTiles() {
     var box = $("scopetiles");
     box.innerHTML = "";
@@ -9816,12 +9879,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (rv.length) tile("🧠", "Revisão dos seus erros", rv.length, { t: "review", cc: rv }, "#f72585");
     tile("🌍", "Mundo todo", availCount(), { t: "world" }, "#9aa3b5");
     REG.forEach(function(rg, ri) {
-      if (ri === 1 || ri === 2) {
-        if (ri === 1) tile("🦅", "América Central e do Norte", D.filter(function(d) {
-          return (d.r === 1 || d.r === 2) && avail(d);
-        }).length, { t: "multi", items: [{ r: 1 }, { r: 2 }] }, REG[2].c);
-        return;
-      }
       var n = D.filter(function(d) {
         return d.r === ri && avail(d);
       }).length;
@@ -9931,40 +9988,16 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     if (!scopeMultiMode) {
       var rv = reviewList();
-      if (rv.length) item("🧠 Revisão do dia: seus " + rv.length + " mais errados", rv.length, { t: "review", cc: rv }, 0);
+      if (rv.length) item("🧠 Revisão do dia: " + (rv.length === 1 ? "o que você mais erra" : "os " + rv.length + " que você mais erra"), rv.length, { t: "review", cc: rv }, 0);
       item("🌍 Mundo", availCount(), { t: "world" }, 0);
-      item("Só os que estão ligados em Filtros", estadoMapa.on.reduce(function(a, b2) {
-        return a + b2;
-      }, 0), { t: "filter" }, 0);
     }
-    header("AMÉRICAS");
-    var amCount = D.filter(function(d) {
-      return AMERICAS_R.indexOf(d.r) >= 0 && avail(d);
-    }).length;
-    item("🌎 Américas (todas)", amCount, { t: "super" }, 0);
-    AMERICAS_R.forEach(function(ri) {
-      var rg = REG[ri], list = D.filter(function(d) {
-        return d.r === ri && avail(d);
-      });
-      item(rg.n, list.length, { t: "reg", r: ri }, 1);
-      var subs = [];
-      list.forEach(function(d) {
-        if (d.sub !== rg.n && subs.indexOf(d.sub) < 0) subs.push(d.sub);
-      });
-      subs.forEach(function(sn) {
-        item(sn, list.filter(function(d) {
-          return d.sub === sn;
-        }).length, { t: "sub", r: ri, s: sn }, 2);
-      });
-    });
     REG.forEach(function(rg, ri) {
-      if (AMERICAS_R.indexOf(ri) >= 0) return;
       var list = D.filter(function(d) {
         return d.r === ri && avail(d);
       });
       if (!list.length) return;
       header(rg.n.toUpperCase());
-      item(rg.n + " (todo o continente)", list.length, { t: "reg", r: ri }, 0);
+      item(rg.n + " (inteira)", list.length, { t: "reg", r: ri }, 0);
       var subs = [];
       list.forEach(function(d) {
         if (d.sub !== rg.n && subs.indexOf(d.sub) < 0) subs.push(d.sub);
@@ -11070,7 +11103,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var box = $("legitens");
     box.innerHTML = "";
     REG.forEach(function(rg, ri) {
-      if (!SHAPES[ri]) return;
+      if (!SHAPES[ri] || !D.some(function(d) {
+        return d.r === ri;
+      })) return;
       var it = document.createElement("span");
       var f = document.createElement("i");
       f.textContent = SIMBOLO[SHAPES[ri]];

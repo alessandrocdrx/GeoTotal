@@ -49,7 +49,7 @@ function updateMultiApplyBtn(){
   btn.textContent='Aplicar ('+n+' regi'+(n===1?'ão':'ões')+' · '+cnt+' países)';
 }
 /* cartões grandes: o caminho principal da tela; sub-regiões e o resto ficam em "Mais opções" */
-const EMOJI_REG = ['🦜','🏝️','🦅','🦁','🏰','🐼','🦘'];
+const EMOJI_REG = ['🦜','🦅',null,'🦁','🏰','🐼','🦘'];
 function buildScopeTiles(){
   var box=$('scopetiles');box.innerHTML='';
   function tile(icone,nome,count,sc,cor,unid){
@@ -69,11 +69,6 @@ function buildScopeTiles(){
   if(rv.length)tile('🧠','Revisão dos seus erros',rv.length,{t:'review',cc:rv},'#f72585');
   tile('🌍','Mundo todo',availCount(),{t:'world'},'#9aa3b5');
   REG.forEach(function(rg,ri){
-    if(ri===1||ri===2){
-      /* América do Norte tem só 3 países: junta com a Central e o Caribe num cartão só */
-      if(ri===1)tile('🦅','América Central e do Norte',D.filter(function(d){return (d.r===1||d.r===2)&&avail(d);}).length,{t:'multi',items:[{r:1},{r:2}]},REG[2].c);
-      return;
-    }
     var n=D.filter(function(d){return d.r===ri&&avail(d);}).length;
     if(n&&EMOJI_REG[ri])tile(EMOJI_REG[ri],rg.n,n,{t:'reg',r:ri},rg.c);
   });
@@ -135,26 +130,14 @@ function buildScopeList(filterStr){
   function header(t){if(q2)return;var h=document.createElement('div');h.className='sh';h.textContent=t;box.appendChild(h);}
   if(!scopeMultiMode){
     var rv=reviewList();
-    if(rv.length)item('🧠 Revisão do dia: seus '+rv.length+' mais errados',rv.length,{t:'review',cc:rv},0);
+    if(rv.length)item('🧠 Revisão do dia: '+(rv.length===1?'o que você mais erra':'os '+rv.length+' que você mais erra'),rv.length,{t:'review',cc:rv},0);
     item('🌍 Mundo',availCount(),{t:'world'},0);
-    item('Só os que estão ligados em Filtros',estadoMapa.on.reduce(function(a,b2){return a+b2;},0),{t:'filter'},0);
   }
-  header('AMÉRICAS');
-  var amCount=D.filter(function(d){return AMERICAS_R.indexOf(d.r)>=0&&avail(d);}).length;
-  item('🌎 Américas (todas)',amCount,{t:'super'},0);
-  AMERICAS_R.forEach(function(ri){
-    var rg=REG[ri],list=D.filter(function(d){return d.r===ri&&avail(d);});
-    item(rg.n,list.length,{t:'reg',r:ri},1);
-    var subs=[];
-    list.forEach(function(d){if(d.sub!==rg.n&&subs.indexOf(d.sub)<0)subs.push(d.sub);});
-    subs.forEach(function(sn){item(sn,list.filter(function(d){return d.sub===sn;}).length,{t:'sub',r:ri,s:sn},2);});
-  });
   REG.forEach(function(rg,ri){
-    if(AMERICAS_R.indexOf(ri)>=0)return;
     var list=D.filter(function(d){return d.r===ri&&avail(d);});
     if(!list.length)return;
     header(rg.n.toUpperCase());
-    item(rg.n+' (todo o continente)',list.length,{t:'reg',r:ri},0);
+    item(rg.n+' (inteira)',list.length,{t:'reg',r:ri},0);
     var subs=[];
     list.forEach(function(d){if(d.sub!==rg.n&&subs.indexOf(d.sub)<0)subs.push(d.sub);});
     subs.forEach(function(sn){item(sn,list.filter(function(d){return d.sub===sn;}).length,{t:'sub',r:ri,s:sn},1);});
