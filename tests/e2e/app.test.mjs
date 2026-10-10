@@ -330,7 +330,7 @@ test('progresso: salvar e restaurar; música pausa no treino; legenda no Livre',
   const livre = await pagina.evaluate(() => ({ pausada: window.__geoTotal.estadoSom.pausada, legenda: !document.getElementById('legenda').hidden, itens: document.querySelectorAll('#legitens span').length }));
   assert.equal(livre.pausada, false, 'no Livre a música pode tocar');
   assert.equal(livre.legenda, true, 'legenda aparece na primeira visita ao Livre');
-  assert.equal(livre.itens, 7);
+  assert.equal(livre.itens, 6, 'as 6 regiões com países (Américas: Sul e Central e do Norte)');
   await pagina.click('#legok');
   assert.equal(await pagina.evaluate(() => document.getElementById('legenda').hidden), true);
   assert.deepEqual(erros, []);
@@ -415,7 +415,7 @@ test('zerou a região: duas próximas paradas e entra sozinho na primeira', asyn
   assert.equal(r.botoes.length, 2, 'duas sugestões: ' + r.botoes.join(', '));
   assert.ok(!r.botoes.includes('América do Sul'), 'não sugere a região que acabou de zerar');
   assert.match(r.cont, /começa em \d+s/);
-  await pagina.waitForTimeout(12500); // 1,2 s do avanço automático da última resposta + 10 s de contagem
+  await pagina.waitForTimeout(14500); // até 3,2 s do avanço automático da última resposta (com curiosidade) + 10 s de contagem
   const depois = await pagina.evaluate(() => window.__geoTotal.estadoTreino.quizScope);
   assert.equal(depois.t, 'reg');
   assert.notEqual(depois.r, 0, 'entrou sozinho na próxima região');
@@ -519,15 +519,138 @@ test('zerar tudo também zera nível e conquistas', async () => {
   await fechar();
 });
 
-test('botão do visual: dia e noite → sempre de dia → cartoon → volta, e lembra a escolha', async () => {
+test('botão do visual: alterna só entre dia e noite e sempre de dia', async () => {
   const { pagina, erros, fechar } = await abrirApp();
-  await pagina.waitForTimeout(2500);
+  await pagina.waitForTimeout(1500);
   const seq = [];
-  for (let k = 0; k < 3; k++) { await pagina.click('#mvisual'); seq.push(await pagina.evaluate(() => [document.getElementById('mvisual').textContent, window.__geoTotal.estadoRender.cartoon])); }
-  assert.deepEqual(seq.map((x) => x[0]).sort(), ['☀️', '🌗', '🎨'].sort());
-  const toon = seq.find((x) => x[0] === '🎨');
-  assert.equal(toon[1], true, 'no 🎨 o globo fica cartoon');
-  assert.ok(seq.filter((x) => x[0] !== '🎨').every((x) => x[1] === false));
+  for (let k = 0; k < 3; k++) { await pagina.click('#mvisual'); seq.push(await pagina.evaluate(() => document.getElementById('mvisual').textContent)); }
+  assert.deepEqual([...new Set(seq)].sort(), ['☀️', '🌗'].sort());
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('fim da partida diz quantas partidas sem erro faltam para dominar a região', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const txt = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.quiz.sessionLen = 0;
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    for (let k = 0; k < 40 && g.runPool().length; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    return document.querySelector('.rundone .recline').textContent;
+  });
+  assert.match(txt, /Mais 2 partidas sem errar e você domina América do Sul/);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('recomeçar só a partida: volta a contagem a zero e mantém XP, medalhas e conquistas', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.applyScopeChange({ t: 'reg', r: 0 });
+    for (let k = 0; k < 4; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    const xp = JSON.parse(localStorage.getItem('globo.prog.v1')).xp;
+    document.getElementById('qscopeb').click();
+    const b = document.getElementById('qrestart');
+    const visivel = !b.hidden;
+    b.click();
+    const armado = g.runPool().length < g.poolIdx().length;
+    b.click();
+    return { visivel, armado, pool: g.runPool().length, n: g.poolIdx().length, xp, xp2: JSON.parse(localStorage.getItem('globo.prog.v1')).xp };
+  });
+  assert.equal(r.visivel, true, 'botão aparece na tela de região depois de responder');
+  assert.equal(r.armado, true, 'o primeiro toque só pede confirmação');
+  assert.equal(r.pool, r.n, 'partida voltou ao começo');
+  assert.equal(r.xp2, r.xp, 'XP continua');
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('Américas: só América do Sul e América Central e do Norte, com os 23 países juntos', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    document.getElementById('qscopeb').click();
+    const cartoes = [...document.querySelectorAll('#scopetiles .stile b')].map((b) => b.textContent);
+    const lista = document.getElementById('scopelist').textContent;
+    g.applyScopeChange({ t: 'reg', r: 1 });
+    return { cartoes, temCaribeSeparado: /América Central e Caribe/.test(lista), n: g.poolIdx().length, eua: g.D.find((d) => d.cc === 'US').r };
+  });
+  assert.ok(r.cartoes.includes('América do Sul') && r.cartoes.includes('América Central e do Norte'));
+  assert.equal(r.temCaribeSeparado, false);
+  assert.equal(r.eua, 1, 'Estados Unidos na região 1');
+  assert.equal(r.n, 23);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('passaporte: carimbo ao dominar um país e tela com as bandeiras por região', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    g.applyScopeChange({ t: 'world' });
+    g.quizSetMode('cap');
+    const d = g.QD()[g.quiz.cur];
+    g.estadoTreino.QS.m.cap[d.cc] = { r: 2, w: 0, s: 2, l: 0 };
+    g.quiz.answered = false; g.finishQ(true);
+    const toast = [...document.querySelectorAll('.qtoast')].map((x) => x.textContent).join(' | ');
+    document.getElementById('mpassaporte').click();
+    return { toast, head: document.getElementById('passhead').textContent, on: document.querySelectorAll('#passbody .carimbo.on').length, total: document.querySelectorAll('#passbody .carimbo').length };
+  });
+  assert.match(r.toast, /Carimbo novo no passaporte/);
+  assert.match(r.head, /1 de 204/);
+  assert.equal(r.on, 1);
+  assert.equal(r.total, 204);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('jogos rápidos: Relâmpago de 60 s com recorde e Misto com tipos variados', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    document.getElementById('qscopeb').click();
+    document.getElementById('jrMisto').click();
+    const modos = new Set();
+    for (let k = 0; k < 9; k++) { modos.add(g.quiz.mode); g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    const rotuloMisto = document.getElementById('qmodev').textContent;
+    document.getElementById('qscopeb').click();
+    document.getElementById('jrRelampago').click();
+    const timer = g.quiz.timerLen, rotulo = document.getElementById('qmodev').textContent;
+    for (let k = 0; k < 3; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
+    const placar = document.getElementById('qruntxt').textContent;
+    g.quiz.timerStart = Date.now() - 61000;
+    return { modos: [...modos], rotuloMisto, timer, rotulo, placar };
+  });
+  await pagina.waitForTimeout(600);
+  const fim = await pagina.evaluate(() => ({ txt: document.querySelector('.rodadafim') ? document.querySelector('.rodadafim').textContent : '', rec: localStorage.getItem('globo.relampago.recorde') }));
+  assert.ok(r.modos.length >= 2, 'o Misto variou o tipo: ' + r.modos.join(','));
+  assert.equal(r.rotuloMisto, '🎲 Misto');
+  assert.equal(r.timer, 60);
+  assert.equal(r.rotulo, '⚡ Relâmpago');
+  assert.equal(r.placar, '✔ 3 certas');
+  assert.match(fim.txt, /Fim do Relâmpago/);
+  assert.match(fim.txt, /Novo recorde: 3/);
+  assert.equal(fim.rec, '3');
+  const depois = await pagina.evaluate(() => { const g = window.__geoTotal; g.applyScopeChange({ t: 'reg', r: 0 }); return { jr: g.quiz.jogoRapido, timer: g.quiz.timerLen }; });
+  assert.equal(depois.jr, null, 'escolher uma região sai do jogo rápido');
+  assert.equal(depois.timer, 0);
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('acerto avança sozinho e mostra a barrinha no botão Próxima', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(() => {
+    const g = window.__geoTotal;
+    const antes = g.quiz.sessionAsked;
+    g.quiz.answered = false; g.finishQ(true);
+    return { auto: document.getElementById('qnext').classList.contains('auto'), antes };
+  });
+  assert.equal(r.auto, true);
+  await pagina.waitForTimeout(3600);
+  const depois = await pagina.evaluate(() => window.__geoTotal.quiz.sessionAsked);
+  assert.ok(depois > r.antes, 'passou para a próxima sozinho');
   assert.deepEqual(erros, []);
   await fechar();
 });

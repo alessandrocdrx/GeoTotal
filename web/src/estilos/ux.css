@@ -363,3 +363,47 @@ h1.marca{flex:none}
 }
 /* telas bem estreitas (abaixo de ~386px): não cabe o nome junto dos botões; fica só a logo */
 @media (max-width:385px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
+/* painel do treino translúcido como o cartão do Livre: o mapa aparece por baixo */
+#quiz.map .qpanel{background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+
+/* seletor de pergunta: cartões com ícone e exemplo */
+#qmodes .mcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:9px 11px!important}
+#qmodes .mcard b{font-size:13.5px}
+#qmodes .mcard small{font-size:11.5px;font-weight:500;color:var(--muted);line-height:1.25}
+#qmodes .mcard[aria-pressed="true"] small{color:inherit;opacity:.85}
+.qresp{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin-top:2px}
+.qresp span{font-size:12.5px;font-weight:700;color:var(--muted)}
+.qresp button{flex:1;padding:8px!important;font-size:13px!important}
+/* recomeçar só a partida (não mexe em placar, medalhas nem conquistas) */
+.qrestart{border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:999px;font-size:11.5px;font-weight:700;font-family:inherit;line-height:1.2;white-space:nowrap;padding:3px 9px;cursor:pointer;margin-left:6px;flex:none}
+
+/* recomeçar a partida: botão claro na tela de região, longe do placar */
+.restartrow{display:block;width:100%;margin:0 0 12px;padding:12px;border-radius:14px;border:1px solid var(--border);background:var(--chip);color:var(--fg);font-size:14px;font-weight:700;font-family:inherit;text-align:left;cursor:pointer}
+.restartrow.armado{background:#e5484d;border-color:#e5484d;color:#fff}
+/* "Mais ajustes" afastado do resto, para não ser tocado sem querer */
+.qmodesmais{margin:10px 0 6px}
+#qmodes{margin-bottom:10px}
+
+/* passaporte */
+.passintro{font-size:12.5px;color:var(--muted);margin:2px 0 10px;line-height:1.35}
+.passreg{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 6px;padding-top:10px;border-top:1px solid var(--border)}
+.passreg b{font-size:14px}.passreg span{font-size:12px;color:var(--muted);font-weight:700}
+.passgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.carimbo{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 3px;border-radius:12px;border:1.5px dashed var(--border);min-width:0}
+.carimbo .cbandeira{font-size:26px;line-height:1.1;filter:grayscale(1);opacity:.3}
+.carimbo small{font-size:9.5px;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carimbo.on{border:1.5px solid #d4a017;background:rgba(212,160,23,.1);transform:rotate(-2deg)}
+.carimbo.on .cbandeira{filter:none;opacity:1}
+.carimbo.on small{color:var(--fg);font-weight:700}
+
+/* avanço automático: barrinha enchendo no botão Próxima */
+#qnext{position:relative;overflow:hidden}
+#qnext.auto::after{content:'';position:absolute;left:0;bottom:0;height:4px;width:0;background:#1fa85a;animation:qauto var(--auto,1200ms) linear forwards}
+@keyframes qauto{to{width:100%}}
+/* jogos rápidos na tela de região */
+.jrapidos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.jrbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px;border-radius:16px;border:2px solid #f5b301;background:linear-gradient(135deg,rgba(255,196,0,.22),rgba(255,120,0,.12));color:var(--fg);font-family:inherit;cursor:pointer}
+.jrbtn+.jrbtn{border-color:#7c5cff;background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(80,160,255,.12))}
+.jrbtn b{font-size:15px}.jrbtn small{font-size:11.5px;color:var(--muted);font-weight:600}
+.scopesect{font-size:12.5px;font-weight:800;color:var(--muted);margin:0 0 8px}
+.rfrecorde{font-weight:800;margin:6px 0 2px;text-align:center}

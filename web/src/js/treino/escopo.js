@@ -8,16 +8,17 @@ import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { D, norm, REG } from '../dados/paises.js';
 import { setIncludeDep, setIncludeDisputed, setIncludeUni } from '../interface/filtros.js';
 import { ouvir } from '../nucleo/eventos.js';
-import { $, lsSet } from '../nucleo/utilitarios.js';
+import { $, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { firePulseForScope } from './destaque-escopo.js';
-import { applyDomainForScope, inScopeActive, QD, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
-import { AMERICAS_R, estadoTreino, quiz, resetSession } from './estado.js';
-import { estadoPartida, MEDAL, recordable, renderScore, scopeKeyFor } from './partida.js';
-import { buildModeButtons, nextQ, quizOpen } from './perguntas.js';
+import { applyDomainForScope, inScopeActive, poolIdx, QD, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
+import { AMERICAS_R, estadoTreino, quiz, resetSession, scopeLabel } from './estado.js';
+import { curRun, estadoPartida, MEDAL, recordable, renderScore, runPool, scopeKeyFor } from './partida.js';
+import { buildModeButtons, iniciarJogoRapido, nextQ, quizOpen, recordeRelampago, runRestart, sairJogoRapido } from './perguntas.js';
 import { avail, availCount, estadoMapa } from '../visualizacao/tela.js';
 
 /* ---------- escopo e foco do treino ---------- */
 function applyScopeChange(newScope){
+  sairJogoRapido();
   estadoTreino.quizScopePrev=estadoTreino.quizScope;
   estadoTreino.quizScope=newScope;
   lsSet('globo.quiz.scope',estadoTreino.quizScope);
@@ -49,7 +50,7 @@ function updateMultiApplyBtn(){
   btn.textContent='Aplicar ('+n+' regi'+(n===1?'ão':'ões')+' · '+cnt+' países)';
 }
 /* cartões grandes: o caminho principal da tela; sub-regiões e o resto ficam em "Mais opções" */
-const EMOJI_REG = ['🦜','🏝️','🦅','🦁','🏰','🐼','🦘'];
+const EMOJI_REG = ['🦜','🦅',null,'🦁','🏰','🐼','🦘'];
 function buildScopeTiles(){
   var box=$('scopetiles');box.innerHTML='';
   function tile(icone,nome,count,sc,cor,unid){
@@ -69,11 +70,6 @@ function buildScopeTiles(){
   if(rv.length)tile('🧠','Revisão dos seus erros',rv.length,{t:'review',cc:rv},'#f72585');
   tile('🌍','Mundo todo',availCount(),{t:'world'},'#9aa3b5');
   REG.forEach(function(rg,ri){
-    if(ri===1||ri===2){
-      /* América do Norte tem só 3 países: junta com a Central e o Caribe num cartão só */
-      if(ri===1)tile('🦅','América Central e do Norte',D.filter(function(d){return (d.r===1||d.r===2)&&avail(d);}).length,{t:'multi',items:[{r:1},{r:2}]},REG[2].c);
-      return;
-    }
     var n=D.filter(function(d){return d.r===ri&&avail(d);}).length;
     if(n&&EMOJI_REG[ri])tile(EMOJI_REG[ri],rg.n,n,{t:'reg',r:ri},rg.c);
   });
@@ -135,26 +131,14 @@ function buildScopeList(filterStr){
   function header(t){if(q2)return;var h=document.createElement('div');h.className='sh';h.textContent=t;box.appendChild(h);}
   if(!scopeMultiMode){
     var rv=reviewList();
-    if(rv.length)item('🧠 Revisão do dia: seus '+rv.length+' mais errados',rv.length,{t:'review',cc:rv},0);
+    if(rv.length)item('🧠 Revisão do dia: '+(rv.length===1?'o que você mais erra':'os '+rv.length+' que você mais erra'),rv.length,{t:'review',cc:rv},0);
     item('🌍 Mundo',availCount(),{t:'world'},0);
-    item('Só os que estão ligados em Filtros',estadoMapa.on.reduce(function(a,b2){return a+b2;},0),{t:'filter'},0);
   }
-  header('AMÉRICAS');
-  var amCount=D.filter(function(d){return AMERICAS_R.indexOf(d.r)>=0&&avail(d);}).length;
-  item('🌎 Américas (todas)',amCount,{t:'super'},0);
-  AMERICAS_R.forEach(function(ri){
-    var rg=REG[ri],list=D.filter(function(d){return d.r===ri&&avail(d);});
-    item(rg.n,list.length,{t:'reg',r:ri},1);
-    var subs=[];
-    list.forEach(function(d){if(d.sub!==rg.n&&subs.indexOf(d.sub)<0)subs.push(d.sub);});
-    subs.forEach(function(sn){item(sn,list.filter(function(d){return d.sub===sn;}).length,{t:'sub',r:ri,s:sn},2);});
-  });
   REG.forEach(function(rg,ri){
-    if(AMERICAS_R.indexOf(ri)>=0)return;
     var list=D.filter(function(d){return d.r===ri&&avail(d);});
     if(!list.length)return;
     header(rg.n.toUpperCase());
-    item(rg.n+' (todo o continente)',list.length,{t:'reg',r:ri},0);
+    item(rg.n+' (inteira)',list.length,{t:'reg',r:ri},0);
     var subs=[];
     list.forEach(function(d){if(d.sub!==rg.n&&subs.indexOf(d.sub)<0)subs.push(d.sub);});
     subs.forEach(function(sn){item(sn,list.filter(function(d){return d.sub===sn;}).length,{t:'sub',r:ri,s:sn},1);});
@@ -168,12 +152,28 @@ function buildScopeList(filterStr){
   updateMultiApplyBtn();
 }
 
+/* recomeçar só a partida da região atual (placar, medalhas e conquistas ficam) */
+function mostrarRecomecar(){
+  var rc=recordeRelampago();$('jrRelampagoSub').textContent='60 segundos, perguntas misturadas'+(rc?' · recorde '+rc:'');
+  var b=$('qrestart'),n=poolIdx().length,r=curRun(),feitos=n?n-runPool().length:0;
+  b.classList.remove('armado');
+  b.hidden=!(n&&!estadoTreino.desafio&&(feitos>0||r.e>0)&&!r.fin);
+  b.textContent='↺ Recomeçar '+scopeLabel()+' do zero ('+feitos+' de '+n+' feitos)';
+}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ouvir('treinar-regiao',function(o){if(!quiz.open)quizOpen();applyScopeChange({t:'reg',r:o.r});});
   ouvir('categorias-mudaram',function(o){if(quiz.open){updateScopeBtn();if(o.placar)renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}});
   $('qscopeback').onclick=function(){if(estadoTreino.quizScopePrev){applyScopeChange(estadoTreino.quizScopePrev);$('scopesheet').style.display='none';}};
-  $('qscopeb').onclick=function(){$('scopeq').value='';$('scopeadv').open=false;buildScopeList();$('scopesheet').style.display='block';};
+  $('qscopeb').onclick=function(){$('scopeq').value='';$('scopeadv').open=false;buildScopeList();mostrarRecomecar();$('scopesheet').style.display='block';};
+  $('jrRelampago').onclick=function(){iniciarJogoRapido('relampago');};
+  $('jrMisto').onclick=function(){iniciarJogoRapido('misto');};
+  $('qrestart').onclick=function(){
+    var b=$('qrestart');
+    if(!b.classList.contains('armado')){b.classList.add('armado');b.textContent='Toque de novo para recomeçar '+scopeLabel()+' do zero';clearTimeout(b._t);b._t=setTimeout(mostrarRecomecar,4000);return;}
+    clearTimeout(b._t);$('scopesheet').style.display='none';runRestart();
+    setStatus('Partida recomeçada do zero. Medalhas e conquistas continuam.',3000);
+  };
   $('scopeq').addEventListener('input',function(){buildScopeList(this.value);});
   $('scopeclose').onclick=function(){$('scopesheet').style.display='none';};
   $('scopesheet').addEventListener('pointerdown',function(e){if(e.target===$('scopesheet'))$('scopesheet').style.display='none';});
