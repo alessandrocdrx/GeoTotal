@@ -30,7 +30,7 @@ Os mesmos 10 países para todo mundo, uma vez por dia. Compare o resultado 🟩�
 Suba de Turista a Lenda do Mapa, ganhe medalha de ouro, prata ou bronze em cada região que você zerar, conquistas com barra de progresso e uma sequência de dias com congelador para não perder nada. Os países que você domina ficam dourados no globo.
 
 🌍 EXPLORE O MUNDO
-Toque em qualquer país e veja capital, bandeira, população, área, idiomas, moeda, a hora agora (comparada com Brasília) e curiosidades. Escolha o visual: globo realista com dia e noite em tempo real, sempre de dia, globo cartoon 🎨 colorido ou mapa plano. Passeio automático pelos países.
+Toque em qualquer país e veja capital, bandeira, população, área, idiomas, moeda, a hora agora (comparada com Brasília) e curiosidades. Globo realista com relevo e dia e noite em tempo real (ou sempre de dia), e mapa plano. Passeio automático pelos países.
 
 🇧🇷 ESTADOS DO BRASIL
 Os 27 estados e suas capitais, com contornos, fusos horários e estados vizinhos.
