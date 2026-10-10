@@ -30,8 +30,6 @@ const ganchos = {
   desenharPulsoEscopo: (/* R, cx, cy */) => {},
   /** Selo com o nome do país da resposta, depois de responder. */
   desenharSeloResposta: (/* R, cx, cy */) => {},
-  /** Liga ou desliga o globo cartoon (preenchido por visualizacao/carregamento.js). */
-  trocarCartoon: (/* ligado */) => {},
 };
 
 export { ganchos };

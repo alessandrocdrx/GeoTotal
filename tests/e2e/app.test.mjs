@@ -519,15 +519,12 @@ test('zerar tudo também zera nível e conquistas', async () => {
   await fechar();
 });
 
-test('botão do visual: dia e noite → sempre de dia → cartoon → volta, e lembra a escolha', async () => {
+test('botão do visual: alterna só entre dia e noite e sempre de dia', async () => {
   const { pagina, erros, fechar } = await abrirApp();
-  await pagina.waitForTimeout(2500);
+  await pagina.waitForTimeout(1500);
   const seq = [];
-  for (let k = 0; k < 3; k++) { await pagina.click('#mvisual'); seq.push(await pagina.evaluate(() => [document.getElementById('mvisual').textContent, window.__geoTotal.estadoRender.cartoon])); }
-  assert.deepEqual(seq.map((x) => x[0]).sort(), ['☀️', '🌗', '🎨'].sort());
-  const toon = seq.find((x) => x[0] === '🎨');
-  assert.equal(toon[1], true, 'no 🎨 o globo fica cartoon');
-  assert.ok(seq.filter((x) => x[0] !== '🎨').every((x) => x[1] === false));
+  for (let k = 0; k < 3; k++) { await pagina.click('#mvisual'); seq.push(await pagina.evaluate(() => document.getElementById('mvisual').textContent)); }
+  assert.deepEqual([...new Set(seq)].sort(), ['☀️', '🌗'].sort());
   assert.deepEqual(erros, []);
   await fechar();
 });
