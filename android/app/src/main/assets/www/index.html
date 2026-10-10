@@ -37,7 +37,7 @@
   window.print=function(){B.print();};
 
   /* Botão voltar: fecha o que estiver aberto, do painel mais alto para o mais baixo. */
-  var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['sharesheet','shareclose'],['statsheet','statsclose'],['badgesheet','badgesclose'],['scopesheet','scopeclose'],
+  var CLOSERS=[['txtd','txtclose'],['study','studyclose'],['sharesheet','shareclose'],['statsheet','statsclose'],['badgesheet','badgesclose'],['passsheet','passclose'],['scopesheet','scopeclose'],
     ['mback','mback'],['msheet','mclose'],['sheet','sclose'],['quiz','qclose'],['card','close'],['stbar','stexit']];
   window.__androidBack=function(){
     for(var i=0;i<CLOSERS.length;i++){
@@ -718,6 +718,30 @@ h1.marca{flex:none}
 /* "Mais ajustes" afastado do resto, para não ser tocado sem querer */
 .qmodesmais{margin:10px 0 6px}
 #qmodes{margin-bottom:10px}
+
+/* passaporte */
+.passintro{font-size:12.5px;color:var(--muted);margin:2px 0 10px;line-height:1.35}
+.passreg{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 6px;padding-top:10px;border-top:1px solid var(--border)}
+.passreg b{font-size:14px}.passreg span{font-size:12px;color:var(--muted);font-weight:700}
+.passgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.carimbo{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 3px;border-radius:12px;border:1.5px dashed var(--border);min-width:0}
+.carimbo .cbandeira{font-size:26px;line-height:1.1;filter:grayscale(1);opacity:.3}
+.carimbo small{font-size:9.5px;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.carimbo.on{border:1.5px solid #d4a017;background:rgba(212,160,23,.1);transform:rotate(-2deg)}
+.carimbo.on .cbandeira{filter:none;opacity:1}
+.carimbo.on small{color:var(--fg);font-weight:700}
+
+/* avanço automático: barrinha enchendo no botão Próxima */
+#qnext{position:relative;overflow:hidden}
+#qnext.auto::after{content:'';position:absolute;left:0;bottom:0;height:4px;width:0;background:#1fa85a;animation:qauto var(--auto,1200ms) linear forwards}
+@keyframes qauto{to{width:100%}}
+/* jogos rápidos na tela de região */
+.jrapidos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.jrbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px;border-radius:16px;border:2px solid #f5b301;background:linear-gradient(135deg,rgba(255,196,0,.22),rgba(255,120,0,.12));color:var(--fg);font-family:inherit;cursor:pointer}
+.jrbtn+.jrbtn{border-color:#7c5cff;background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(80,160,255,.12))}
+.jrbtn b{font-size:15px}.jrbtn small{font-size:11.5px;color:var(--muted);font-weight:600}
+.scopesect{font-size:12.5px;font-weight:800;color:var(--muted);margin:0 0 8px}
+.rfrecorde{font-weight:800;margin:6px 0 2px;text-align:center}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -818,6 +842,7 @@ h1.marca{flex:none}
     <div class="mtiles">
       <button class="mtile" id="mdesafio"><span class="mi">🗓️</span><span class="mt"><b>Desafio do dia</b><small>10 países, os mesmos para todo mundo hoje</small></span><span class="mc">›</span></button>
       <button id="mtour" class="mtile"><span class="mi">❓</span><span class="mt"><b>Como jogar</b><small>Tour rápido pelos botões e menus</small></span><span class="mc">›</span></button>
+      <button class="mtile" id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Um carimbo para cada país que você domina</small></span><span class="mc">›</span></button>
       <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos do treino</small></span><span class="mc">›</span></button>
       <button class="mtile" id="mhist"><span class="mi">📊</span><span class="mt"><b>Seu histórico</b><small>Acertos e erros por país e por região</small></span><span class="mc">›</span></button>
     </div>
@@ -947,6 +972,11 @@ h1.marca{flex:none}
   <div class="shead"><b>Onde você quer treinar?</b><button id="scopeclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <button id="qscopeback" class="qbackrow" hidden></button>
   <button id="qrestart" class="restartrow" hidden></button>
+  <div class="jrapidos">
+    <button id="jrRelampago" class="jrbtn"><b>⚡ Relâmpago</b><small id="jrRelampagoSub">60 segundos, perguntas misturadas</small></button>
+    <button id="jrMisto" class="jrbtn"><b>🎲 Misto</b><small>10 perguntas de tipos variados</small></button>
+  </div>
+  <div class="scopesect">Ou escolha uma região:</div>
   <div id="scopetiles" class="scopetiles"></div>
   <details id="scopeadv" class="scopeadv"><summary>🔎 Partes de um continente <small>(Caribe, Escandinávia, regiões do Brasil…)</small></summary>
   <input id="scopeq" type="search" placeholder="Buscar continente, sub-região ou Brasil…" autocomplete="off">
@@ -977,6 +1007,10 @@ h1.marca{flex:none}
   <div id="badgesbody"></div>
 </div></div>
 
+<div id="passsheet" class="ov" style="z-index:85"><div class="box">
+  <div class="shead"><b id="passhead">🛂 Passaporte</b><button id="passclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div id="passbody"></div>
+</div></div>
 <div id="study" class="ov"><div class="box">
   <div class="shead"><b>Folha de estudo</b><span><button id="studyprint">Imprimir</button> <button id="studyclose" class="closeb" aria-label="Fechar">✕ Fechar</button></span></div>
   <div id="studybody"></div>
@@ -8561,6 +8595,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var n = poolIdx().length, r = curRun(), done = n ? n - runPool().length : 0;
     var vezes = (estadoPartida.RECS[runKey()] || {}).n || 0;
     $("qruntxt").textContent = estadoTreino.desafio ? "🗓️ Desafio do dia · " + Math.min(quiz.sessionAsked, 10) + "/10" : n ? done + " de " + n + (r.e ? " · " + r.e + " " + (r.e === 1 ? "erro" : "erros") : "") + (vezes ? " · 🏁 " + vezes + "×" : "") : "";
+    if (quiz.jogoRapido) {
+      var certas = quiz.sessionLog.filter(function(x) {
+        return x.ok;
+      }).length;
+      $("qruntxt").textContent = "✔ " + certas + (certas === 1 ? " certa" : " certas") + (quiz.jogoRapido === "misto" ? " · " + Math.min(quiz.sessionAsked, 10) + "/10" : "");
+      n = 0;
+    }
     $("qrunbar").style.display = n ? "block" : "none";
     $("qrunfill").style.width = (n ? Math.round(100 * done / n) : 0) + "%";
   }
@@ -8572,6 +8613,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       quiz.ok++;
       quiz.streak++;
       if (quiz.streak > estadoTreino.QS.best) estadoTreino.QS.best = quiz.streak;
+      if (s.s === 3 && quiz.mode === "cap" && estadoTreino.quizDomain === "world" && !o.dep && !o.uni) {
+        celebrate("🛂 Carimbo novo no passaporte: " + qflag(o) + " " + short(o) + "!");
+        tocar("conquista");
+      }
     } else if (ok && hinted) {
       s.r++;
       s.s = 0;
@@ -8736,12 +8781,17 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("qnext").style.display = "block";
     measureQ();
     sessionRecord(ok, ganho, rapido);
+    if (quiz.jogoRapido) renderScore();
     clearTimeout(quiz.autoT);
-    if (ok) {
-      var asked = quiz.sessionAsked;
+    if (ok || quiz.jogoRapido === "relampago") {
+      var asked = quiz.sessionAsked, dur = cur ? 3200 : ok ? 1200 : 1800, nx = $("qnext");
+      nx.style.setProperty("--auto", dur + "ms");
+      nx.classList.remove("auto");
+      void nx.offsetWidth;
+      nx.classList.add("auto");
       quiz.autoT = setTimeout(function() {
         if (quiz.open && quiz.answered && quiz.sessionAsked === asked) $("qnext").click();
-      }, 1200);
+      }, dur);
     }
     setTimeout(function() {
       try {
@@ -8900,13 +8950,16 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(perguntas_exports, {
     buildModeButtons: () => buildModeButtons,
     iniciar: () => iniciar35,
+    iniciarJogoRapido: () => iniciarJogoRapido,
     nextQ: () => nextQ,
     pickStateNear: () => pickStateNear,
     quizMapAnswer: () => quizMapAnswer,
     quizMapAnswerBR: () => quizMapAnswerBR,
     quizOpen: () => quizOpen,
     quizSetMode: () => quizSetMode,
-    runRestart: () => runRestart
+    recordeRelampago: () => recordeRelampago,
+    runRestart: () => runRestart,
+    sairJogoRapido: () => sairJogoRapido
   });
 
   // web/src/js/brasil/modo-estados.js
@@ -8940,6 +8993,49 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
 
   // web/src/js/treino/perguntas.js
+  var MODOS_MISTO = { world: ["cap", "pais", "flag", "neighbor"], br: ["cap", "pais", "neighbor", "code"] };
+  function iniciarJogoRapido(tipo) {
+    if (!quiz.open) quizOpen();
+    if (!quiz.jogoRapido) quiz.antesRapido = { len: quiz.sessionLen, timer: quiz.timerLen, surv: quiz.survivalMode, mode: quiz.mode, type: quiz.type };
+    quiz.jogoRapido = tipo;
+    estadoTreino.quizScope = { t: "world" };
+    applyDomainForScope();
+    quiz.survivalMode = false;
+    quiz.type = "choice";
+    quiz.sessionLen = tipo === "relampago" ? 0 : 10;
+    quiz.timerLen = tipo === "relampago" ? 60 : 0;
+    $("scopesheet").style.display = "none";
+    resetSession();
+    quiz.last = -1;
+    if (quiz.timerLen) startTimerTick();
+    else {
+      stopTimerTick();
+      updateTimerDisplay();
+    }
+    nextQ();
+    buildModeButtons();
+    rotuloJogoRapido();
+    renderScore();
+    updateScopeBtn();
+  }
+  function sairJogoRapido() {
+    if (!quiz.jogoRapido) return;
+    var a = quiz.antesRapido || {};
+    quiz.jogoRapido = null;
+    if (a.len != null) quiz.sessionLen = a.len;
+    quiz.timerLen = a.timer || 0;
+    quiz.survivalMode = !!a.surv;
+    quiz.mode = a.mode || "cap";
+    quiz.type = a.type || "choice";
+    stopTimerTick();
+    updateTimerDisplay();
+  }
+  function rotuloJogoRapido() {
+    if (quiz.jogoRapido) $("qmodev").textContent = quiz.jogoRapido === "relampago" ? "⚡ Relâmpago" : "🎲 Misto";
+  }
+  function recordeRelampago() {
+    return lsGet("globo.relampago.recorde", 0);
+  }
   function sessionDone() {
     return quiz.sessionLen > 0 && quiz.sessionAsked >= quiz.sessionLen;
   }
@@ -9014,12 +9110,22 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     box.appendChild(st);
     var h = document.createElement("div");
     h.className = "rftit";
-    h.textContent = reason === "time" ? "⏱️ Tempo esgotado!" : reason === "survival" ? "💀 Fim da sobrevivência!" : ["Bora de novo? 💪", "Bom começo! 👍", "Muito bem! 🎉", "Perfeito! 🏆"][est];
+    h.textContent = reason === "time" && quiz.jogoRapido === "relampago" ? "⚡ Fim do Relâmpago!" : reason === "time" ? "⏱️ Tempo esgotado!" : reason === "survival" ? "💀 Fim da sobrevivência!" : ["Bora de novo? 💪", "Bom começo! 👍", "Muito bem! 🎉", "Perfeito! 🏆"][est];
     box.appendChild(h);
     var sub = document.createElement("div");
     sub.className = "rfsub";
     sub.textContent = okc + " de " + log.length + " certas";
     box.appendChild(sub);
+    if (quiz.jogoRapido === "relampago") {
+      var rec = recordeRelampago(), rl = document.createElement("div");
+      rl.className = "rfrecorde";
+      if (okc > rec) {
+        lsSet("globo.relampago.recorde", okc);
+        rl.textContent = "🏆 Novo recorde: " + okc + " certas em 60 segundos!";
+        celebrarTela(28);
+      } else rl.textContent = "Seu recorde: " + rec + " certas. Faltaram " + (rec - okc + 1) + " para bater.";
+      box.appendChild(rl);
+    }
     var stats = document.createElement("div");
     stats.className = "rfstats";
     [["+" + xp, "XP"], ["🔥 " + comboMax, "seguidos"], ["⚡ " + rap, "rápidas"]].forEach(function(p) {
@@ -9071,6 +9177,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var free = document.createElement("button");
     free.textContent = "Jogar sem parar";
     free.onclick = function() {
+      sairJogoRapido();
       quiz.sessionLen = 0;
       lsSet("globo.quiz.sesslen", 0);
       updateSessionBtn();
@@ -9124,6 +9231,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("qorderb").textContent = quiz.order === "seq" ? "➡️ Ordem: sequencial" : "🔀 Ordem: aleatória";
   }
   function nextQ() {
+    if (quiz.jogoRapido) {
+      var lm = MODOS_MISTO[estadoTreino.quizDomain] || MODOS_MISTO.world;
+      quiz.mode = lm[Math.floor(Math.random() * lm.length)];
+      estadoTreino.qMap = false;
+    }
+    $("qnext").classList.remove("auto");
     estadoTreino.qFlash = null;
     estadoTreino.qBadge = null;
     estadoTreino.qPino = null;
@@ -9345,6 +9458,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         }
       }, 50);
     }
+    rotuloJogoRapido();
   }
   function quizMapAnswer(cn) {
     if (!estadoTreino.qMap || quiz.answered) return;
@@ -9485,6 +9599,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
   }
   function quizSetMode(m) {
+    sairJogoRapido();
     $("qmodes").hidden = true;
     $("qmodeb").setAttribute("aria-expanded", "false");
     quiz.mode = m;
@@ -9854,6 +9969,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     iniciar: () => iniciar37
   });
   function applyScopeChange(newScope) {
+    sairJogoRapido();
     estadoTreino.quizScopePrev = estadoTreino.quizScope;
     estadoTreino.quizScope = newScope;
     lsSet("globo.quiz.scope", estadoTreino.quizScope);
@@ -10070,6 +10186,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     updateMultiApplyBtn();
   }
   function mostrarRecomecar() {
+    var rc = recordeRelampago();
+    $("jrRelampagoSub").textContent = "60 segundos, perguntas misturadas" + (rc ? " · recorde " + rc : "");
     var b = $("qrestart"), n = poolIdx().length, r = curRun(), feitos = n ? n - runPool().length : 0;
     b.classList.remove("armado");
     b.hidden = !(n && !estadoTreino.desafio && (feitos > 0 || r.e > 0) && !r.fin);
@@ -10099,6 +10217,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       buildScopeList();
       mostrarRecomecar();
       $("scopesheet").style.display = "block";
+    };
+    $("jrRelampago").onclick = function() {
+      iniciarJogoRapido("relampago");
+    };
+    $("jrMisto").onclick = function() {
+      iniciarJogoRapido("misto");
     };
     $("qrestart").onclick = function() {
       var b = $("qrestart");
@@ -10809,19 +10933,91 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     restoreLastView();
   }
 
+  // web/src/js/treino/passaporte.js
+  var passaporte_exports = {};
+  __export(passaporte_exports, {
+    abrirPassaporte: () => abrirPassaporte,
+    contarCarimbos: () => contarCarimbos,
+    iniciar: () => iniciar44
+  });
+  function carimbado(d) {
+    var e = (estadoTreino.QS.m.cap || {})[d.cc];
+    return !!(e && e.s >= 3);
+  }
+  function paisesDoPassaporte() {
+    return D.filter(function(d) {
+      return !d.dep && !d.uni;
+    });
+  }
+  function contarCarimbos() {
+    var l = paisesDoPassaporte();
+    return [l.filter(carimbado).length, l.length];
+  }
+  function abrirPassaporte() {
+    var box = $("passbody");
+    box.innerHTML = "";
+    var c = contarCarimbos();
+    $("passhead").textContent = "🛂 Passaporte (" + c[0] + " de " + c[1] + ")";
+    var intro = document.createElement("div");
+    intro.className = "passintro";
+    intro.textContent = "Cada país ganha o carimbo quando você acerta a capital dele 3 vezes seguidas, em rodadas diferentes.";
+    box.appendChild(intro);
+    REG.forEach(function(rg, ri) {
+      var lista = paisesDoPassaporte().filter(function(d) {
+        return d.r === ri;
+      });
+      if (!lista.length) return;
+      var feitos = lista.filter(carimbado).length;
+      var h = document.createElement("div");
+      h.className = "passreg";
+      var t = document.createElement("b");
+      t.textContent = rg.n;
+      var n = document.createElement("span");
+      n.textContent = feitos + " de " + lista.length;
+      h.appendChild(t);
+      h.appendChild(n);
+      box.appendChild(h);
+      var g = document.createElement("div");
+      g.className = "passgrid";
+      lista.slice().sort(function(a, b) {
+        return carimbado(b) - carimbado(a) || a.name.localeCompare(b.name);
+      }).forEach(function(d) {
+        var on = carimbado(d), cel = document.createElement("div");
+        cel.className = "carimbo" + (on ? " on" : "");
+        cel.title = d.name + (on ? "" : " (ainda sem carimbo)");
+        var f = document.createElement("span");
+        f.className = "cbandeira";
+        f.textContent = d.dis ? "🏳️" : d.flag;
+        var nm = document.createElement("small");
+        nm.textContent = d.name;
+        cel.appendChild(f);
+        cel.appendChild(nm);
+        g.appendChild(cel);
+      });
+      box.appendChild(g);
+    });
+    $("passsheet").style.display = "block";
+  }
+  function iniciar44() {
+    $("mpassaporte").onclick = abrirPassaporte;
+    $("passclose").onclick = function() {
+      $("passsheet").style.display = "none";
+    };
+  }
+
   // web/src/js/app/inicio.js
   var inicio_exports = {};
   __export(inicio_exports, {
-    iniciar: () => iniciar44
+    iniciar: () => iniciar45
   });
-  function iniciar44() {
+  function iniciar45() {
     quizOpen();
   }
 
   // web/src/js/treino/toques.js
   var toques_exports = {};
   __export(toques_exports, {
-    iniciar: () => iniciar45
+    iniciar: () => iniciar46
   });
   function paisNoPonto(x, y) {
     if (!estadoCamera.plano2D) return countryAt(x, y);
@@ -10904,7 +11100,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     quizMapAnswer(cand.length ? cand[0].d : poly);
     return true;
   }
-  function iniciar45() {
+  function iniciar46() {
     ganchosInterface.toqueAntes = toqueAntes;
     ganchosInterface.toqueNoGlobo = toqueNoGlobo;
     ganchosInterface.toqueNoMapa2D = toqueNoMapa2D;
@@ -10913,13 +11109,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/treino/boas-vindas.js
   var boas_vindas_exports = {};
   __export(boas_vindas_exports, {
-    iniciar: () => iniciar47
+    iniciar: () => iniciar48
   });
 
   // web/src/js/treino/tour.js
   var tour_exports = {};
   __export(tour_exports, {
-    iniciar: () => iniciar46,
+    iniciar: () => iniciar47,
     iniciarTour: () => iniciarTour
   });
   var PASSOS = [
@@ -10969,7 +11165,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     passo = 0;
     setTimeout(mostrarPasso, 450);
   }
-  function iniciar46() {
+  function iniciar47() {
     $("guiaprox").onclick = function() {
       passo++;
       mostrarPasso();
@@ -10990,7 +11186,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
 
   // web/src/js/treino/boas-vindas.js
-  function iniciar47() {
+  function iniciar48() {
     if (lsGet("globo.bv.v1", false)) return;
     lsSet("globo.bv.v1", true);
     var m = estadoTreino.QS.m || {}, jaJogou = Object.keys(m).some(function(k) {
@@ -11027,7 +11223,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/treino/desafio.js
   var desafio_exports = {};
   __export(desafio_exports, {
-    iniciar: () => iniciar48
+    iniciar: () => iniciar49
   });
   var INICIO = Date.UTC(2026, 9, 1);
   function hojeStr() {
@@ -11093,6 +11289,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     celebrate("📋 Resultado copiado! Cole no WhatsApp.");
   }
   function iniciarDesafio() {
+    sairJogoRapido();
     var feito = resultadoDeHoje();
     if (feito) {
       celebrate("✅ Desafio de hoje: " + feito.certas + "/10. O próximo sai em " + faltaParaAmanha() + ".");
@@ -11154,7 +11351,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (mais) mais.insertBefore(b, mais.firstChild);
     }
   }
-  function iniciar48() {
+  function iniciar49() {
     ouvir("rodada-terminou", aoTerminarRodada);
     $("mdesafio").onclick = function() {
       $("mclose").click();
@@ -11165,7 +11362,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/legenda.js
   var legenda_exports = {};
   __export(legenda_exports, {
-    iniciar: () => iniciar49
+    iniciar: () => iniciar50
   });
   var SIMBOLO = { c: "●", d: "◆", s: "■", t: "▲" };
   function mostrarLegenda() {
@@ -11186,7 +11383,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     $("legenda").hidden = false;
   }
-  function iniciar49() {
+  function iniciar50() {
     $("legok").onclick = function() {
       lsSet("globo.legenda.vista", true);
       $("legenda").hidden = true;
@@ -11208,7 +11405,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/recursos/progresso.js
   var progresso_exports = {};
   __export(progresso_exports, {
-    iniciar: () => iniciar50,
+    iniciar: () => iniciar51,
     restaurarDeTexto: () => restaurarDeTexto
   });
   var MARCA = "geoTotal-progresso";
@@ -11244,7 +11441,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     return "";
   }
-  function iniciar50() {
+  function iniciar51() {
     $("msave").onclick = salvarProgresso;
     $("mload").onchange = function() {
       var f = this.files && this.files[0];
@@ -11296,7 +11493,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   iniciar30();
   iniciar33();
   iniciar35();
-  iniciar45();
+  iniciar46();
   iniciar31();
   iniciar36();
   iniciar37();
@@ -11312,13 +11509,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   iniciar16();
   iniciar32();
   iniciar44();
-  iniciar46();
+  iniciar45();
   iniciar47();
   iniciar48();
-  iniciar50();
   iniciar49();
+  iniciar51();
+  iniciar50();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, hora_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, hora_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

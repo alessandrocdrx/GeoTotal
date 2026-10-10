@@ -212,12 +212,19 @@ function renderScore(){
   /* quantas vezes você já zerou esta região neste tipo de pergunta (fica discreto, ao lado da contagem) */
   var vezes=(estadoPartida.RECS[runKey()]||{}).n||0;
   $('qruntxt').textContent=estadoTreino.desafio?('🗓️ Desafio do dia · '+Math.min(quiz.sessionAsked,10)+'/10'):n?(done+' de '+n+(r.e?' · '+r.e+' '+(r.e===1?'erro':'erros'):'')+(vezes?' · 🏁 '+vezes+'×':'')):'';
+  if(quiz.jogoRapido){
+    /* jogos rápidos misturam tipos de pergunta: a contagem da partida não faz sentido, só os acertos */
+    var certas=quiz.sessionLog.filter(function(x){return x.ok;}).length;
+    $('qruntxt').textContent='✔ '+certas+(certas===1?' certa':' certas')+(quiz.jogoRapido==='misto'?' · '+Math.min(quiz.sessionAsked,10)+'/10':'');
+    n=0;
+  }
   $('qrunbar').style.display=n?'block':'none';
   $('qrunfill').style.width=(n?Math.round(100*done/n):0)+'%';
 }
 function record(i,ok,hinted){
   var o=QD()[i],cc=qcc(o),stt=mstats(),s=stt[cc]||(stt[cc]={r:0,w:0,s:0,l:0});
-  if(ok&&!hinted){s.r++;s.s++;quiz.ok++;quiz.streak++;if(quiz.streak>estadoTreino.QS.best)estadoTreino.QS.best=quiz.streak;}
+  if(ok&&!hinted){s.r++;s.s++;quiz.ok++;quiz.streak++;if(quiz.streak>estadoTreino.QS.best)estadoTreino.QS.best=quiz.streak;
+    if(s.s===3&&quiz.mode==='cap'&&estadoTreino.quizDomain==='world'&&!o.dep&&!o.uni){celebrate('🛂 Carimbo novo no passaporte: '+qflag(o)+' '+short(o)+'!');tocar('conquista');}}
   else if(ok&&hinted){s.r++;s.s=0;quiz.ok++;}
   else{s.w++;s.s=0;quiz.streak=0;}
   s.l=estadoTreino.QS.q[quiz.mode]||0;
@@ -309,13 +316,15 @@ function finishQ(ok,extra){
   var qse=$('qstat');if(qse)fillQStat(qse,QD()[quiz.cur]);
   $('qnext').style.display='block';measureQ();
   sessionRecord(ok,ganho,rapido);
-  /* acertou: passa sozinho para a próxima; errou: espera o toque em "Próxima" */
+  if(quiz.jogoRapido)renderScore();
+  /* acertou: passa sozinho para a próxima (a barrinha no botão mostra o tempo); errou: espera o toque em "Próxima" */
   clearTimeout(quiz.autoT);
-  if(ok){
-    var asked=quiz.sessionAsked;
+  if(ok||quiz.jogoRapido==='relampago'){
+    var asked=quiz.sessionAsked,dur=cur?3200:(ok?1200:1800),nx=$('qnext');
+    nx.style.setProperty('--auto',dur+'ms');nx.classList.remove('auto');void nx.offsetWidth;nx.classList.add('auto');
     quiz.autoT=setTimeout(function(){
       if(quiz.open&&quiz.answered&&quiz.sessionAsked===asked)$('qnext').click();
-    },1200);
+    },dur);
   }
   setTimeout(function(){
     try{var qp=$('quiz').querySelector('.qpanel');if(qp)qp.scrollTo({top:qp.scrollHeight,behavior:'smooth'});}catch(e){}

@@ -13,11 +13,12 @@ import { firePulseForScope } from './destaque-escopo.js';
 import { applyDomainForScope, inScopeActive, poolIdx, QD, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
 import { AMERICAS_R, estadoTreino, quiz, resetSession, scopeLabel } from './estado.js';
 import { curRun, estadoPartida, MEDAL, recordable, renderScore, runPool, scopeKeyFor } from './partida.js';
-import { buildModeButtons, nextQ, quizOpen, runRestart } from './perguntas.js';
+import { buildModeButtons, iniciarJogoRapido, nextQ, quizOpen, recordeRelampago, runRestart, sairJogoRapido } from './perguntas.js';
 import { avail, availCount, estadoMapa } from '../visualizacao/tela.js';
 
 /* ---------- escopo e foco do treino ---------- */
 function applyScopeChange(newScope){
+  sairJogoRapido();
   estadoTreino.quizScopePrev=estadoTreino.quizScope;
   estadoTreino.quizScope=newScope;
   lsSet('globo.quiz.scope',estadoTreino.quizScope);
@@ -153,6 +154,7 @@ function buildScopeList(filterStr){
 
 /* recomeçar só a partida da região atual (placar, medalhas e conquistas ficam) */
 function mostrarRecomecar(){
+  var rc=recordeRelampago();$('jrRelampagoSub').textContent='60 segundos, perguntas misturadas'+(rc?' · recorde '+rc:'');
   var b=$('qrestart'),n=poolIdx().length,r=curRun(),feitos=n?n-runPool().length:0;
   b.classList.remove('armado');
   b.hidden=!(n&&!estadoTreino.desafio&&(feitos>0||r.e>0)&&!r.fin);
@@ -164,6 +166,8 @@ function iniciar() {
   ouvir('categorias-mudaram',function(o){if(quiz.open){updateScopeBtn();if(o.placar)renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}});
   $('qscopeback').onclick=function(){if(estadoTreino.quizScopePrev){applyScopeChange(estadoTreino.quizScopePrev);$('scopesheet').style.display='none';}};
   $('qscopeb').onclick=function(){$('scopeq').value='';$('scopeadv').open=false;buildScopeList();mostrarRecomecar();$('scopesheet').style.display='block';};
+  $('jrRelampago').onclick=function(){iniciarJogoRapido('relampago');};
+  $('jrMisto').onclick=function(){iniciarJogoRapido('misto');};
   $('qrestart').onclick=function(){
     var b=$('qrestart');
     if(!b.classList.contains('armado')){b.classList.add('armado');b.textContent='Toque de novo para recomeçar '+scopeLabel()+' do zero';clearTimeout(b._t);b._t=setTimeout(mostrarRecomecar,4000);return;}

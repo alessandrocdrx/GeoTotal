@@ -10,7 +10,7 @@ import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { applyScopeChange } from './escopo.js';
 import { estadoTreino, quiz, resetSession, stopTimerTick } from './estado.js';
 import { renderScore } from './partida.js';
-import { nextQ, quizOpen, quizSetMode } from './perguntas.js';
+import { nextQ, quizOpen, quizSetMode, sairJogoRapido } from './perguntas.js';
 import { celebrate } from './progressao.js';
 
 /*
@@ -49,6 +49,7 @@ function copiar(texto){
 
 /** Começa o desafio de hoje (ou lembra que já foi feito). */
 function iniciarDesafio(){
+  sairJogoRapido();
   var feito=resultadoDeHoje();
   if(feito){celebrate('✅ Desafio de hoje: '+feito.certas+'/10. O próximo sai em '+faltaParaAmanha()+'.');return;}
   if(!quiz.open)quizOpen();
