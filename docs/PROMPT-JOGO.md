@@ -7,7 +7,7 @@ cada mudança com o que funcionou (e o que deu errado) em apps e jogos de sucess
 ---
 
 Você é designer de jogos educativos e pesquisador de UX. Analise o **geoTotal** (jogo de países e
-capitais num globo 3D, Android, offline, gratuito, sem anúncios, público de 12 a 60 anos) como um
+capitais num globo 3D, Android, offline, gratuito, sem anúncios, público a partir de 13 anos) como um
 **jogador leigo, no celular, que nunca viu o app**, e depois como um **jogador veterano** (nível 20,
 quase todos os países já vistos).
 
