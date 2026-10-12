@@ -342,7 +342,7 @@ function buildModeButtons(){
   var box=$('qmodes');box.innerHTML='';$('qmodev').textContent=modeName(quiz.mode);
   $('qmodel').textContent='🎮 Jogo';
   var defs=estadoTreino.quizDomain==='br'?[['cap','🏛️','Estado → Capital','Qual é a capital da Bahia?'],['pais','🏙️','Capital → Estado','Salvador é capital de qual estado?'],['neighbor','🤝','Vizinhos','Quem faz divisa com a Bahia?'],['code','🔤','Siglas','Qual é a sigla da Bahia?'],['map','📍','Achar no mapa','Toque onde fica a Bahia']]
-    :[['cap','🏛️','País → Capital','Qual é a capital do Peru?'],['pais','🏙️','Capital → País','Lima é capital de qual país?'],['flag','🚩','Bandeiras','De quem é esta bandeira?'],['neighbor','🤝','Vizinhos','Quem faz fronteira com o Peru?'],['map','📍','Achar no mapa','Toque onde fica o Peru']];
+    :[['cap','🏛️','País → Capital','Qual é a capital do Japão?'],['pais','🏙️','Capital → País','Londres é capital de qual país?'],['flag','🚩','Bandeiras','De quem é esta bandeira?'],['neighbor','🤝','Vizinhos','Quem faz fronteira com a China?'],['map','📍','Achar no mapa','Toque onde fica o Egito']];
   defs.forEach(function(m){
     var b=document.createElement('button');b.className='mcard';b.setAttribute('aria-pressed',!quiz.jogoRapido&&!estadoTreino.desafio&&quiz.mode===m[0]?'true':'false');
     var t=document.createElement('b');t.textContent=m[1]+' '+m[2];var ex=document.createElement('small');ex.textContent=m[3];

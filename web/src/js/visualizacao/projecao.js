@@ -16,7 +16,7 @@ const estadoRender = {
   useTex: false,
   optTex: true,
   optBor: true,
-  optFill: false,
+  optFill: true,
   feats: null,
   FEAT: undefined,
   EXTRA: [],

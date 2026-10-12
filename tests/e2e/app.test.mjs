@@ -222,6 +222,7 @@ test('rodada de 10: termina com estrelas, XP e "Jogar de novo"', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
+    g.definirRodada(10); g.nextQ(); // o padrão é sem fim
     for (let k = 0; k < 10; k++) { g.quiz.answered = false; g.finishQ(true); if (k < 9) g.nextQ(); }
     document.getElementById('qnext').click();
     const fim = document.querySelector('.rodadafim');
@@ -233,7 +234,7 @@ test('rodada de 10: termina com estrelas, XP e "Jogar de novo"', async () => {
       jogar: !!document.querySelector('.rfjogar'),
     };
   });
-  assert.equal(r.len, 10, 'rodadas de 10 por padrão');
+  assert.equal(r.len, 10, 'rodada de 10 escolhida nos ajustes');
   assert.equal(r.fim, true, 'tela de fim de rodada aparece');
   assert.equal(r.estrelas, 3, '10 de 10 = 3 estrelas');
   assert.equal(r.combo, '🔥 x10');
