@@ -530,10 +530,14 @@ test('zerar tudo também zera nível e conquistas', async () => {
   await fechar();
 });
 
-test('menu ⋯: dia e noite numa chave e tema com as três opções à vista', async () => {
+test('dia e noite no topo e no menu ⋯, tema com as três opções à vista', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.waitForFunction(() => !document.getElementById('oNight').disabled, null, { timeout: 15000 });
+  await pagina.click('#mvisual');
+  const topo = await pagina.evaluate(() => ({ noite: window.__geoTotal.optNight, icone: document.getElementById('mvisual').textContent, chave: document.getElementById('oNight').checked }));
+  assert.deepEqual(topo, { noite: true, icone: '🌗', chave: true }, 'o botão do topo liga o dia e noite e a chave do menu acompanha');
   await pagina.click('#mbtn');
+  await pagina.click('label:has(#oNight)');
   await pagina.click('label:has(#oNight)');
   const noite = await pagina.evaluate(() => window.__geoTotal.optNight);
   await pagina.click('#mtema [data-v="dark"]');
@@ -736,7 +740,7 @@ test('cabeçalho: logo, botão de som; começa sempre de dia; tocar num país no
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     const logo = getComputedStyle(document.querySelector('h1 .marca-logo')).backgroundImage.startsWith('url("data:image/png');
-    const noite = g.optNight === false && !document.getElementById('oNight').checked && !document.getElementById('mvisual');
+    const noite = g.optNight === false && !document.getElementById('oNight').checked && document.getElementById('mvisual').textContent === '☀️';
     document.getElementById('msom').click();
     const mudo = g.estadoSom.mudo, icone = document.getElementById('msom').textContent;
     document.getElementById('msom').click();

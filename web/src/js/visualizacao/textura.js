@@ -4,7 +4,7 @@
  * Textura procedural com aparência de satélite (não é foto real).
  */
 
-import { $ } from '../nucleo/utilitarios.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
 import { estadoRender } from './projecao.js';
 import { PI } from './tela.js';
 
@@ -110,6 +110,16 @@ function iniciar() {
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
   oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
   oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
+  /* botão do topo, junto do som: alterna entre dia e noite reais e sempre de dia (a mesma chave do menu ⋯) */
+  function visMostra(){var n=$('oNight').checked;$('mvisual').textContent=n?'🌗':'☀️';$('mvisual').setAttribute('aria-pressed',n?'true':'false');}
+  $('mvisual').onclick=function(){
+    var noite=$('oNight'),v=!noite.checked;
+    estadoRender.optTex=true;oTex.checked=estadoRender.useTex;
+    noite.checked=v;noite.dispatchEvent(new Event('change'));
+    visMostra();setStatus(v?'🌗 Globo com dia e noite de verdade':'☀️ Globo sempre de dia',2200);
+  };
+  $('oNight').addEventListener('change',visMostra);oTex.addEventListener('change',visMostra);
+  setTimeout(visMostra,0);
 }
 
 export { buildTexture, iniciar, updateOpts };

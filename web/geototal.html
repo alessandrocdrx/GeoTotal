@@ -730,7 +730,7 @@ h1.marca{flex:none}
   <header>
     <div class="htop">
       <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
-      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite">☀️</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -4050,6 +4050,23 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     oFill.onchange = function() {
       estadoRender.optFill = oFill.checked;
     };
+    function visMostra() {
+      var n = $("oNight").checked;
+      $("mvisual").textContent = n ? "🌗" : "☀️";
+      $("mvisual").setAttribute("aria-pressed", n ? "true" : "false");
+    }
+    $("mvisual").onclick = function() {
+      var noite = $("oNight"), v = !noite.checked;
+      estadoRender.optTex = true;
+      oTex.checked = estadoRender.useTex;
+      noite.checked = v;
+      noite.dispatchEvent(new Event("change"));
+      visMostra();
+      setStatus(v ? "🌗 Globo com dia e noite de verdade" : "☀️ Globo sempre de dia", 2200);
+    };
+    $("oNight").addEventListener("change", visMostra);
+    oTex.addEventListener("change", visMostra);
+    setTimeout(visMostra, 0);
   }
 
   // web/src/js/visualizacao/webgl.js
