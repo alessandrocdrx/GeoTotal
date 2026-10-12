@@ -366,7 +366,7 @@ function buildModeButtons(){
   var jt=document.createElement('div');jt.className='qjrtit';jt.textContent='Jogos rápidos';
   box.appendChild(jt);box.appendChild(jr);
 }
-function fecharJogos(){$('qmodes').hidden=true;$('qmodeb').setAttribute('aria-expanded','false');}
+function fecharJogos(){$('jogosheet').style.display='none';$('qmodeb').setAttribute('aria-expanded','false');}
 function quizSetMode(m){
   sairJogoRapido();
   fecharJogos();
@@ -485,7 +485,9 @@ function iniciarContagem(ri,box){
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ouvir('modo-estados-abriu',function(){if(quiz.open)quizClose();});
-  $('qmodeb').onclick=function(){var o=$('qmodes').hidden;$('qmodes').hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');};
+  $('qmodeb').onclick=function(){$('jogosheet').style.display='block';this.setAttribute('aria-expanded','true');};
+  $('jogoclose').onclick=fecharJogos;
+  $('jogosheet').addEventListener('pointerdown',function(e){if(e.target===$('jogosheet'))fecharJogos();});
   $('qbtn').onclick=function(){if(!quiz.open)quizOpen();};$('qclose').onclick=function(){if(quiz.open)quizClose();};
   $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
   confirmTap($('qreset'),'Toque de novo para zerar tudo',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();zerarProgresso();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Tudo zerado: treino, medalhas, nível e conquistas.',3000);});

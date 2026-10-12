@@ -65,7 +65,7 @@ select,option{font-family:inherit}
 #qmodeb{flex:0 1 auto;max-width:48%}
 .qgoalmini span{font-size:inherit!important;font-weight:inherit!important;color:inherit!important}
 .qbackmini{flex:none;width:40px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;font-size:15px;cursor:pointer}
-.qbackmini[hidden],#qmodes[hidden]{display:none!important}
+.qbackmini[hidden]{display:none!important}
 .qstrip{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--muted)}
 .qstrip #qruntxt{flex:1;min-width:0;color:var(--fg)}
 .qgoalmini{background:none;border:0;padding:2px 0;color:var(--muted);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}

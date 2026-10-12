@@ -172,7 +172,7 @@ canvas:active{cursor:grabbing}
 #quiz.map .qtop{font-size:15px}#quiz.map .qtop button{padding:6px 12px;font-size:13px}
 #qmodes{display:grid;grid-template-columns:1fr 1fr}
 #qmodes button{min-width:0}
-#quiz.map #qmodes{display:grid;grid-template-columns:1fr 1fr;overflow:visible}#quiz.map #qmodes button{padding:9px 8px;font-size:13px}
+#qmodes button{padding:9px 8px;font-size:13px}
 @media print{
   html,body{height:auto!important;overflow:visible!important;background:#fff!important}
   body>*:not(#study){display:none!important}
@@ -259,7 +259,7 @@ select,option{font-family:inherit}
 #qmodeb{flex:0 1 auto;max-width:48%}
 .qgoalmini span{font-size:inherit!important;font-weight:inherit!important;color:inherit!important}
 .qbackmini{flex:none;width:40px;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:12px;font-size:15px;cursor:pointer}
-.qbackmini[hidden],#qmodes[hidden]{display:none!important}
+.qbackmini[hidden]{display:none!important}
 .qstrip{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:var(--muted)}
 .qstrip #qruntxt{flex:1;min-width:0;color:var(--fg)}
 .qgoalmini{background:none;border:0;padding:2px 0;color:var(--muted);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer}
@@ -871,7 +871,6 @@ h1.marca{flex:none}
     <button id="qscopeb" class="qpick"><small>🗺️ Região</small><span id="qscopev">📍 Mundo</span><i>▾</i></button>
     <button id="qajustb" class="qajust" aria-label="Ajustes da partida" title="Ajustes da partida">⚙️</button>
   </div>
-  <div class="qseg" id="qmodes" hidden></div>
   <div id="qscore" class="qscore"><div class="qstrip"><span id="qruntxt"></span><span id="qcomb" class="qcomb" hidden></span><span id="qtimer"></span><button id="goalgo" class="qgoalmini" title="Toque para mudar a meta diária"><span id="qlevel">Nível 1</span> · <span id="qgoaltxt">0/10 hoje</span></button></div><span class="runbar" id="qrunbar"><i id="qrunfill"></i></span></div>
   <div hidden><div id="qxpbar"></div><div id="qxptxt"></div><svg><circle id="qgoalring"/></svg></div>
   <div id="qpool" class="inote"></div>
@@ -907,6 +906,10 @@ h1.marca{flex:none}
   <div id="scopelist"></div>
   <div id="scopeempty" class="inote" style="display:none">Nada encontrado.</div>
   </details>
+</div></div>
+<div id="jogosheet" class="ov" style="z-index:85"><div class="box">
+  <div class="shead"><b>🎮 Escolha o jogo</b><button id="jogoclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div id="qmodes" class="qseg"></div>
 </div></div>
 <div id="ajsheet" class="ov" style="z-index:85"><div class="box">
   <div class="shead"><b>⚙️ Ajustes da partida</b><button id="ajclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
@@ -9171,7 +9174,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     box.appendChild(jr);
   }
   function fecharJogos() {
-    $("qmodes").hidden = true;
+    $("jogosheet").style.display = "none";
     $("qmodeb").setAttribute("aria-expanded", "false");
   }
   function quizSetMode(m) {
@@ -9410,10 +9413,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (quiz.open) quizClose();
     });
     $("qmodeb").onclick = function() {
-      var o = $("qmodes").hidden;
-      $("qmodes").hidden = !o;
-      this.setAttribute("aria-expanded", o ? "true" : "false");
+      $("jogosheet").style.display = "block";
+      this.setAttribute("aria-expanded", "true");
     };
+    $("jogoclose").onclick = fecharJogos;
+    $("jogosheet").addEventListener("pointerdown", function(e) {
+      if (e.target === $("jogosheet")) fecharJogos();
+    });
     $("qbtn").onclick = function() {
       if (!quiz.open) quizOpen();
     };

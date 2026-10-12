@@ -34,7 +34,7 @@
 #quiz.map .qtop{font-size:15px}#quiz.map .qtop button{padding:6px 12px;font-size:13px}
 #qmodes{display:grid;grid-template-columns:1fr 1fr}
 #qmodes button{min-width:0}
-#quiz.map #qmodes{display:grid;grid-template-columns:1fr 1fr;overflow:visible}#quiz.map #qmodes button{padding:9px 8px;font-size:13px}
+#qmodes button{padding:9px 8px;font-size:13px}
 @media print{
   html,body{height:auto!important;overflow:visible!important;background:#fff!important}
   body>*:not(#study){display:none!important}

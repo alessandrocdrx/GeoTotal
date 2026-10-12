@@ -99,6 +99,8 @@ test('treino: todos os tipos de pergunta, respostas, dica, digitação e opçõe
     ['voltar ao mundo', () => window.__geoTotal.applyScopeChange({ t: 'world' })],
     ['meta diária abre os ajustes', CLICAR, 'goalgo'],
     ['fechar ajustes pelo ✕', CLICAR, 'ajclose'],
+    ['abrir jogos e voltar do Android', () => { document.getElementById('qmodeb').click(); if (!window.__androidBack()) throw new Error('Voltar não fechou a lista de jogos'); if (document.getElementById('jogosheet').style.display === 'block') throw new Error('lista de jogos continuou aberta'); }],
+    ['abrir ajustes e voltar do Android', () => { document.getElementById('qajustb').click(); if (!window.__androidBack()) throw new Error('Voltar não fechou os ajustes'); if (document.getElementById('ajsheet').style.display === 'block') throw new Error('ajustes continuaram abertos'); }],
     ['jogo rápido Misto', () => { document.getElementById('qmodeb').click(); document.getElementById('jr-misto').click(); }],
     ['jogo rápido Relâmpago', () => { document.getElementById('qmodeb').click(); document.getElementById('jr-relampago').click(); }],
     ['desafio do dia', () => { document.getElementById('qmodeb').click(); document.getElementById('jr-desafio').click(); }],
