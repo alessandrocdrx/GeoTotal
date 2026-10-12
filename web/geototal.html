@@ -842,7 +842,7 @@ h1.marca{flex:none}
     <div class="sobre">
       <i class="marca-logo grande" aria-hidden="true"></i>
       <h3 class="marca">geo<span>Total</span></h3>
-      <p class="sobrev">Países e Capitais · versão 1.37</p>
+      <p class="sobrev">Países e Capitais · versão 1.38</p>
       <p>Criado por <b>alessandrocdrx</b>.</p>
       <p>Gratuito, sem anúncios, funciona sem internet e não pede nenhuma permissão.</p>
       <p class="sobrecred"><b>Créditos:</b> D3.js (BSD), TopoJSON (BSD), DataMaps (MIT) e mapa dos estados do Brasil da amCharts (licença incluída no app). Dados de países aproximados, de fontes públicas.</p>
@@ -6967,6 +6967,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (arr[i].uni && (!estadoMapa.includeUni || quiz.mode !== "map")) continue;
       if (arr[i].pseudo && (quiz.mode === "flag" || quiz.mode === "code")) continue;
       if (quiz.mode === "flag" && arr[i].dis) continue;
+      if (estadoTreino.quizDomain === "br" && (quiz.mode === "cap" || quiz.mode === "pais") && norm(arr[i].name) === norm(arr[i].cap)) continue;
       if (quiz.mode === "neighbor") {
         var nbz = estadoTreino.quizDomain === "br" ? arr[i].nb : NB[i];
         if (!nbz || !nbz.length) continue;

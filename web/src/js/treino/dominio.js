@@ -83,6 +83,8 @@ function poolIdx(){
     if(arr[i].uni&&(!estadoMapa.includeUni||quiz.mode!=='map'))continue;
     if(arr[i].pseudo&&(quiz.mode==='flag'||quiz.mode==='code'))continue;
     if(quiz.mode==='flag'&&arr[i].dis)continue;
+    /* estado cuja capital tem o mesmo nome (Rio de Janeiro): a pergunta já entregaria a resposta */
+    if(estadoTreino.quizDomain==='br'&&(quiz.mode==='cap'||quiz.mode==='pais')&&norm(arr[i].name)===norm(arr[i].cap))continue;
     if(quiz.mode==='neighbor'){var nbz=estadoTreino.quizDomain==='br'?arr[i].nb:NB[i];if(!nbz||!nbz.length)continue;}
     if(quiz.mode==='map'){
       if(estadoTreino.quizDomain==='br'){if(estadoBrasil.STFEAT.some(function(f){return f;})&&!estadoBrasil.STFEAT[i])continue;}

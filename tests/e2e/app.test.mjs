@@ -726,11 +726,12 @@ test('numa região a rodada não corta em 10: vai até zerar', async () => {
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     g.applyScopeChange({ t: 'br' });
+    const antes = g.runPool().length;
     for (let k = 0; k < 12; k++) { g.quiz.answered = false; g.finishQ(true); document.getElementById('qnext').click(); }
-    return { fim: !!document.querySelector('.rodadafim'), restam: g.runPool().length };
+    return { fim: !!document.querySelector('.rodadafim'), restam: g.runPool().length, antes };
   });
   assert.equal(r.fim, false, 'depois de 12 respostas nos estados, não interrompeu');
-  assert.equal(r.restam, 15);
+  assert.equal(r.restam, r.antes - 12);
   assert.deepEqual(erros, []);
   await fechar();
 });
