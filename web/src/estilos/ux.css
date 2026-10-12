@@ -103,7 +103,7 @@ header .modesw button{padding:0 10px!important}
 .csbar i{display:block;height:100%}
 .csbar .ok{background:#1f9d55}.csbar .bad{background:#d64545}
 .cslg{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-.qstat{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:5px;font-size:11.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;opacity:.85}
+.qstat{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:6px;font-size:12.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;opacity:.85}
 .qsbar{display:inline-block;width:42px;height:4px;border-radius:3px;background:rgba(214,69,69,.55);overflow:hidden}
 .qsbar i{display:block;height:100%;background:#1f9d55}
 .distag.dep{color:#2563eb;background:rgba(77,163,255,.14);border-color:rgba(77,163,255,.45)}

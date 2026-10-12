@@ -76,7 +76,8 @@ function celebrate(msg){
 function showNextToast(){
   if(!toastQ.length)return;
   var msg=toastQ[0];
-  var host=quiz.open?$('quiz').querySelector('.qpanel'):$('stage');
+  /* no treino o aviso flutua sobre o globo (não empurra nem corta o painel) */
+  var host=quiz.open?$('quiz'):$('stage');
   if(!host)return;
   var el=document.createElement('div');el.className='qtoast';el.textContent=msg;
   host.insertBefore(el,host.firstChild);

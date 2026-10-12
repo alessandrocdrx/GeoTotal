@@ -10,7 +10,7 @@ import { short } from '../dados/vizinhos.js';
 import { ganchosInterface } from '../interface/ganchos.js';
 import { emitir } from '../nucleo/eventos.js';
 import { $, setStatus } from '../nucleo/utilitarios.js';
-import { inScopeActive, mstats, poolIdx, qcc, QD, unitWord } from './dominio.js';
+import { inScopeActive, mstats, qcc, QD, unitWord } from './dominio.js';
 import { estadoTreino, quiz, scopeLabel } from './estado.js';
 import { avail } from '../visualizacao/tela.js';
 
@@ -145,15 +145,12 @@ function renderCardStat(key,isState){
   lg.textContent='✔ '+r+' '+(r===1?'acerto':'acertos')+' · ✖ '+w+' '+(w===1?'erro':'erros');
   box.appendChild(top);box.appendChild(bar);box.appendChild(lg);
 }
+/** Linha discreta abaixo da pergunta: acertos e erros deste país em todos os tipos de pergunta (mesmos números do cartão). */
 function fillQStat(el,o){
-  /* placar discreto deste tipo de pergunta: a pergunta da vez (sem dizer o nome, para não entregar) e a região toda */
-  var st=estadoTreino.QS.m[quiz.mode]||{},e=st[qcc(o)],arr=QD(),rt=0,wt=0;
-  poolIdx().forEach(function(i){var x=st[qcc(arr[i])];if(x){rt+=x.r||0;wt+=x.w||0;}});
-  var partes=[];
-  if(e&&(e.r||e.w))partes.push('Esta: ✔ '+(e.r||0)+' · ✖ '+(e.w||0));
-  if(rt+wt)partes.push(scopeLabel()+': ✔ '+rt+' · ✖ '+wt);
-  el.innerHTML='';el.hidden=!partes.length;
-  el.textContent=partes.join('   |   ');
+  var key=qcc(o),r=0,w=0;
+  Object.keys(estadoTreino.QS.m).forEach(function(m){var e=estadoTreino.QS.m[m][key];if(e){r+=e.r||0;w+=e.w||0;}});
+  el.hidden=!(r+w);
+  el.textContent=(r+w)?'📊 Neste país: '+r+(r===1?' acerto':' acertos')+' · '+w+(w===1?' erro':' erros'):'';
 }
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {

@@ -277,6 +277,7 @@ select,option{font-family:inherit}
 .qtoast{background:linear-gradient(90deg,#f6c800,#ff8a3d);color:#1a1200;font-weight:800;font-size:14.5px;text-align:center;border-radius:12px;padding:11px 14px;margin-bottom:10px;opacity:0;transform:translateY(-8px);transition:opacity .25s,transform .25s}
 .qtoast.show{opacity:1;transform:translateY(0)}
 #stage .qtoast{position:absolute;left:10px;right:10px;top:10px;z-index:30}
+#quiz>.qtoast{position:absolute;left:12px;right:12px;top:calc(var(--sat) + 62px);max-width:560px;margin:0 auto;z-index:30;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .badgerow{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--border)}
 .badgerow.locked{opacity:.45}
 .badgeicon{font-size:26px;flex:none;width:38px;text-align:center}
@@ -390,7 +391,7 @@ header .modesw button{padding:0 10px!important}
 .csbar i{display:block;height:100%}
 .csbar .ok{background:#1f9d55}.csbar .bad{background:#d64545}
 .cslg{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-.qstat{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:5px;font-size:11.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;opacity:.85}
+.qstat{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:6px;font-size:12.5px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;opacity:.85}
 .qsbar{display:inline-block;width:42px;height:4px;border-radius:3px;background:rgba(214,69,69,.55);overflow:hidden}
 .qsbar i{display:block;height:100%;background:#1f9d55}
 .distag.dep{color:#2563eb;background:rgba(77,163,255,.14);border-color:rgba(77,163,255,.45)}
@@ -7299,20 +7300,16 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     box.appendChild(lg);
   }
   function fillQStat(el, o) {
-    var st = estadoTreino.QS.m[quiz.mode] || {}, e = st[qcc(o)], arr = QD(), rt = 0, wt = 0;
-    poolIdx().forEach(function(i) {
-      var x = st[qcc(arr[i])];
-      if (x) {
-        rt += x.r || 0;
-        wt += x.w || 0;
+    var key = qcc(o), r = 0, w = 0;
+    Object.keys(estadoTreino.QS.m).forEach(function(m) {
+      var e = estadoTreino.QS.m[m][key];
+      if (e) {
+        r += e.r || 0;
+        w += e.w || 0;
       }
     });
-    var partes = [];
-    if (e && (e.r || e.w)) partes.push("Esta: ✔ " + (e.r || 0) + " · ✖ " + (e.w || 0));
-    if (rt + wt) partes.push(scopeLabel() + ": ✔ " + rt + " · ✖ " + wt);
-    el.innerHTML = "";
-    el.hidden = !partes.length;
-    el.textContent = partes.join("   |   ");
+    el.hidden = !(r + w);
+    el.textContent = r + w ? "📊 Neste país: " + r + (r === 1 ? " acerto" : " acertos") + " · " + w + (w === 1 ? " erro" : " erros") : "";
   }
   function iniciar29() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
@@ -7469,7 +7466,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function showNextToast() {
     if (!toastQ.length) return;
     var msg = toastQ[0];
-    var host = quiz.open ? $("quiz").querySelector(".qpanel") : $("stage");
+    var host = quiz.open ? $("quiz") : $("stage");
     if (!host) return;
     var el = document.createElement("div");
     el.className = "qtoast";
