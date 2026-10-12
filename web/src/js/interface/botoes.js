@@ -1,12 +1,11 @@
 /**
  * @arquivo js/interface/botoes.js
  * Camada: Interface
- * Botões de ferramentas do globo (zoom, polos, rótulos).
+ * Botões de ferramentas do globo (zoom, giro, rótulos).
  */
 
-import { $, setStatus } from '../nucleo/utilitarios.js';
-import { flyTo } from '../visualizacao/animacao.js';
-import { estadoCamera, estadoMapa, PI } from '../visualizacao/tela.js';
+import { setStatus } from '../nucleo/utilitarios.js';
+import { estadoCamera, estadoMapa } from '../visualizacao/tela.js';
 
 let spinB;
 let lp;
@@ -17,8 +16,6 @@ function iniciar() {
   /* ---------- Botões ---------- */
   document.getElementById('zin').onclick=function(){estadoCamera.target=null;estadoCamera.zoom=Math.min(7,estadoCamera.zoom*1.35);estadoCamera.lastInteract=performance.now();};
   document.getElementById('zout').onclick=function(){estadoCamera.target=null;estadoCamera.zoom=Math.max(.8,estadoCamera.zoom/1.35);estadoCamera.lastInteract=performance.now();};
-  document.getElementById('pn').onclick=function(){$('msheet').style.display='none';flyTo(90,estadoCamera.lam*180/PI,1);};
-  document.getElementById('ps').onclick=function(){$('msheet').style.display='none';flyTo(-90,estadoCamera.lam*180/PI,1);};
   spinB = document.getElementById('spin');
   spinB.setAttribute('aria-pressed',estadoCamera.auto?'true':'false');spinB.style.opacity=estadoCamera.auto?1:.5;
   spinB.onclick=function(){estadoCamera.auto=!estadoCamera.auto;spinB.setAttribute('aria-pressed',estadoCamera.auto?'true':'false');spinB.style.opacity=estadoCamera.auto?1:.5;

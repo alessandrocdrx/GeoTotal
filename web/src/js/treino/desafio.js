@@ -6,7 +6,7 @@
 
 import { D } from '../dados/paises.js';
 import { ouvir } from '../nucleo/eventos.js';
-import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
+import { lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { applyScopeChange } from './escopo.js';
 import { estadoTreino, quiz, resetSession, stopTimerTick } from './estado.js';
 import { renderScore } from './partida.js';
@@ -89,7 +89,7 @@ function aoTerminarRodada(o){
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ouvir('rodada-terminou',aoTerminarRodada);
-  $('mdesafio').onclick=function(){$('mclose').click();iniciarDesafio();};
+  ouvir('abrir-desafio',iniciarDesafio);
 }
 
 export { iniciar };

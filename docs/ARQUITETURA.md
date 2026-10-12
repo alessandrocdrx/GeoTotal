@@ -45,7 +45,7 @@ web/src/
     ├── nucleo/             utilitários, cálculo de distância e eventos
     ├── visualizacao/       tela e câmera, globo 3D, WebGL, textura, fronteiras, mapa 2D, dia e noite
     ├── interface/          gestos, cartão, filtros, busca, menu e ferramentas
-    ├── recursos/           exportação (CSV, Anki) e folha de estudo
+    ├── recursos/           salvar arquivo, progresso e folha de estudo
     ├── brasil/             modo estados do Brasil
     ├── treino/             estado do treino, partida, perguntas, toques, dicas, estatísticas, progressão
     └── app/                compatibilidade, memória da última visão e ponto de entrada
@@ -55,7 +55,7 @@ android/app/src/main/java/io/github/alessandrocdrx/geototal/
 ├── ShareProvider.java      entrega a imagem do resultado a outros apps (só leitura)
 ├── web/
 │   ├── AssetWebViewClient  serve assets/ em https://appassets.androidplatform.net/
-│   ├── FileChooserClient   seletor de arquivos para os botões "Importar"
+│   ├── FileChooserClient   seletor de arquivos para "Restaurar progresso"
 │   ├── WebBridge           ponte window.AndroidBridge (salvar, compartilhar, imprimir)
 │   └── MimeTypes           tipo MIME por extensão
 ├── files/

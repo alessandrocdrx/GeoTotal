@@ -61,12 +61,23 @@ test('filtro por continente e Desfazer funcionam no modo Livre (regressão: "his
   await fechar();
 });
 
-test('menu ⋯ abre as opções do treino', async () => {
+test('⚙️ abre os ajustes da partida com as alternativas à vista e vale na hora', async () => {
   const { pagina, erros, fechar } = await abrirApp();
-  await pagina.click('#mbtn');
-  await pagina.click('[data-p="mp-train"]');
-  assert.equal(await pagina.evaluate(() => document.getElementById('mtitle').textContent), 'Opções do treino');
-  assert.ok(await pagina.evaluate(() => document.getElementById('qtypes').getClientRects().length > 0));
+  await pagina.click('#qbtn');
+  await pagina.click('#qajustb');
+  const linhas = await pagina.evaluate(() => [...document.querySelectorAll('#ajbody .ajrow > b')].map((b) => b.textContent));
+  assert.deepEqual(linhas, ['Responder', 'Perguntas', 'Ordem', 'Tamanho da rodada', 'Cronômetro', 'Sobrevivência', 'Meta do dia']);
+  const cron = '#ajbody .ajrow:nth-child(5) .aseg button';
+  await pagina.locator(cron).nth(2).click();
+  const r = await pagina.evaluate((sel) => ({
+    tempo: window.__geoTotal.quiz.timerLen,
+    marcado: document.querySelectorAll(sel)[2].getAttribute('aria-pressed'),
+    rodada: document.querySelector('#ajbody .ajrow:nth-child(4) .aseg button[aria-pressed="true"]').textContent,
+    aberto: document.getElementById('ajsheet').style.display,
+  }), cron);
+  assert.deepEqual(r, { tempo: 60, marcado: 'true', rodada: 'Sem fim', aberto: 'block' }, 'cronômetro liga, desliga a rodada fechada e a tela continua aberta');
+  await pagina.click('#ajok');
+  assert.equal(await pagina.evaluate(() => document.getElementById('ajsheet').style.display), 'none');
   assert.deepEqual(erros, []);
   await fechar();
 });
@@ -163,9 +174,9 @@ test('toques e categorias passam pelos ganchos da interface', async () => {
     const livre = k.toqueAntes(10, 10) || k.toqueNoGlobo(10, 10, []) || k.toqueEstados(10, 10);
     const antes = g.availCount();
     document.getElementById('oDep').click();
-    return { ignoraNoTreino, livre, cresceu: g.availCount() > antes, marcadaNoTreino: document.getElementById('oDepQ').checked };
+    return { ignoraNoTreino, livre, cresceu: g.availCount() > antes, marcada: document.getElementById('oDep').checked && g.estadoMapa.includeDep };
   });
-  assert.deepEqual(r, { ignoraNoTreino: true, livre: false, cresceu: true, marcadaNoTreino: true });
+  assert.deepEqual(r, { ignoraNoTreino: true, livre: false, cresceu: true, marcada: true });
   assert.deepEqual(erros, []);
   await fechar();
 });
@@ -173,15 +184,14 @@ test('toques e categorias passam pelos ganchos da interface', async () => {
 test('som: efeitos e música ligam e desligam pelo menu, sem erros', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.click('#mbtn');
-  await pagina.evaluate(() => document.querySelectorAll('.mfold').forEach((d) => { d.open = true; }));
-  const antes = await pagina.evaluate(() => ({ e: document.getElementById('msfxv').textContent, m: document.getElementById('mmusicv').textContent }));
-  await pagina.click('#mmusic');
+  const antes = await pagina.evaluate(() => ({ e: document.getElementById('msfx').checked, m: document.getElementById('mmusic').checked }));
+  await pagina.click('label:has(#mmusic)');
   await pagina.evaluate(() => { const g = window.__geoTotal; ['acerto', 'erro', 'toque', 'nivel', 'meta', 'conquista'].forEach(g.tocar); });
   await pagina.waitForTimeout(3500);
-  await pagina.click('#msfx');
-  const depois = await pagina.evaluate(() => ({ e: document.getElementById('msfxv').textContent, m: document.getElementById('mmusicv').textContent, musica: window.__geoTotal.estadoSom.musica }));
-  assert.deepEqual(antes, { e: 'Ligados', m: 'Ligada (toca no modo Livre)' });
-  assert.equal(depois.e, 'Desligados');
+  await pagina.click('label:has(#msfx)');
+  const depois = await pagina.evaluate(() => ({ e: document.getElementById('msfx').checked, efeitos: window.__geoTotal.estadoSom.efeitos, musica: window.__geoTotal.estadoSom.musica }));
+  assert.deepEqual(antes, { e: true, m: true });
+  assert.deepEqual([depois.e, depois.efeitos], [false, false]);
   assert.equal(depois.musica, false, 'tocar em Música desliga (começa ligada)');
   assert.deepEqual(erros, []);
   await fechar();
@@ -236,8 +246,8 @@ test('rodada de 10: termina com estrelas, XP e "Jogar de novo"', async () => {
 
 test('desafio do dia: 10 países iguais para todos, uma vez por dia, com resultado para copiar', async () => {
   const { pagina, erros, fechar } = await abrirApp();
-  await pagina.click('#mbtn');
-  await pagina.click('#mdesafio');
+  await pagina.click('#qmodeb');
+  await pagina.click('#jr-desafio');
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     const fila = g.estadoTreino.desafio.fila.slice();
@@ -519,12 +529,20 @@ test('zerar tudo também zera nível e conquistas', async () => {
   await fechar();
 });
 
-test('botão do visual: alterna só entre dia e noite e sempre de dia', async () => {
+test('menu ⋯: dia e noite numa chave e tema com as três opções à vista', async () => {
   const { pagina, erros, fechar } = await abrirApp();
-  await pagina.waitForTimeout(1500);
-  const seq = [];
-  for (let k = 0; k < 3; k++) { await pagina.click('#mvisual'); seq.push(await pagina.evaluate(() => document.getElementById('mvisual').textContent)); }
-  assert.deepEqual([...new Set(seq)].sort(), ['☀️', '🌗'].sort());
+  await pagina.waitForFunction(() => !document.getElementById('oNight').disabled, null, { timeout: 15000 });
+  await pagina.click('#mbtn');
+  await pagina.click('label:has(#oNight)');
+  const noite = await pagina.evaluate(() => window.__geoTotal.optNight);
+  await pagina.click('#mtema [data-v="dark"]');
+  const r = await pagina.evaluate(() => ({
+    tema: document.documentElement.getAttribute('data-theme'),
+    marcado: document.querySelector('#mtema [aria-pressed="true"]').textContent,
+    guardado: localStorage.getItem('globo.theme'),
+  }));
+  assert.equal(noite, true, 'a chave liga o dia e noite');
+  assert.deepEqual(r, { tema: 'dark', marcado: 'Escuro', guardado: '"dark"' });
   assert.deepEqual(erros, []);
   await fechar();
 });
@@ -609,13 +627,13 @@ test('jogos rápidos: Relâmpago de 60 s com recorde e Misto com tipos variados'
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
-    document.getElementById('qscopeb').click();
-    document.getElementById('jrMisto').click();
+    document.getElementById('qmodeb').click();
+    document.getElementById('jr-misto').click();
     const modos = new Set();
     for (let k = 0; k < 9; k++) { modos.add(g.quiz.mode); g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
     const rotuloMisto = document.getElementById('qmodev').textContent;
-    document.getElementById('qscopeb').click();
-    document.getElementById('jrRelampago').click();
+    document.getElementById('qmodeb').click();
+    document.getElementById('jr-relampago').click();
     const timer = g.quiz.timerLen, rotulo = document.getElementById('qmodev').textContent;
     for (let k = 0; k < 3; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
     const placar = document.getElementById('qruntxt').textContent;
@@ -712,12 +730,12 @@ test('numa região a rodada não corta em 10: vai até zerar', async () => {
   await fechar();
 });
 
-test('cabeçalho: logo, botão de som; começa sempre de dia (☀️); tocar num país no treino mostra só o nome', async () => {
+test('cabeçalho: logo, botão de som; começa sempre de dia; tocar num país no treino mostra só o nome', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     const logo = getComputedStyle(document.querySelector('h1 .marca-logo')).backgroundImage.startsWith('url("data:image/png');
-    const noite = g.optNight === false && !document.getElementById('oNight').checked && document.getElementById('mvisual').textContent === '☀️';
+    const noite = g.optNight === false && !document.getElementById('oNight').checked && !document.getElementById('mvisual');
     document.getElementById('msom').click();
     const mudo = g.estadoSom.mudo, icone = document.getElementById('msom').textContent;
     document.getElementById('msom').click();
@@ -766,13 +784,13 @@ test('cartão mostra a hora agora e a diferença para Brasília (país e estado)
   await fechar();
 });
 
-test('"Onde treinar?": Guiana Francesa na América do Sul, Américas Central e do Norte juntas, lista das categorias', async () => {
+test('"Onde treinar?": Guiana Francesa na América do Sul, Américas Central e do Norte juntas; lista das categorias no menu', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.click('#qscopeb');
   const r = await pagina.evaluate(() => {
     const tiles = [...document.querySelectorAll('.stile b')].map((b) => b.textContent);
-    document.getElementById('scopeadv').open = true;
-    document.getElementById('catlista').open = true;
+    const d = document.getElementById('catlista');
+    d.open = true; d.dispatchEvent(new Event('toggle'));
     const ultra = [...document.querySelectorAll('.catrow')].filter((x) => x.querySelector('.catultra')).length;
     const g = window.__geoTotal;
     return { tiles, ultra, sul: g.D.filter((d) => d.r === 0 && g.avail(d)).map((d) => d.cc).includes('GF') };
@@ -787,7 +805,7 @@ test('"Onde treinar?": Guiana Francesa na América do Sul, Américas Central e d
   await fechar();
 });
 
-test('dica na múltipla escolha tira 2 erradas sem dar a letra; seletor leva às outras opções do treino', async () => {
+test('dica na múltipla escolha tira 2 erradas sem dar a letra; a meta do dia abre os ajustes', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
@@ -800,10 +818,8 @@ test('dica na múltipla escolha tira 2 erradas sem dar a letra; seletor leva às
   assert.equal(r.elim.length, 2, 'duas opções eliminadas');
   assert.ok(!r.elim.includes(r.certo), 'a certa nunca é eliminada');
   assert.doesNotMatch(r.texto, /começa com/);
-  await pagina.click('#qmodeb');
-  await pagina.click('.qmodesmais');
-  await pagina.waitForTimeout(300);
-  assert.equal(await pagina.evaluate(() => !document.getElementById('mp-train').hidden), true, 'abre Opções do treino');
+  await pagina.click('#goalgo');
+  assert.equal(await pagina.evaluate(() => document.getElementById('ajsheet').style.display), 'block', 'abre Ajustes da partida');
   assert.deepEqual(erros, []);
   await fechar();
 });

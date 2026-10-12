@@ -15,12 +15,13 @@ import { quizOpen } from './perguntas.js';
 
 const PASSOS = [
   { alvo: '.modesw', texto: '🔀 Aqui você troca de modo: 🎯 Treino tem perguntas; 🧭 Livre é para explorar o globo à vontade.' },
-  { alvo: '#qmodeb', texto: '❓ Escolha o tipo de pergunta: capital, bandeira, achar no mapa, vizinhos…' },
-  { alvo: '#qscopeb', texto: '📍 Escolha a região: um continente, um país e seus vizinhos ou o mundo todo.' },
+  { alvo: '#qmodeb', texto: '🎮 Escolha o jogo: capital, bandeira, achar no mapa, vizinhos… ou um jogo rápido (Relâmpago, Misto, Desafio do dia).' },
+  { alvo: '#qscopeb', texto: '📍 Escolha a região: um continente, uma parte dele, os estados do Brasil ou o mundo todo.' },
+  { alvo: '#qajustb', texto: '⚙️ Ajustes da partida: digitar ou escolher, cronômetro, tamanho da rodada, meta do dia…' },
   { alvo: '#qscore', texto: '⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥.' },
   { alvo: '#qbody', texto: '👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final.' },
   { alvo: '.tools', texto: '🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países.' },
-  { alvo: '#mbtn', texto: '⋯ No menu: desafio do dia, conquistas, histórico, som, salvar progresso e este tour de novo.' },
+  { alvo: '#mbtn', texto: '⋯ No menu: passaporte, conquistas, histórico, explorar o mapa, som e visual, salvar progresso e este tour de novo.' },
 ];
 
 let passo = -1;

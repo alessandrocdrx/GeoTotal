@@ -1,37 +1,16 @@
 /**
  * @arquivo js/recursos/exportar.js
  * Camada: Recursos
- * Exportação CSV/Anki e folha de estudo.
+ * Salvar arquivo (ou mostrar o texto para copiar) e folha de estudo.
  */
 
-import { langText, relText } from '../dados/linguas.js';
 import { D, qcapDisp, REG } from '../dados/paises.js';
-import { NB, short } from '../dados/vizinhos.js';
-import { fmtArea, fmtPop } from '../interface/cartao-detalhes.js';
+import { short } from '../dados/vizinhos.js';
 import { $, setStatus } from '../nucleo/utilitarios.js';
 import { estadoMapa } from '../visualizacao/tela.js';
 
-/* ---------- exportar e folha de estudo ---------- */
+/* ---------- salvar arquivo e folha de estudo ---------- */
 let dlNS = null;
-function csvCell(v){v=String(v==null?'':v);return /[",\n;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
-function buildCSV(kind){
-  var rows=[],i,d,x;
-  if(kind==='anki'){
-    for(i=0;i<D.length;i++){
-      if(!estadoMapa.on[i])continue;d=D[i];
-      var tag=REG[d.r].n.replace(/\s+/g,'_');
-      rows.push([d.flag+' '+short(d)+' — qual é a capital?',qcapDisp(d),tag]);
-      rows.push(['Qual país tem como capital '+qcapDisp(d)+'?',d.flag+' '+short(d),tag]);
-    }
-    return rows.map(function(r){return r.map(csvCell).join(',');}).join('\n');
-  }
-  rows.push(['País','Bandeira','Capital','Região','Sub-região','Vizinhos por terra','População (aprox.)','Área','Idioma(s)','Moeda','Fuso','DDI','Domínio','Religiões (aprox.)','Línguas (aprox.)']);
-  for(i=0;i<D.length;i++){
-    if(!estadoMapa.on[i])continue;d=D[i];x=d.info;
-    rows.push([short(d),d.flag,d.cap,REG[d.r].n,d.sub,NB[i].map(function(k){return short(D[k]);}).join(' / '),x?fmtPop(x.pop):'',x?fmtArea(x.area):'',x?x.lang:'',x?x.cur:'',x?x.tz:'',x?x.dial:'',x?x.tld:'',relText(d),langText(d)]);
-  }
-  return '\uFEFF'+rows.map(function(r){return r.map(csvCell).join(',');}).join('\n');
-}
 function showText(name,text){
   $('txtname').textContent=name;$('txta').value=text;$('txtd').style.display='block';
 }
@@ -67,11 +46,9 @@ function iniciar() {
     else setStatus(ok?'Copiado.':'Selecione o texto e copie manualmente.',3000);
   };
   $('txtclose').onclick=function(){$('txtd').style.display='none';};
-  $('expCsv').onclick=function(){$('msheet').style.display='none';offerFile('paises-e-capitais.csv',buildCSV('full'));};
-  $('expAnki').onclick=function(){$('msheet').style.display='none';offerFile('paises-capitais-anki.csv',buildCSV('anki'));};
   $('expStudy').onclick=function(){$('msheet').style.display='none';buildStudy();$('study').style.display='block';};
   $('studyclose').onclick=function(){$('study').style.display='none';};
   $('studyprint').onclick=function(){try{window.print();}catch(e){setStatus('Impressão indisponível aqui. Tire uma captura de tela da folha.',5000);}};
 }
 
-export { csvCell, iniciar, offerFile };
+export { iniciar, offerFile };

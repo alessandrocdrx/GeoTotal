@@ -1,52 +1,47 @@
 <!-- @arquivo componentes/menu.html · Camada: Interface
-     Menu "⋯" em lista com páginas internas (opções do treino, mapa, explorar, app). -->
+     Menu "⋯" numa página só: atalhos do progresso, explorar, som e visual (com as escolhas à vista),
+     lugares incluídos, seus dados e ajuda. Só "Explorar" abre páginas internas (têm formulário). -->
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
   <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Mais</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <nav id="mlist" class="mlist">
     <div class="mtiles">
-      <button class="mtile" id="mdesafio"><span class="mi">🗓️</span><span class="mt"><b>Desafio do dia</b><small>10 países, os mesmos para todo mundo hoje</small></span><span class="mc">›</span></button>
-      <button id="mtour" class="mtile"><span class="mi">❓</span><span class="mt"><b>Como jogar</b><small>Tour rápido pelos botões e menus</small></span><span class="mc">›</span></button>
-      <button class="mtile" id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Um carimbo para cada país que você domina</small></span><span class="mc">›</span></button>
-      <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos do treino</small></span><span class="mc">›</span></button>
-      <button class="mtile" id="mhist"><span class="mi">📊</span><span class="mt"><b>Seu histórico</b><small>Acertos e erros por país e por região</small></span><span class="mc">›</span></button>
+      <button class="mtile" id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Carimbos dos países que você domina</small></span></button>
+      <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos</small></span></button>
+      <button class="mtile" id="mhist"><span class="mi">📊</span><span class="mt"><b>Histórico</b><small>Acertos e erros</small></span></button>
     </div>
-    <button data-p="mp-train"><span class="mi">🎯</span><span class="mt"><b>Opções do treino</b><small id="mtrainv">Resposta, foco, sessão, cronômetro</small></span><span class="mc">›</span></button>
-    <details class="mfold"><summary><span class="mi">🧭</span><span class="mt"><b>Explorar o mapa</b><small>Brasil, comparar países, distâncias, polos, folha de estudo</small></span><span class="mc">▾</span></summary>
+
+    <div class="mgrp">🧭 Explorar</div>
     <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
     <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Dois países lado a lado</small></span><span class="mc">›</span></button>
     <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Calcula e mostra no globo</small></span><span class="mc">›</span></button>
-    <button id="mlabels"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b><small id="mlabelsv">Países</small></span><span class="mc">↻</span></button>
-    <button data-p="mp-poles"><span class="mi">🧭</span><span class="mt"><b>Ir a um polo</b><small>Polo Norte ou Polo Sul</small></span><span class="mc">›</span></button>
-    <button data-p="mp-exp"><span class="mi">📄</span><span class="mt"><b>Estudar e exportar</b><small>Folha de estudo, CSV e Anki</small></span><span class="mc">›</span></button>
-    </details>
-    <details class="mfold"><summary><span class="mi">⚙️</span><span class="mt"><b>Configurações</b><small>Som, aparência, seu progresso e ajuda</small></span><span class="mc">▾</span></summary>
-    <div class="mgrp msub">🎨 Aparência e som</div>
-    <button id="msfx"><span class="mi">🔊</span><span class="mt"><b>Efeitos sonoros</b><small id="msfxv">Ligados</small></span><span class="mc">↻</span></button>
-    <button id="mmusic"><span class="mi">🎵</span><span class="mt"><b>Música</b><small id="mmusicv">Desligada</small></span><span class="mc">↻</span></button>
-    <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema claro ou escuro</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
-    <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Visual do globo</b><small>Textura, dia e noite, fronteiras</small></span><span class="mc">›</span></button>
-    <div class="mgrp msub">💾 Seu progresso</div>
+    <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
+
+    <div class="mgrp">🎨 Som e visual</div>
+    <label class="mswrow"><span class="mi">🔔</span><span class="mt"><b>Efeitos sonoros</b></span><input type="checkbox" id="msfx" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🎵</span><span class="mt"><b>Música</b><small>Toca no modo Livre</small></span><input type="checkbox" id="mmusic" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🌗</span><span class="mt"><b>Dia e noite de verdade</b><small>Sombra da noite no globo, agora</small></span><input type="checkbox" id="oNight" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">〰️</span><span class="mt"><b>Fronteiras dos países</b></span><input type="checkbox" id="oBor" role="switch" checked disabled><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🖍️</span><span class="mt"><b>Colorir por região</b></span><input type="checkbox" id="oFill" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
+    <input type="checkbox" id="oTex" checked disabled hidden>
+    <div class="msegrow"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b></span><div class="aseg" id="mlabels"><button data-v="p">Países</button><button data-v="c">Capitais</button></div></div>
+    <div class="msegrow"><span class="mi">🌓</span><span class="mt"><b>Tema</b></span><div class="aseg" id="mtema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div>
+
+    <div class="mgrp">🗺️ Lugares no jogo e no mapa</div>
+    <label class="mswrow"><span class="mi">⚠️</span><span class="mt"><b>Não reconhecidos pela ONU <small class="tgn" id="nDis"></small></b><small>Kosovo, Somalilândia, Transnístria…</small></span><input type="checkbox" id="oDisputed" role="switch" checked><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">◇</span><span class="mt"><b>Territórios dependentes <small class="tgn" id="nDep"></small></b><small>Porto Rico, Groenlândia, Hong Kong…</small></span><input type="checkbox" id="oDep" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">❄️</span><span class="mt"><b>Desabitados e Antártida <small class="tgn" id="nUni"></small></b><small>No treino, só em "Achar no mapa"</small></span><input type="checkbox" id="oUni" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <details id="catlista" class="catlista"><summary>📋 Quais são esses lugares?</summary><div id="catbody"></div></details>
+
+    <div class="mgrp">💾 Seus dados</div>
     <button id="msave"><span class="mi">💾</span><span class="mt"><b>Salvar meu progresso</b><small>Guarde o arquivo (no Drive, por exemplo) para trocar de celular</small></span><span class="mc">↓</span></button>
     <label class="mrowfile"><span class="mi">📂</span><span class="mt"><b>Restaurar progresso</b><small>Abra um arquivo salvo antes</small></span><span class="mc">›</span><input id="mload" type="file" accept=".json,application/json" hidden></label>
-    <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
-    <div class="mgrp msub">❓ Ajuda</div>
+    <button id="qreset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar todo o progresso</b><small>Treino, medalhas, nível e conquistas · toque duas vezes</small></span></button>
+
+    <div class="mgrp">❓ Ajuda</div>
+    <button id="mtour"><span class="mi">👀</span><span class="mt"><b>Como jogar</b><small>Tour rápido pelos botões</small></span><span class="mc">›</span></button>
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
-    </details>
   </nav>
-  <div class="mpage" id="mp-train" data-t="Opções do treino" hidden>
-    <div class="mlab">Resposta</div>
-    <div class="qseg" id="qtypes"></div>
-    <div class="mlab">Quais perguntas</div>
-    <div class="qscoperow"><button id="qfocusb">Foco: tudo</button></div>
-    <small class="mdesc">Tudo, só os que você nunca viu ou só os que errou.</small>
-    <div class="mlab">Rodada</div>
-  <div class="mcol"><button id="qsessionb">🧮 Sessão: livre</button><small class="mdesc">Quantas perguntas por rodada no Mundo (livre = sem fim). Numa região, a rodada vai até zerar.</small>
-  <button id="qorderb">🔀 Ordem: aleatória</button><small class="mdesc">Embaralhada ou sempre na mesma sequência.</small>
-  <button id="qtimerb">⏱️ Cronômetro: desligado</button><small class="mdesc">Responda o máximo que der antes do tempo acabar.</small>
-  <button id="qsurvb">💀 Sobrevivência: desligada</button><small class="mdesc">Errou uma vez, a rodada acaba. Quanto você aguenta?</small>
-  <button id="qrunreset">🔁 Recomeçar a partida</button><small class="mdesc">Zera só a região atual, para jogar do zero.</small></div>
-  </div>
   <div class="mpage" id="mp-sobre" data-t="Sobre o geoTotal" hidden>
     <div class="sobre">
       <i class="marca-logo grande" aria-hidden="true"></i>
@@ -56,13 +51,6 @@
       <p>Gratuito, sem anúncios, funciona sem internet e não pede nenhuma permissão.</p>
       <p class="sobrecred"><b>Créditos:</b> D3.js (BSD), TopoJSON (BSD), DataMaps (MIT) e mapa dos estados do Brasil da amCharts (licença incluída no app). Dados de países aproximados, de fontes públicas.</p>
     </div>
-  </div>
-  <div class="mpage" id="mp-poles" data-t="Ir a um polo" hidden>
-    <div class="row2"><button id="pn">▲ Polo Norte</button><button id="ps">▼ Polo Sul</button></div>
-  </div>
-
-  <div class="mpage" id="mp-theme" data-t="Tema" hidden>
-    <div class="row2"><button id="themeb">🌗 Tema: automático</button></div>
   </div>
   <div class="mpage" id="mp-cmp" data-t="Comparar países" hidden>
     <select id="cmpA" aria-label="Primeiro país"></select>
@@ -79,25 +67,5 @@
   <div class="mpage" id="mp-br" data-t="Estados do Brasil" hidden>
     <select id="stSel" aria-label="Estado"></select>
     <div class="row2"><button id="stGo">Ir para o estado</button><button id="stAll">Ver todos os estados</button></div>
-    <div class="row2"><button id="expBR">CSV dos estados</button><label class="filebtn">Importar contornos (GeoJSON)<input id="impSt" type="file" accept=".json,.geojson,application/json,application/geo+json" hidden></label></div>
-    <div class="inote">O app tenta carregar os limites dos estados sozinho ao entrar no modo estados (dados amCharts geodata / Natural Earth). Se não conseguir, importe um GeoJSON dos estados, por exemplo a malha do IBGE.</div>
-  </div>
-  <div class="mpage" id="mp-exp" data-t="Estudar e exportar" hidden>
-    <div class="inote">Usa os países ligados em Filtros.</div>
-    <div class="row2"><button id="expCsv">CSV completo</button><button id="expAnki">CSV para Anki</button></div>
-    <div class="row2"><button id="expStudy">Folha de estudo</button></div>
-  </div>
-  <div class="mpage" id="mp-map" data-t="Visual do globo" hidden>
-    <div id="minfo" class="inote"></div>
-    <details class="adv"><summary>⚙️ Avançado (importar textura e fronteiras)</summary><div>
-    <div class="row2"><label class="filebtn">Importar textura (imagem)<input id="impTex" type="file" accept="image/*" hidden></label><button id="resetTex">Voltar à textura gerada</button></div>
-    <div class="row2"><label class="filebtn">Importar fronteiras (GeoJSON)<input id="impBor" type="file" accept=".json,.geojson,application/json,application/geo+json" hidden></label><button id="clearData">Apagar dados de mapa salvos</button></div>
-    <div class="inote">Imagem: mapa-múndi em projeção equirretangular (proporção 2:1), como o "Blue Marble" da NASA. Fronteiras: GeoJSON de países com códigos ISO (por exemplo, o Natural Earth).</div>
-    </div></details>
-  </div>
-  <div class="mpage" id="mp-reset" data-t="Zerar progresso do treino" hidden>
-    <div class="inote">Apaga o histórico de acertos e erros de cada país, as partidas em andamento, os recordes e as medalhas. Níveis, XP e conquistas continuam.</div>
-    <div class="row2"><button id="qreset" class="mdangerbtn">Zerar tudo (treino, medalhas, nível e conquistas)</button></div>
   </div>
 </div></div>
-

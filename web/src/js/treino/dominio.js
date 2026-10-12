@@ -42,7 +42,6 @@ function applyDomainForScope(){
 }
 function updateScopeBtn(){
   $('qscopev').textContent='📍 '+scopeLabel();
-  $('qfocusb').textContent='Foco: '+({mix:'tudo','new':'só novos',wrong:'só errados'})[estadoTreino.quizFocus];updateTrainRow();
 }
 function updateScopeBackBtn(){
   var btn=$('qscopeback');
@@ -102,6 +101,4 @@ function mstats(){return estadoTreino.QS.m[quiz.mode]||(estadoTreino.QS.m[quiz.m
 function gapOf(e){if(e.s===0)return 3;var g=Math.min(120,12+12*e.s);return e.w>0?Math.round(g*.6):g;}
 function tierOf(i){var e=mstats()[qcc(QD()[i])];return !e?'new':(e.s===0?'wrong':'ok');}
 
-function updateTrainRow(){var el=$('mtrainv');if(el)el.textContent=(quiz.type==='type'?'Digitar':'Múltipla escolha')+' · '+({mix:'foco em tudo','new':'só novos',wrong:'só errados'})[estadoTreino.quizFocus]+(quiz.timerLen?' · '+quiz.timerLen+'s':'')+(quiz.survivalMode?' · sobrevivência':'');}
-
-export { applyDomainForScope, emptyMsg, fitScopeView, gapOf, inScopeActive, mstats, poolIdx, qcapD, qcc, QD, qflag, regNameOf, scopeView, TIER_P, tierOf, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow };
+export { applyDomainForScope, emptyMsg, fitScopeView, gapOf, inScopeActive, mstats, poolIdx, qcapD, qcc, QD, qflag, regNameOf, scopeView, TIER_P, tierOf, unitWord, updateScopeBackBtn, updateScopeBtn };

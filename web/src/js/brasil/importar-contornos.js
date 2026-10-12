@@ -6,7 +6,7 @@
 
 import { BRBY, BRS } from '../dados/estados-brasil.js';
 import { norm } from '../dados/paises.js';
-import { $, setStatus } from '../nucleo/utilitarios.js';
+import { setStatus } from '../nucleo/utilitarios.js';
 import { fixWind, idbGet, idbSet } from '../visualizacao/carregamento.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { estadoRender } from '../visualizacao/projecao.js';
@@ -79,7 +79,7 @@ function loadAmcharts(){
 }
 function ensureStateShapes(){
   if(estadoBrasil.STFEAT.some(function(f){return f;})||stAuto===1)return;
-  if(!estadoRender.feats||!window.d3){setStatus('Os limites dos estados aparecem depois que o mapa carregar. Importe um arquivo em ⋯ Mais se preferir.',6000);return;}
+  if(!estadoRender.feats||!window.d3){setStatus('Os limites dos estados aparecem depois que o mapa carregar.',6000);return;}
   stAuto=1;
   setStatus('Carregando os limites dos estados…');
   loadAmcharts().then(function(g){
@@ -88,7 +88,7 @@ function ensureStateShapes(){
     setStatus('Limites dos estados carregados ('+m+' de 27). Dados: amCharts geodata / Natural Earth.',6000);
   }).catch(function(){
     stAuto=0;
-    setStatus('Não consegui carregar os limites dos estados sozinho. Você pode importar um GeoJSON em ⋯ Mais → Brasil.',9000);
+    setStatus('Não consegui carregar os limites dos estados sozinho. Tente de novo mais tarde.',9000);
   });
 }
 function loadSavedStates(){
@@ -104,19 +104,6 @@ function loadSavedStates(){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
-  $('impSt').onchange=function(){
-    var f=this.files[0];this.value='';if(!f)return;
-    if(!window.d3||!window.topojson){setStatus('As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.',6000);return;}
-    var fr=new FileReader();
-    fr.onload=function(){
-      try{
-        var list=ingestStates(JSON.parse(fr.result)),m=setupStates(list);
-        saveStates(list);
-        setStatus('Contornos dos estados importados ('+m+' de 27). Salvos neste aparelho.',6000);
-      }catch(e){setStatus('Não consegui usar esse arquivo: '+e.message+'. Use um GeoJSON dos estados do Brasil (por exemplo, a malha do IBGE).',10000);}
-    };
-    fr.readAsText(f);
-  };
   loadSavedStates();
 }
 

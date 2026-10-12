@@ -107,7 +107,6 @@ header .modesw button{padding:0 10px!important}
 .qsbar{display:inline-block;width:42px;height:4px;border-radius:3px;background:rgba(214,69,69,.55);overflow:hidden}
 .qsbar i{display:block;height:100%;background:#1f9d55}
 .distag.dep{color:#2563eb;background:rgba(77,163,255,.14);border-color:rgba(77,163,255,.45)}
-#mp-train .mcol{display:flex;flex-direction:column;gap:8px}#mp-train .mcol button,#mp-train #qfocusb{width:100%;text-align:left;white-space:normal}
 .mgrp{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 4px 2px}
 .mgrp:first-child{margin-top:4px}
 .mlist .mgrp+button{border-top:0}
@@ -264,13 +263,6 @@ h1.marca span{color:var(--marca)}
 .mlist .mtile .mt b{font-size:15px}
 .mlist .mtile .mt small{font-size:12px}
 .mlist .mtile .mc{display:none}
-#mdesafio.mtile{border-color:#2f80ff;background:linear-gradient(140deg,rgba(47,128,255,.22),transparent 75%)}
-#mtour.mtile{border-color:#ffc93c;background:linear-gradient(140deg,rgba(255,201,60,.2),transparent 75%)}
-.mfold{border-top:1px solid var(--border)}
-.mfold summary{display:flex;align-items:center;gap:12px;padding:13px 4px;cursor:pointer;list-style:none}
-.mfold summary::-webkit-details-marker{display:none}
-.mfold[open] summary .mc{transform:rotate(180deg)}
-.mfold > button,.mfold > label,.mfold > a{padding-left:18px!important}
 /* giro automático e passeio só fazem sentido no Livre */
 body.quizing #spin,body.quizing #tour{display:none}
 .tools button{font-size:18px}
@@ -327,10 +319,7 @@ h1.marca{flex:none}
 .qpick i{grid-column:2;grid-row:1;font-size:11px;font-weight:800;color:#6aa8ff!important;font-style:normal;padding:1px 7px;border-radius:999px;background:rgba(77,163,255,.14)}
 .qpick span{grid-column:1/3;grid-row:2;font-size:14.5px}
 #qmodeb{max-width:50%!important}
-.qmodesmais{grid-column:1/-1;background:transparent!important;border:1px dashed var(--border)!important;color:#6aa8ff!important;font-weight:700!important;font-size:12.5px!important}
 .qopts button.elim{opacity:.28;text-decoration:line-through}
-/* subgrupos dentro de Configurações */
-.mlist .mgrp.msub{margin:10px 0 2px 18px;font-size:11.5px}
 /* Conquistas: seção de medalhas das regiões zeradas */
 .medtit{font-weight:800;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 2px}
 .medsec .medtit:first-child{margin-top:4px}
@@ -371,17 +360,12 @@ h1.marca{flex:none}
 #qmodes .mcard b{font-size:13.5px}
 #qmodes .mcard small{font-size:11.5px;font-weight:500;color:var(--muted);line-height:1.25}
 #qmodes .mcard[aria-pressed="true"] small{color:inherit;opacity:.85}
-.qresp{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin-top:2px}
-.qresp span{font-size:12.5px;font-weight:700;color:var(--muted)}
-.qresp button{flex:1;padding:8px!important;font-size:13px!important}
 /* recomeçar só a partida (não mexe em placar, medalhas nem conquistas) */
 .qrestart{border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:999px;font-size:11.5px;font-weight:700;font-family:inherit;line-height:1.2;white-space:nowrap;padding:3px 9px;cursor:pointer;margin-left:6px;flex:none}
 
 /* recomeçar a partida: botão claro na tela de região, longe do placar */
 .restartrow{display:block;width:100%;margin:0 0 12px;padding:12px;border-radius:14px;border:1px solid var(--border);background:var(--chip);color:var(--fg);font-size:14px;font-weight:700;font-family:inherit;text-align:left;cursor:pointer}
 .restartrow.armado{background:#e5484d;border-color:#e5484d;color:#fff}
-/* "Mais ajustes" afastado do resto, para não ser tocado sem querer */
-.qmodesmais{margin:10px 0 6px}
 #qmodes{margin-bottom:10px}
 
 /* passaporte */
@@ -401,9 +385,52 @@ h1.marca{flex:none}
 #qnext.auto::after{content:'';position:absolute;left:0;bottom:0;height:4px;width:0;background:#1fa85a;animation:qauto var(--auto,1200ms) linear forwards}
 @keyframes qauto{to{width:100%}}
 /* jogos rápidos na tela de região */
-.jrapidos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
-.jrbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px;border-radius:16px;border:2px solid #f5b301;background:linear-gradient(135deg,rgba(255,196,0,.22),rgba(255,120,0,.12));color:var(--fg);font-family:inherit;cursor:pointer}
-.jrbtn+.jrbtn{border-color:#7c5cff;background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(80,160,255,.12))}
-.jrbtn b{font-size:15px}.jrbtn small{font-size:11.5px;color:var(--muted);font-weight:600}
-.scopesect{font-size:12.5px;font-weight:800;color:var(--muted);margin:0 0 8px}
+.qjr .mcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px;border-radius:16px;border:2px solid #f5b301;background:linear-gradient(135deg,rgba(255,196,0,.22),rgba(255,120,0,.12));color:var(--fg);font-family:inherit;cursor:pointer}
+.jrbtn+.qjr .mcard{border-color:#7c5cff;background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(80,160,255,.12))}
+.qjr .mcard b{font-size:13.5px}.qjr .mcard small{font-size:11.5px;color:var(--muted);font-weight:600}
 .rfrecorde{font-weight:800;margin:6px 0 2px;text-align:center}
+
+/* ---------- menus mais simples (v1.38): escolhas à vista, no máximo 2 toques ---------- */
+/* painel do treino: Jogo · Região · ⚙️ */
+.qajust{flex:none;width:48px;border:1.5px solid rgba(77,163,255,.45);background:var(--chip);color:var(--fg);border-radius:12px;font-size:20px;cursor:pointer;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
+.qjrtit{grid-column:1/-1;font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:6px 2px 0}
+.qjr{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.qjr .mcard{min-width:0;border-width:2px!important}
+.qjr .mcard:nth-child(3){border-color:#2f80ff!important;background:linear-gradient(135deg,rgba(47,128,255,.22),rgba(47,128,255,.06))!important}
+.qjr .mcard[aria-pressed="true"]{outline:2px solid var(--fg);outline-offset:1px}
+/* botões lado a lado: mostram todas as alternativas e marcam a escolhida */
+.aseg{display:flex;gap:4px;padding:3px;border-radius:12px;background:var(--chip);border:1px solid var(--border)}
+.aseg button{flex:1;min-width:0;border:0;background:transparent;color:var(--fg);border-radius:9px;padding:9px 6px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aseg button[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg)}
+.ajrow{padding:10px 2px;border-top:1px solid var(--border)}
+.ajrow:first-child{border-top:0}
+.ajrow>b{display:block;font-size:14.5px;margin-bottom:6px}
+.ajrow>small{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.35}
+#ajok{margin-top:12px}
+/* menu ⋯: linhas com chave liga/desliga e linhas com botões lado a lado */
+.mlist .mtiles{grid-template-columns:repeat(3,1fr);gap:8px}
+.mlist .mtiles button.mtile{min-height:88px;padding:10px}
+.mlist .mtile .mt b{font-size:14px}
+.mlist .mtile .mt small{font-size:11px}
+.mswrow,.msegrow{display:flex;align-items:center;gap:12px;width:100%;border-top:1px solid var(--border);padding:11px 4px;cursor:pointer;color:var(--fg)}
+.mgrp+.mswrow,.mgrp+.msegrow{border-top:0}
+.mswrow .mi,.msegrow .mi{font-size:22px;width:30px;text-align:center;flex:none;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
+.mswrow .mt,.msegrow .mt{flex:1;min-width:0;display:flex;flex-direction:column}
+.mswrow .mt b,.msegrow .mt b{font-size:15px}
+.mswrow .mt small{font-size:12.5px;color:var(--muted);margin-top:1px;font-weight:400}
+.mswrow input{position:absolute;opacity:0;pointer-events:none}
+.msw{flex:none;position:relative;width:46px;height:28px;border-radius:999px;background:var(--border);transition:background .15s}
+.msw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .15s}
+.mswrow input:checked+.msw{background:#2f9e5b}
+.mswrow input:checked+.msw::after{transform:translateX(18px)}
+.mswrow input:disabled+.msw{opacity:.45}
+.mswrow input:focus-visible+.msw{outline:2px solid #4da3ff;outline-offset:2px}
+.msegrow{cursor:default}
+.msegrow .aseg{flex:none;width:52%}
+.msegrow .aseg button{padding:7px 4px;font-size:12.5px}
+.mlist .catlista{margin:0 0 4px 46px}
+.mlist button.mdanger.armado{background:#d64545;border-radius:12px}
+.mlist button.mdanger.armado b,.mlist button.mdanger.armado small{color:#fff}
+.qjr .mcard{padding:8px 8px!important}
+.qjr .mcard b{font-size:12.5px;white-space:nowrap}
+.qjr .mcard small{font-size:11px}

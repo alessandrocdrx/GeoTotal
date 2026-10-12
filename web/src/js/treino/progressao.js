@@ -49,6 +49,9 @@ function updateStreakPill(){
   if(n>0){el.style.display='flex';el.textContent='🔥 '+n;}
   else el.style.display='none';
 }
+/** Meta de respostas por dia (5, 10, 20 ou 30). */
+function definirMeta(n){PROG.dailyGoal=n;saveProg();updateProgUI();}
+function metaDoDia(){return PROG.dailyGoal;}
 function updateProgUI(){
   ensureDay();
   var lv=levelOf(PROG.xp),into=PROG.xp%100;
@@ -208,10 +211,6 @@ function iniciar() {
   };
   $('mbadges').onclick=openBadges;$('mhist').onclick=function(){openHistory();};
   $('badgesclose').onclick=function(){$('badgesheet').style.display='none';};
-  $('goalgo').onclick=function(){
-    var opts=[5,10,20,30],idx=opts.indexOf(PROG.dailyGoal);
-    PROG.dailyGoal=opts[(idx+1)%opts.length];saveProg();updateProgUI();
-  };
   ensureDay();saveProg();updateProgUI();
   (function firstTip(){
     if(lsGet('globo.seenhint',false)){$('hint').style.display='none';return;}
@@ -225,4 +224,4 @@ function iniciar() {
   startMap();
 }
 
-export { addXP, celebrate, iniciar, recordProgress, updateProgUI, xpAtual, zerarProgresso };
+export { addXP, celebrate, definirMeta, iniciar, metaDoDia, recordProgress, updateProgUI, xpAtual, zerarProgresso };

@@ -218,7 +218,7 @@ body.states #fbtn,body.states #ubtn{opacity:.4;pointer-events:none}
 .near button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:999px;padding:6px 10px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
 select,option{font-family:inherit}
 .qscoperow{display:flex;gap:6px;margin:6px 0}
-.qscoperow button,#mp-train .mcol button{flex:1;min-width:0;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qscoperow button{flex:1;min-width:0;border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #qfocusb{flex:0 0 auto!important}
 #scopelist .sitem{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-top:1px solid var(--border);background:none;color:var(--fg);padding:12px 4px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer}
 #scopelist .sitem.sub{padding-left:22px;font-size:14px;font-weight:500}
@@ -236,7 +236,6 @@ select,option{font-family:inherit}
 #scopelist .sitem small{color:var(--muted);font-weight:500}
 #scopelist .sitem.on{color:#4da3ff;font-weight:800}
 #scopelist .sh{font-size:12px;color:var(--muted);font-weight:700;margin:10px 0 2px}
-#scopeMulti[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg)}
 .toglab{display:flex;align-items:flex-start;gap:10px;padding:2px 0;font-size:13.5px;line-height:1.4}
 .toglab small.tgn{color:var(--muted);font-weight:600;margin-left:4px}.toglab small.tgd{display:block;color:var(--muted);font-size:12px;margin-top:1px}
 .tgrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 8px}.tgrow .tglab{font-size:12.5px;color:var(--muted);font-weight:700}
@@ -395,7 +394,6 @@ header .modesw button{padding:0 10px!important}
 .qsbar{display:inline-block;width:42px;height:4px;border-radius:3px;background:rgba(214,69,69,.55);overflow:hidden}
 .qsbar i{display:block;height:100%;background:#1f9d55}
 .distag.dep{color:#2563eb;background:rgba(77,163,255,.14);border-color:rgba(77,163,255,.45)}
-#mp-train .mcol{display:flex;flex-direction:column;gap:8px}#mp-train .mcol button,#mp-train #qfocusb{width:100%;text-align:left;white-space:normal}
 .mgrp{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 4px 2px}
 .mgrp:first-child{margin-top:4px}
 .mlist .mgrp+button{border-top:0}
@@ -552,13 +550,6 @@ h1.marca span{color:var(--marca)}
 .mlist .mtile .mt b{font-size:15px}
 .mlist .mtile .mt small{font-size:12px}
 .mlist .mtile .mc{display:none}
-#mdesafio.mtile{border-color:#2f80ff;background:linear-gradient(140deg,rgba(47,128,255,.22),transparent 75%)}
-#mtour.mtile{border-color:#ffc93c;background:linear-gradient(140deg,rgba(255,201,60,.2),transparent 75%)}
-.mfold{border-top:1px solid var(--border)}
-.mfold summary{display:flex;align-items:center;gap:12px;padding:13px 4px;cursor:pointer;list-style:none}
-.mfold summary::-webkit-details-marker{display:none}
-.mfold[open] summary .mc{transform:rotate(180deg)}
-.mfold > button,.mfold > label,.mfold > a{padding-left:18px!important}
 /* giro automático e passeio só fazem sentido no Livre */
 body.quizing #spin,body.quizing #tour{display:none}
 .tools button{font-size:18px}
@@ -615,10 +606,7 @@ h1.marca{flex:none}
 .qpick i{grid-column:2;grid-row:1;font-size:11px;font-weight:800;color:#6aa8ff!important;font-style:normal;padding:1px 7px;border-radius:999px;background:rgba(77,163,255,.14)}
 .qpick span{grid-column:1/3;grid-row:2;font-size:14.5px}
 #qmodeb{max-width:50%!important}
-.qmodesmais{grid-column:1/-1;background:transparent!important;border:1px dashed var(--border)!important;color:#6aa8ff!important;font-weight:700!important;font-size:12.5px!important}
 .qopts button.elim{opacity:.28;text-decoration:line-through}
-/* subgrupos dentro de Configurações */
-.mlist .mgrp.msub{margin:10px 0 2px 18px;font-size:11.5px}
 /* Conquistas: seção de medalhas das regiões zeradas */
 .medtit{font-weight:800;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 2px}
 .medsec .medtit:first-child{margin-top:4px}
@@ -659,17 +647,12 @@ h1.marca{flex:none}
 #qmodes .mcard b{font-size:13.5px}
 #qmodes .mcard small{font-size:11.5px;font-weight:500;color:var(--muted);line-height:1.25}
 #qmodes .mcard[aria-pressed="true"] small{color:inherit;opacity:.85}
-.qresp{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin-top:2px}
-.qresp span{font-size:12.5px;font-weight:700;color:var(--muted)}
-.qresp button{flex:1;padding:8px!important;font-size:13px!important}
 /* recomeçar só a partida (não mexe em placar, medalhas nem conquistas) */
 .qrestart{border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:999px;font-size:11.5px;font-weight:700;font-family:inherit;line-height:1.2;white-space:nowrap;padding:3px 9px;cursor:pointer;margin-left:6px;flex:none}
 
 /* recomeçar a partida: botão claro na tela de região, longe do placar */
 .restartrow{display:block;width:100%;margin:0 0 12px;padding:12px;border-radius:14px;border:1px solid var(--border);background:var(--chip);color:var(--fg);font-size:14px;font-weight:700;font-family:inherit;text-align:left;cursor:pointer}
 .restartrow.armado{background:#e5484d;border-color:#e5484d;color:#fff}
-/* "Mais ajustes" afastado do resto, para não ser tocado sem querer */
-.qmodesmais{margin:10px 0 6px}
 #qmodes{margin-bottom:10px}
 
 /* passaporte */
@@ -689,12 +672,55 @@ h1.marca{flex:none}
 #qnext.auto::after{content:'';position:absolute;left:0;bottom:0;height:4px;width:0;background:#1fa85a;animation:qauto var(--auto,1200ms) linear forwards}
 @keyframes qauto{to{width:100%}}
 /* jogos rápidos na tela de região */
-.jrapidos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
-.jrbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px;border-radius:16px;border:2px solid #f5b301;background:linear-gradient(135deg,rgba(255,196,0,.22),rgba(255,120,0,.12));color:var(--fg);font-family:inherit;cursor:pointer}
-.jrbtn+.jrbtn{border-color:#7c5cff;background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(80,160,255,.12))}
-.jrbtn b{font-size:15px}.jrbtn small{font-size:11.5px;color:var(--muted);font-weight:600}
-.scopesect{font-size:12.5px;font-weight:800;color:var(--muted);margin:0 0 8px}
+.qjr .mcard{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px;border-radius:16px;border:2px solid #f5b301;background:linear-gradient(135deg,rgba(255,196,0,.22),rgba(255,120,0,.12));color:var(--fg);font-family:inherit;cursor:pointer}
+.jrbtn+.qjr .mcard{border-color:#7c5cff;background:linear-gradient(135deg,rgba(124,92,255,.22),rgba(80,160,255,.12))}
+.qjr .mcard b{font-size:13.5px}.qjr .mcard small{font-size:11.5px;color:var(--muted);font-weight:600}
 .rfrecorde{font-weight:800;margin:6px 0 2px;text-align:center}
+
+/* ---------- menus mais simples (v1.38): escolhas à vista, no máximo 2 toques ---------- */
+/* painel do treino: Jogo · Região · ⚙️ */
+.qajust{flex:none;width:48px;border:1.5px solid rgba(77,163,255,.45);background:var(--chip);color:var(--fg);border-radius:12px;font-size:20px;cursor:pointer;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
+.qjrtit{grid-column:1/-1;font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:6px 2px 0}
+.qjr{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.qjr .mcard{min-width:0;border-width:2px!important}
+.qjr .mcard:nth-child(3){border-color:#2f80ff!important;background:linear-gradient(135deg,rgba(47,128,255,.22),rgba(47,128,255,.06))!important}
+.qjr .mcard[aria-pressed="true"]{outline:2px solid var(--fg);outline-offset:1px}
+/* botões lado a lado: mostram todas as alternativas e marcam a escolhida */
+.aseg{display:flex;gap:4px;padding:3px;border-radius:12px;background:var(--chip);border:1px solid var(--border)}
+.aseg button{flex:1;min-width:0;border:0;background:transparent;color:var(--fg);border-radius:9px;padding:9px 6px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aseg button[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg)}
+.ajrow{padding:10px 2px;border-top:1px solid var(--border)}
+.ajrow:first-child{border-top:0}
+.ajrow>b{display:block;font-size:14.5px;margin-bottom:6px}
+.ajrow>small{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.35}
+#ajok{margin-top:12px}
+/* menu ⋯: linhas com chave liga/desliga e linhas com botões lado a lado */
+.mlist .mtiles{grid-template-columns:repeat(3,1fr);gap:8px}
+.mlist .mtiles button.mtile{min-height:88px;padding:10px}
+.mlist .mtile .mt b{font-size:14px}
+.mlist .mtile .mt small{font-size:11px}
+.mswrow,.msegrow{display:flex;align-items:center;gap:12px;width:100%;border-top:1px solid var(--border);padding:11px 4px;cursor:pointer;color:var(--fg)}
+.mgrp+.mswrow,.mgrp+.msegrow{border-top:0}
+.mswrow .mi,.msegrow .mi{font-size:22px;width:30px;text-align:center;flex:none;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
+.mswrow .mt,.msegrow .mt{flex:1;min-width:0;display:flex;flex-direction:column}
+.mswrow .mt b,.msegrow .mt b{font-size:15px}
+.mswrow .mt small{font-size:12.5px;color:var(--muted);margin-top:1px;font-weight:400}
+.mswrow input{position:absolute;opacity:0;pointer-events:none}
+.msw{flex:none;position:relative;width:46px;height:28px;border-radius:999px;background:var(--border);transition:background .15s}
+.msw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .15s}
+.mswrow input:checked+.msw{background:#2f9e5b}
+.mswrow input:checked+.msw::after{transform:translateX(18px)}
+.mswrow input:disabled+.msw{opacity:.45}
+.mswrow input:focus-visible+.msw{outline:2px solid #4da3ff;outline-offset:2px}
+.msegrow{cursor:default}
+.msegrow .aseg{flex:none;width:52%}
+.msegrow .aseg button{padding:7px 4px;font-size:12.5px}
+.mlist .catlista{margin:0 0 4px 46px}
+.mlist button.mdanger.armado{background:#d64545;border-radius:12px}
+.mlist button.mdanger.armado b,.mlist button.mdanger.armado small{color:#fff}
+.qjr .mcard{padding:8px 8px!important}
+.qjr .mcard b{font-size:12.5px;white-space:nowrap}
+.qjr .mcard small{font-size:11px}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -703,7 +729,7 @@ h1.marca{flex:none}
   <header>
     <div class="htop">
       <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
-      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Visual do globo" title="Visual do globo">🌗</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -762,80 +788,55 @@ h1.marca{flex:none}
 <div id="sheet"><div class="box">
   <div class="shead"><b>Filtros</b><button id="sclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <div class="inote" id="sheetcount" style="margin-top:-4px"></div>
-  <div class="row2"><button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶ Desfazer o último filtro</button></div>
-  <div class="opts">
-    <label hidden><input type="checkbox" id="oTex" checked disabled><span>Textura de satélite (estilizada)</span></label>
-    <label><input type="checkbox" id="oBor" checked disabled><span>Fronteiras dos países</span></label>
-    <label><input type="checkbox" id="oFill" disabled><span>Colorir países por região</span></label>
-    <label><input type="checkbox" id="oNight" disabled><span>Dia e noite (sombra da noite, agora)</span></label>
-  </div>
-  <div class="row2"><button id="allon">Ligar todos</button><button id="alloff">Desligar todos</button></div>
+  <div class="row2"><button id="allon">Ligar todos</button><button id="alloff">Desligar todos</button><button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶ Desfazer</button></div>
   <div class="nbbox">
     <div class="lab">Por vizinhança (fronteira terrestre)</div>
     <select id="nbsel" aria-label="País"></select>
     <div class="row2"><button id="nbsolo">Só o país e vizinhos</button><button id="nbadd">Somar vizinhos</button></div>
   </div>
-  <div class="sec">
-    <div class="lab">Incluir também</div>
-    <label class="toglab"><input type="checkbox" id="oDisputed" checked><span>Não reconhecidos pela ONU <small class="tgn" id="nDis"></small><small class="tgd">Kosovo, Somalilândia, Transnístria… · ⚠</small></span></label>
-    <label class="toglab"><input type="checkbox" id="oDep"><span>Territórios dependentes <small class="tgn" id="nDep"></small><small class="tgd">Porto Rico, Groenlândia, Hong Kong, Guiana Francesa… · ◇</small></span></label>
-    <label class="toglab"><input type="checkbox" id="oUni"><span>Desabitados e Antártida <small class="tgn" id="nUni"></small><small class="tgd">Ilhas remotas e bases antárticas; no treino, só em "Achar no mapa" · ❄</small></span></label>
-  </div>
-  <div class="sec">
-    <div class="lab">Filtros favoritos</div>
-    <div class="row2"><input id="favname" placeholder="Nome do favorito" maxlength="40"><button id="favsave">Salvar o filtro atual</button></div>
-    <div id="favs"></div>
-  </div>
   <div id="tree"></div>
 </div></div>
-
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
   <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Mais</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <nav id="mlist" class="mlist">
     <div class="mtiles">
-      <button class="mtile" id="mdesafio"><span class="mi">🗓️</span><span class="mt"><b>Desafio do dia</b><small>10 países, os mesmos para todo mundo hoje</small></span><span class="mc">›</span></button>
-      <button id="mtour" class="mtile"><span class="mi">❓</span><span class="mt"><b>Como jogar</b><small>Tour rápido pelos botões e menus</small></span><span class="mc">›</span></button>
-      <button class="mtile" id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Um carimbo para cada país que você domina</small></span><span class="mc">›</span></button>
-      <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos do treino</small></span><span class="mc">›</span></button>
-      <button class="mtile" id="mhist"><span class="mi">📊</span><span class="mt"><b>Seu histórico</b><small>Acertos e erros por país e por região</small></span><span class="mc">›</span></button>
+      <button class="mtile" id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Carimbos dos países que você domina</small></span></button>
+      <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos</small></span></button>
+      <button class="mtile" id="mhist"><span class="mi">📊</span><span class="mt"><b>Histórico</b><small>Acertos e erros</small></span></button>
     </div>
-    <button data-p="mp-train"><span class="mi">🎯</span><span class="mt"><b>Opções do treino</b><small id="mtrainv">Resposta, foco, sessão, cronômetro</small></span><span class="mc">›</span></button>
-    <details class="mfold"><summary><span class="mi">🧭</span><span class="mt"><b>Explorar o mapa</b><small>Brasil, comparar países, distâncias, polos, folha de estudo</small></span><span class="mc">▾</span></summary>
+
+    <div class="mgrp">🧭 Explorar</div>
     <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
     <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Dois países lado a lado</small></span><span class="mc">›</span></button>
     <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Calcula e mostra no globo</small></span><span class="mc">›</span></button>
-    <button id="mlabels"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b><small id="mlabelsv">Países</small></span><span class="mc">↻</span></button>
-    <button data-p="mp-poles"><span class="mi">🧭</span><span class="mt"><b>Ir a um polo</b><small>Polo Norte ou Polo Sul</small></span><span class="mc">›</span></button>
-    <button data-p="mp-exp"><span class="mi">📄</span><span class="mt"><b>Estudar e exportar</b><small>Folha de estudo, CSV e Anki</small></span><span class="mc">›</span></button>
-    </details>
-    <details class="mfold"><summary><span class="mi">⚙️</span><span class="mt"><b>Configurações</b><small>Som, aparência, seu progresso e ajuda</small></span><span class="mc">▾</span></summary>
-    <div class="mgrp msub">🎨 Aparência e som</div>
-    <button id="msfx"><span class="mi">🔊</span><span class="mt"><b>Efeitos sonoros</b><small id="msfxv">Ligados</small></span><span class="mc">↻</span></button>
-    <button id="mmusic"><span class="mi">🎵</span><span class="mt"><b>Música</b><small id="mmusicv">Desligada</small></span><span class="mc">↻</span></button>
-    <button id="mthemerow"><span class="mi">🌗</span><span class="mt"><b>Tema claro ou escuro</b><small id="mthemev">Automático</small></span><span class="mc">↻</span></button>
-    <button data-p="mp-map"><span class="mi">🗺️</span><span class="mt"><b>Visual do globo</b><small>Textura, dia e noite, fronteiras</small></span><span class="mc">›</span></button>
-    <div class="mgrp msub">💾 Seu progresso</div>
+    <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
+
+    <div class="mgrp">🎨 Som e visual</div>
+    <label class="mswrow"><span class="mi">🔔</span><span class="mt"><b>Efeitos sonoros</b></span><input type="checkbox" id="msfx" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🎵</span><span class="mt"><b>Música</b><small>Toca no modo Livre</small></span><input type="checkbox" id="mmusic" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🌗</span><span class="mt"><b>Dia e noite de verdade</b><small>Sombra da noite no globo, agora</small></span><input type="checkbox" id="oNight" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">〰️</span><span class="mt"><b>Fronteiras dos países</b></span><input type="checkbox" id="oBor" role="switch" checked disabled><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🖍️</span><span class="mt"><b>Colorir por região</b></span><input type="checkbox" id="oFill" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
+    <input type="checkbox" id="oTex" checked disabled hidden>
+    <div class="msegrow"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b></span><div class="aseg" id="mlabels"><button data-v="p">Países</button><button data-v="c">Capitais</button></div></div>
+    <div class="msegrow"><span class="mi">🌓</span><span class="mt"><b>Tema</b></span><div class="aseg" id="mtema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div>
+
+    <div class="mgrp">🗺️ Lugares no jogo e no mapa</div>
+    <label class="mswrow"><span class="mi">⚠️</span><span class="mt"><b>Não reconhecidos pela ONU <small class="tgn" id="nDis"></small></b><small>Kosovo, Somalilândia, Transnístria…</small></span><input type="checkbox" id="oDisputed" role="switch" checked><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">◇</span><span class="mt"><b>Territórios dependentes <small class="tgn" id="nDep"></small></b><small>Porto Rico, Groenlândia, Hong Kong…</small></span><input type="checkbox" id="oDep" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">❄️</span><span class="mt"><b>Desabitados e Antártida <small class="tgn" id="nUni"></small></b><small>No treino, só em "Achar no mapa"</small></span><input type="checkbox" id="oUni" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <details id="catlista" class="catlista"><summary>📋 Quais são esses lugares?</summary><div id="catbody"></div></details>
+
+    <div class="mgrp">💾 Seus dados</div>
     <button id="msave"><span class="mi">💾</span><span class="mt"><b>Salvar meu progresso</b><small>Guarde o arquivo (no Drive, por exemplo) para trocar de celular</small></span><span class="mc">↓</span></button>
     <label class="mrowfile"><span class="mi">📂</span><span class="mt"><b>Restaurar progresso</b><small>Abra um arquivo salvo antes</small></span><span class="mc">›</span><input id="mload" type="file" accept=".json,application/json" hidden></label>
-    <button data-p="mp-reset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar progresso do treino</b><small>Histórico, partidas e medalhas</small></span><span class="mc">›</span></button>
-    <div class="mgrp msub">❓ Ajuda</div>
+    <button id="qreset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar todo o progresso</b><small>Treino, medalhas, nível e conquistas · toque duas vezes</small></span></button>
+
+    <div class="mgrp">❓ Ajuda</div>
+    <button id="mtour"><span class="mi">👀</span><span class="mt"><b>Como jogar</b><small>Tour rápido pelos botões</small></span><span class="mc">›</span></button>
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
-    </details>
   </nav>
-  <div class="mpage" id="mp-train" data-t="Opções do treino" hidden>
-    <div class="mlab">Resposta</div>
-    <div class="qseg" id="qtypes"></div>
-    <div class="mlab">Quais perguntas</div>
-    <div class="qscoperow"><button id="qfocusb">Foco: tudo</button></div>
-    <small class="mdesc">Tudo, só os que você nunca viu ou só os que errou.</small>
-    <div class="mlab">Rodada</div>
-  <div class="mcol"><button id="qsessionb">🧮 Sessão: livre</button><small class="mdesc">Quantas perguntas por rodada no Mundo (livre = sem fim). Numa região, a rodada vai até zerar.</small>
-  <button id="qorderb">🔀 Ordem: aleatória</button><small class="mdesc">Embaralhada ou sempre na mesma sequência.</small>
-  <button id="qtimerb">⏱️ Cronômetro: desligado</button><small class="mdesc">Responda o máximo que der antes do tempo acabar.</small>
-  <button id="qsurvb">💀 Sobrevivência: desligada</button><small class="mdesc">Errou uma vez, a rodada acaba. Quanto você aguenta?</small>
-  <button id="qrunreset">🔁 Recomeçar a partida</button><small class="mdesc">Zera só a região atual, para jogar do zero.</small></div>
-  </div>
   <div class="mpage" id="mp-sobre" data-t="Sobre o geoTotal" hidden>
     <div class="sobre">
       <i class="marca-logo grande" aria-hidden="true"></i>
@@ -845,13 +846,6 @@ h1.marca{flex:none}
       <p>Gratuito, sem anúncios, funciona sem internet e não pede nenhuma permissão.</p>
       <p class="sobrecred"><b>Créditos:</b> D3.js (BSD), TopoJSON (BSD), DataMaps (MIT) e mapa dos estados do Brasil da amCharts (licença incluída no app). Dados de países aproximados, de fontes públicas.</p>
     </div>
-  </div>
-  <div class="mpage" id="mp-poles" data-t="Ir a um polo" hidden>
-    <div class="row2"><button id="pn">▲ Polo Norte</button><button id="ps">▼ Polo Sul</button></div>
-  </div>
-
-  <div class="mpage" id="mp-theme" data-t="Tema" hidden>
-    <div class="row2"><button id="themeb">🌗 Tema: automático</button></div>
   </div>
   <div class="mpage" id="mp-cmp" data-t="Comparar países" hidden>
     <select id="cmpA" aria-label="Primeiro país"></select>
@@ -868,32 +862,13 @@ h1.marca{flex:none}
   <div class="mpage" id="mp-br" data-t="Estados do Brasil" hidden>
     <select id="stSel" aria-label="Estado"></select>
     <div class="row2"><button id="stGo">Ir para o estado</button><button id="stAll">Ver todos os estados</button></div>
-    <div class="row2"><button id="expBR">CSV dos estados</button><label class="filebtn">Importar contornos (GeoJSON)<input id="impSt" type="file" accept=".json,.geojson,application/json,application/geo+json" hidden></label></div>
-    <div class="inote">O app tenta carregar os limites dos estados sozinho ao entrar no modo estados (dados amCharts geodata / Natural Earth). Se não conseguir, importe um GeoJSON dos estados, por exemplo a malha do IBGE.</div>
-  </div>
-  <div class="mpage" id="mp-exp" data-t="Estudar e exportar" hidden>
-    <div class="inote">Usa os países ligados em Filtros.</div>
-    <div class="row2"><button id="expCsv">CSV completo</button><button id="expAnki">CSV para Anki</button></div>
-    <div class="row2"><button id="expStudy">Folha de estudo</button></div>
-  </div>
-  <div class="mpage" id="mp-map" data-t="Visual do globo" hidden>
-    <div id="minfo" class="inote"></div>
-    <details class="adv"><summary>⚙️ Avançado (importar textura e fronteiras)</summary><div>
-    <div class="row2"><label class="filebtn">Importar textura (imagem)<input id="impTex" type="file" accept="image/*" hidden></label><button id="resetTex">Voltar à textura gerada</button></div>
-    <div class="row2"><label class="filebtn">Importar fronteiras (GeoJSON)<input id="impBor" type="file" accept=".json,.geojson,application/json,application/geo+json" hidden></label><button id="clearData">Apagar dados de mapa salvos</button></div>
-    <div class="inote">Imagem: mapa-múndi em projeção equirretangular (proporção 2:1), como o "Blue Marble" da NASA. Fronteiras: GeoJSON de países com códigos ISO (por exemplo, o Natural Earth).</div>
-    </div></details>
-  </div>
-  <div class="mpage" id="mp-reset" data-t="Zerar progresso do treino" hidden>
-    <div class="inote">Apaga o histórico de acertos e erros de cada país, as partidas em andamento, os recordes e as medalhas. Níveis, XP e conquistas continuam.</div>
-    <div class="row2"><button id="qreset" class="mdangerbtn">Zerar tudo (treino, medalhas, nível e conquistas)</button></div>
   </div>
 </div></div>
-
 <div id="quiz"><div class="qpanel">
   <div class="qhead2">
-    <button id="qmodeb" class="qpick" aria-expanded="false"><small id="qmodel">❓ Tipo de pergunta</small><span id="qmodev">País → Capital</span><i>Trocar ▾</i></button>
-    <button id="qscopeb" class="qpick"><small>🗺️ Região</small><span id="qscopev">📍 Mundo</span><i>Trocar ▾</i></button>
+    <button id="qmodeb" class="qpick" aria-expanded="false"><small id="qmodel">🎮 Jogo</small><span id="qmodev">País → Capital</span><i>▾</i></button>
+    <button id="qscopeb" class="qpick"><small>🗺️ Região</small><span id="qscopev">📍 Mundo</span><i>▾</i></button>
+    <button id="qajustb" class="qajust" aria-label="Ajustes da partida" title="Ajustes da partida">⚙️</button>
   </div>
   <div class="qseg" id="qmodes" hidden></div>
   <div id="qscore" class="qscore"><div class="qstrip"><span id="qruntxt"></span><span id="qcomb" class="qcomb" hidden></span><span id="qtimer"></span><button id="goalgo" class="qgoalmini" title="Toque para mudar a meta diária"><span id="qlevel">Nível 1</span> · <span id="qgoaltxt">0/10 hoje</span></button></div><span class="runbar" id="qrunbar"><i id="qrunfill"></i></span></div>
@@ -925,21 +900,17 @@ h1.marca{flex:none}
   <div class="shead"><b>Onde você quer treinar?</b><button id="scopeclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <button id="qscopeback" class="qbackrow" hidden></button>
   <button id="qrestart" class="restartrow" hidden></button>
-  <div class="jrapidos">
-    <button id="jrRelampago" class="jrbtn"><b>⚡ Relâmpago</b><small id="jrRelampagoSub">60 segundos, perguntas misturadas</small></button>
-    <button id="jrMisto" class="jrbtn"><b>🎲 Misto</b><small>10 perguntas de tipos variados</small></button>
-  </div>
-  <div class="scopesect">Ou escolha uma região:</div>
   <div id="scopetiles" class="scopetiles"></div>
   <details id="scopeadv" class="scopeadv"><summary>🔎 Partes de um continente <small>(Caribe, Escandinávia, regiões do Brasil…)</small></summary>
   <input id="scopeq" type="search" placeholder="Buscar continente, sub-região ou Brasil…" autocomplete="off">
-  <div class="row2" hidden><button id="scopeMulti" aria-pressed="false">➕ Combinar regiões</button></div>
-  <div class="tgrow"><span class="tglab">Incluir também:</span><label class="tgchip"><input type="checkbox" id="oDisputedQ" checked><span>⚠ Países disputados</span></label><label class="tgchip"><input type="checkbox" id="oDepQ"><span>◇ Territórios de outros países</span></label><label class="tgchip"><input type="checkbox" id="oUniQ"><span>❄ Ilhas e bases sem moradores</span></label></div>
-  <details id="catlista" class="catlista"><summary>📋 Quais são esses lugares?</summary><div id="catbody"></div></details>
   <div id="scopelist"></div>
   <div id="scopeempty" class="inote" style="display:none">Nada encontrado.</div>
   </details>
-  <button id="scopeApply" class="scopeapplybtn" style="display:none"></button>
+</div></div>
+<div id="ajsheet" class="ov" style="z-index:85"><div class="box">
+  <div class="shead"><b>⚙️ Ajustes da partida</b><button id="ajclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div id="ajbody"></div>
+  <button id="ajok" class="scopeapplybtn">Pronto, jogar</button>
 </div></div>
 <div id="statsheet" class="ov" style="z-index:85"><div class="box">
   <div class="shead"><b>📊 Seu histórico</b><button id="statsclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
@@ -2677,20 +2648,22 @@ Brunei:Malásia
     }
   }
   function confirmTap(btn, ask, fn) {
-    var orig = btn.textContent, armed = false, t = 0;
+    var alvo = btn.querySelector("b") || btn, orig = alvo.textContent, armed = false, t = 0;
+    function volta() {
+      armed = false;
+      alvo.textContent = orig;
+      btn.classList.remove("armado");
+    }
     btn.onclick = function() {
       if (!armed) {
         armed = true;
-        btn.textContent = ask;
-        t = setTimeout(function() {
-          armed = false;
-          btn.textContent = orig;
-        }, 4e3);
+        alvo.textContent = ask;
+        btn.classList.add("armado");
+        t = setTimeout(volta, 4e3);
         return;
       }
       clearTimeout(t);
-      armed = false;
-      btn.textContent = orig;
+      volta();
       fn();
     };
   }
@@ -3820,7 +3793,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(mapa_2d_exports, {
     R2now: () => R2now,
     draw2D: () => draw2D,
-    iniciar: () => iniciar16,
+    iniciar: () => iniciar15,
     inv2D: () => inv2D,
     proj2D: () => proj2D,
     setFlat2D: () => setFlat2D
@@ -3832,10 +3805,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     fixWind: () => fixWind,
     idbGet: () => idbGet,
     idbSet: () => idbSet,
-    iniciar: () => iniciar15,
     startMap: () => startMap,
-    texCanvas: () => texCanvas,
-    updateMapInfo: () => updateMapInfo
+    texCanvas: () => texCanvas
   });
 
   // web/src/js/nucleo/eventos.js
@@ -4072,28 +4043,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     oTex.onchange = function() {
       estadoRender.optTex = oTex.checked;
     };
-    var VIS = [["🌗", "🌗 Globo com dia e noite de verdade"], ["☀️", "☀️ Globo sempre de dia"]];
-    function visAtual() {
-      return $("oNight").checked ? 0 : 1;
-    }
-    function visMostra() {
-      var v = visAtual();
-      $("mvisual").textContent = VIS[v][0];
-    }
-    $("mvisual").onclick = function() {
-      var v = (visAtual() + 1) % 2, noite = $("oNight");
-      estadoRender.optTex = true;
-      oTex.checked = estadoRender.useTex;
-      if (noite.checked !== (v === 0)) {
-        noite.checked = v === 0;
-        noite.dispatchEvent(new Event("change"));
-      }
-      visMostra();
-      setStatus(VIS[v][1], 2200);
-    };
-    $("oNight").addEventListener("change", visMostra);
-    oTex.addEventListener("change", visMostra);
-    setTimeout(visMostra, 0);
     oBor.onchange = function() {
       estadoRender.optBor = oBor.checked;
     };
@@ -4298,20 +4247,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       return c;
     });
   }
-  var texSource = "nenhuma";
-  var bordersCustom = false;
   var texCanvas = null;
-  function updateMapInfo() {
-    var t = { nenhuma: "ainda sem textura", proc: "gerada pelo app (salva neste aparelho)", custom: "imagem importada por você" }[texSource] || texSource;
-    $("minfo").textContent = "Textura: " + t + " · Fronteiras: " + (estadoRender.feats ? bordersCustom ? "arquivo importado por você" : "biblioteca de mapas" : "não carregadas");
-  }
-  function setTextureFrom(c, src) {
+  function setTextureFrom(c) {
     if (uploadTexture(c)) {
       estadoRender.useTex = true;
-      texSource = src;
       texCanvas = c;
       updateOpts();
-      updateMapInfo();
       return true;
     }
     return false;
@@ -4320,7 +4261,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (!estadoRender.gl || !estadoRender.feats) return;
     setStatus("Gerando a textura do globo… 0%");
     buildTexture(function(tc) {
-      if (setTextureFrom(tc, "proc")) {
+      if (setTextureFrom(tc)) {
         setStatus("Pronto: textura gerada e salva neste aparelho.", 3500);
         tc.toBlob(function(b) {
           if (b) idbSet("tex-proc", b);
@@ -4329,29 +4270,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }, function(p) {
       setStatus("Gerando a textura do globo… " + p + "%");
     });
-  }
-  function setupFeatures(list) {
-    estadoRender.feats = list;
-    limparCacheVistas();
-    estadoRender.FEAT = D.map(function() {
-      return null;
-    });
-    estadoRender.EXTRA = [];
-    var by = {};
-    D.forEach(function(d) {
-      by[A3[d.cc]] = d.i;
-    });
-    var m = 0;
-    list.forEach(function(f) {
-      var i = by[f.id];
-      if (i !== void 0 && !estadoRender.FEAT[i]) {
-        estadoRender.FEAT[i] = f;
-        m++;
-      } else estadoRender.EXTRA.push(f);
-    });
-    estadoRender.proj = d3.geo.orthographic().clipAngle(90).precision(0.6);
-    estadoRender.gpath = d3.geo.path().projection(estadoRender.proj).context(ctx);
-    return m;
   }
   function loadD3Topo() {
     return tryLoad(["https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js", "https://cdn.jsdelivr.net/npm/d3@3.5.17/d3.min.js"], function() {
@@ -4370,31 +4288,19 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function startMap() {
     var okGL = initGL();
     setStatus("Carregando o mapa…");
-    var pTex = !okGL ? Promise.resolve(false) : idbGet("tex-custom").then(function(b) {
-      return b ? { b, src: "custom" } : idbGet("tex-proc").then(function(b2) {
-        return b2 ? { b: b2, src: "proc" } : null;
-      });
-    }).then(function(r) {
-      if (!r) return false;
-      return blobToTexCanvas(r.b).then(function(c) {
-        return setTextureFrom(c, r.src);
+    var pTex = !okGL ? Promise.resolve(false) : idbGet("tex-proc").then(function(b) {
+      if (!b) return false;
+      return blobToTexCanvas(b).then(function(c) {
+        return setTextureFrom(c);
       }).catch(function() {
         return false;
       });
     });
-    Promise.all([pTex, idbGet("borders")]).then(function(res2) {
-      var bstr = res2[1];
-      if (res2[0]) setStatus("Textura carregada do aparelho. Carregando fronteiras…");
+    idbDel("tex-custom");
+    idbDel("borders");
+    pTex.then(function(okTex) {
+      if (okTex) setStatus("Textura carregada do aparelho. Carregando fronteiras…");
       return loadD3Topo().then(function() {
-        if (bstr) {
-          try {
-            var m = setupFeatures(JSON.parse(bstr).features);
-            bordersCustom = true;
-            return m;
-          } catch (e) {
-            bordersCustom = false;
-          }
-        }
         return loadDM().then(function() {
           return setupGeo();
         });
@@ -4402,7 +4308,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }).then(function(m) {
       emitir("fronteiras-carregadas");
       updateOpts();
-      updateMapInfo();
       if (!okGL) {
         setStatus("Fronteiras carregadas (" + m + " países com contorno). Este aparelho não suporta a textura 3D.", 7e3);
         return;
@@ -4414,26 +4319,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       genTexture();
     }, function() {
       updateOpts();
-      updateMapInfo();
       setStatus(estadoRender.useTex ? "Textura carregada, mas não consegui carregar as fronteiras (a biblioteca de mapas não abriu)." : "Não consegui carregar as fronteiras (a biblioteca de mapas não abriu). O globo segue funcionando sem elas.", 9e3);
     });
-  }
-  function featA3(f) {
-    var p = f.properties || {}, a2map = {};
-    D.forEach(function(d) {
-      a2map[d.cc] = A3[d.cc];
-    });
-    var cands = [p.ADM0_A3, p.ISO_A3, p.iso_a3, p.ISO3, p["ISO3166-1-Alpha-3"], p.iso_3166_1_alpha_3, p.A3, p.adm0_a3, typeof f.id === "string" && f.id.length === 3 ? f.id : null];
-    for (var i = 0; i < cands.length; i++) {
-      var c = cands[i];
-      if (typeof c === "string" && c.length === 3 && c !== "-99") return c.toUpperCase();
-    }
-    var c2 = [p.ISO_A2, p.iso_a2, p["ISO3166-1-Alpha-2"], p.ISO2];
-    for (var j = 0; j < c2.length; j++) {
-      var q2 = c2[j];
-      if (typeof q2 === "string" && a2map[q2.toUpperCase()]) return a2map[q2.toUpperCase()];
-    }
-    return null;
   }
   function fixWind(f) {
     var g = f.geometry;
@@ -4450,106 +4337,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (g.type === "Polygon") g.coordinates = fixPoly(g.coordinates);
     else if (g.type === "MultiPolygon") g.coordinates = g.coordinates.map(fixPoly);
     return f;
-  }
-  function ingestGeo(json) {
-    var fs = null;
-    if (json.type === "FeatureCollection") fs = json.features;
-    else if (json.type === "Topology") {
-      var k = Object.keys(json.objects)[0];
-      fs = topojson.feature(json, json.objects[k]).features;
-    } else if (json.type === "Feature") fs = [json];
-    if (!fs) throw new Error("formato não reconhecido");
-    var valid = {};
-    D.forEach(function(d) {
-      valid[A3[d.cc]] = 1;
-    });
-    var out = [], m = 0;
-    fs.forEach(function(f) {
-      if (!f.geometry) return;
-      var a3 = featA3(f);
-      var nf = { type: "Feature", id: a3 || "X" + out.length, properties: {}, geometry: JSON.parse(JSON.stringify(f.geometry)) };
-      if (a3 && valid[a3]) m++;
-      out.push(fixWind(nf));
-    });
-    if (m < 50) throw new Error("só reconheci " + m + " países pelos códigos ISO");
-    return out;
-  }
-  function iniciar15() {
-    $("impBor").onchange = function() {
-      var f = this.files[0];
-      this.value = "";
-      if (!f) return;
-      if (!window.d3 || !window.topojson) {
-        setStatus("As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.", 6e3);
-        return;
-      }
-      var fr = new FileReader();
-      fr.onload = function() {
-        try {
-          var list = ingestGeo(JSON.parse(fr.result)), m = setupFeatures(list);
-          bordersCustom = true;
-          emitir("fronteiras-carregadas");
-          updateOpts();
-          updateMapInfo();
-          idbSet("borders", JSON.stringify({ type: "FeatureCollection", features: list }));
-          setStatus("Fronteiras importadas: " + m + " países com contorno. Salvas neste aparelho.", 6e3);
-          if (texSource !== "custom" && estadoRender.gl) {
-            idbDel("tex-proc");
-            genTexture();
-          }
-        } catch (e) {
-          setStatus("Não consegui usar esse arquivo: " + e.message + ". Use um GeoJSON de países com códigos ISO (por exemplo ISO_A3).", 1e4);
-        }
-      };
-      fr.readAsText(f);
-    };
-    $("impTex").onchange = function() {
-      var f = this.files[0];
-      this.value = "";
-      if (!f) return;
-      if (!estadoRender.gl) {
-        setStatus("Este aparelho não suporta a textura 3D.", 5e3);
-        return;
-      }
-      var fr = new FileReader();
-      fr.onload = function() {
-        var im = new Image();
-        im.onload = function() {
-          var ratio = im.width / im.height, c = document.createElement("canvas");
-          c.width = 2048;
-          c.height = 1024;
-          c.getContext("2d").drawImage(im, 0, 0, 2048, 1024);
-          if (setTextureFrom(c, "custom")) {
-            c.toBlob(function(b) {
-              if (b) idbSet("tex-custom", b);
-            }, "image/jpeg", 0.92);
-            setStatus("Textura importada e salva." + (ratio < 1.9 || ratio > 2.1 ? " A proporção não era 2:1, então a imagem foi esticada." : ""), 7e3);
-          } else setStatus("Essa imagem não pôde ser usada como textura.", 6e3);
-        };
-        im.onerror = function() {
-          setStatus("Não consegui abrir essa imagem.", 6e3);
-        };
-        im.src = fr.result;
-      };
-      fr.readAsDataURL(f);
-    };
-    $("resetTex").onclick = function() {
-      idbDel("tex-custom").then(function() {
-        return idbGet("tex-proc");
-      }).then(function(b) {
-        if (b) return blobToTexCanvas(b).then(function(c) {
-          setTextureFrom(c, "proc");
-          setStatus("Voltei à textura gerada pelo app.", 3500);
-        });
-        if (estadoRender.feats) genTexture();
-        else setStatus("A textura será gerada quando as fronteiras carregarem.", 4e3);
-      });
-    };
-    confirmTap($("clearData"), "Toque de novo para apagar", function() {
-      Promise.all([idbDel("tex-custom"), idbDel("tex-proc"), idbDel("borders")]).then(function() {
-        setStatus("Dados de mapa apagados. Recarregue a página para começar do zero.", 8e3);
-      });
-    });
   }
 
   // web/src/js/visualizacao/selo.js
@@ -4785,7 +4572,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("flat2d").textContent = v ? "🌐" : "🗺️";
     $("flat2d").setAttribute("aria-label", v ? "Ver como globo" : "Ver como mapa 2D");
   }
-  function iniciar16() {
+  function iniciar15() {
     estadoCamera.plano2D = lsGet("globo.flat2d", false);
     $("flat2d").onclick = function() {
       setFlat2D(!estadoCamera.plano2D);
@@ -5034,7 +4821,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/interacao.js
   var interacao_exports = {};
   __export(interacao_exports, {
-    iniciar: () => iniciar22,
+    iniciar: () => iniciar21,
     tap: () => tap,
     tap2D: () => tap2D
   });
@@ -5048,7 +4835,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     fillInfo: () => fillInfo,
     fmtArea: () => fmtArea,
     fmtPop: () => fmtPop,
-    iniciar: () => iniciar17,
+    iniciar: () => iniciar16,
     measureCard: () => measureCard,
     tourStop: () => tourStop
   });
@@ -5124,7 +4911,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("tour").textContent = "🎬";
     $("tour").setAttribute("aria-label", "Passeio pelos países");
   }
-  function iniciar17() {
+  function iniciar16() {
     card = document.getElementById("card");
     ganchos.alturaCartao = function() {
       return estadoCartao.cardH;
@@ -5143,7 +4930,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/cartao-pais.js
   var cartao_pais_exports = {};
   __export(cartao_pais_exports, {
-    iniciar: () => iniciar19,
+    iniciar: () => iniciar18,
     renderChips: () => renderChips,
     renderFacts: () => renderFacts,
     renderNear: () => renderNear,
@@ -5160,7 +4947,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     chips: () => chips,
     estadoFiltros: () => estadoFiltros,
     hist: () => hist,
-    iniciar: () => iniciar18,
+    iniciar: () => iniciar17,
     setIncludeDep: () => setIncludeDep,
     setIncludeDisputed: () => setIncludeDisputed,
     setIncludeUni: () => setIncludeUni,
@@ -5453,7 +5240,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoMapa.includeDisputed = v;
     lsSet("globo.includeDisputed", v);
     $("oDisputed").checked = v;
-    $("oDisputedQ").checked = v;
     if (v) D.forEach(function(d) {
       if (d.dis) estadoMapa.on[d.i] = 1;
     });
@@ -5464,7 +5250,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoMapa.includeDep = v;
     lsSet("globo.includeDep", v);
     $("oDep").checked = v;
-    $("oDepQ").checked = v;
     if (v) D.forEach(function(d) {
       if (d.dep) estadoMapa.on[d.i] = 1;
     });
@@ -5475,13 +5260,56 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoMapa.includeUni = v;
     lsSet("globo.includeUni", v);
     $("oUni").checked = v;
-    $("oUniQ").checked = v;
     if (v) D.forEach(function(d) {
       if (d.uni) estadoMapa.on[d.i] = 1;
     });
     buildTree();
     afterFilter();
     emitir("categorias-mudaram", { placar: true });
+  }
+  function buildCatList() {
+    var box = $("catbody");
+    if (!box || box.dataset.ok) return;
+    box.dataset.ok = "1";
+    function grupo(titulo, lista) {
+      var h = document.createElement("div");
+      h.className = "cath";
+      h.textContent = titulo + " (" + lista.length + ")";
+      box.appendChild(h);
+      lista.forEach(function(d) {
+        var r = document.createElement("div");
+        r.className = "catrow";
+        var f = document.createElement("span");
+        f.className = "catflag";
+        f.textContent = d.dis ? "🏳️" : d.flag;
+        var t = document.createElement("div");
+        var n = document.createElement("b");
+        n.textContent = d.name;
+        var o = document.createElement("small");
+        o.textContent = (d.obs || "").split(/[;—]/)[0].trim();
+        var ultra = /ultramarin/i.test(d.obs || "");
+        if (ultra) {
+          var u = document.createElement("em");
+          u.className = "catultra";
+          u.textContent = "ultramarino";
+          n.appendChild(u);
+        }
+        t.appendChild(n);
+        t.appendChild(o);
+        r.appendChild(f);
+        r.appendChild(t);
+        box.appendChild(r);
+      });
+    }
+    grupo("⚠️ Não reconhecidos pela ONU", D.filter(function(d) {
+      return d.dis;
+    }));
+    grupo("◇ Territórios dependentes", D.filter(function(d) {
+      return d.dep;
+    }));
+    grupo("❄️ Desabitados e Antártida", D.filter(function(d) {
+      return d.uni;
+    }));
   }
   var hist = [];
   function updateUndo() {
@@ -5494,7 +5322,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (hist.length > 30) hist.shift();
     updateUndo();
   }
-  function iniciar18() {
+  function iniciar17() {
     ouvir("fronteiras-carregadas", afterFilter);
     chips = document.getElementById("chips");
     sel = document.getElementById("nbsel");
@@ -5541,11 +5369,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       sheet.style.display = "none";
       neighborsOf(+sel.value, true);
     };
+    $("catlista").addEventListener("toggle", buildCatList);
     $("nDis").textContent = "(" + D.filter(function(d) {
       return d.dis;
     }).length + ")";
     $("nDep").textContent = "(" + N_DEP + ")";
     $("nUni").textContent = "(" + N_UNI + ")";
+    $("oDisputed").checked = estadoMapa.includeDisputed;
     $("oDisputed").onclick = function() {
       setIncludeDisputed(this.checked);
     };
@@ -6030,7 +5860,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
   }
   var sw = null;
-  function iniciar19() {
+  function iniciar18() {
     document.getElementById("close").onclick = closeCard;
     document.getElementById("prev").onclick = function() {
       step(-1);
@@ -6058,13 +5888,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var lista_proximos_exports = {};
   __export(lista_proximos_exports, {
     hidePick: () => hidePick,
-    iniciar: () => iniciar20
+    iniciar: () => iniciar19
   });
   var pick;
   function hidePick() {
     pick.style.display = "none";
   }
-  function iniciar20() {
+  function iniciar19() {
     pick = $("pick");
     cv.addEventListener("pointerdown", function() {
       hidePick();
@@ -6079,7 +5909,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     alternarMudo: () => alternarMudo,
     alternarMusica: () => alternarMusica,
     estadoSom: () => estadoSom,
-    iniciar: () => iniciar21,
+    iniciar: () => iniciar20,
     pausarMusica: () => pausarMusica,
     tocar: () => tocar
   });
@@ -6277,7 +6107,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     } else pararMusica();
     return estadoSom.musica;
   }
-  function iniciar21() {
+  function iniciar20() {
     estadoSom.efeitos = lsGet("globo.som.efeitos", true);
     estadoSom.musica = lsGet("globo.som.musica", true);
     estadoSom.mudo = lsGet("globo.som.mudo", false);
@@ -6394,7 +6224,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       select(chosen, false, grp);
     } else if (estadoMapa.selected) closeCard();
   }
-  function iniciar22() {
+  function iniciar21() {
     cv.addEventListener("pointerdown", function(e) {
       cv.setPointerCapture(e.pointerId);
       ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -6446,11 +6276,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/busca.js
   var busca_exports = {};
   __export(busca_exports, {
-    iniciar: () => iniciar23
+    iniciar: () => iniciar22
   });
   var q;
   var res;
-  function iniciar23() {
+  function iniciar22() {
     q = document.getElementById("q");
     res = document.getElementById("results");
     q.addEventListener("input", function() {
@@ -6510,13 +6340,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/botoes.js
   var botoes_exports = {};
   __export(botoes_exports, {
-    iniciar: () => iniciar24,
+    iniciar: () => iniciar23,
     spinB: () => spinB
   });
   var spinB;
   var lp;
   var lc;
-  function iniciar24() {
+  function iniciar23() {
     document.getElementById("zin").onclick = function() {
       estadoCamera.target = null;
       estadoCamera.zoom = Math.min(7, estadoCamera.zoom * 1.35);
@@ -6526,14 +6356,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       estadoCamera.target = null;
       estadoCamera.zoom = Math.max(0.8, estadoCamera.zoom / 1.35);
       estadoCamera.lastInteract = performance.now();
-    };
-    document.getElementById("pn").onclick = function() {
-      $("msheet").style.display = "none";
-      flyTo(90, estadoCamera.lam * 180 / PI, 1);
-    };
-    document.getElementById("ps").onclick = function() {
-      $("msheet").style.display = "none";
-      flyTo(-90, estadoCamera.lam * 180 / PI, 1);
     };
     spinB = document.getElementById("spin");
     spinB.setAttribute("aria-pressed", estadoCamera.auto ? "true" : "false");
@@ -6561,7 +6383,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/filtros-desfazer.js
   var filtros_desfazer_exports = {};
   __export(filtros_desfazer_exports, {
-    iniciar: () => iniciar25
+    iniciar: () => iniciar24
   });
   function undo() {
     if (!hist.length) return;
@@ -6574,90 +6396,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     else if (v.length) fitTo(v);
     setStatus("Filtro desfeito.", 1800);
   }
-  function iniciar25() {
+  function iniciar24() {
     $("ubtn").onclick = undo;
     updateUndo();
-  }
-
-  // web/src/js/interface/filtros-favoritos.js
-  var filtros_favoritos_exports = {};
-  __export(filtros_favoritos_exports, {
-    iniciar: () => iniciar26
-  });
-  function favs() {
-    return lsGet("globo.fav.v1", []);
-  }
-  function renderFavs() {
-    var box = $("favs");
-    box.innerHTML = "";
-    var fs = favs();
-    if (!fs.length) {
-      box.textContent = "Nenhum favorito salvo ainda.";
-      box.className = "inote";
-      return;
-    }
-    box.className = "";
-    fs.forEach(function(f, k) {
-      var row = document.createElement("div");
-      row.className = "favrow";
-      var nm = document.createElement("span");
-      nm.textContent = f.n + " (" + f.c.length + ")";
-      var ap = document.createElement("button");
-      ap.textContent = "Aplicar";
-      var del = document.createElement("button");
-      del.textContent = "×";
-      del.setAttribute("aria-label", "Apagar favorito");
-      ap.onclick = function() {
-        snap();
-        estadoFiltros.nbSaved = null;
-        var set = {};
-        f.c.forEach(function(c) {
-          set[c] = 1;
-        });
-        estadoMapa.on = D.map(function(d) {
-          return set[d.cc] ? 1 : 0;
-        });
-        afterFilter();
-        var v = visIdx();
-        if (v.length === D.length) flyTo(estadoCamera.phi * 180 / PI, estadoCamera.lam * 180 / PI, 1);
-        else if (v.length) fitTo(v);
-        $("sheet").style.display = "none";
-      };
-      del.onclick = function() {
-        var a = favs();
-        a.splice(k, 1);
-        lsSet("globo.fav.v1", a);
-        renderFavs();
-      };
-      row.appendChild(nm);
-      row.appendChild(ap);
-      row.appendChild(del);
-      box.appendChild(row);
-    });
-  }
-  function iniciar26() {
-    $("favsave").onclick = function() {
-      var v = visIdx();
-      if (!v.length) {
-        setStatus("Nenhum país ligado para salvar.", 2500);
-        return;
-      }
-      var a = favs(), name = $("favname").value.trim() || "Filtro " + (a.length + 1);
-      a.push({ n: name, c: v.map(function(i) {
-        return D[i].cc;
-      }) });
-      lsSet("globo.fav.v1", a);
-      $("favname").value = "";
-      renderFavs();
-      setStatus("Favorito salvo neste aparelho.", 2500);
-    };
-    renderFavs();
   }
 
   // web/src/js/interface/passeio.js
   var passeio_exports = {};
   __export(passeio_exports, {
-    iniciar: () => iniciar27
+    iniciar: () => iniciar25
   });
   function tourStart() {
     if (estadoCartao.passeio) return;
@@ -6680,7 +6427,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("tour").setAttribute("aria-label", "Parar passeio");
     setStatus("🎬 Passeio: mostro um país a cada 4 segundos. Toque em ⏹ para parar.", 3500);
   }
-  function iniciar27() {
+  function iniciar25() {
     $("tour").onclick = function() {
       if (estadoCartao.passeio) tourStop();
       else tourStart();
@@ -6693,7 +6440,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     drawArc: () => drawArc,
     estadoDistancia: () => estadoDistancia,
     fillCountrySelect: () => fillCountrySelect,
-    iniciar: () => iniciar28,
+    iniciar: () => iniciar26,
     slerp: () => slerp
   });
 
@@ -6763,7 +6510,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     sel2.value = byName[norm(first)];
   }
-  function iniciar28() {
+  function iniciar26() {
     ganchos.desenharArco = drawArc;
     fillCountrySelect($("dA"), "Brasil");
     fillCountrySelect($("dB"), "Japão");
@@ -6792,42 +6539,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/recursos/exportar.js
   var exportar_exports = {};
   __export(exportar_exports, {
-    csvCell: () => csvCell,
-    iniciar: () => iniciar29,
+    iniciar: () => iniciar27,
     offerFile: () => offerFile
   });
   var dlNS = null;
-  function csvCell(v) {
-    v = String(v == null ? "" : v);
-    return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
-  }
-  function buildCSV(kind) {
-    var rows = [], i, d, x;
-    if (kind === "anki") {
-      for (i = 0; i < D.length; i++) {
-        if (!estadoMapa.on[i]) continue;
-        d = D[i];
-        var tag = REG[d.r].n.replace(/\s+/g, "_");
-        rows.push([d.flag + " " + short(d) + " — qual é a capital?", qcapDisp(d), tag]);
-        rows.push(["Qual país tem como capital " + qcapDisp(d) + "?", d.flag + " " + short(d), tag]);
-      }
-      return rows.map(function(r) {
-        return r.map(csvCell).join(",");
-      }).join("\n");
-    }
-    rows.push(["País", "Bandeira", "Capital", "Região", "Sub-região", "Vizinhos por terra", "População (aprox.)", "Área", "Idioma(s)", "Moeda", "Fuso", "DDI", "Domínio", "Religiões (aprox.)", "Línguas (aprox.)"]);
-    for (i = 0; i < D.length; i++) {
-      if (!estadoMapa.on[i]) continue;
-      d = D[i];
-      x = d.info;
-      rows.push([short(d), d.flag, d.cap, REG[d.r].n, d.sub, NB[i].map(function(k) {
-        return short(D[k]);
-      }).join(" / "), x ? fmtPop(x.pop) : "", x ? fmtArea(x.area) : "", x ? x.lang : "", x ? x.cur : "", x ? x.tz : "", x ? x.dial : "", x ? x.tld : "", relText(d), langText(d)]);
-    }
-    return "\uFEFF" + rows.map(function(r) {
-      return r.map(csvCell).join(",");
-    }).join("\n");
-  }
   function showText(name, text) {
     $("txtname").textContent = name;
     $("txta").value = text;
@@ -6871,7 +6586,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     if (!n) box.textContent = "Nenhum país ligado nos filtros.";
   }
-  function iniciar29() {
+  function iniciar27() {
     setTimeout(function() {
       try {
         if (window.claude && claude.use) claude.use("downloads").then(function(n) {
@@ -6901,14 +6616,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("txtclose").onclick = function() {
       $("txtd").style.display = "none";
     };
-    $("expCsv").onclick = function() {
-      $("msheet").style.display = "none";
-      offerFile("paises-e-capitais.csv", buildCSV("full"));
-    };
-    $("expAnki").onclick = function() {
-      $("msheet").style.display = "none";
-      offerFile("paises-capitais-anki.csv", buildCSV("anki"));
-    };
     $("expStudy").onclick = function() {
       $("msheet").style.display = "none";
       buildStudy();
@@ -6934,7 +6641,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoTreino: () => estadoTreino,
     freshQS: () => freshQS,
     inScope: () => inScope,
-    iniciar: () => iniciar30,
+    iniciar: () => iniciar28,
     matches: () => matches,
     measureQ: () => measureQ,
     qHide: () => qHide,
@@ -7050,7 +6757,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       quiz.timerInt = null;
     }
   }
-  function iniciar30() {
+  function iniciar28() {
     ganchos.treinoAberto = function() {
       return quiz.open;
     };
@@ -7148,8 +6855,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     tierOf: () => tierOf,
     unitWord: () => unitWord,
     updateScopeBackBtn: () => updateScopeBackBtn,
-    updateScopeBtn: () => updateScopeBtn,
-    updateTrainRow: () => updateTrainRow
+    updateScopeBtn: () => updateScopeBtn
   });
   function QD() {
     return estadoTreino.quizDomain === "br" ? BRS : D;
@@ -7189,8 +6895,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   function updateScopeBtn() {
     $("qscopev").textContent = "📍 " + scopeLabel();
-    $("qfocusb").textContent = "Foco: " + { mix: "tudo", "new": "só novos", wrong: "só errados" }[estadoTreino.quizFocus];
-    updateTrainRow();
   }
   function updateScopeBackBtn() {
     var btn = $("qscopeback");
@@ -7275,10 +6979,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var e = mstats()[qcc(QD()[i])];
     return !e ? "new" : e.s === 0 ? "wrong" : "ok";
   }
-  function updateTrainRow() {
-    var el = $("mtrainv");
-    if (el) el.textContent = (quiz.type === "type" ? "Digitar" : "Múltipla escolha") + " · " + { mix: "foco em tudo", "new": "só novos", wrong: "só errados" }[estadoTreino.quizFocus] + (quiz.timerLen ? " · " + quiz.timerLen + "s" : "") + (quiz.survivalMode ? " · sobrevivência" : "");
-  }
 
   // web/src/js/treino/partida.js
   var partida_exports = {};
@@ -7291,7 +6991,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     fbText: () => fbText,
     finishQ: () => finishQ,
     fmtTime: () => fmtTime,
-    iniciar: () => iniciar33,
+    iniciar: () => iniciar31,
     makeNeighborOptions: () => makeNeighborOptions,
     makeOptions: () => makeOptions,
     medalFor: () => medalFor,
@@ -7312,7 +7012,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var estatisticas_exports = {};
   __export(estatisticas_exports, {
     fillQStat: () => fillQStat,
-    iniciar: () => iniciar31,
+    iniciar: () => iniciar29,
     modeName: () => modeName,
     openHistory: () => openHistory
   });
@@ -7614,7 +7314,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     el.hidden = !partes.length;
     el.textContent = partes.join("   |   ");
   }
-  function iniciar31() {
+  function iniciar29() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
     $("htabC").onclick = function() {
       histTab = "c";
@@ -7659,7 +7359,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(progressao_exports, {
     addXP: () => addXP,
     celebrate: () => celebrate,
-    iniciar: () => iniciar32,
+    definirMeta: () => definirMeta,
+    iniciar: () => iniciar30,
+    metaDoDia: () => metaDoDia,
     recordProgress: () => recordProgress,
     updateProgUI: () => updateProgUI,
     xpAtual: () => xpAtual,
@@ -7730,6 +7432,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       el.style.display = "flex";
       el.textContent = "🔥 " + n;
     } else el.style.display = "none";
+  }
+  function definirMeta(n) {
+    PROG.dailyGoal = n;
+    saveProg();
+    updateProgUI();
+  }
+  function metaDoDia() {
+    return PROG.dailyGoal;
   }
   function updateProgUI() {
     ensureDay();
@@ -8012,7 +7722,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("badgeshead").textContent = "Conquistas (" + n + "/" + tot + ")";
     $("badgesheet").style.display = "block";
   }
-  function iniciar32() {
+  function iniciar30() {
     PROG = lsGet("globo.prog.v1", progNovo());
     $("streakpill").onclick = function() {
       var n = displayStreak(), f = PROG.freezes || 0;
@@ -8024,12 +7734,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     };
     $("badgesclose").onclick = function() {
       $("badgesheet").style.display = "none";
-    };
-    $("goalgo").onclick = function() {
-      var opts = [5, 10, 20, 30], idx = opts.indexOf(PROG.dailyGoal);
-      PROG.dailyGoal = opts[(idx + 1) % opts.length];
-      saveProg();
-      updateProgUI();
     };
     ensureDay();
     saveProg();
@@ -8700,7 +8404,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.fillStyle = "#fff";
     ctx.fillText(name, bx + 44, by + bh / 2 + 1);
   }
-  function iniciar33() {
+  function iniciar31() {
     ganchos.desenharSeloResposta = drawBadge;
     estadoPartida.RUNS = lsGet("globo.runs.v1", {});
     estadoPartida.RECS = lsGet("globo.recs.v1", {});
@@ -8779,7 +8483,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var perguntas_exports = {};
   __export(perguntas_exports, {
     buildModeButtons: () => buildModeButtons,
-    iniciar: () => iniciar35,
+    definirOrdem: () => definirOrdem,
+    definirResposta: () => definirResposta,
+    definirRodada: () => definirRodada,
+    definirSobrevivencia: () => definirSobrevivencia,
+    definirTempo: () => definirTempo,
+    iniciar: () => iniciar33,
     iniciarJogoRapido: () => iniciarJogoRapido,
     nextQ: () => nextQ,
     pickStateNear: () => pickStateNear,
@@ -8796,7 +8505,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var modo_estados_exports = {};
   __export(modo_estados_exports, {
     exitStates: () => exitStates,
-    iniciar: () => iniciar34,
+    iniciar: () => iniciar32,
     updateStBtn: () => updateStBtn
   });
   function updateStBtn() {
@@ -8815,7 +8524,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     afterFilter();
     if (goBrazil !== false) select(D[byName[norm("Brasil")]], true);
   }
-  function iniciar34() {
+  function iniciar32() {
     ganchosInterface.atualizarBotaoEstados = updateStBtn;
     $("stexit").onclick = function() {
       exitStates(true);
@@ -9010,15 +8719,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       sairJogoRapido();
       quiz.sessionLen = 0;
       lsSet("globo.quiz.sesslen", 0);
-      updateSessionBtn();
       quiz.timerLen = 0;
       lsSet("globo.quiz.timerlen", 0);
-      updateTimerBtn();
       stopTimerTick();
       updateTimerDisplay();
       quiz.survivalMode = false;
       lsSet("globo.quiz.survival", false);
-      updateSurvBtn();
       resetSession();
       nextQ();
     };
@@ -9047,18 +8753,61 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       })(p), 2200);
     }
   }
-  function updateSessionBtn() {
-    updateTrainRow();
-    $("qsessionb").textContent = "🧮 Sessão: " + (quiz.sessionLen ? quiz.sessionLen + " perguntas" : "livre");
+  function definirTempo(v) {
+    sairJogoRapido();
+    quiz.timerLen = v;
+    lsSet("globo.quiz.timerlen", v);
+    if (v) {
+      quiz.sessionLen = 0;
+      lsSet("globo.quiz.sesslen", 0);
+      quiz.survivalMode = false;
+      lsSet("globo.quiz.survival", false);
+    }
+    resetSession();
+    if (v) startTimerTick();
+    else {
+      stopTimerTick();
+      updateTimerDisplay();
+    }
+    nextQ();
   }
-  function updateTimerBtn() {
-    $("qtimerb").textContent = "⏱️ Cronômetro: " + (quiz.timerLen ? quiz.timerLen + "s" : "desligado");
+  function definirSobrevivencia(v) {
+    sairJogoRapido();
+    quiz.survivalMode = v;
+    lsSet("globo.quiz.survival", v);
+    if (v) {
+      quiz.sessionLen = 0;
+      lsSet("globo.quiz.sesslen", 0);
+      quiz.timerLen = 0;
+      lsSet("globo.quiz.timerlen", 0);
+      stopTimerTick();
+      updateTimerDisplay();
+    }
+    resetSession();
+    nextQ();
   }
-  function updateSurvBtn() {
-    $("qsurvb").textContent = "💀 Sobrevivência: " + (quiz.survivalMode ? "ligada" : "desligada");
+  function definirOrdem(v) {
+    quiz.order = v;
+    lsSet("globo.quiz.order2", v);
+    quiz.last = -1;
+    resetSession();
+    nextQ();
   }
-  function updateOrderBtn() {
-    $("qorderb").textContent = quiz.order === "seq" ? "➡️ Ordem: sequencial" : "🔀 Ordem: aleatória";
+  function definirRodada(v) {
+    sairJogoRapido();
+    quiz.sessionLen = v;
+    lsSet("globo.quiz.sesslen", v);
+    if (v) {
+      quiz.survivalMode = false;
+      lsSet("globo.quiz.survival", false);
+    }
+    resetSession();
+  }
+  function definirResposta(v) {
+    quiz.type = v;
+    buildModeButtons();
+    resetSession();
+    nextQ();
   }
   function nextQ() {
     if (quiz.jogoRapido) {
@@ -9086,7 +8835,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     fb.className = "";
     $("qnext").style.display = "none";
     var isMap = quiz.mode === "map", isNeighbor = quiz.mode === "neighbor";
-    $("qtypes").style.display = isMap || isNeighbor ? "none" : "flex";
     measureQ();
     if (i < 0) {
       updateScopeBtn();
@@ -9363,75 +9111,57 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var box = $("qmodes");
     box.innerHTML = "";
     $("qmodev").textContent = modeName(quiz.mode);
-    $("qmodel").textContent = "❓ Pergunta";
+    $("qmodel").textContent = "🎮 Jogo";
     var defs = estadoTreino.quizDomain === "br" ? [["cap", "🏛️", "Estado → Capital", "Qual é a capital da Bahia?"], ["pais", "🏙️", "Capital → Estado", "Salvador é capital de qual estado?"], ["neighbor", "🤝", "Vizinhos", "Quem faz divisa com a Bahia?"], ["code", "🔤", "Siglas", "Qual é a sigla da Bahia?"], ["map", "📍", "Achar no mapa", "Toque onde fica a Bahia"]] : [["cap", "🏛️", "País → Capital", "Qual é a capital do Peru?"], ["pais", "🏙️", "Capital → País", "Lima é capital de qual país?"], ["flag", "🚩", "Bandeiras", "De quem é esta bandeira?"], ["neighbor", "🤝", "Vizinhos", "Quem faz fronteira com o Peru?"], ["map", "📍", "Achar no mapa", "Toque onde fica o Peru"]];
     defs.forEach(function(m) {
       var b = document.createElement("button");
       b.className = "mcard";
-      b.setAttribute("aria-pressed", quiz.mode === m[0] ? "true" : "false");
-      var t2 = document.createElement("b");
-      t2.textContent = m[1] + " " + m[2];
+      b.setAttribute("aria-pressed", !quiz.jogoRapido && !estadoTreino.desafio && quiz.mode === m[0] ? "true" : "false");
+      var t = document.createElement("b");
+      t.textContent = m[1] + " " + m[2];
       var ex = document.createElement("small");
       ex.textContent = m[3];
-      b.appendChild(t2);
+      b.appendChild(t);
       b.appendChild(ex);
       b.onclick = function() {
         quizSetMode(m[0]);
       };
       box.appendChild(b);
     });
-    var resp = document.createElement("div");
-    resp.className = "qresp";
-    var rl = document.createElement("span");
-    rl.textContent = "Responder:";
-    resp.appendChild(rl);
-    [["choice", "👆 Escolher"], ["type", "⌨️ Digitar"]].forEach(function(t2) {
+    var jr = document.createElement("div");
+    jr.className = "qjr";
+    var rc = recordeRelampago();
+    [["relampago", "⚡ Relâmpago", "60 segundos" + (rc ? " · recorde " + rc : "")], ["misto", "🎲 Misto", "10 perguntas variadas"], ["desafio", "🗓️ Desafio", "Do dia, igual para todos"]].forEach(function(j) {
       var b = document.createElement("button");
-      b.textContent = t2[1];
-      b.setAttribute("aria-pressed", quiz.type === t2[0] ? "true" : "false");
+      b.className = "mcard";
+      b.id = "jr-" + j[0];
+      b.setAttribute("aria-pressed", quiz.jogoRapido === j[0] || j[0] === "desafio" && estadoTreino.desafio ? "true" : "false");
+      var t = document.createElement("b");
+      t.textContent = j[1];
+      var ex = document.createElement("small");
+      ex.textContent = j[2];
+      b.appendChild(t);
+      b.appendChild(ex);
       b.onclick = function() {
-        quiz.type = t2[0];
-        $("qmodes").hidden = true;
-        $("qmodeb").setAttribute("aria-expanded", "false");
-        buildModeButtons();
-        resetSession();
-        nextQ();
+        fecharJogos();
+        if (j[0] === "desafio") emitir("abrir-desafio");
+        else iniciarJogoRapido(j[0]);
       };
-      resp.appendChild(b);
+      jr.appendChild(b);
     });
-    box.appendChild(resp);
-    var mais = document.createElement("button");
-    mais.className = "qmodesmais";
-    mais.textContent = "⚙️ Mais ajustes (cronômetro, tamanho da rodada…)";
-    mais.onclick = function() {
-      $("qmodes").hidden = true;
-      $("qmodeb").setAttribute("aria-expanded", "false");
-      $("mbtn").click();
-      setTimeout(function() {
-        var t2 = document.querySelector('[data-p="mp-train"]');
-        if (t2) t2.click();
-      }, 60);
-    };
-    box.appendChild(mais);
-    var t = $("qtypes");
-    t.innerHTML = "";
-    [["choice", "Múltipla escolha"], ["type", "Digitar"]].forEach(function(m) {
-      var b = document.createElement("button");
-      b.textContent = m[1];
-      b.setAttribute("aria-pressed", quiz.type === m[0] ? "true" : "false");
-      b.onclick = function() {
-        quiz.type = m[0];
-        buildModeButtons();
-        resetSession();
-        nextQ();
-      };
-      t.appendChild(b);
-    });
+    var jt = document.createElement("div");
+    jt.className = "qjrtit";
+    jt.textContent = "Jogos rápidos";
+    box.appendChild(jt);
+    box.appendChild(jr);
+  }
+  function fecharJogos() {
+    $("qmodes").hidden = true;
+    $("qmodeb").setAttribute("aria-expanded", "false");
   }
   function quizSetMode(m) {
     sairJogoRapido();
-    $("qmodes").hidden = true;
-    $("qmodeb").setAttribute("aria-expanded", "false");
+    fecharJogos();
     quiz.mode = m;
     estadoTreino.qMap = m === "map" && quiz.open;
     if (m === "neighbor") quiz.type = "choice";
@@ -9457,10 +9187,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     pausarMusica(true);
     $("quiz").style.display = "block";
     applyDomainForScope();
-    updateSessionBtn();
-    updateOrderBtn();
-    updateTimerBtn();
-    updateSurvBtn();
     updateScopeBackBtn();
     if (quiz.timerLen) startTimerTick();
     else updateTimerDisplay();
@@ -9664,59 +9390,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       }
     }, 1e3);
   }
-  function iniciar35() {
+  function iniciar33() {
     ouvir("modo-estados-abriu", function() {
       if (quiz.open) quizClose();
     });
-    $("qtimerb").onclick = function() {
-      var opts = [0, 30, 60], idx = opts.indexOf(quiz.timerLen);
-      quiz.timerLen = opts[(idx + 1) % opts.length];
-      lsSet("globo.quiz.timerlen", quiz.timerLen);
-      if (quiz.timerLen) {
-        quiz.sessionLen = 0;
-        lsSet("globo.quiz.sesslen", 0);
-        updateSessionBtn();
-        quiz.survivalMode = false;
-        lsSet("globo.quiz.survival", false);
-        updateSurvBtn();
-      }
-      updateTimerBtn();
-      resetSession();
-      startTimerTick();
-      nextQ();
-    };
-    $("qsurvb").onclick = function() {
-      quiz.survivalMode = !quiz.survivalMode;
-      lsSet("globo.quiz.survival", quiz.survivalMode);
-      if (quiz.survivalMode) {
-        quiz.sessionLen = 0;
-        lsSet("globo.quiz.sesslen", 0);
-        updateSessionBtn();
-        quiz.timerLen = 0;
-        lsSet("globo.quiz.timerlen", 0);
-        updateTimerBtn();
-        stopTimerTick();
-        updateTimerDisplay();
-      }
-      updateSurvBtn();
-      resetSession();
-      nextQ();
-    };
-    $("qorderb").onclick = function() {
-      quiz.order = quiz.order === "seq" ? "random" : "seq";
-      lsSet("globo.quiz.order2", quiz.order);
-      updateOrderBtn();
-      quiz.last = -1;
-      resetSession();
-      nextQ();
-    };
-    $("qsessionb").onclick = function() {
-      var opts = [0, 10, 20], i2 = opts.indexOf(quiz.sessionLen);
-      quiz.sessionLen = opts[(i2 + 1) % opts.length];
-      lsSet("globo.quiz.sesslen", quiz.sessionLen);
-      updateSessionBtn();
-      resetSession();
-    };
     $("qmodeb").onclick = function() {
       var o = $("qmodes").hidden;
       $("qmodes").hidden = !o;
@@ -9728,12 +9405,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("qclose").onclick = function() {
       if (quiz.open) quizClose();
     };
-    confirmTap($("qrunreset"), "Toque de novo para recomeçar", runRestart);
     $("qnext").onclick = function() {
       if (roundDone()) showRoundSummary(quiz.survivalMode ? "survival" : "count");
       else nextQ();
     };
-    confirmTap($("qreset"), "Toque de novo para zerar", function() {
+    confirmTap($("qreset"), "Toque de novo para zerar tudo", function() {
       estadoTreino.QS = freshQS();
       lsSet("globo.quiz.v1", estadoTreino.QS);
       estadoPartida.RUNS = {};
@@ -9754,7 +9430,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(destaque_escopo_exports, {
     drawScopePulse: () => drawScopePulse,
     firePulseForScope: () => firePulseForScope,
-    iniciar: () => iniciar36
+    iniciar: () => iniciar34
   });
   var scopePulse = null;
   function firePulse(pts) {
@@ -9788,7 +9464,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     ctx.restore();
   }
-  function iniciar36() {
+  function iniciar34() {
     ganchos.desenharPulsoEscopo = drawScopePulse;
   }
 
@@ -9796,7 +9472,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var escopo_exports = {};
   __export(escopo_exports, {
     applyScopeChange: () => applyScopeChange,
-    iniciar: () => iniciar37
+    definirFoco: () => definirFoco,
+    iniciar: () => iniciar35
   });
   function applyScopeChange(newScope) {
     sairJogoRapido();
@@ -9814,8 +9491,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     updateScopeBackBtn();
     firePulseForScope();
   }
-  var scopeMultiMode = false;
-  var multiSel = [];
   function reviewList() {
     var st = estadoTreino.QS.m[quiz.mode] || {}, arr = [];
     D.forEach(function(d) {
@@ -9828,21 +9503,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return arr.slice(0, 10).map(function(x) {
       return x.cc;
     });
-  }
-  function multiHas(sc) {
-    return multiSel.some(function(m) {
-      return m.r === sc.r && m.s === sc.s;
-    });
-  }
-  function updateMultiApplyBtn() {
-    var n = multiSel.length, btn = $("scopeApply");
-    var cnt = D.filter(function(d) {
-      return multiSel.some(function(it) {
-        return it.s ? d.r === it.r && d.sub === it.s : d.r === it.r;
-      });
-    }).length;
-    btn.style.display = n ? "flex" : "none";
-    btn.textContent = "Aplicar (" + n + " regi" + (n === 1 ? "ão" : "ões") + " · " + cnt + " países)";
   }
   var EMOJI_REG = ["🦜", "🦅", null, "🦁", "🏰", "🐼", "🦘"];
   function buildScopeTiles() {
@@ -9881,53 +9541,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     tile("🇧🇷", "Estados do Brasil", BRS.length, { t: "br" }, "#1fa85a", "estados");
   }
-  function buildCatList() {
-    var box = $("catbody");
-    if (!box || box.dataset.ok) return;
-    box.dataset.ok = "1";
-    function grupo(titulo, lista) {
-      var h = document.createElement("div");
-      h.className = "cath";
-      h.textContent = titulo + " (" + lista.length + ")";
-      box.appendChild(h);
-      lista.forEach(function(d) {
-        var r = document.createElement("div");
-        r.className = "catrow";
-        var f = document.createElement("span");
-        f.className = "catflag";
-        f.textContent = d.dis ? "🏳️" : d.flag;
-        var t = document.createElement("div");
-        var n = document.createElement("b");
-        n.textContent = d.name;
-        var o = document.createElement("small");
-        o.textContent = (d.obs || "").split(/[;—]/)[0].trim();
-        var ultra = /ultramarin/i.test(d.obs || "");
-        if (ultra) {
-          var u = document.createElement("em");
-          u.className = "catultra";
-          u.textContent = "ultramarino";
-          n.appendChild(u);
-        }
-        t.appendChild(n);
-        t.appendChild(o);
-        r.appendChild(f);
-        r.appendChild(t);
-        box.appendChild(r);
-      });
-    }
-    grupo("⚠️ Não reconhecidos pela ONU", D.filter(function(d) {
-      return d.dis;
-    }));
-    grupo("◇ Territórios dependentes", D.filter(function(d) {
-      return d.dep;
-    }));
-    grupo("❄️ Desabitados e Antártida", D.filter(function(d) {
-      return d.uni;
-    }));
-  }
   function buildScopeList(filterStr) {
     buildScopeTiles();
-    buildCatList();
     var box = $("scopelist");
     box.innerHTML = "";
     var q2 = norm((filterStr || "").trim());
@@ -9941,37 +9556,16 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       var b = document.createElement("button");
       b.className = "sitem" + (level === 1 ? " sub" : level === 2 ? " sub sub2" : "");
       var a = document.createElement("span");
-      var rc = recordable(sc) && sc.t !== "multi" ? estadoPartida.RECS[scopeKeyFor(sc, quiz.mode)] : null;
+      var rc = recordable(sc) ? estadoPartida.RECS[scopeKeyFor(sc, quiz.mode)] : null;
       a.textContent = (rc && rc.medal ? MEDAL[rc.medal].i + " " : "") + label;
       var c = document.createElement("small");
       c.textContent = count + (sc.t === "br" || sc.t === "brreg" ? count === 1 ? " estado" : " estados" : count === 1 ? " país" : " países");
       b.appendChild(a);
       b.appendChild(c);
-      var combinable = sc.t === "reg" || sc.t === "sub" || sc.t === "super";
-      if (scopeMultiMode && combinable) {
-        if (multiHas(sc.t === "super" ? { r: -1 } : sc)) b.classList.add("selchk");
-        b.onclick = function() {
-          if (sc.t === "super") {
-            AMERICAS_R.forEach(function(ri) {
-              var it = { r: ri };
-              if (!multiHas(it)) multiSel.push(it);
-            });
-          } else {
-            var idx = multiSel.findIndex(function(m) {
-              return m.r === sc.r && m.s === sc.s;
-            });
-            if (idx >= 0) multiSel.splice(idx, 1);
-            else multiSel.push({ r: sc.r, s: sc.s });
-          }
-          updateMultiApplyBtn();
-          buildScopeList($("scopeq").value);
-        };
-      } else {
-        if (sc.t === estadoTreino.quizScope.t && sc.r === estadoTreino.quizScope.r && sc.s === estadoTreino.quizScope.s && sc.t !== "multi") b.classList.add("on");
-        b.onclick = function() {
-          applyScopeChange(sc);
-        };
-      }
+      if (sc.t === estadoTreino.quizScope.t && sc.r === estadoTreino.quizScope.r && sc.s === estadoTreino.quizScope.s) b.classList.add("on");
+      b.onclick = function() {
+        applyScopeChange(sc);
+      };
       box.appendChild(b);
     }
     function header(t) {
@@ -9981,11 +9575,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       h.textContent = t;
       box.appendChild(h);
     }
-    if (!scopeMultiMode) {
-      var rv = reviewList();
-      if (rv.length) item("🧠 Revisão do dia: " + (rv.length === 1 ? "o que você mais erra" : "os " + rv.length + " que você mais erra"), rv.length, { t: "review", cc: rv }, 0);
-      item("🌍 Mundo", availCount(), { t: "world" }, 0);
-    }
+    var rv = reviewList();
+    if (rv.length) item("🧠 Revisão do dia: " + (rv.length === 1 ? "o que você mais erra" : "os " + rv.length + " que você mais erra"), rv.length, { t: "review", cc: rv }, 0);
+    item("🌍 Mundo", availCount(), { t: "world" }, 0);
     REG.forEach(function(rg, ri) {
       var list = D.filter(function(d) {
         return d.r === ri && avail(d);
@@ -10003,27 +9595,30 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         }).length, { t: "sub", r: ri, s: sn }, 1);
       });
     });
-    if (!scopeMultiMode) {
-      header("BRASIL");
-      item("🇧🇷 Todos os 27 estados", BRS.length, { t: "br" }, 0);
-      BRREG.forEach(function(rg, ri) {
-        item(rg.n, BRS.filter(function(s) {
-          return s.r === ri;
-        }).length, { t: "brreg", r: ri }, 1);
-      });
-    }
+    header("BRASIL");
+    item("🇧🇷 Todos os 27 estados", BRS.length, { t: "br" }, 0);
+    BRREG.forEach(function(rg, ri) {
+      item(rg.n, BRS.filter(function(s) {
+        return s.r === ri;
+      }).length, { t: "brreg", r: ri }, 1);
+    });
     $("scopeempty").style.display = any ? "none" : "block";
-    updateMultiApplyBtn();
+  }
+  function definirFoco(v) {
+    estadoTreino.quizFocus = v;
+    lsSet("globo.quiz.focus", v);
+    quiz.last = -1;
+    resetSession();
+    nextQ();
+    updateScopeBtn();
   }
   function mostrarRecomecar() {
-    var rc = recordeRelampago();
-    $("jrRelampagoSub").textContent = "60 segundos, perguntas misturadas" + (rc ? " · recorde " + rc : "");
     var b = $("qrestart"), n = poolIdx().length, r = curRun(), feitos = n ? n - runPool().length : 0;
     b.classList.remove("armado");
     b.hidden = !(n && !estadoTreino.desafio && (feitos > 0 || r.e > 0) && !r.fin);
     b.textContent = "↺ Recomeçar " + scopeLabel() + " do zero (" + feitos + " de " + n + " feitos)";
   }
-  function iniciar37() {
+  function iniciar35() {
     ouvir("treinar-regiao", function(o) {
       if (!quiz.open) quizOpen();
       applyScopeChange({ t: "reg", r: o.r });
@@ -10048,12 +9643,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       mostrarRecomecar();
       $("scopesheet").style.display = "block";
     };
-    $("jrRelampago").onclick = function() {
-      iniciarJogoRapido("relampago");
-    };
-    $("jrMisto").onclick = function() {
-      iniciarJogoRapido("misto");
-    };
     $("qrestart").onclick = function() {
       var b = $("qrestart");
       if (!b.classList.contains("armado")) {
@@ -10077,55 +9666,19 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("scopesheet").addEventListener("pointerdown", function(e) {
       if (e.target === $("scopesheet")) $("scopesheet").style.display = "none";
     });
-    $("scopeMulti").onclick = function() {
-      scopeMultiMode = !scopeMultiMode;
-      multiSel = [];
-      this.setAttribute("aria-pressed", scopeMultiMode ? "true" : "false");
-      buildScopeList($("scopeq").value);
-    };
-    $("scopeApply").onclick = function() {
-      if (!multiSel.length) return;
-      applyScopeChange({ t: "multi", items: multiSel.slice() });
-      multiSel = [];
-      scopeMultiMode = false;
-      $("scopeMulti").setAttribute("aria-pressed", "false");
-    };
-    $("qfocusb").onclick = function() {
-      estadoTreino.quizFocus = estadoTreino.quizFocus === "mix" ? "new" : estadoTreino.quizFocus === "new" ? "wrong" : "mix";
-      lsSet("globo.quiz.focus", estadoTreino.quizFocus);
-      quiz.last = -1;
-      resetSession();
-      nextQ();
-    };
-    $("oUniQ").checked = estadoMapa.includeUni;
-    $("oDepQ").checked = estadoMapa.includeDep;
-    $("oUniQ").onclick = function() {
-      setIncludeUni(this.checked);
-      buildScopeList($("scopeq").value);
-    };
-    $("oDepQ").onclick = function() {
-      setIncludeDep(this.checked);
-      buildScopeList($("scopeq").value);
-    };
-    $("oDisputedQ").onclick = function() {
-      setIncludeDisputed(this.checked);
-      buildScopeList($("scopeq").value);
-    };
   }
 
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
-    iniciar: () => iniciar38
+    iniciar: () => iniciar36,
+    ligarSeg: () => ligarSeg
   });
   var themeMode;
   function applyTheme() {
     document.documentElement.removeAttribute("data-theme");
     if (themeMode === "light") document.documentElement.setAttribute("data-theme", "light");
     else if (themeMode === "dark") document.documentElement.setAttribute("data-theme", "dark");
-    $("themeb").textContent = "🌗 Tema: " + { auto: "automático", light: "claro", dark: "escuro" }[themeMode];
-    var tv = $("mthemev");
-    if (tv) tv.textContent = { auto: "Automático (segue o celular)", light: "Claro", dark: "Escuro" }[themeMode];
   }
   function mShow(id) {
     $("mlist").hidden = !!id;
@@ -10137,17 +9690,30 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var bx = $("msheet").querySelector(".box");
     if (bx) bx.scrollTop = 0;
   }
-  function updateLabelsRow() {
-    $("mlabelsv").textContent = estadoMapa.labelMode === "p" ? "Países" : "Capitais";
+  function ligarSeg(box, atual, definir) {
+    function marca(v) {
+      Array.prototype.forEach.call(box.querySelectorAll("button"), function(b) {
+        b.setAttribute("aria-pressed", b.getAttribute("data-v") === v ? "true" : "false");
+      });
+    }
+    Array.prototype.forEach.call(box.querySelectorAll("button"), function(b) {
+      b.onclick = function() {
+        var v = b.getAttribute("data-v");
+        definir(v);
+        marca(v);
+      };
+    });
+    marca(atual);
+    return marca;
   }
-  function iniciar38() {
+  function iniciar36() {
     themeMode = lsGet("globo.theme", "auto");
-    $("themeb").onclick = function() {
-      themeMode = themeMode === "auto" ? "light" : themeMode === "light" ? "dark" : "auto";
-      lsSet("globo.theme", themeMode);
-      applyTheme();
-    };
     applyTheme();
+    ligarSeg($("mtema"), themeMode, function(v) {
+      themeMode = v;
+      lsSet("globo.theme", v);
+      applyTheme();
+    });
     Array.prototype.forEach.call(document.querySelectorAll("#mlist [data-p]"), function(b) {
       b.onclick = function() {
         mShow(b.getAttribute("data-p"));
@@ -10156,17 +9722,19 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("mback").onclick = function() {
       mShow(null);
     };
-    $("mthemerow").onclick = function() {
-      $("themeb").click();
-    };
     function somV() {
-      $("msfxv").textContent = estadoSom.efeitos ? "Ligados" : "Desligados";
-      $("mmusicv").textContent = estadoSom.musica ? "Ligada (toca no modo Livre)" : "Desligada";
+      $("msfx").checked = estadoSom.efeitos;
+      $("mmusic").checked = estadoSom.musica;
     }
-    $("msfx").onclick = function() {
-      alternarEfeitos();
+    $("msfx").onchange = function() {
+      if (this.checked !== estadoSom.efeitos) alternarEfeitos();
       somV();
     };
+    $("mmusic").onchange = function() {
+      if (this.checked !== estadoSom.musica) alternarMusica();
+      somV();
+    };
+    somV();
     function somH() {
       var b = $("msom");
       b.textContent = estadoSom.mudo ? "🔇" : "🔊";
@@ -10179,18 +9747,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       setStatus(estadoSom.mudo ? "🔇 Som desligado" : "🔊 Som ligado (a música toca no modo Livre)", 2200);
     };
     somH();
-    $("mmusic").onclick = function() {
-      alternarMusica();
-      somV();
-    };
-    somV();
-    $("mlabels").onclick = function() {
-      (estadoMapa.labelMode === "p" ? $("lc") : $("lp")).click();
-      updateLabelsRow();
-    };
-    updateLabelsRow();
+    var marcaNomes = ligarSeg($("mlabels"), estadoMapa.labelMode, function(v) {
+      $(v === "c" ? "lc" : "lp").click();
+    });
     $("mbtn").onclick = function() {
-      updateMapInfo();
+      marcaNomes(estadoMapa.labelMode);
+      somV();
       mShow(null);
       $("msheet").style.display = "block";
     };
@@ -10209,14 +9771,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var cartao_estado_exports = {};
   __export(cartao_estado_exports, {
     enterStates: () => enterStates,
-    iniciar: () => iniciar40
+    iniciar: () => iniciar38
   });
 
   // web/src/js/brasil/importar-contornos.js
   var importar_contornos_exports = {};
   __export(importar_contornos_exports, {
     ensureStateShapes: () => ensureStateShapes,
-    iniciar: () => iniciar39
+    iniciar: () => iniciar37
   });
   function stFeatIndex(f) {
     var p = f.properties || {};
@@ -10330,7 +9892,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       return f;
     }) || stAuto === 1) return;
     if (!estadoRender.feats || !window.d3) {
-      setStatus("Os limites dos estados aparecem depois que o mapa carregar. Importe um arquivo em ⋯ Mais se preferir.", 6e3);
+      setStatus("Os limites dos estados aparecem depois que o mapa carregar.", 6e3);
       return;
     }
     stAuto = 1;
@@ -10342,7 +9904,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       setStatus("Limites dos estados carregados (" + m + " de 27). Dados: amCharts geodata / Natural Earth.", 6e3);
     }).catch(function() {
       stAuto = 0;
-      setStatus("Não consegui carregar os limites dos estados sozinho. Você pode importar um GeoJSON em ⋯ Mais → Brasil.", 9e3);
+      setStatus("Não consegui carregar os limites dos estados sozinho. Tente de novo mais tarde.", 9e3);
     });
   }
   function loadSavedStates() {
@@ -10361,27 +9923,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       })();
     });
   }
-  function iniciar39() {
-    $("impSt").onchange = function() {
-      var f = this.files[0];
-      this.value = "";
-      if (!f) return;
-      if (!window.d3 || !window.topojson) {
-        setStatus("As bibliotecas de mapa ainda não carregaram; tente de novo em instantes.", 6e3);
-        return;
-      }
-      var fr = new FileReader();
-      fr.onload = function() {
-        try {
-          var list = ingestStates(JSON.parse(fr.result)), m = setupStates(list);
-          saveStates(list);
-          setStatus("Contornos dos estados importados (" + m + " de 27). Salvos neste aparelho.", 6e3);
-        } catch (e) {
-          setStatus("Não consegui usar esse arquivo: " + e.message + ". Use um GeoJSON dos estados do Brasil (por exemplo, a malha do IBGE).", 1e4);
-        }
-      };
-      fr.readAsText(f);
-    };
+  function iniciar37() {
     loadSavedStates();
   }
 
@@ -10559,7 +10101,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     selectSt(st || BRS[0], true);
     ensureStateShapes();
   }
-  function iniciar40() {
+  function iniciar38() {
     ganchosInterface.passoEstado = stepSt;
     ganchosInterface.alternarVizinhosEstado = toggleNbSt;
     ganchosInterface.selecionarEstado = selectSt;
@@ -10577,7 +10119,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/brasil/filtros.js
   var filtros_exports2 = {};
   __export(filtros_exports2, {
-    iniciar: () => iniciar41
+    iniciar: () => iniciar39
   });
   function mkChipSt(label, color, val, count) {
     var b = document.createElement("button");
@@ -10626,14 +10168,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       }).length));
     });
   }
-  function iniciar41() {
+  function iniciar39() {
     ganchosInterface.montarChipsEstados = buildChipsSt;
   }
 
   // web/src/js/brasil/menu.js
   var menu_exports2 = {};
   __export(menu_exports2, {
-    iniciar: () => iniciar42
+    iniciar: () => iniciar40
   });
   function cmpRow(box, label, va, vb) {
     var r = document.createElement("div");
@@ -10658,7 +10200,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function cmpRelTop(d) {
     return d.rel && d.rel.items[0] ? d.rel.items[0].n + (d.rel.items[0].p != null ? " " + d.rel.items[0].p + "%" : "") : "—";
   }
-  function iniciar42() {
+  function iniciar40() {
     BRS.forEach(function(s) {
       var o = document.createElement("option");
       o.value = s.i;
@@ -10708,18 +10250,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       n.textContent = "Valores aproximados. Confira em fonte oficial antes de citar.";
       box.appendChild(n);
     };
-    $("expBR").onclick = function() {
-      $("msheet").style.display = "none";
-      var rows = [["Estado", "Sigla", "Capital", "Região", "Área (km²)", "População (Censo 2022)", "Código IBGE", "Estados vizinhos"]];
-      BRS.forEach(function(s) {
-        rows.push([s.name, s.sigla, s.cap, BRREG[s.reg].n, s.area, s.pop, s.ibge, s.nb.map(function(k) {
-          return BRS[k].sigla;
-        }).join(" / ")]);
-      });
-      offerFile("estados-e-capitais-do-brasil.csv", "\uFEFF" + rows.map(function(r) {
-        return r.map(csvCell).join(",");
-      }).join("\n"));
-    };
     document.addEventListener("visibilitychange", function() {
       if (document.hidden) tourStop();
     });
@@ -10728,7 +10258,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/app/ultima-visao.js
   var ultima_visao_exports = {};
   __export(ultima_visao_exports, {
-    iniciar: () => iniciar43
+    iniciar: () => iniciar41
   });
   function saveLastView() {
     if (quiz.open || estadoBrasil.statesMode) return;
@@ -10758,7 +10288,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (i >= 0 && estadoMapa.on[i]) select(D[i], false);
     }
   }
-  function iniciar43() {
+  function iniciar41() {
     ouvir("visao-mudou", saveLastView);
     restoreLastView();
   }
@@ -10768,7 +10298,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(passaporte_exports, {
     abrirPassaporte: () => abrirPassaporte,
     contarCarimbos: () => contarCarimbos,
-    iniciar: () => iniciar44
+    iniciar: () => iniciar42
   });
   function carimbado(d) {
     var e = (estadoTreino.QS.m.cap || {})[d.cc];
@@ -10828,7 +10358,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     $("passsheet").style.display = "block";
   }
-  function iniciar44() {
+  function iniciar42() {
     $("mpassaporte").onclick = abrirPassaporte;
     $("passclose").onclick = function() {
       $("passsheet").style.display = "none";
@@ -10838,16 +10368,16 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/app/inicio.js
   var inicio_exports = {};
   __export(inicio_exports, {
-    iniciar: () => iniciar45
+    iniciar: () => iniciar43
   });
-  function iniciar45() {
+  function iniciar43() {
     quizOpen();
   }
 
   // web/src/js/treino/toques.js
   var toques_exports = {};
   __export(toques_exports, {
-    iniciar: () => iniciar46
+    iniciar: () => iniciar44
   });
   function paisNoPonto(x, y) {
     if (!estadoCamera.plano2D) return countryAt(x, y);
@@ -10930,7 +10460,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     quizMapAnswer(cand.length ? cand[0].d : poly);
     return true;
   }
-  function iniciar46() {
+  function iniciar44() {
     ganchosInterface.toqueAntes = toqueAntes;
     ganchosInterface.toqueNoGlobo = toqueNoGlobo;
     ganchosInterface.toqueNoMapa2D = toqueNoMapa2D;
@@ -10939,23 +10469,24 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/treino/boas-vindas.js
   var boas_vindas_exports = {};
   __export(boas_vindas_exports, {
-    iniciar: () => iniciar48
+    iniciar: () => iniciar46
   });
 
   // web/src/js/treino/tour.js
   var tour_exports = {};
   __export(tour_exports, {
-    iniciar: () => iniciar47,
+    iniciar: () => iniciar45,
     iniciarTour: () => iniciarTour
   });
   var PASSOS = [
     { alvo: ".modesw", texto: "🔀 Aqui você troca de modo: 🎯 Treino tem perguntas; 🧭 Livre é para explorar o globo à vontade." },
-    { alvo: "#qmodeb", texto: "❓ Escolha o tipo de pergunta: capital, bandeira, achar no mapa, vizinhos…" },
-    { alvo: "#qscopeb", texto: "📍 Escolha a região: um continente, um país e seus vizinhos ou o mundo todo." },
+    { alvo: "#qmodeb", texto: "🎮 Escolha o jogo: capital, bandeira, achar no mapa, vizinhos… ou um jogo rápido (Relâmpago, Misto, Desafio do dia)." },
+    { alvo: "#qscopeb", texto: "📍 Escolha a região: um continente, uma parte dele, os estados do Brasil ou o mundo todo." },
+    { alvo: "#qajustb", texto: "⚙️ Ajustes da partida: digitar ou escolher, cronômetro, tamanho da rodada, meta do dia…" },
     { alvo: "#qscore", texto: "⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥." },
     { alvo: "#qbody", texto: "👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final." },
     { alvo: ".tools", texto: "🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países." },
-    { alvo: "#mbtn", texto: "⋯ No menu: desafio do dia, conquistas, histórico, som, salvar progresso e este tour de novo." }
+    { alvo: "#mbtn", texto: "⋯ No menu: passaporte, conquistas, histórico, explorar o mapa, som e visual, salvar progresso e este tour de novo." }
   ];
   var passo = -1;
   function fecharTour() {
@@ -10995,7 +10526,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     passo = 0;
     setTimeout(mostrarPasso, 450);
   }
-  function iniciar47() {
+  function iniciar45() {
     $("guiaprox").onclick = function() {
       passo++;
       mostrarPasso();
@@ -11016,7 +10547,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
 
   // web/src/js/treino/boas-vindas.js
-  function iniciar48() {
+  function iniciar46() {
     if (lsGet("globo.bv.v1", false)) return;
     lsSet("globo.bv.v1", true);
     var m = estadoTreino.QS.m || {}, jaJogou = Object.keys(m).some(function(k) {
@@ -11053,7 +10584,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/treino/desafio.js
   var desafio_exports = {};
   __export(desafio_exports, {
-    iniciar: () => iniciar49
+    iniciar: () => iniciar47
   });
   var INICIO = Date.UTC(2026, 9, 1);
   function hojeStr() {
@@ -11181,18 +10712,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (mais) mais.insertBefore(b, mais.firstChild);
     }
   }
-  function iniciar49() {
+  function iniciar47() {
     ouvir("rodada-terminou", aoTerminarRodada);
-    $("mdesafio").onclick = function() {
-      $("mclose").click();
-      iniciarDesafio();
-    };
+    ouvir("abrir-desafio", iniciarDesafio);
   }
 
   // web/src/js/interface/legenda.js
   var legenda_exports = {};
   __export(legenda_exports, {
-    iniciar: () => iniciar50
+    iniciar: () => iniciar48
   });
   var SIMBOLO = { c: "●", d: "◆", s: "■", t: "▲" };
   function mostrarLegenda() {
@@ -11213,7 +10741,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     $("legenda").hidden = false;
   }
-  function iniciar50() {
+  function iniciar48() {
     $("legok").onclick = function() {
       lsSet("globo.legenda.vista", true);
       $("legenda").hidden = true;
@@ -11235,7 +10763,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/recursos/progresso.js
   var progresso_exports = {};
   __export(progresso_exports, {
-    iniciar: () => iniciar51,
+    iniciar: () => iniciar49,
     restaurarDeTexto: () => restaurarDeTexto
   });
   var MARCA = "geoTotal-progresso";
@@ -11271,7 +10799,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     return "";
   }
-  function iniciar51() {
+  function iniciar49() {
     $("msave").onclick = salvarProgresso;
     $("mload").onchange = function() {
       var f = this.files && this.files[0];
@@ -11293,6 +10821,126 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     };
   }
 
+  // web/src/js/treino/ajustes.js
+  var ajustes_exports = {};
+  __export(ajustes_exports, {
+    abrirAjustes: () => abrirAjustes,
+    iniciar: () => iniciar50
+  });
+  var LINHAS = [
+    [
+      "Responder",
+      "Vizinhos e Achar no mapa são sempre de tocar.",
+      [["choice", "👆 Escolher"], ["type", "⌨️ Digitar"]],
+      function() {
+        return quiz.type;
+      },
+      definirResposta
+    ],
+    [
+      "Perguntas",
+      "",
+      [["mix", "Todas"], ["new", "Só novas"], ["wrong", "Que errei"]],
+      function() {
+        return estadoTreino.quizFocus;
+      },
+      definirFoco
+    ],
+    [
+      "Ordem",
+      "",
+      [["random", "🔀 Aleatória"], ["seq", "➡️ Em sequência"]],
+      function() {
+        return quiz.order === "seq" ? "seq" : "random";
+      },
+      definirOrdem
+    ],
+    [
+      "Tamanho da rodada",
+      "No Mundo. Numa região, a rodada vai até completar a região.",
+      [[0, "Sem fim"], [10, "10"], [20, "20"]],
+      function() {
+        return quiz.sessionLen;
+      },
+      definirRodada
+    ],
+    [
+      "Cronômetro",
+      "Responda o máximo que der antes do tempo acabar.",
+      [[0, "Sem tempo"], [30, "30 s"], [60, "60 s"]],
+      function() {
+        return quiz.timerLen;
+      },
+      definirTempo
+    ],
+    [
+      "Sobrevivência",
+      "Errou uma vez, a rodada acaba.",
+      [[false, "Não"], [true, "💀 Sim"]],
+      function() {
+        return !!quiz.survivalMode;
+      },
+      definirSobrevivencia
+    ],
+    [
+      "Meta do dia",
+      "Respostas por dia para manter a sequência 🔥.",
+      [[5, "5"], [10, "10"], [20, "20"], [30, "30"]],
+      metaDoDia,
+      definirMeta
+    ]
+  ];
+  function montarAjustes() {
+    var box = $("ajbody");
+    box.innerHTML = "";
+    LINHAS.forEach(function(l) {
+      var row = document.createElement("div");
+      row.className = "ajrow";
+      var t = document.createElement("b");
+      t.textContent = l[0];
+      row.appendChild(t);
+      var seg = document.createElement("div");
+      seg.className = "aseg";
+      var atual = l[3]();
+      l[2].forEach(function(op) {
+        var b = document.createElement("button");
+        b.textContent = op[1];
+        b.setAttribute("aria-pressed", op[0] === atual ? "true" : "false");
+        b.onclick = function() {
+          if (op[0] !== l[3]()) {
+            l[4](op[0]);
+          }
+          montarAjustes();
+        };
+        seg.appendChild(b);
+      });
+      row.appendChild(seg);
+      if (l[1]) {
+        var d = document.createElement("small");
+        d.textContent = l[1];
+        row.appendChild(d);
+      }
+      box.appendChild(row);
+    });
+  }
+  function abrirAjustes() {
+    montarAjustes();
+    $("ajsheet").style.display = "block";
+  }
+  function fecharAjustes() {
+    $("ajsheet").style.display = "none";
+  }
+  function iniciar50() {
+    $("qajustb").onclick = abrirAjustes;
+    $("goalgo").onclick = abrirAjustes;
+    $("goalgo").title = "Toque para mudar a meta do dia e outros ajustes";
+    $("ajclose").onclick = fecharAjustes;
+    $("ajok").onclick = fecharAjustes;
+    $("ajsheet").addEventListener("pointerdown", function(e) {
+      if (e.target === $("ajsheet")) fecharAjustes();
+    });
+  }
+
   // web/src/js/main.js
   iniciar();
   iniciar2();
@@ -11302,51 +10950,50 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   iniciar6();
   iniciar7();
   iniciar8();
-  iniciar21();
+  iniciar20();
   iniciar9();
-  iniciar22();
-  iniciar17();
-  iniciar19();
+  iniciar21();
+  iniciar16();
   iniciar18();
+  iniciar17();
+  iniciar22();
   iniciar23();
-  iniciar24();
   iniciar12();
   iniciar13();
+  iniciar24();
+  iniciar19();
   iniciar25();
-  iniciar20();
   iniciar26();
+  iniciar14();
   iniciar27();
   iniciar28();
-  iniciar14();
-  iniciar15();
-  iniciar29();
-  iniciar30();
-  iniciar33();
-  iniciar35();
-  iniciar46();
   iniciar31();
+  iniciar33();
+  iniciar44();
+  iniciar29();
+  iniciar34();
+  iniciar35();
   iniciar36();
-  iniciar37();
-  iniciar38();
   iniciar10();
   iniciar11();
-  iniciar34();
+  iniciar32();
+  iniciar38();
+  iniciar39();
+  iniciar37();
   iniciar40();
   iniciar41();
-  iniciar39();
+  iniciar15();
+  iniciar30();
   iniciar42();
   iniciar43();
-  iniciar16();
-  iniciar32();
-  iniciar44();
   iniciar45();
-  iniciar47();
-  iniciar48();
-  iniciar49();
-  iniciar51();
   iniciar50();
+  iniciar46();
+  iniciar47();
+  iniciar49();
+  iniciar48();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, filtros_favoritos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, hora_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

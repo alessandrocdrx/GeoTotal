@@ -27,7 +27,6 @@ import * as VisualizacaoMarcadores from './visualizacao/marcadores.js';
 import * as InterfaceCartaoDetalhes from './interface/cartao-detalhes.js';
 import * as InterfaceFiltrosDesfazer from './interface/filtros-desfazer.js';
 import * as InterfaceListaProximos from './interface/lista-proximos.js';
-import * as InterfaceFiltrosFavoritos from './interface/filtros-favoritos.js';
 import * as InterfacePasseio from './interface/passeio.js';
 import * as InterfaceDistancia from './interface/distancia.js';
 import * as VisualizacaoDiaNoite from './visualizacao/dia-noite.js';
@@ -69,6 +68,7 @@ import * as TreinoDesafio from './treino/desafio.js';
 import * as InterfaceLegenda from './interface/legenda.js';
 import * as RecursosProgresso from './recursos/progresso.js';
 import * as TreinoTour from './treino/tour.js';
+import * as TreinoAjustes from './treino/ajustes.js';
 import * as NucleoHora from './nucleo/hora.js';
 
 /* Módulos só definem funções e estado ao carregar; a execução começa aqui, nesta ordem. */
@@ -92,11 +92,9 @@ VisualizacaoFronteiras.iniciar();
 VisualizacaoTextura.iniciar();
 InterfaceFiltrosDesfazer.iniciar();
 InterfaceListaProximos.iniciar();
-InterfaceFiltrosFavoritos.iniciar();
 InterfacePasseio.iniciar();
 InterfaceDistancia.iniciar();
 VisualizacaoDiaNoite.iniciar();
-VisualizacaoCarregamento.iniciar();
 RecursosExportar.iniciar();
 TreinoEstado.iniciar();
 TreinoPartida.iniciar();
@@ -119,6 +117,7 @@ TreinoProgressao.iniciar();
 TreinoPassaporte.iniciar();
 AppInicio.iniciar();
 TreinoTour.iniciar();
+TreinoAjustes.iniciar();
 TreinoBoasVindas.iniciar();
 TreinoDesafio.iniciar();
 RecursosProgresso.iniciar();
@@ -128,7 +127,7 @@ InterfaceLegenda.iniciar();
 window.setStatus = VisualizacaoFronteiras.setStatus;
 
 /* Interface de depuração e testes (tests/e2e): window.__geoTotal.nome lê o valor atual. */
-const modulos = [AppCompatEmoji, DadosPaises, DadosInfoPaises, DadosReligioes, DadosLinguas, DadosMassasTerra, DadosVizinhos, DadosOceanosPolos, VisualizacaoGlobo, VisualizacaoAnimacao, InterfaceInteracao, InterfaceCartaoPais, InterfaceFiltros, InterfaceBusca, InterfaceBotoes, VisualizacaoFronteiras, VisualizacaoWebgl, VisualizacaoTextura, NucleoUtilitarios, VisualizacaoMarcadores, InterfaceCartaoDetalhes, InterfaceFiltrosDesfazer, InterfaceListaProximos, InterfaceFiltrosFavoritos, InterfacePasseio, InterfaceDistancia, VisualizacaoDiaNoite, VisualizacaoCarregamento, RecursosExportar, TreinoEstado, TreinoDominio, TreinoPartida, TreinoDica, TreinoPerguntas, TreinoEstatisticas, TreinoDestaqueEscopo, TreinoEscopo, InterfaceMenu, DadosEstadosBrasil, BrasilModoEstados, BrasilCartaoEstado, BrasilFiltros, BrasilImportarContornos, BrasilMenu, AppUltimaVisao, VisualizacaoMapa2d, TreinoProgressao, TreinoPassaporte, AppInicio, NucleoGeo, VisualizacaoEnquadramento, VisualizacaoEstados, VisualizacaoGanchos, VisualizacaoSelo, InterfaceGanchos, NucleoEventos, TreinoToques, VisualizacaoProjecao, VisualizacaoTela, NucleoSom, TreinoBoasVindas, TreinoDesafio, InterfaceLegenda, RecursosProgresso, TreinoTour, NucleoHora];
+const modulos = [AppCompatEmoji, DadosPaises, DadosInfoPaises, DadosReligioes, DadosLinguas, DadosMassasTerra, DadosVizinhos, DadosOceanosPolos, VisualizacaoGlobo, VisualizacaoAnimacao, InterfaceInteracao, InterfaceCartaoPais, InterfaceFiltros, InterfaceBusca, InterfaceBotoes, VisualizacaoFronteiras, VisualizacaoWebgl, VisualizacaoTextura, NucleoUtilitarios, VisualizacaoMarcadores, InterfaceCartaoDetalhes, InterfaceFiltrosDesfazer, InterfaceListaProximos, InterfacePasseio, InterfaceDistancia, VisualizacaoDiaNoite, VisualizacaoCarregamento, RecursosExportar, TreinoEstado, TreinoDominio, TreinoPartida, TreinoDica, TreinoPerguntas, TreinoEstatisticas, TreinoDestaqueEscopo, TreinoEscopo, InterfaceMenu, DadosEstadosBrasil, BrasilModoEstados, BrasilCartaoEstado, BrasilFiltros, BrasilImportarContornos, BrasilMenu, AppUltimaVisao, VisualizacaoMapa2d, TreinoProgressao, TreinoPassaporte, AppInicio, NucleoGeo, VisualizacaoEnquadramento, VisualizacaoEstados, VisualizacaoGanchos, VisualizacaoSelo, InterfaceGanchos, NucleoEventos, TreinoToques, VisualizacaoProjecao, VisualizacaoTela, NucleoSom, TreinoBoasVindas, TreinoDesafio, InterfaceLegenda, RecursosProgresso, TreinoTour, TreinoAjustes, NucleoHora];
 const api = {};
 for (const mod of modulos) {
   for (const nome of Object.keys(mod)) {
