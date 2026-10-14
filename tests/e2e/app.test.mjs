@@ -185,6 +185,43 @@ test('toques e categorias passam pelos ganchos da interface', async () => {
   await fechar();
 });
 
+test('botão 🏷️ e estilo no topo; mudar lugares no meio da rodada avisa e recomeça', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(async () => {
+    const g = window.__geoTotal, $ = (id) => document.getElementById(id);
+    const espera = (ms) => new Promise((ok) => setTimeout(ok, ms));
+    $('mestilotop').click();
+    const atlas = g.estadoRender.atlas && $('mestilotop').textContent === '🎨' && document.querySelector('#mestilo [data-v="atlas"]').getAttribute('aria-pressed') === 'true';
+    $('mestilotop').click();
+    /* camadas de nomes */
+    $('camb').click();
+    const aberto = !$('camadas').hidden;
+    $('cMar').click();
+    const semMares = g.estadoRender.camadas.mares === false;
+    $('cMar').click();
+    ['cZon', 'cDes', 'cFlo', 'cMon'].forEach((i) => $(i).click());
+    const c = g.estadoRender.camadas;
+    const natureza = c.zonas && c.desertos && c.florestas && c.montanhas;
+    $('flat2d').click();await espera(200);$('flat2d').click();
+    /* treino com uma resposta dada: mudar territórios pergunta antes */
+    $('qbtn').click();await espera(300);
+    g.quiz.answered = false;g.finishQ(true);g.nextQ();
+    const dep = g.estadoMapa.includeDep;
+    $('cDep').click();
+    const aviso = document.querySelector('.avisolug');
+    const naoMudouAinda = g.estadoMapa.includeDep === dep;
+    aviso.querySelector('button:not(.avsim)').click();
+    const cancelou = !document.querySelector('.avisolug') && g.estadoMapa.includeDep === dep;
+    $('cDep').click();
+    document.querySelector('.avisolug .avsim').click();
+    const n = g.poolIdx().length, feitos = n - g.runPool().length;
+    return { atlas, aberto, semMares, natureza, aviso: !!aviso, naoMudouAinda, cancelou, mudou: g.estadoMapa.includeDep === !dep, zerou: feitos === 0 && $('oDep').checked === !dep };
+  });
+  assert.deepEqual(r, { atlas: true, aberto: true, semMares: true, natureza: true, aviso: true, naoMudouAinda: true, cancelou: true, mudou: true, zerou: true });
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
 test('som: efeitos e música ligam e desligam pelo menu, sem erros', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.click('#mbtn');

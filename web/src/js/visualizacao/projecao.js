@@ -19,6 +19,8 @@ const estadoRender = {
   optFill: true,
   /** Estilo atlas escolar (cores por país, oceano claro) em vez da textura de satélite. */
   atlas: false,
+  /** Nomes no mapa que o usuário liga e desliga no botão 🏷️. */
+  camadas: { oceanos: true, mares: true, zonas: false, desertos: false, florestas: false, montanhas: false },
   feats: null,
   FEAT: undefined,
   EXTRA: [],

@@ -114,6 +114,8 @@ function iniciar() {
   function visMostra(){var n=$('oNight').checked;$('mvisual').textContent=n?'🌗':'☀️';$('mvisual').setAttribute('aria-pressed',n?'true':'false');}
   $('mvisual').onclick=function(){
     var noite=$('oNight'),v=!noite.checked;
+    /* dia e noite só existe no satélite: no atlas, o botão volta para o satélite */
+    if(estadoRender.atlas)definirAtlas(false);
     estadoRender.optTex=true;oTex.checked=estadoRender.useTex;
     noite.checked=v;noite.dispatchEvent(new Event('change'));
     visMostra();setStatus(v?'🌗 Globo com dia e noite de verdade':'☀️ Globo sempre de dia',2200);
@@ -121,10 +123,20 @@ function iniciar() {
   $('oNight').addEventListener('change',visMostra);oTex.addEventListener('change',visMostra);
   /* estilo do mapa: satélite (textura com relevo, dia e noite) ou atlas escolar (uma cor por país) */
   estadoRender.atlas=lsGet('globo.atlas',false)===true;
-  function estiloMostra(){Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',(b.dataset.v==='atlas')===estadoRender.atlas?'true':'false');});}
+  function estiloMostra(){
+    Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',(b.dataset.v==='atlas')===estadoRender.atlas?'true':'false');});
+    var t=$('mestilotop');t.textContent=estadoRender.atlas?'🎨':'🛰️';
+    t.setAttribute('aria-label','Estilo do mapa: '+(estadoRender.atlas?'atlas':'satélite'));t.setAttribute('aria-pressed',estadoRender.atlas?'true':'false');
+  }
+  function definirAtlas(v){estadoRender.atlas=v;lsSet('globo.atlas',v);estiloMostra();}
   Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){
-    b.onclick=function(){estadoRender.atlas=b.dataset.v==='atlas';lsSet('globo.atlas',estadoRender.atlas);estiloMostra();};
+    b.onclick=function(){definirAtlas(b.dataset.v==='atlas');};
   });
+  /* botão do topo, ao lado do dia e noite: alterna satélite e atlas */
+  $('mestilotop').onclick=function(){
+    definirAtlas(!estadoRender.atlas);
+    setStatus(estadoRender.atlas?'🎨 Mapa atlas: uma cor por país':'🛰️ Mapa de satélite',2200);
+  };
   estiloMostra();
   setTimeout(visMostra,0);
 }

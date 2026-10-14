@@ -35,6 +35,8 @@ const ganchosInterface = {
   toqueNoGlobo: (/* x, y, cand */) => false,
   /** Treino: o mesmo no mapa 2D. */
   toqueNoMapa2D: (/* x, y */) => false,
+  /** Treino: antes de mudar quais lugares entram no jogo (avisa que a rodada recomeça). Chama fazer() se puder. */
+  antesDeMudarLugares: (fazer) => fazer(),
 };
 
 export { ganchosInterface };

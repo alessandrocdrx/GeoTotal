@@ -6,6 +6,7 @@
 
 import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { D, norm, REG } from '../dados/paises.js';
+import { ganchosInterface } from '../interface/ganchos.js';
 import { ouvir } from '../nucleo/eventos.js';
 import { $, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { firePulseForScope } from './destaque-escopo.js';
@@ -115,8 +116,32 @@ function mostrarRecomecar(){
   b.hidden=!(n&&!estadoTreino.desafio&&(feitos>0||r.e>0)&&!r.fin);
   b.textContent='↺ Recomeçar '+scopeLabel()+' do zero ('+feitos+' de '+n+' feitos)';
 }
+/* mudar quais lugares entram (não reconhecidos, territórios…) no meio de uma rodada muda a lista de
+   perguntas: avisa e, se a pessoa confirmar, a rodada recomeça do zero */
+function rodadaEmAndamento(){
+  if(!quiz.open||estadoTreino.desafio||estadoTreino.quizDomain==='br')return false;
+  var n=poolIdx().length,r=curRun();
+  return !!n&&!r.fin&&(n-runPool().length>0||r.e>0);
+}
+function antesDeMudarLugares(fazer){
+  if(!rodadaEmAndamento()){fazer();return;}
+  var ov=document.createElement('div');ov.className='ov avisolug';ov.style.display='block';ov.style.zIndex='130';
+  var bx=document.createElement('div');bx.className='box';
+  var t=document.createElement('b');t.className='avtit';t.textContent='Recomeçar a rodada?';
+  var p=document.createElement('p');p.textContent='Mudar quais lugares entram no jogo muda as perguntas. A rodada de '+scopeLabel()+' vai recomeçar do zero. Medalhas e conquistas continuam.';
+  var lin=document.createElement('div');lin.className='row2';
+  var sim=document.createElement('button');sim.className='avsim';sim.textContent='↺ Mudar e recomeçar';
+  var nao=document.createElement('button');nao.textContent='Agora não';
+  function fechar(){ov.remove();}
+  sim.onclick=function(){fechar();fazer();runRestart();setStatus('Rodada recomeçada do zero com os lugares novos.',3000);};
+  nao.onclick=fechar;
+  ov.addEventListener('pointerdown',function(e){if(e.target===ov)fechar();});
+  lin.appendChild(sim);lin.appendChild(nao);bx.appendChild(t);bx.appendChild(p);bx.appendChild(lin);ov.appendChild(bx);
+  document.body.appendChild(ov);
+}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  ganchosInterface.antesDeMudarLugares=antesDeMudarLugares;
   ouvir('treinar-regiao',function(o){if(!quiz.open)quizOpen();applyScopeChange({t:'reg',r:o.r});});
   ouvir('treinar-estados',function(){if(!quiz.open)quizOpen();applyScopeChange({t:'br'});});
   ouvir('categorias-mudaram',function(o){if(quiz.open){updateScopeBtn();if(o.placar)renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}});

@@ -4,7 +4,7 @@
   <header>
     <div class="htop">
       <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
-      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite">☀️</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite">☀️</button><button id="mestilotop" class="hsom" aria-label="Estilo do mapa: satélite" title="Satélite ou atlas">🛰️</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -37,6 +37,20 @@
       <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true">🔄</button>
       <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países">🎬</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
+      <button id="camb" aria-label="O que aparece no mapa" title="O que aparece no mapa" aria-expanded="false">🏷️</button>
+    </div>
+    <div id="camadas" class="camadas" hidden>
+      <div class="camtit"><b>O que aparece no mapa</b><button id="camfechar" class="closeb" aria-label="Fechar">✕</button></div>
+      <label class="mswrow"><span class="mi">🌊</span><span class="mt"><b>Oceanos</b></span><input type="checkbox" id="cOce" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">⛵</span><span class="mt"><b>Mares e golfos</b><small>Os menores aparecem ao aproximar</small></span><input type="checkbox" id="cMar" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">🌡️</span><span class="mt"><b>Zonas climáticas</b><small>Tropical, temperadas e polares; Equador e Trópicos</small></span><input type="checkbox" id="cZon" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">🏜️</span><span class="mt"><b>Desertos</b></span><input type="checkbox" id="cDes" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">🌳</span><span class="mt"><b>Florestas</b></span><input type="checkbox" id="cFlo" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">⛰️</span><span class="mt"><b>Cordilheiras</b></span><input type="checkbox" id="cMon" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <div class="camsep">Lugares (valem também no treino)</div>
+      <label class="mswrow"><span class="mi">⚠️</span><span class="mt"><b>Não reconhecidos pela ONU</b><small>Kosovo, Somalilândia…</small></span><input type="checkbox" id="cDis" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">◇</span><span class="mt"><b>Territórios dependentes</b><small>Porto Rico, Groenlândia…</small></span><input type="checkbox" id="cDep" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">❄️</span><span class="mt"><b>Desabitados e Antártida</b></span><input type="checkbox" id="cUni" role="switch"><i class="msw" aria-hidden="true"></i></label>
     </div>
     <div id="legenda" class="legenda" hidden><b>Cada forma é um continente</b><div id="legitens" class="legitens"></div><button id="legok" class="legok">Entendi</button></div>
     <div class="hint" id="hint">Arraste para girar · toque num país para ver os detalhes</div>

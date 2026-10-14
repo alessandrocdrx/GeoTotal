@@ -5,15 +5,16 @@
  */
 
 import { LX, LY, LZ } from '../dados/massas-terra.js';
-import { OC } from '../dados/oceanos-polos.js';
 import { D, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
+import { desenharAguas } from './aguas.js';
 import { shortest } from './animacao.js';
 import { drawStates, estadoBrasil } from './estados.js';
 import { drawGeo } from './fronteiras.js';
 import { ganchos } from './ganchos.js';
 import { draw2D } from './mapa-2d.js';
 import { shapePath, SHAPES } from './marcadores.js';
+import { desenharNatureza, desenharZonas, rotulosZonas } from './natureza.js';
 import { OCEANO } from './atlas.js';
 import { estadoRender } from './projecao.js';
 import { paintSelBadge, selBadgeMetrics } from './selo.js';
@@ -103,21 +104,18 @@ function draw(){
   drawGeo(R,cx,cy);
   ganchos.desenharArco(R,cx,cy);
 
-  /* nomes dos oceanos */
-  var fs=Math.max(9,Math.min(24,R*0.06));
-  ctx.font='italic 600 '+fs+'px '+FONT;ctx.textAlign='center';ctx.textBaseline='middle';
-  if('letterSpacing' in ctx)ctx.letterSpacing=(fs*0.2)+'px';
-  for(k=0;k<OC.length;k++){
-    var oc=OC[k],pp=rot(oc.x,oc.y,oc.z);
-    if(pp[2]>0.22){
-      var al=Math.min(1,(pp[2]-0.22)*2.4)*.9;
-      var ox=cx+R*pp[0],oy=cy-R*pp[1];
-      ctx.fillStyle='rgba(168,214,255,'+al+')';
-      ctx.fillText(oc.l1,ox,oy-fs*.62);ctx.fillText(oc.l2,ox,oy+fs*.72);
-    }
+  /* camadas do botão 🏷️: zonas climáticas, oceanos e mares, desertos, florestas e cordilheiras */
+  function ptGlobo(lat,lng){var a=lat*PI/180,b=lng*PI/180,q=rot(Math.cos(a)*Math.sin(b),Math.sin(a),Math.cos(a)*Math.cos(b));return [cx+R*q[0],cy-R*q[1],q[2]];}
+  function projGlobo(o){
+    var pp=rot(o.x,o.y,o.z);if(pp[2]<=0.22)return null;
+    return {x:cx+R*pp[0],y:cy-R*pp[1],a:Math.min(1,(pp[2]-0.22)*2.4)};
   }
-  if('letterSpacing' in ctx)ctx.letterSpacing='0px';
-  ctx.textAlign='left';
+  var usados=[],lngC=0,melhor=-2;
+  for(k=-180;k<180;k+=5){var zc=ptGlobo(0,k)[2];if(zc>melhor){melhor=zc;lngC=k;}}
+  desenharZonas(ptGlobo,false);
+  desenharNatureza(projGlobo,estadoCamera.zoom,usados);
+  desenharAguas(projGlobo,R,estadoCamera.zoom,usados);
+  rotulosZonas(ptGlobo,lngC-38,lngC+38,usados);
 
   /* marcadores (só países ligados) */
   var vis=[],i,d;

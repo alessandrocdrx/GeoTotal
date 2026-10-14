@@ -856,6 +856,22 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
 .ibtn.iprin span{color:rgba(255,255,255,.92)}
 .izero{display:block;margin:10px auto 0;border:0;background:none;color:var(--muted);font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;padding:6px}
 .izero.armado{color:#e5484d}
+
+/* botão 🏷️: o que aparece no mapa */
+.camadas{position:absolute;right:60px;top:8px;z-index:7;width:min(310px,calc(100% - 76px));max-height:calc(100% - 16px);overflow:auto;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:16px;padding:8px 10px 6px;box-shadow:0 12px 34px rgba(0,0,0,.35);animation:qpop .2s ease-out}
+.camadas[hidden]{display:none}
+.camadas .camtit{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 4px}
+.camadas .camtit b{font-size:15px}
+.camadas .closeb{padding:4px 10px}
+.camadas .camsep{margin:8px 2px 2px;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.camadas .mswrow{padding:7px 2px}
+.avisolug .box{bottom:auto;top:50%;left:16px;right:16px;transform:translateY(-50%);border-radius:18px;max-width:420px;padding:18px 16px}
+.avisolug .avtit{display:block;font-size:18px;margin-bottom:6px}
+.avisolug p{margin:0 0 14px;line-height:1.4;color:var(--fg)}
+.avisolug .avsim{background:var(--marca,#4da3ff);color:#fff;border-color:transparent;font-weight:800}
+.camadas .mswrow b{font-size:14px}
+.camadas .mswrow small{font-size:11.5px}
+.camadas .mswrow .mi{font-size:18px}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -864,7 +880,7 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
   <header>
     <div class="htop">
       <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
-      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite">☀️</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite">☀️</button><button id="mestilotop" class="hsom" aria-label="Estilo do mapa: satélite" title="Satélite ou atlas">🛰️</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -897,6 +913,20 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
       <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true">🔄</button>
       <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países">🎬</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
+      <button id="camb" aria-label="O que aparece no mapa" title="O que aparece no mapa" aria-expanded="false">🏷️</button>
+    </div>
+    <div id="camadas" class="camadas" hidden>
+      <div class="camtit"><b>O que aparece no mapa</b><button id="camfechar" class="closeb" aria-label="Fechar">✕</button></div>
+      <label class="mswrow"><span class="mi">🌊</span><span class="mt"><b>Oceanos</b></span><input type="checkbox" id="cOce" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">⛵</span><span class="mt"><b>Mares e golfos</b><small>Os menores aparecem ao aproximar</small></span><input type="checkbox" id="cMar" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">🌡️</span><span class="mt"><b>Zonas climáticas</b><small>Tropical, temperadas e polares; Equador e Trópicos</small></span><input type="checkbox" id="cZon" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">🏜️</span><span class="mt"><b>Desertos</b></span><input type="checkbox" id="cDes" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">🌳</span><span class="mt"><b>Florestas</b></span><input type="checkbox" id="cFlo" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">⛰️</span><span class="mt"><b>Cordilheiras</b></span><input type="checkbox" id="cMon" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <div class="camsep">Lugares (valem também no treino)</div>
+      <label class="mswrow"><span class="mi">⚠️</span><span class="mt"><b>Não reconhecidos pela ONU</b><small>Kosovo, Somalilândia…</small></span><input type="checkbox" id="cDis" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">◇</span><span class="mt"><b>Territórios dependentes</b><small>Porto Rico, Groenlândia…</small></span><input type="checkbox" id="cDep" role="switch"><i class="msw" aria-hidden="true"></i></label>
+      <label class="mswrow"><span class="mi">❄️</span><span class="mt"><b>Desabitados e Antártida</b></span><input type="checkbox" id="cUni" role="switch"><i class="msw" aria-hidden="true"></i></label>
     </div>
     <div id="legenda" class="legenda" hidden><b>Cada forma é um continente</b><div id="legitens" class="legitens"></div><button id="legok" class="legok">Entendi</button></div>
     <div class="hint" id="hint">Arraste para girar · toque num país para ver os detalhes</div>
@@ -2729,25 +2759,98 @@ Brunei:Malásia
   // web/src/js/dados/oceanos-polos.js
   var oceanos_polos_exports = {};
   __export(oceanos_polos_exports, {
+    MARES: () => MARES,
     OC: () => OC,
     iniciar: () => iniciar8
   });
   var OC;
+  var MARES;
+  var MARES_RAW = `
+Mar do Caribe|15|-75|1
+Golfo do México|25|-90|1
+Mar Mediterrâneo|35|18|1
+Mar Negro|43.3|34|1
+Mar Cáspio|42|50.5|1
+Mar Vermelho|20|38.5|1
+Golfo Pérsico|27|51.5|2
+Mar da Arábia|15|63|1
+Golfo de Bengala|15|88|1
+Mar da China Meridional|13|114|1
+Mar da China Oriental|29|125|2
+Mar Amarelo|36|123|2
+Mar do Japão|40|135|1
+Mar de Okhotsk|54|148|1
+Mar de Bering|58|-178|1
+Golfo do Alasca|56|-145|1
+Mar do Norte|56|3|1
+Mar Báltico|58|20|1
+Mar da Noruega|68|2|1
+Mar de Barents|74|40|1
+Mar da Groenlândia|76|-8|2
+Baía de Hudson|60|-85|1
+Mar do Labrador|58|-55|2
+Mar de Kara|76|68|2
+Mar de Laptev|76|125|2
+Mar da Sibéria Oriental|73|160|2
+Mar de Beaufort|72|-140|2
+Mar de Chukchi|70|-170|2
+Mar de Weddell|-72|-45|1
+Mar de Ross|-75|-175|1
+Mar da Tasmânia|-40|160|1
+Mar de Coral|-18|155|1
+Mar de Arafura|-9.5|135|2
+Mar de Timor|-11.5|126|2
+Mar de Java|-5|111|2
+Mar de Banda|-5.5|127|2
+Mar das Filipinas|20|130|1
+Mar de Celebes|3|122|2
+Mar de Andamão|10|96|2
+Mar dos Sargaços|31|-64|1
+Golfo da Guiné|1.5|4|1
+Canal de Moçambique|-18|41|1
+Golfo de Áden|12.5|48|2
+Mar de Scotia|-57|-45|2
+Mar Adriático|43|15|2
+Mar Egeu|38.8|25|2
+Mar Tirreno|40|12|2
+Mar Jônico|37.5|18.5|2
+Golfo da Biscaia|45.5|-4.5|2
+Canal da Mancha|50|-2|2
+Mar da Irlanda|53.8|-5|2
+Golfo de Bótnia|62|20|2
+Mar de Azov|46|36.6|2
+Mar de Mármara|40.7|28.2|2
+Golfo da Califórnia|27|-111|2
+Mar de Salomão|-8|153|2
+Mar de Bismarck|-4|148|2
+Mar de Sulu|8|120|2`;
+  function xyz(lat, lng) {
+    var a = lat * Math.PI / 180, b = lng * Math.PI / 180;
+    return { lat, lng, x: Math.cos(a) * Math.sin(b), y: Math.sin(a), z: Math.cos(a) * Math.cos(b) };
+  }
   function iniciar8() {
     OC = [
-      ["OCEANO", "ATLÂNTICO", 28, -42],
+      ["OCEANO", "ATLÂNTICO", 24, -38],
       ["OCEANO", "ATLÂNTICO", -22, -10],
       ["OCEANO", "PACÍFICO", 5, -140],
       ["OCEANO", "PACÍFICO", -30, -125],
-      ["OCEANO", "PACÍFICO", 15, 175],
+      ["OCEANO", "PACÍFICO", 15, 170],
       ["OCEANO", "ÍNDICO", -15, 78],
-      ["OCEANO GLACIAL", "ÁRTICO", 74, -150],
+      ["OCEANO GLACIAL", "ÁRTICO", 80, -150],
       ["OCEANO", "AUSTRAL", -63, 20],
       ["OCEANO", "AUSTRAL", -63, 140],
       ["OCEANO", "AUSTRAL", -62, -100]
     ].map(function(o) {
-      var a = o[2] * Math.PI / 180, b = o[3] * Math.PI / 180;
-      return { l1: o[0], l2: o[1], x: Math.cos(a) * Math.sin(b), y: Math.sin(a), z: Math.cos(a) * Math.cos(b) };
+      var p = xyz(o[2], o[3]);
+      p.l1 = o[0];
+      p.l2 = o[1];
+      return p;
+    });
+    MARES = MARES_RAW.trim().split("\n").map(function(l) {
+      var c = l.split("|"), p = xyz(+c[1], +c[2]);
+      p.nome = c[0];
+      p.nivel = +c[3];
+      return p;
     });
   }
 
@@ -2757,12 +2860,14 @@ Brunei:Malásia
     frame: () => frame
   });
 
-  // web/src/js/visualizacao/animacao.js
-  var animacao_exports = {};
-  __export(animacao_exports, {
-    fitTo: () => fitTo,
-    flyTo: () => flyTo,
-    shortest: () => shortest
+  // web/src/js/visualizacao/projecao.js
+  var projecao_exports = {};
+  __export(projecao_exports, {
+    countryAt: () => countryAt,
+    estadoRender: () => estadoRender,
+    hexA: () => hexA,
+    inFeat: () => inFeat,
+    projCfg: () => projCfg
   });
 
   // web/src/js/visualizacao/tela.js
@@ -2945,7 +3050,122 @@ Brunei:Malásia
     window.addEventListener("resize", resize);
   }
 
+  // web/src/js/visualizacao/projecao.js
+  var estadoRender = {
+    gl: null,
+    glProg: null,
+    glTex: null,
+    glBuf: null,
+    useTex: false,
+    optTex: true,
+    optBor: true,
+    optFill: true,
+    /** Estilo atlas escolar (cores por país, oceano claro) em vez da textura de satélite. */
+    atlas: false,
+    /** Nomes no mapa que o usuário liga e desliga no botão 🏷️. */
+    camadas: { oceanos: true, mares: true, zonas: false, desertos: false, florestas: false, montanhas: false },
+    feats: null,
+    FEAT: void 0,
+    EXTRA: [],
+    proj: null,
+    gpath: null
+  };
+  function hexA(h, a) {
+    var n = parseInt(h.slice(1), 16);
+    return "rgba(" + (n >> 16) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  function projCfg(R, cx, cy) {
+    estadoRender.proj.scale(R).translate([cx, cy]).rotate([-estadoCamera.lam * 180 / PI, -estadoCamera.phi * 180 / PI]);
+  }
+  function inRing(x, y, r) {
+    var c = false;
+    for (var i = 0, j = r.length - 1; i < r.length; j = i++) {
+      var xi = r[i][0], yi = r[i][1], xj = r[j][0], yj = r[j][1];
+      if (yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  }
+  function inFeat(f, x, y) {
+    var g = f.geometry;
+    if (!g) return false;
+    var polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
+    for (var a = 0; a < polys.length; a++) {
+      var p = polys[a];
+      if (inRing(x, y, p[0])) {
+        var hole = false;
+        for (var h = 1; h < p.length; h++) if (inRing(x, y, p[h])) hole = true;
+        if (!hole) return true;
+      }
+    }
+    return false;
+  }
+  function countryAt(x, y) {
+    if (!estadoRender.feats) return null;
+    projCfg(R0 * estadoCamera.zoom, W / 2, H * estadoCamera.cyFrac);
+    var ll = estadoRender.proj.invert([x, y]);
+    if (!ll || isNaN(ll[0]) || isNaN(ll[1])) return null;
+    for (var i = 0; i < D.length; i++) if (estadoMapa.on[i] && estadoRender.FEAT[i] && inFeat(estadoRender.FEAT[i], ll[0], ll[1])) return D[i];
+    return null;
+  }
+
+  // web/src/js/visualizacao/aguas.js
+  function cabe(r, usados) {
+    for (var u = 0; u < usados.length; u++) {
+      var U = usados[u];
+      if (!(r.x > U.x + U.w || r.x + r.w < U.x || r.y > U.y + U.h || r.y + r.h < U.y)) return false;
+    }
+    return true;
+  }
+  function desenharAguas(projetar, escala, zoom, usados) {
+    var cam = estadoRender.camadas, atlas = estadoRender.atlas && !!estadoRender.feats;
+    usados = usados || [];
+    if (!cam.oceanos && !cam.mares) return usados;
+    var cor = atlas ? "30,78,128" : "168,214,255", k, p;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    var fs = Math.max(9, Math.min(24, escala * 0.06));
+    if (cam.oceanos) {
+      ctx.font = "italic 600 " + fs + "px " + FONT;
+      if ("letterSpacing" in ctx) ctx.letterSpacing = fs * 0.2 + "px";
+      for (k = 0; k < OC.length; k++) {
+        var oc = OC[k];
+        p = projetar(oc);
+        if (!p) continue;
+        var w = Math.max(ctx.measureText(oc.l1).width, ctx.measureText(oc.l2).width), ro = { x: p.x - w / 2, y: p.y - fs * 1.3, w, h: fs * 2.6 };
+        if (!cabe(ro, usados)) continue;
+        usados.push(ro);
+        ctx.fillStyle = "rgba(" + cor + "," + p.a * 0.9 + ")";
+        ctx.fillText(oc.l1, p.x, p.y - fs * 0.62);
+        ctx.fillText(oc.l2, p.x, p.y + fs * 0.72);
+      }
+      if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
+    }
+    if (cam.mares) {
+      var fm = Math.max(9, Math.min(14, fs * 0.62)), nivel = zoom >= 2.2 ? 2 : 1;
+      ctx.font = "italic 600 " + fm + "px " + FONT;
+      for (k = 0; k < MARES.length; k++) {
+        var m = MARES[k];
+        if (m.nivel > nivel) continue;
+        p = projetar(m);
+        if (!p) continue;
+        var tw = ctx.measureText(m.nome).width, r = { x: p.x - tw / 2 - 3, y: p.y - fm * 0.75, w: tw + 6, h: fm * 1.5 };
+        if (!cabe(r, usados)) continue;
+        usados.push(r);
+        ctx.fillStyle = "rgba(" + cor + "," + p.a * 0.82 + ")";
+        ctx.fillText(m.nome, p.x, p.y);
+      }
+    }
+    ctx.textAlign = "left";
+    return usados;
+  }
+
   // web/src/js/visualizacao/animacao.js
+  var animacao_exports = {};
+  __export(animacao_exports, {
+    fitTo: () => fitTo,
+    flyTo: () => flyTo,
+    shortest: () => shortest
+  });
   function shortest(a, b) {
     var d = b - a;
     while (d > PI) d -= 2 * PI;
@@ -3121,70 +3341,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     desenharSeloResposta: () => {
     }
   };
-
-  // web/src/js/visualizacao/projecao.js
-  var projecao_exports = {};
-  __export(projecao_exports, {
-    countryAt: () => countryAt,
-    estadoRender: () => estadoRender,
-    hexA: () => hexA,
-    inFeat: () => inFeat,
-    projCfg: () => projCfg
-  });
-  var estadoRender = {
-    gl: null,
-    glProg: null,
-    glTex: null,
-    glBuf: null,
-    useTex: false,
-    optTex: true,
-    optBor: true,
-    optFill: true,
-    /** Estilo atlas escolar (cores por país, oceano claro) em vez da textura de satélite. */
-    atlas: false,
-    feats: null,
-    FEAT: void 0,
-    EXTRA: [],
-    proj: null,
-    gpath: null
-  };
-  function hexA(h, a) {
-    var n = parseInt(h.slice(1), 16);
-    return "rgba(" + (n >> 16) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
-  }
-  function projCfg(R, cx, cy) {
-    estadoRender.proj.scale(R).translate([cx, cy]).rotate([-estadoCamera.lam * 180 / PI, -estadoCamera.phi * 180 / PI]);
-  }
-  function inRing(x, y, r) {
-    var c = false;
-    for (var i = 0, j = r.length - 1; i < r.length; j = i++) {
-      var xi = r[i][0], yi = r[i][1], xj = r[j][0], yj = r[j][1];
-      if (yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c;
-    }
-    return c;
-  }
-  function inFeat(f, x, y) {
-    var g = f.geometry;
-    if (!g) return false;
-    var polys = g.type === "Polygon" ? [g.coordinates] : g.type === "MultiPolygon" ? g.coordinates : [];
-    for (var a = 0; a < polys.length; a++) {
-      var p = polys[a];
-      if (inRing(x, y, p[0])) {
-        var hole = false;
-        for (var h = 1; h < p.length; h++) if (inRing(x, y, p[h])) hole = true;
-        if (!hole) return true;
-      }
-    }
-    return false;
-  }
-  function countryAt(x, y) {
-    if (!estadoRender.feats) return null;
-    projCfg(R0 * estadoCamera.zoom, W / 2, H * estadoCamera.cyFrac);
-    var ll = estadoRender.proj.invert([x, y]);
-    if (!ll || isNaN(ll[0]) || isNaN(ll[1])) return null;
-    for (var i = 0; i < D.length; i++) if (estadoMapa.on[i] && estadoRender.FEAT[i] && inFeat(estadoRender.FEAT[i], ll[0], ll[1])) return D[i];
-    return null;
-  }
 
   // web/src/js/visualizacao/enquadramento.js
   var cacheVistas = {};
@@ -4277,6 +4433,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     $("mvisual").onclick = function() {
       var noite = $("oNight"), v = !noite.checked;
+      if (estadoRender.atlas) definirAtlas(false);
       estadoRender.optTex = true;
       oTex.checked = estadoRender.useTex;
       noite.checked = v;
@@ -4291,14 +4448,25 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       Array.prototype.forEach.call($("mestilo").querySelectorAll("button"), function(b) {
         b.setAttribute("aria-pressed", b.dataset.v === "atlas" === estadoRender.atlas ? "true" : "false");
       });
+      var t = $("mestilotop");
+      t.textContent = estadoRender.atlas ? "🎨" : "🛰️";
+      t.setAttribute("aria-label", "Estilo do mapa: " + (estadoRender.atlas ? "atlas" : "satélite"));
+      t.setAttribute("aria-pressed", estadoRender.atlas ? "true" : "false");
+    }
+    function definirAtlas(v) {
+      estadoRender.atlas = v;
+      lsSet("globo.atlas", v);
+      estiloMostra();
     }
     Array.prototype.forEach.call($("mestilo").querySelectorAll("button"), function(b) {
       b.onclick = function() {
-        estadoRender.atlas = b.dataset.v === "atlas";
-        lsSet("globo.atlas", estadoRender.atlas);
-        estiloMostra();
+        definirAtlas(b.dataset.v === "atlas");
       };
     });
+    $("mestilotop").onclick = function() {
+      definirAtlas(!estadoRender.atlas);
+      setStatus(estadoRender.atlas ? "🎨 Mapa atlas: uma cor por país" : "🛰️ Mapa de satélite", 2200);
+    };
     estiloMostra();
     setTimeout(visMostra, 0);
   }
@@ -4591,6 +4759,195 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return f;
   }
 
+  // web/src/js/dados/natureza.js
+  var NATUREZA_RAW = `
+d|Deserto do Saara|23|12|1
+d|Deserto da Arábia|21|48|1
+d|Deserto de Gobi|43|105|1
+d|Deserto do Kalahari|-23|22|1
+d|Deserto do Namibe|-23|15|2
+d|Deserto do Atacama|-24|-69.5|1
+d|Deserto da Patagônia|-45|-69|2
+d|Grande Deserto de Vitória|-29|129|1
+d|Grande Deserto Arenoso|-20.5|123|2
+d|Deserto de Taklamakan|38.5|83|1
+d|Deserto de Thar|27|71|2
+d|Deserto de Karakum|39|60|2
+d|Deserto de Kyzylkum|42|64|2
+d|Deserto Sírio|33|39|2
+d|Deserto de Sonora|31|-112|2
+d|Deserto de Chihuahua|29|-105|2
+d|Deserto de Mojave|35|-116|2
+d|Grande Bacia|40|-117|2
+d|Deserto da Líbia|25|25|2
+d|Deserto da Núbia|20.5|33|2
+d|Deserto do Danakil|13.5|41|2
+d|Deserto de Dasht-e Kavir|34.5|54|2
+f|Floresta Amazônica|-4|-62|1
+f|Floresta do Congo|0|20|1
+f|Taiga Siberiana|61|100|1
+f|Floresta Boreal do Canadá|55|-100|1
+f|Mata Atlântica|-21|-42.5|2
+f|Florestas de Bornéu|0.5|114|2
+f|Florestas da Nova Guiné|-5|142|2
+f|Florestas de Sumatra|0|102|2
+f|Floresta da Indochina|17|104|2
+f|Floresta Valdiviana|-40|-73|2
+f|Floresta Negra|48.2|8.2|2
+f|Florestas de Madagascar|-17|49|2
+f|Sequoias da Califórnia|40.5|-123.8|2
+f|Floresta do Pacífico Norte|50|-125|2
+m|Cordilheira dos Andes|-17|-68|1
+m|Montanhas Rochosas|44|-110|1
+m|Himalaia|28.5|84|1
+m|Alpes|46.5|10|1
+m|Montes Urais|58|59.5|1
+m|Montes Atlas|31.5|-6|1
+m|Montes Apalaches|38|-80|2
+m|Cordilheira do Cáucaso|42.5|44|2
+m|Montes Zagros|33|48|2
+m|Pamir e Hindu Kush|37|71.5|2
+m|Tian Shan|42|80|2
+m|Planalto do Tibete|33|88|1
+m|Montes Cárpatos|47.5|25|2
+m|Pirineus|42.7|0.5|2
+m|Alpes Escandinavos|65|14|2
+m|Grande Cordilheira Divisória|-30|150|2
+m|Alpes do Sul|-43.5|170.5|2
+m|Montanhas Etíopes|10|38.5|2
+m|Monte Kilimanjaro|-3.07|37.35|2
+m|Serra do Mar|-23.5|-46|2
+m|Sierra Madre|23|-105.5|2
+m|Montes Altai|49|88|2`;
+  var NATUREZA = NATUREZA_RAW.trim().split("\n").map(function(l) {
+    var c = l.split("|"), lat = +c[2], lng = +c[3], a = lat * Math.PI / 180, b = lng * Math.PI / 180;
+    return { tipo: c[0], nome: c[1], lat, lng, nivel: +c[4], x: Math.cos(a) * Math.sin(b), y: Math.sin(a), z: Math.cos(a) * Math.cos(b) };
+  });
+  var LINHAS_ZONAS = [
+    [66.56, "Círculo Polar Ártico"],
+    [23.44, "Trópico de Câncer"],
+    [0, "Equador"],
+    [-23.44, "Trópico de Capricórnio"],
+    [-66.56, "Círculo Polar Antártico"]
+  ];
+  var FAIXAS_ZONAS = [
+    [66.56, 90, "Zona polar norte", "#bfe3ff"],
+    [23.44, 66.56, "Zona temperada norte", "#9be38f"],
+    [-23.44, 23.44, "Zona tropical", "#ffb347"],
+    [-66.56, -23.44, "Zona temperada sul", "#9be38f"],
+    [-90, -66.56, "Zona polar sul", "#bfe3ff"]
+  ];
+
+  // web/src/js/visualizacao/natureza.js
+  function hexA2(h, a) {
+    var n = parseInt(h.slice(1), 16);
+    return "rgba(" + (n >> 16) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
+  }
+  function cabe2(r, usados) {
+    for (var u = 0; u < usados.length; u++) {
+      var U = usados[u];
+      if (!(r.x > U.x + U.w || r.x + r.w < U.x || r.y > U.y + U.h || r.y + r.h < U.y)) return false;
+    }
+    return true;
+  }
+  function rotulo(t, x, y, fs, cor, halo, usados) {
+    ctx.font = "700 " + fs + "px " + FONT;
+    var w = ctx.measureText(t).width;
+    x = Math.max(w / 2 + 4, Math.min(W - w / 2 - 58, x));
+    var r = { x: x - w / 2 - 3, y: y - fs * 0.75, w: w + 6, h: fs * 1.5 };
+    if (!cabe2(r, usados)) return false;
+    usados.push(r);
+    ctx.lineWidth = 3;
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = halo;
+    ctx.strokeText(t, x, y);
+    ctx.fillStyle = cor;
+    ctx.fillText(t, x, y);
+    return true;
+  }
+  function desenharZonas(pt, plano) {
+    if (!estadoRender.camadas.zonas) return;
+    var atlas = estadoRender.atlas && !!estadoRender.feats, k, lo, la, p;
+    FAIXAS_ZONAS.forEach(function(f) {
+      ctx.beginPath();
+      var passoLa = (f[1] - f[0]) / 4;
+      for (lo = -180; lo < 180; lo += 6) {
+        for (la = f[0]; la < f[1] - 1e-6; la += passoLa) {
+          var c = [pt(la, lo), pt(la, lo + 6), pt(la + passoLa, lo + 6), pt(la + passoLa, lo)];
+          if (c[0][2] <= 0 || c[1][2] <= 0 || c[2][2] <= 0 || c[3][2] <= 0) continue;
+          if (plano && Math.abs(c[1][0] - c[0][0]) > W / 2) continue;
+          ctx.moveTo(c[0][0], c[0][1]);
+          for (k = 1; k < 4; k++) ctx.lineTo(c[k][0], c[k][1]);
+          ctx.closePath();
+        }
+      }
+      ctx.fillStyle = hexA2(f[3], atlas ? 0.2 : 0.13);
+      ctx.fill();
+    });
+    ctx.save();
+    ctx.setLineDash([7, 5]);
+    LINHAS_ZONAS.forEach(function(l) {
+      ctx.beginPath();
+      var pen = false, px = 0;
+      for (lo = -180; lo <= 180; lo += 3) {
+        p = pt(l[0], lo);
+        if (p[2] > 0 && !(plano && pen && Math.abs(p[0] - px) > W / 2)) {
+          if (pen) ctx.lineTo(p[0], p[1]);
+          else {
+            ctx.moveTo(p[0], p[1]);
+            pen = true;
+          }
+        } else pen = false;
+        px = p[0];
+      }
+      ctx.lineWidth = l[0] === 0 ? 1.6 : 1.2;
+      ctx.strokeStyle = atlas ? "rgba(140,40,40,.75)" : "rgba(255,224,102,.8)";
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+  function rotulosZonas(pt, lngLinhas, lngFaixas, usados) {
+    if (!estadoRender.camadas.zonas) return;
+    var atlas = estadoRender.atlas && !!estadoRender.feats, p;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    var cor = atlas ? "#7a2323" : "#ffe8a3", halo = atlas ? "rgba(255,255,255,.85)" : "rgba(4,16,36,.85)";
+    LINHAS_ZONAS.forEach(function(l) {
+      p = pt(l[0], lngLinhas);
+      if (p[2] <= 0.25) return;
+      rotulo(l[1] + " " + Math.abs(l[0]).toLocaleString("pt-BR") + "°" + (l[0] > 0 ? " N" : l[0] < 0 ? " S" : ""), p[0], p[1] - 9, 10.5, cor, halo, usados);
+    });
+    FAIXAS_ZONAS.forEach(function(f) {
+      var meio = f[2] === "Zona tropical" ? 11 : (f[0] + f[1]) / 2;
+      p = pt(meio, lngFaixas);
+      if (p[2] <= 0.25) return;
+      rotulo(f[2].toUpperCase(), p[0], p[1], 11, atlas ? "#3a3a3a" : "#fff", halo, usados);
+    });
+    ctx.textAlign = "left";
+  }
+  var TIPOS = {
+    d: ["desertos", "🏜️", "#8a4b12", "#ffd59a"],
+    f: ["florestas", "🌳", "#1d6b2f", "#b4f5b4"],
+    m: ["montanhas", "⛰️", "#5b4636", "#ecd9c6"]
+  };
+  function desenharNatureza(projetar, zoom, usados) {
+    var cam = estadoRender.camadas;
+    if (!cam.desertos && !cam.florestas && !cam.montanhas) return;
+    var atlas = estadoRender.atlas && !!estadoRender.feats, nivel = zoom >= 2.2 ? 2 : 1;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (var k = 0; k < NATUREZA.length; k++) {
+      var n = NATUREZA[k], t = TIPOS[n.tipo];
+      if (!cam[t[0]] || n.nivel > nivel) continue;
+      var p = projetar(n);
+      if (!p || p.x < -80 || p.x > W + 80 || p.y < -20 || p.y > H + 20) continue;
+      ctx.globalAlpha = p.a;
+      rotulo(t[1] + " " + n.nome, p.x, p.y, 11, atlas ? t[2] : t[3], atlas ? "rgba(255,255,255,.85)" : "rgba(4,16,36,.85)", usados);
+      ctx.globalAlpha = 1;
+    }
+    ctx.textAlign = "left";
+  }
+
   // web/src/js/visualizacao/selo.js
   var selo_exports = {};
   __export(selo_exports, {
@@ -4759,6 +5116,20 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         ctx.stroke();
       }
     }
+    function proj2(o) {
+      var q2 = proj2D(o.lng, o.lat, R2, cx, cy);
+      return q2.x < -60 || q2.x > W + 60 || q2.y < -20 || q2.y > H + 20 ? null : { x: q2.x, y: q2.y, a: 1 };
+    }
+    var usados = [];
+    var lamG = estadoCamera.lam * 180 / PI, largG = W / R2 * 180 / PI;
+    function pt2(la2, lo2) {
+      var q2 = proj2D(lo2, la2, R2, cx, cy);
+      return [q2.x, q2.y, 1];
+    }
+    desenharZonas(pt2, true);
+    desenharNatureza(proj2, estadoCamera.zoom * 1.6, usados);
+    desenharAguas(proj2, R2 * 2.4, estadoCamera.zoom * 1.6, usados);
+    rotulosZonas(pt2, lamG - largG * 0.28, lamG + largG * 0.22, usados);
     var vis = [];
     for (i = 0; i < D.length; i++) {
       d = D[i];
@@ -4976,23 +5347,27 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.fill();
     drawGeo(R, cx, cy);
     ganchos.desenharArco(R, cx, cy);
-    var fs = Math.max(9, Math.min(24, R * 0.06));
-    ctx.font = "italic 600 " + fs + "px " + FONT;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    if ("letterSpacing" in ctx) ctx.letterSpacing = fs * 0.2 + "px";
-    for (k = 0; k < OC.length; k++) {
-      var oc = OC[k], pp = rot(oc.x, oc.y, oc.z);
-      if (pp[2] > 0.22) {
-        var al = Math.min(1, (pp[2] - 0.22) * 2.4) * 0.9;
-        var ox = cx + R * pp[0], oy = cy - R * pp[1];
-        ctx.fillStyle = "rgba(168,214,255," + al + ")";
-        ctx.fillText(oc.l1, ox, oy - fs * 0.62);
-        ctx.fillText(oc.l2, ox, oy + fs * 0.72);
+    function ptGlobo(lat, lng) {
+      var a3 = lat * PI / 180, b3 = lng * PI / 180, q3 = rot(Math.cos(a3) * Math.sin(b3), Math.sin(a3), Math.cos(a3) * Math.cos(b3));
+      return [cx + R * q3[0], cy - R * q3[1], q3[2]];
+    }
+    function projGlobo(o2) {
+      var pp = rot(o2.x, o2.y, o2.z);
+      if (pp[2] <= 0.22) return null;
+      return { x: cx + R * pp[0], y: cy - R * pp[1], a: Math.min(1, (pp[2] - 0.22) * 2.4) };
+    }
+    var usados = [], lngC = 0, melhor = -2;
+    for (k = -180; k < 180; k += 5) {
+      var zc = ptGlobo(0, k)[2];
+      if (zc > melhor) {
+        melhor = zc;
+        lngC = k;
       }
     }
-    if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
-    ctx.textAlign = "left";
+    desenharZonas(ptGlobo, false);
+    desenharNatureza(projGlobo, estadoCamera.zoom, usados);
+    desenharAguas(projGlobo, R, estadoCamera.zoom, usados);
+    rotulosZonas(ptGlobo, lngC - 38, lngC + 38, usados);
     var vis = [], i, d;
     for (i = 0; i < D.length; i++) {
       d = D[i];
@@ -5221,6 +5596,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoFiltros: () => estadoFiltros,
     hist: () => hist,
     iniciar: () => iniciar17,
+    ligarLugar: () => ligarLugar,
     setIncludeDep: () => setIncludeDep,
     setIncludeDisputed: () => setIncludeDisputed,
     setIncludeUni: () => setIncludeUni,
@@ -5267,7 +5643,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     /** Treino: responder "Achar no mapa" (mundo). cand = países perto do toque. */
     toqueNoGlobo: () => false,
     /** Treino: o mesmo no mapa 2D. */
-    toqueNoMapa2D: () => false
+    toqueNoMapa2D: () => false,
+    /** Treino: antes de mudar quais lugares entram no jogo (avisa que a rodada recomeça). Chama fazer() se puder. */
+    antesDeMudarLugares: (fazer) => fazer()
   };
 
   // web/src/js/interface/filtros.js
@@ -5540,6 +5918,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     afterFilter();
     emitir("categorias-mudaram", { placar: true });
   }
+  function ligarLugar(cb, definir) {
+    cb.onclick = function() {
+      var v = cb.checked;
+      cb.checked = !v;
+      ganchosInterface.antesDeMudarLugares(function() {
+        definir(v);
+      });
+    };
+  }
   function buildCatList() {
     var box = $("catbody");
     if (!box || box.dataset.ok) return;
@@ -5649,17 +6036,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("nDep").textContent = "(" + N_DEP + ")";
     $("nUni").textContent = "(" + N_UNI + ")";
     $("oDisputed").checked = estadoMapa.includeDisputed;
-    $("oDisputed").onclick = function() {
-      setIncludeDisputed(this.checked);
-    };
     $("oUni").checked = estadoMapa.includeUni;
-    $("oUni").onclick = function() {
-      setIncludeUni(this.checked);
-    };
     $("oDep").checked = estadoMapa.includeDep;
-    $("oDep").onclick = function() {
-      setIncludeDep(this.checked);
-    };
+    ligarLugar($("oDisputed"), setIncludeDisputed);
+    ligarLugar($("oUni"), setIncludeUni);
+    ligarLugar($("oDep"), setIncludeDep);
   }
 
   // web/src/js/nucleo/hora.js
@@ -6747,7 +7128,7 @@ NAN|Nadi|-17.76|177.44`;
     var s1 = Math.sin((1 - t) * om) / so, s2 = Math.sin(t * om) / so;
     return [a[0] * s1 + b[0] * s2, a[1] * s1 + b[1] * s2, a[2] * s1 + b[2] * s2];
   }
-  function xyz(d) {
+  function xyz2(d) {
     return [d.x, d.y, d.z];
   }
   function latLng(p) {
@@ -6796,7 +7177,7 @@ NAN|Nadi|-17.76|177.44`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     (arc.escalas || []).forEach(function(h) {
-      var p = naTela(xyz(h), R, cx, cy);
+      var p = naTela(xyz2(h), R, cx, cy);
       if (!p) return;
       ctx.beginPath();
       ctx.arc(p.x, p.y, 5, 0, 7);
@@ -6812,7 +7193,7 @@ NAN|Nadi|-17.76|177.44`;
       (letras[i] = letras[i] || []).push(letra(n));
     });
     Object.keys(letras).forEach(function(i) {
-      var p = naTela(xyz(D[i]), R, cx, cy);
+      var p = naTela(xyz2(D[i]), R, cx, cy);
       if (!p) return;
       ctx.beginPath();
       ctx.arc(p.x, p.y, 8, 0, 7);
@@ -6902,7 +7283,7 @@ NAN|Nadi|-17.76|177.44`;
   function codAero(d) {
     return AEROPORTO_DA_CAPITAL[d.cc] || "";
   }
-  function rotulo(d) {
+  function rotulo2(d) {
     var c = codAero(d);
     return (c ? c + " " : "") + capShort(d);
   }
@@ -6985,7 +7366,7 @@ NAN|Nadi|-17.76|177.44`;
       for (j = 1; j < nos.length; j++) {
         var d = km(nos[j - 1], nos[j]) * (modo === "voo" ? DESVIO : 1);
         kmTrecho += d;
-        for (var t = 0; t <= 1.0001; t += 1 / 80) pts.push(slerp(xyz(nos[j - 1]), xyz(nos[j]), Math.min(1, t)));
+        for (var t = 0; t <= 1.0001; t += 1 / 80) pts.push(slerp(xyz2(nos[j - 1]), xyz2(nos[j]), Math.min(1, t)));
         if (modo === "voo") horas += d / VELOCIDADE + 0.5;
         if (j < nos.length - 1) {
           escalas.push(nos[j]);
@@ -6999,7 +7380,7 @@ NAN|Nadi|-17.76|177.44`;
     estadoDistancia.ativo = true;
     document.body.classList.add("dist");
     var ida = D[lista[0]], fim = D[lista[lista.length - 1]];
-    $("dbtit").textContent = ida.flag + " " + rotulo(ida) + " → " + (lista.length > 2 ? "… → " : "") + fim.flag + " " + rotulo(fim);
+    $("dbtit").textContent = ida.flag + " " + rotulo2(ida) + " → " + (lista.length > 2 ? "… → " : "") + fim.flag + " " + rotulo2(fim);
     var txt = fmtKm(tot);
     if (modo === "reta") txt += " em linha reta pela superfície";
     else txt += " · ~" + fmtHoras(horas) + (escalas.length ? " com " + escalas.length + (escalas.length === 1 ? " escala" : " escalas") : " sem escala");
@@ -7585,6 +7966,52 @@ NAN|Nadi|-17.76|177.44`;
     };
   }
 
+  // web/src/js/interface/camadas.js
+  var camadas_exports = {};
+  __export(camadas_exports, {
+    abrir: () => abrir,
+    iniciar: () => iniciar28
+  });
+  var CHAVES = [["cOce", "oceanos"], ["cMar", "mares"], ["cZon", "zonas"], ["cDes", "desertos"], ["cFlo", "florestas"], ["cMon", "montanhas"]];
+  function mostrar() {
+    CHAVES.forEach(function(c) {
+      $(c[0]).checked = estadoRender.camadas[c[1]];
+    });
+    $("cDis").checked = estadoMapa.includeDisputed;
+    $("cDep").checked = estadoMapa.includeDep;
+    $("cUni").checked = estadoMapa.includeUni;
+  }
+  function abrir(v) {
+    $("camadas").hidden = !v;
+    $("camb").setAttribute("aria-expanded", v ? "true" : "false");
+    if (v) mostrar();
+  }
+  function iniciar28() {
+    CHAVES.forEach(function(c) {
+      estadoRender.camadas[c[1]] = lsGet("globo.cam." + c[1], estadoRender.camadas[c[1]]) === true;
+    });
+    CHAVES.forEach(function(c) {
+      $(c[0]).onchange = function() {
+        estadoRender.camadas[c[1]] = this.checked;
+        lsSet("globo.cam." + c[1], this.checked);
+      };
+    });
+    ligarLugar($("cDis"), setIncludeDisputed);
+    ligarLugar($("cDep"), setIncludeDep);
+    ligarLugar($("cUni"), setIncludeUni);
+    ouvir("categorias-mudaram", mostrar);
+    $("camb").onclick = function() {
+      abrir($("camadas").hidden);
+    };
+    $("camfechar").onclick = function() {
+      abrir(false);
+    };
+    document.addEventListener("pointerdown", function(e) {
+      if (!$("camadas").hidden && !$("camadas").contains(e.target) && e.target !== $("camb")) abrir(false);
+    }, true);
+    mostrar();
+  }
+
   // web/src/js/recursos/pdf.js
   var pdf_exports = {};
   __export(pdf_exports, {
@@ -7723,7 +8150,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/avaliacao.js
   var avaliacao_exports = {};
   __export(avaliacao_exports, {
-    iniciar: () => iniciar28
+    iniciar: () => iniciar29
   });
   var LOJA = "https://play.google.com/store/apps/details?id=io.github.alessandrocdrx.geototal";
   var DIAS_MINIMOS = 3;
@@ -7747,7 +8174,7 @@ NAN|Nadi|-17.76|177.44`;
   function momentoBom() {
     if (podePedir()) setTimeout(pedir, 2500);
   }
-  function iniciar28() {
+  function iniciar29() {
     var dias = lsGet("globo.dias.uso", []);
     if (dias.indexOf(hoje()) < 0) {
       dias.push(hoje());
@@ -7772,7 +8199,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/exportar.js
   var exportar_exports = {};
   __export(exportar_exports, {
-    iniciar: () => iniciar29,
+    iniciar: () => iniciar30,
     offerFile: () => offerFile
   });
   var dlNS = null;
@@ -7860,7 +8287,7 @@ NAN|Nadi|-17.76|177.44`;
       setStatus("Não consegui gerar o PDF.", 4e3);
     });
   }
-  function iniciar29() {
+  function iniciar30() {
     setTimeout(function() {
       try {
         if (window.claude && claude.use) claude.use("downloads").then(function(n) {
@@ -7909,7 +8336,7 @@ NAN|Nadi|-17.76|177.44`;
     estadoTreino: () => estadoTreino,
     freshQS: () => freshQS,
     inScope: () => inScope,
-    iniciar: () => iniciar30,
+    iniciar: () => iniciar31,
     matches: () => matches,
     measureQ: () => measureQ,
     qHide: () => qHide,
@@ -8025,7 +8452,7 @@ NAN|Nadi|-17.76|177.44`;
       quiz.timerInt = null;
     }
   }
-  function iniciar30() {
+  function iniciar31() {
     ganchos.treinoAberto = function() {
       return quiz.open;
     };
@@ -8359,7 +8786,7 @@ NAN|Nadi|-17.76|177.44`;
     finishQ: () => finishQ,
     fmtRelogio: () => fmtRelogio,
     fmtTime: () => fmtTime,
-    iniciar: () => iniciar33,
+    iniciar: () => iniciar34,
     makeNeighborOptions: () => makeNeighborOptions,
     makeOptions: () => makeOptions,
     medalFor: () => medalFor,
@@ -8381,7 +8808,7 @@ NAN|Nadi|-17.76|177.44`;
   var estatisticas_exports = {};
   __export(estatisticas_exports, {
     fillQStat: () => fillQStat,
-    iniciar: () => iniciar31,
+    iniciar: () => iniciar32,
     modeName: () => modeName,
     openHistory: () => openHistory
   });
@@ -8679,7 +9106,7 @@ NAN|Nadi|-17.76|177.44`;
     el2.hidden = !(r + w);
     el2.textContent = r + w ? "📊 Neste país: " + r + (r === 1 ? " acerto" : " acertos") + " · " + w + (w === 1 ? " erro" : " erros") : "";
   }
-  function iniciar31() {
+  function iniciar32() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
     $("htabC").onclick = function() {
       histTab = "c";
@@ -8726,7 +9153,7 @@ NAN|Nadi|-17.76|177.44`;
     celebrate: () => celebrate,
     definirMeta: () => definirMeta,
     displayStreak: () => displayStreak,
-    iniciar: () => iniciar32,
+    iniciar: () => iniciar33,
     levelOf: () => levelOf,
     metaDoDia: () => metaDoDia,
     recordProgress: () => recordProgress,
@@ -9089,7 +9516,7 @@ NAN|Nadi|-17.76|177.44`;
     $("badgeshead").textContent = "Conquistas (" + n + "/" + tot + ")";
     $("badgesheet").style.display = "block";
   }
-  function iniciar32() {
+  function iniciar33() {
     PROG = lsGet("globo.prog.v1", progNovo());
     $("streakpill").onclick = function() {
       var n = displayStreak(), f = PROG.freezes || 0;
@@ -9764,7 +10191,7 @@ NAN|Nadi|-17.76|177.44`;
     if (estadoTreino.qBadge != null) desenharSelo(D[estadoTreino.qBadge], R, cx, cy, true, false);
     else if (estadoTreino.qPino != null) desenharSelo(D[estadoTreino.qPino], R, cx, cy, false, false, "📍 " + qcapD(D[estadoTreino.qPino]));
   }
-  function desenharSelo(d, R, cx, cy, comBandeira, espia, rotulo2) {
+  function desenharSelo(d, R, cx, cy, comBandeira, espia, rotulo3) {
     var X, Y;
     if (estadoCamera.plano2D) {
       var R2 = R2now(), pp = proj2D(d.lng, d.lat, R2, cx, cy);
@@ -9785,7 +10212,7 @@ NAN|Nadi|-17.76|177.44`;
     ctx.arc(X, Y, 4.5, 0, 7);
     ctx.fillStyle = REG[d.r].c;
     ctx.fill();
-    var name = rotulo2 || short(d), fs = espia ? 13 : 15;
+    var name = rotulo3 || short(d), fs = espia ? 13 : 15;
     ctx.font = "700 " + fs + "px " + FONT;
     var tw = ctx.measureText(name).width, bw = Math.min(W - 12, tw + (comBandeira ? 58 : 24)), bh = espia ? 34 : 40;
     var bx = Math.max(6, Math.min(X - bw / 2, W - bw - 6)), by = Y - bh - 16;
@@ -9826,7 +10253,7 @@ NAN|Nadi|-17.76|177.44`;
     ctx.fillStyle = "#fff";
     ctx.fillText(name, bx + 44, by + bh / 2 + 1);
   }
-  function iniciar33() {
+  function iniciar34() {
     ganchos.desenharSeloResposta = drawBadge;
     estadoPartida.RUNS = lsGet("globo.runs.v1", {});
     estadoPartida.RECS = lsGet("globo.recs.v1", {});
@@ -9911,7 +10338,7 @@ NAN|Nadi|-17.76|177.44`;
     definirRodada: () => definirRodada,
     definirSobrevivencia: () => definirSobrevivencia,
     definirTempo: () => definirTempo,
-    iniciar: () => iniciar35,
+    iniciar: () => iniciar36,
     iniciarJogoRapido: () => iniciarJogoRapido,
     mostrarIntro: () => mostrarIntro,
     nextQ: () => nextQ,
@@ -9930,7 +10357,7 @@ NAN|Nadi|-17.76|177.44`;
   var modo_estados_exports = {};
   __export(modo_estados_exports, {
     exitStates: () => exitStates,
-    iniciar: () => iniciar34,
+    iniciar: () => iniciar35,
     updateStBtn: () => updateStBtn
   });
   function updateStBtn() {
@@ -9949,7 +10376,7 @@ NAN|Nadi|-17.76|177.44`;
     afterFilter();
     if (goBrazil !== false) select(D[byName[norm("Brasil")]], true);
   }
-  function iniciar34() {
+  function iniciar35() {
     ganchosInterface.atualizarBotaoEstados = updateStBtn;
     $("stexit").onclick = function() {
       exitStates(true);
@@ -10934,7 +11361,7 @@ NAN|Nadi|-17.76|177.44`;
       }
     }, 1e3);
   }
-  function iniciar35() {
+  function iniciar36() {
     ouvir("modo-estados-abriu", function() {
       if (quiz.open) quizClose();
     });
@@ -10977,7 +11404,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(destaque_escopo_exports, {
     drawScopePulse: () => drawScopePulse,
     firePulseForScope: () => firePulseForScope,
-    iniciar: () => iniciar36
+    iniciar: () => iniciar37
   });
   var scopePulse = null;
   function firePulse(pts) {
@@ -11011,7 +11438,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     ctx.restore();
   }
-  function iniciar36() {
+  function iniciar37() {
     ganchos.desenharPulsoEscopo = drawScopePulse;
   }
 
@@ -11020,7 +11447,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(escopo_exports, {
     applyScopeChange: () => applyScopeChange,
     definirFoco: () => definirFoco,
-    iniciar: () => iniciar37
+    iniciar: () => iniciar38
   });
   function applyScopeChange(newScope) {
     sairJogoRapido();
@@ -11165,7 +11592,57 @@ NAN|Nadi|-17.76|177.44`;
     b.hidden = !(n && !estadoTreino.desafio && (feitos > 0 || r.e > 0) && !r.fin);
     b.textContent = "↺ Recomeçar " + scopeLabel() + " do zero (" + feitos + " de " + n + " feitos)";
   }
-  function iniciar37() {
+  function rodadaEmAndamento() {
+    if (!quiz.open || estadoTreino.desafio || estadoTreino.quizDomain === "br") return false;
+    var n = poolIdx().length, r = curRun();
+    return !!n && !r.fin && (n - runPool().length > 0 || r.e > 0);
+  }
+  function antesDeMudarLugares(fazer) {
+    if (!rodadaEmAndamento()) {
+      fazer();
+      return;
+    }
+    var ov = document.createElement("div");
+    ov.className = "ov avisolug";
+    ov.style.display = "block";
+    ov.style.zIndex = "130";
+    var bx = document.createElement("div");
+    bx.className = "box";
+    var t = document.createElement("b");
+    t.className = "avtit";
+    t.textContent = "Recomeçar a rodada?";
+    var p = document.createElement("p");
+    p.textContent = "Mudar quais lugares entram no jogo muda as perguntas. A rodada de " + scopeLabel() + " vai recomeçar do zero. Medalhas e conquistas continuam.";
+    var lin = document.createElement("div");
+    lin.className = "row2";
+    var sim = document.createElement("button");
+    sim.className = "avsim";
+    sim.textContent = "↺ Mudar e recomeçar";
+    var nao = document.createElement("button");
+    nao.textContent = "Agora não";
+    function fechar2() {
+      ov.remove();
+    }
+    sim.onclick = function() {
+      fechar2();
+      fazer();
+      runRestart();
+      setStatus("Rodada recomeçada do zero com os lugares novos.", 3e3);
+    };
+    nao.onclick = fechar2;
+    ov.addEventListener("pointerdown", function(e) {
+      if (e.target === ov) fechar2();
+    });
+    lin.appendChild(sim);
+    lin.appendChild(nao);
+    bx.appendChild(t);
+    bx.appendChild(p);
+    bx.appendChild(lin);
+    ov.appendChild(bx);
+    document.body.appendChild(ov);
+  }
+  function iniciar38() {
+    ganchosInterface.antesDeMudarLugares = antesDeMudarLugares;
     ouvir("treinar-regiao", function(o) {
       if (!quiz.open) quizOpen();
       applyScopeChange({ t: "reg", r: o.r });
@@ -11222,7 +11699,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
-    iniciar: () => iniciar38,
+    iniciar: () => iniciar39,
     ligarSeg: () => ligarSeg
   });
   var themeMode;
@@ -11257,7 +11734,7 @@ NAN|Nadi|-17.76|177.44`;
     marca(atual);
     return marca;
   }
-  function iniciar38() {
+  function iniciar39() {
     themeMode = lsGet("globo.theme", "auto");
     applyTheme();
     ligarSeg($("mtema"), themeMode, function(v) {
@@ -11322,7 +11799,7 @@ NAN|Nadi|-17.76|177.44`;
   var cartao_estado_exports = {};
   __export(cartao_estado_exports, {
     enterStates: () => enterStates,
-    iniciar: () => iniciar39
+    iniciar: () => iniciar40
   });
   function fillInfoSt(st) {
     var box = $("cinfo");
@@ -11497,7 +11974,7 @@ NAN|Nadi|-17.76|177.44`;
     selectSt(st || BRS[0], true);
     ensureStateShapes();
   }
-  function iniciar39() {
+  function iniciar40() {
     ganchosInterface.passoEstado = stepSt;
     ganchosInterface.alternarVizinhosEstado = toggleNbSt;
     ganchosInterface.selecionarEstado = selectSt;
@@ -11515,7 +11992,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/brasil/filtros.js
   var filtros_exports2 = {};
   __export(filtros_exports2, {
-    iniciar: () => iniciar40
+    iniciar: () => iniciar41
   });
   function mkChipSt(label, color, val, count) {
     var b = document.createElement("button");
@@ -11564,16 +12041,16 @@ NAN|Nadi|-17.76|177.44`;
       }).length));
     });
   }
-  function iniciar40() {
+  function iniciar41() {
     ganchosInterface.montarChipsEstados = buildChipsSt;
   }
 
   // web/src/js/brasil/menu.js
   var menu_exports2 = {};
   __export(menu_exports2, {
-    iniciar: () => iniciar41
+    iniciar: () => iniciar42
   });
-  function iniciar41() {
+  function iniciar42() {
     BRS.forEach(function(s) {
       var o = document.createElement("option");
       o.value = s.i;
@@ -11600,7 +12077,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/app/ultima-visao.js
   var ultima_visao_exports = {};
   __export(ultima_visao_exports, {
-    iniciar: () => iniciar42
+    iniciar: () => iniciar43
   });
   function saveLastView() {
     if (quiz.open || estadoBrasil.statesMode) return;
@@ -11630,7 +12107,7 @@ NAN|Nadi|-17.76|177.44`;
       if (i >= 0 && estadoMapa.on[i]) select(D[i], false);
     }
   }
-  function iniciar42() {
+  function iniciar43() {
     ouvir("visao-mudou", saveLastView);
     restoreLastView();
   }
@@ -11640,7 +12117,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(passaporte_exports, {
     abrirPassaporte: () => abrirPassaporte,
     contarCarimbos: () => contarCarimbos,
-    iniciar: () => iniciar43
+    iniciar: () => iniciar44
   });
   function carimbado(d) {
     var e = (estadoTreino.QS.m.cap || {})[d.cc];
@@ -11700,7 +12177,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     $("passsheet").style.display = "block";
   }
-  function iniciar43() {
+  function iniciar44() {
     $("mpassaporte").onclick = abrirPassaporte;
     $("passclose").onclick = function() {
       $("passsheet").style.display = "none";
@@ -11710,7 +12187,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/app/inicio.js
   var inicio_exports = {};
   __export(inicio_exports, {
-    iniciar: () => iniciar44,
+    iniciar: () => iniciar45,
     mostrarInicio: () => mostrarInicio
   });
   var AUSENCIA = 30 * 6e4;
@@ -11744,7 +12221,7 @@ NAN|Nadi|-17.76|177.44`;
     z.textContent = "↺ Começar " + scopeLabel() + " do zero";
     $("inicio").hidden = false;
   }
-  function iniciar44() {
+  function iniciar45() {
     quizOpen();
     var ultima = lsGet("globo.ultima.visita", 0), saiu = 0;
     lsSet("globo.ultima.visita", Date.now());
@@ -11793,7 +12270,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/toques.js
   var toques_exports = {};
   __export(toques_exports, {
-    iniciar: () => iniciar45
+    iniciar: () => iniciar46
   });
   function paisNoPonto(x, y) {
     if (!estadoCamera.plano2D) return countryAt(x, y);
@@ -11876,7 +12353,7 @@ NAN|Nadi|-17.76|177.44`;
     quizMapAnswer(cand.length ? cand[0].d : poly);
     return true;
   }
-  function iniciar45() {
+  function iniciar46() {
     ganchosInterface.toqueAntes = toqueAntes;
     ganchosInterface.toqueNoGlobo = toqueNoGlobo;
     ganchosInterface.toqueNoMapa2D = toqueNoMapa2D;
@@ -11885,13 +12362,13 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/boas-vindas.js
   var boas_vindas_exports = {};
   __export(boas_vindas_exports, {
-    iniciar: () => iniciar47
+    iniciar: () => iniciar48
   });
 
   // web/src/js/treino/tour.js
   var tour_exports = {};
   __export(tour_exports, {
-    iniciar: () => iniciar46,
+    iniciar: () => iniciar47,
     iniciarTour: () => iniciarTour
   });
   var PASSOS = [
@@ -11942,7 +12419,7 @@ NAN|Nadi|-17.76|177.44`;
     passo = 0;
     setTimeout(mostrarPasso, 450);
   }
-  function iniciar46() {
+  function iniciar47() {
     $("guiaprox").onclick = function() {
       passo++;
       mostrarPasso();
@@ -11963,7 +12440,7 @@ NAN|Nadi|-17.76|177.44`;
   }
 
   // web/src/js/treino/boas-vindas.js
-  function iniciar47() {
+  function iniciar48() {
     if (lsGet("globo.bv.v1", false)) return;
     lsSet("globo.bv.v1", true);
     var m = estadoTreino.QS.m || {}, jaJogou = Object.keys(m).some(function(k) {
@@ -12000,7 +12477,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/desafio.js
   var desafio_exports = {};
   __export(desafio_exports, {
-    iniciar: () => iniciar48
+    iniciar: () => iniciar49
   });
   var INICIO = Date.UTC(2026, 9, 1);
   function hojeStr2() {
@@ -12130,7 +12607,7 @@ NAN|Nadi|-17.76|177.44`;
       if (mais) mais.insertBefore(b, mais.firstChild);
     }
   }
-  function iniciar48() {
+  function iniciar49() {
     ouvir("rodada-terminou", aoTerminarRodada);
     ouvir("abrir-desafio", iniciarDesafio);
   }
@@ -12138,7 +12615,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/legenda.js
   var legenda_exports = {};
   __export(legenda_exports, {
-    iniciar: () => iniciar49
+    iniciar: () => iniciar50
   });
   var SIMBOLO = { c: "●", d: "◆", s: "■", t: "▲" };
   function mostrarLegenda() {
@@ -12159,7 +12636,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     $("legenda").hidden = false;
   }
-  function iniciar49() {
+  function iniciar50() {
     $("legok").onclick = function() {
       lsSet("globo.legenda.vista", true);
       $("legenda").hidden = true;
@@ -12181,7 +12658,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/progresso.js
   var progresso_exports = {};
   __export(progresso_exports, {
-    iniciar: () => iniciar50,
+    iniciar: () => iniciar51,
     restaurarDeTexto: () => restaurarDeTexto
   });
   var MARCA = "geoTotal-progresso";
@@ -12217,7 +12694,7 @@ NAN|Nadi|-17.76|177.44`;
     }
     return "";
   }
-  function iniciar50() {
+  function iniciar51() {
     $("msave").onclick = salvarProgresso;
     $("mload").onchange = function() {
       var f = this.files && this.files[0];
@@ -12243,7 +12720,7 @@ NAN|Nadi|-17.76|177.44`;
   var ajustes_exports = {};
   __export(ajustes_exports, {
     abrirAjustes: () => abrirAjustes,
-    iniciar: () => iniciar51
+    iniciar: () => iniciar52
   });
   var LINHAS = [
     [
@@ -12376,17 +12853,17 @@ NAN|Nadi|-17.76|177.44`;
     row.appendChild(t);
     var b = document.createElement("button");
     b.className = "ajzerar";
-    function rotulo2() {
+    function rotulo3() {
       b.classList.remove("armado");
       b.textContent = "↺ Recomeçar do zero (" + feitos + " de " + n + " feitos)";
     }
-    rotulo2();
+    rotulo3();
     b.onclick = function() {
       if (!b.classList.contains("armado")) {
         b.classList.add("armado");
         b.textContent = "Toque de novo para recomeçar";
         clearTimeout(b._t);
-        b._t = setTimeout(rotulo2, 4e3);
+        b._t = setTimeout(rotulo3, 4e3);
         return;
       }
       clearTimeout(b._t);
@@ -12408,7 +12885,7 @@ NAN|Nadi|-17.76|177.44`;
   function fecharAjustes() {
     $("ajsheet").style.display = "none";
   }
-  function iniciar51() {
+  function iniciar52() {
     $("qajustb").onclick = abrirAjustes;
     $("goalgo").onclick = abrirAjustes;
     $("goalgo").title = "Toque para mudar a meta do dia e outros ajustes";
@@ -12444,35 +12921,36 @@ NAN|Nadi|-17.76|177.44`;
   iniciar21();
   iniciar27();
   iniciar28();
-  iniciar14();
   iniciar29();
+  iniciar14();
   iniciar30();
-  iniciar33();
-  iniciar35();
-  iniciar45();
   iniciar31();
+  iniciar34();
   iniciar36();
+  iniciar46();
+  iniciar32();
   iniciar37();
   iniciar38();
+  iniciar39();
   iniciar10();
   iniciar11();
-  iniciar34();
-  iniciar39();
+  iniciar35();
   iniciar40();
   iniciar41();
   iniciar42();
-  iniciar15();
-  iniciar32();
   iniciar43();
+  iniciar15();
+  iniciar33();
   iniciar44();
-  iniciar46();
-  iniciar51();
+  iniciar45();
   iniciar47();
+  iniciar52();
   iniciar48();
-  iniciar50();
   iniciar49();
+  iniciar51();
+  iniciar50();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, pdf_exports, avaliacao_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, camadas_exports, pdf_exports, avaliacao_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

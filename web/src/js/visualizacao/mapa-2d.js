@@ -8,10 +8,12 @@ import { LLAT, LLNG } from '../dados/massas-terra.js';
 import { D, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
+import { desenharAguas } from './aguas.js';
 import { BORDA, corAtlas, OCEANO, PALETA, SEM_PAIS } from './atlas.js';
 import { texCanvas } from './carregamento.js';
 import { ganchos } from './ganchos.js';
 import { shapePath, SHAPES } from './marcadores.js';
+import { desenharNatureza, desenharZonas, rotulosZonas } from './natureza.js';
 import { estadoRender } from './projecao.js';
 import { paintSelBadge, selBadgeMetrics } from './selo.js';
 import { avail, ctx, dpr, estadoCamera, estadoMapa, FONT, H, PI, W } from './tela.js';
@@ -106,6 +108,19 @@ function draw2D(){
       ctx.lineWidth=2;ctx.strokeStyle='#ffe066';ctx.stroke();
     }
   }
+
+  /* camadas do botão 🏷️ (cada nome uma vez, na cópia do mapa que está mais no centro) */
+  function proj2(o){
+    var q=proj2D(o.lng,o.lat,R2,cx,cy);
+    return (q.x<-60||q.x>W+60||q.y<-20||q.y>H+20)?null:{x:q.x,y:q.y,a:1};
+  }
+  var usados=[];
+  var lamG=estadoCamera.lam*180/PI,largG=W/R2*180/PI;
+  function pt2(la2,lo2){var q=proj2D(lo2,la2,R2,cx,cy);return [q.x,q.y,1];}
+  desenharZonas(pt2,true);
+  desenharNatureza(proj2,estadoCamera.zoom*1.6,usados);
+  desenharAguas(proj2,R2*2.4,estadoCamera.zoom*1.6,usados);
+  rotulosZonas(pt2,lamG-largG*.28,lamG+largG*.22,usados);
 
   /* marcadores */
   var vis=[];

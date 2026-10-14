@@ -162,6 +162,10 @@ function setIncludeUni(v){
   buildTree();afterFilter();
   emitir('categorias-mudaram',{placar:true});
 }
+/** Chave de um tipo de lugar (menu ⋯ ou botão 🏷️): no meio de uma rodada do treino, pergunta antes. */
+function ligarLugar(cb,definir){
+  cb.onclick=function(){var v=cb.checked;cb.checked=!v;ganchosInterface.antesDeMudarLugares(function(){definir(v);});};
+}
 /** Lista dos lugares especiais, com bandeira e o que cada um é (ultramarino de quem, etc.). */
 function buildCatList(){
   var box=$('catbody');if(!box||box.dataset.ok)return;box.dataset.ok='1';
@@ -205,11 +209,9 @@ function iniciar() {
   $('catlista').addEventListener('toggle',buildCatList);
   $('nDis').textContent='('+D.filter(function(d){return d.dis;}).length+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
   $('oDisputed').checked=estadoMapa.includeDisputed;
-  $('oDisputed').onclick=function(){setIncludeDisputed(this.checked);};
   $('oUni').checked=estadoMapa.includeUni;
-  $('oUni').onclick=function(){setIncludeUni(this.checked);};
   $('oDep').checked=estadoMapa.includeDep;
-  $('oDep').onclick=function(){setIncludeDep(this.checked);};
+  ligarLugar($('oDisputed'),setIncludeDisputed);ligarLugar($('oUni'),setIncludeUni);ligarLugar($('oDep'),setIncludeDep);
 }
 
-export { afterFilter, buildChips, buildTree, chips, estadoFiltros, hist, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, snap, toggleNb, updateNbBtn, updateUndo };
+export { afterFilter, ligarLugar, buildChips, buildTree, chips, estadoFiltros, hist, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, snap, toggleNb, updateNbBtn, updateUndo };
