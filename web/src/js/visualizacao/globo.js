@@ -102,7 +102,6 @@ function draw(){
   ctx.fill();
 
   drawGeo(R,cx,cy);
-  ganchos.desenharArco(R,cx,cy);
 
   /* camadas do botão 🏷️: zonas climáticas, oceanos e mares, desertos, florestas e cordilheiras */
   function ptGlobo(lat,lng){var a=lat*PI/180,b=lng*PI/180,q=rot(Math.cos(a)*Math.sin(b),Math.sin(a),Math.cos(a)*Math.cos(b));return [cx+R*q[0],cy-R*q[1],q[2]];}
@@ -123,6 +122,8 @@ function draw(){
   desenharNatureza(projGlobo,estadoCamera.zoom,usados);
   desenharAguas(projGlobo,R,estadoCamera.zoom,usados);
   rotulosZonas(ptGlobo,lngC-38,lngC+38,usados);
+  /* a rota (Distância e respostas do treino) fica por cima das camadas */
+  ganchos.desenharArco(R,cx,cy);
 
   /* marcadores (só países ligados) */
   var vis=[],i,d;

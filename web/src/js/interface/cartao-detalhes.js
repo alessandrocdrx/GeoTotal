@@ -12,6 +12,8 @@ import { estadoMapa } from '../visualizacao/tela.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoCartao.nome). */
 const estadoCartao = {
+  /** O usuário abriu "Mais informações" (vale até fechar o cartão). */
+  expandido: false,
   cardH: 0,
   /** Intervalo do passeio automático pela rota (null = parado). */
   passeio: null,
@@ -44,20 +46,28 @@ function fillInfo(d){
   n.textContent='Valores aproximados (estimativas por volta de 2024). Confira em fonte oficial antes de citar.';
   box.appendChild(n);
 }
+/* o cartão abre pequeno (bandeira, nome e capital) para sobrar mapa; o resto fica no botão grande */
+function aplicarCompacto(){
+  card.classList.toggle('compacto',!estadoCartao.expandido);
+  var b=$('cexpandir');b.textContent=estadoCartao.expandido?'▴ Menos informações':'ℹ️ Mais informações';
+  b.setAttribute('aria-expanded',estadoCartao.expandido?'true':'false');
+}
 function measureCard(){estadoCartao.cardH=card.style.display==='block'?card.offsetHeight+10:0;}
 
 let card;
 function closeCard(){
   /* durante o passeio, fechar o cartão só esconde o cartão: o passeio continua pelo mapa */
   if(estadoCartao.passeio&&estadoMapa.selected){card.style.display='none';estadoCartao.cardH=0;estadoCartao.semCartao=true;setStatus('🎬 O passeio continua sem o cartão. Toque em ⏹ para parar.',3000);return;}
-  estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;tourStop();}
+  estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;estadoCartao.expandido=false;aplicarCompacto();tourStop();}
 function tourStop(){if(!estadoCartao.passeio)return;clearInterval(estadoCartao.passeio);estadoCartao.passeio=null;estadoCartao.semCartao=false;$('tour').textContent='🎬';$('tour').setAttribute('aria-label','Passeio pelos países');}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   card = document.getElementById('card');
   ganchos.alturaCartao = function(){return estadoCartao.cardH;};
+  $('cexpandir').onclick=function(){estadoCartao.expandido=!estadoCartao.expandido;aplicarCompacto();card.scrollTop=0;setTimeout(measureCard,40);};
+  aplicarCompacto();
   $('moreb').onclick=function(){var b=$('cinfo');b.hidden=!b.hidden;$('moreb').textContent=b.hidden?'Ver mais detalhes ▾':'Ver menos ▴';setTimeout(measureCard,40);};
   window.addEventListener('resize',function(){setTimeout(measureCard,60);});
 }
 
-export { card, closeCard, estadoCartao, fillInfo, fmtArea, fmtPop, iniciar, measureCard, tourStop };
+export { aplicarCompacto, card, closeCard, estadoCartao, fillInfo, fmtArea, fmtPop, iniciar, measureCard, tourStop };

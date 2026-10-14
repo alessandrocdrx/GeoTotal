@@ -1,7 +1,7 @@
 /**
  * @arquivo js/visualizacao/textura.js
  * Camada: Visualização
- * Textura procedural com aparência de satélite (não é foto real).
+ * Textura procedural com aparência de satélite (não é foto real), com a neve da estação do ano.
  */
 
 import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
@@ -21,7 +21,12 @@ const MTN = [[-20,-70,26,3.2,1],[45,-112,17,5,.85],[32,85,4,16,1.1],[34,92,4,9,.
 const RAMP = [[0,[203,172,118]],[.22,[178,150,98]],[.42,[139,132,76]],[.62,[88,114,54]],[.82,[46,90,44]],[1,[24,64,34]]];
 function ramp(w){for(var i=1;i<RAMP.length;i++){if(w<=RAMP[i][0]){var a=RAMP[i-1],b=RAMP[i],t=(w-a[0])/(b[0]-a[0]);return [a[1][0]+(b[1][0]-a[1][0])*t,a[1][1]+(b[1][1]-a[1][1])*t,a[1][2]+(b[1][2]-a[1][2])*t];}}return RAMP[RAMP.length-1][1].slice();}
 function dl(a,b){var d=a-b;while(d>180)d-=360;while(d<-180)d+=360;return d;}
+/* neve da estação: latitude a partir da qual a terra fica branca, mês a mês (jan…dez).
+   No norte, o inverno cobre Escandinávia, Rússia e Canadá; no sul, só a Patagônia e os Andes. */
+const NEVE_NORTE = [47,47,51,58,65,72,74,74,70,62,54,49];
+const NEVE_SUL = [70,70,66,58,52,48,46,47,52,60,66,70];
 function buildTexture(done,progress){
+  var mes=new Date().getMonth(),lnN=NEVE_NORTE[mes],lnS=NEVE_SUL[mes];
   var TW=2048,TH=1024,FW=1024,FH=512;
   var fc=document.createElement('canvas');fc.width=FW;fc.height=FH;
   var fx=fc.getContext('2d'),fd=fx.createImageData(FW,FH),fp=fd.data;
@@ -54,6 +59,11 @@ function buildTexture(done,progress){
         var n3=fbm(lng*2.3+11,lat*2.3+5);
         sn=Math.max(sn,sm(1.3,1.85,e)*sm(.42,.62,n3)*(a>12?1:.3));
         if(lat<-62)sn=Math.max(sn,sm(-62,-66,lat)*1);
+        /* manto de neve da estação, com borda irregular (o ruído empurra a linha uns graus) */
+        var lnh=lat>0?lnN:lnS,borda=(n-.5)*7;
+        sn=Math.max(sn,.92*sm(lnh+borda,lnh+borda+6,a));
+        /* no inverno a neve desce mais nas montanhas */
+        if(a>25&&a>lnh-18)sn=Math.max(sn,sm(.9,1.4,e)*sm(.35,.55,n3));
         if(lat>59&&lng>-75&&lng<-10)sn=Math.max(sn,.95*sm(59,63,lat));
         mix3(c,[244,247,250],Math.max(0,Math.min(1,sn)));
         var sh=.86+.28*n2;sh=1-(1-sh)*(1-.65*Math.max(0,Math.min(1,sn)));var o=(y*FW+x)*4;

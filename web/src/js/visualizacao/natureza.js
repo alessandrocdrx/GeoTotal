@@ -82,24 +82,38 @@ function rotulosZonas(pt,lngLinhas,lngFaixas,usados){
   ctx.textAlign='left';
 }
 
-/* camada, ícone, cor do nome no atlas e no satélite, preenchimento, contorno */
+/* camada, ícone, cor do nome no atlas e no satélite */
 const TIPOS = {
-  d:['desertos','🏜️','#8a4b12','#ffd59a','rgba(240,196,100,.42)','#d99a2b'],
-  f:['florestas','🌳','#1d6b2f','#b4f5b4','rgba(46,160,70,.40)','#2e8b3e'],
-  m:['montanhas','⛰️','#5b3a24','#ecd9c6','rgba(130,82,48,.40)','#8b5a2b'],
-  p:['montanhas','🏔️','#6b5238','#e2d3bf','rgba(185,150,105,.30)','#a98656'],
+  d:['desertos','🏜️','#8a5a12','#ffe2a8'],
+  f:['florestas','🌳','#1f6a33','#bdf2c4'],
+  m:['montanhas','⛰️','#5a4a44','#f1ece6'],
+  p:['montanhas','🏔️','#6b5a45','#e8dcc8'],
 };
-/* texturas: pontinhos de areia nos desertos, listras no relevo, folhinhas nas florestas */
+/* aparência de cada tipo: [preenchimento, contorno, tracejado, desenho da textura] — no satélite o
+   fundo já mostra o relevo, então só um véu claro e o contorno; no atlas, cores de atlas escolar */
+const ESTILO = {
+  sat:{
+    d:['rgba(255,214,140,.16)','rgba(255,214,140,.85)',[],null],
+    f:['rgba(110,215,130,.13)','rgba(140,230,150,.75)',[],null],
+    m:['rgba(255,255,255,.07)','rgba(255,255,255,.6)',[],function(g){g.strokeStyle='rgba(255,255,255,.28)';g.lineWidth=1;g.beginPath();g.moveTo(0,8);g.lineTo(4,3);g.lineTo(8,8);g.stroke();}],
+    p:[null,'rgba(236,220,190,.6)',[5,4],null],
+  },
+  atlas:{
+    d:['rgba(244,214,150,.45)','rgba(196,150,70,.8)',[],function(g){g.fillStyle='rgba(180,130,50,.45)';g.fillRect(1,2,1.2,1.2);g.fillRect(5,6,1.2,1.2);}],
+    f:['rgba(80,165,95,.22)','rgba(55,130,70,.75)',[],null],
+    m:['rgba(150,130,120,.14)','rgba(110,90,80,.7)',[],function(g){g.strokeStyle='rgba(110,90,80,.5)';g.lineWidth=1;g.beginPath();g.moveTo(0,8);g.lineTo(4,3);g.lineTo(8,8);g.stroke();}],
+    p:[null,'rgba(150,125,90,.75)',[5,4],null],
+  },
+};
 const PADROES = {};
-function padrao(t){
-  if(PADROES[t]!==undefined)return PADROES[t];
-  var c=document.createElement('canvas');c.width=c.height=10;var g=c.getContext('2d');
-  if(t==='d'){g.fillStyle='rgba(150,95,20,.55)';g.fillRect(2,2,1.4,1.4);g.fillRect(7,6,1.4,1.4);}
-  else if(t==='m'){g.strokeStyle='rgba(80,45,20,.55)';g.lineWidth=1.2;g.beginPath();g.moveTo(0,10);g.lineTo(10,0);g.stroke();}
-  else if(t==='f'){g.fillStyle='rgba(10,90,30,.5)';g.beginPath();g.arc(3,3,1.5,0,7);g.arc(8,8,1.5,0,7);g.fill();}
-  else {PADROES[t]=null;return null;}
-  PADROES[t]=ctx.createPattern(c,'repeat');
-  return PADROES[t];
+function padrao(modo,t){
+  var k=modo+t;
+  if(PADROES[k]!==undefined)return PADROES[k];
+  var f=ESTILO[modo][t][3];
+  if(!f){PADROES[k]=null;return null;}
+  var c=document.createElement('canvas');c.width=c.height=8;f(c.getContext('2d'));
+  PADROES[k]=ctx.createPattern(c,'repeat');
+  return PADROES[k];
 }
 
 /**
@@ -110,16 +124,16 @@ function padrao(t){
 function desenharAreas(tracar,terra){
   var cam=estadoRender.camadas;
   if(!cam.desertos&&!cam.florestas&&!cam.montanhas)return;
+  var modo=estadoRender.atlas&&estadoRender.feats?'atlas':'sat';
   ['p','m','d','f'].forEach(function(t){
-    var T=TIPOS[t];if(!cam[T[0]])return;
+    var T=TIPOS[t],E=ESTILO[modo][t];if(!cam[T[0]])return;
     ctx.save();
     if(t==='f'){ctx.beginPath();terra();ctx.clip();}
     ctx.beginPath();
     for(var k=0;k<REGIOES.length;k++)if(REGIOES[k].tipo===t)tracar(REGIOES[k]);
-    ctx.fillStyle=T[4];ctx.fill();
-    var pd=padrao(t);if(pd){ctx.fillStyle=pd;ctx.fill();}
-    ctx.lineJoin='round';ctx.lineWidth=1.3;ctx.strokeStyle=T[5];
-    if(t==='p')ctx.setLineDash([4,3]);
+    if(E[0]){ctx.fillStyle=E[0];ctx.fill();}
+    var pd=padrao(modo,t);if(pd){ctx.fillStyle=pd;ctx.fill();}
+    ctx.lineJoin='round';ctx.lineWidth=1.1;ctx.strokeStyle=E[1];ctx.setLineDash(E[2]);
     ctx.stroke();
     ctx.restore();
   });

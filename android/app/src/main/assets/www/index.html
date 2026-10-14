@@ -872,6 +872,18 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
 .camadas .mswrow b{font-size:14px}
 .camadas .mswrow small{font-size:11.5px}
 .camadas .mswrow .mi{font-size:18px}
+
+/* cartão do país pequeno: bandeira, nome, capital e o botão grande de mais informações */
+#card.compacto #cstat,#card.compacto #cbody{display:none}
+#card .cexpandir{display:block;width:100%;margin:10px 0 0;padding:13px 12px;border:0;border-radius:14px;background:linear-gradient(135deg,#4da3ff,#2f6fe0);color:#fff;font-size:16px;font-weight:800;line-height:1.2;font-family:inherit;cursor:pointer;box-shadow:0 6px 16px rgba(47,111,224,.35)}
+#card:not(.compacto) .cexpandir{background:var(--chip);color:var(--fg);box-shadow:none;border:1px solid var(--border);font-size:14px;padding:9px 12px}
+#card.compacto .nav{margin-top:8px;padding:8px 0 10px}
+#card.compacto .nav button{height:42px}
+
+/* balão da sigla do aeroporto (tela da Distância) */
+.dbaero{position:absolute;z-index:12;width:220px;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:12px;padding:8px 10px;box-shadow:0 8px 22px rgba(0,0,0,.35);font-size:13px;line-height:1.35;animation:qpop .18s ease-out}
+.dbaero[hidden]{display:none}
+.dbaero b{display:block;font-size:15px;margin-bottom:2px}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -902,6 +914,7 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
       <div class="dbacoes"><select id="dbadd" class="dbadd" aria-label="Adicionar parada"></select><button id="dbmais" class="dbmais"></button></div>
       <div id="dblegs" hidden></div>
     </div>
+    <div id="dbaero" class="dbaero" hidden></div>
     <div id="stbar"><span>🇧🇷 Estados</span><span class="stbtns"><button id="sttreino">🎯 Treinar</button><button id="stexit">← Países</button></span></div>
     <div class="seg" role="group" aria-label="Rótulos" hidden>
       <button id="lp" aria-pressed="true">País</button>
@@ -939,6 +952,7 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
         <button class="x" id="close" aria-label="Fechar">✕</button>
       </div>
       <div class="capbox"><span class="lab">🏛️ Capital</span><b id="ccap"></b><div class="capnote" id="ccapnote"></div></div>
+      <button class="cexpandir" id="cexpandir" aria-expanded="false">ℹ️ Mais informações</button>
       <div class="cstat" id="cstat"></div>
       <div id="cbody">
       <div class="facts" id="cfacts"></div>
@@ -4248,7 +4262,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     while (d < -180) d += 360;
     return d;
   }
+  var NEVE_NORTE = [47, 47, 51, 58, 65, 72, 74, 74, 70, 62, 54, 49];
+  var NEVE_SUL = [70, 70, 66, 58, 52, 48, 46, 47, 52, 60, 66, 70];
   function buildTexture(done, progress) {
+    var mes = (/* @__PURE__ */ new Date()).getMonth(), lnN = NEVE_NORTE[mes], lnS = NEVE_SUL[mes];
     var TW = 2048, TH = 1024, FW = 1024, FH = 512;
     var fc = document.createElement("canvas");
     fc.width = FW;
@@ -4312,6 +4329,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
           var n3 = fbm(lng * 2.3 + 11, lat * 2.3 + 5);
           sn = Math.max(sn, sm(1.3, 1.85, e) * sm(0.42, 0.62, n3) * (a > 12 ? 1 : 0.3));
           if (lat < -62) sn = Math.max(sn, sm(-62, -66, lat) * 1);
+          var lnh = lat > 0 ? lnN : lnS, borda = (n - 0.5) * 7;
+          sn = Math.max(sn, 0.92 * sm(lnh + borda, lnh + borda + 6, a));
+          if (a > 25 && a > lnh - 18) sn = Math.max(sn, sm(0.9, 1.4, e) * sm(0.35, 0.55, n3));
           if (lat > 59 && lng > -75 && lng < -10) sn = Math.max(sn, 0.95 * sm(59, 63, lat));
           mix3(c, [244, 247, 250], Math.max(0, Math.min(1, sn)));
           var sh = 0.86 + 0.28 * n2;
@@ -4667,6 +4687,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
   }
   var texCanvas = null;
+  function chaveTex() {
+    return "tex-proc-m" + (/* @__PURE__ */ new Date()).getMonth();
+  }
   function setTextureFrom(c) {
     if (uploadTexture(c)) {
       estadoRender.useTex = true;
@@ -4683,7 +4706,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (setTextureFrom(tc)) {
         setStatus("Pronto: textura gerada e salva neste aparelho.", 3500);
         tc.toBlob(function(b) {
-          if (b) idbSet("tex-proc", b);
+          if (b) idbSet(chaveTex(), b);
         }, "image/jpeg", 0.9);
       } else setStatus("A textura não pôde ser usada neste aparelho.", 7e3);
     }, function(p) {
@@ -4707,7 +4730,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function startMap() {
     var okGL = initGL();
     setStatus("Carregando o mapa…");
-    var pTex = !okGL ? Promise.resolve(false) : idbGet("tex-proc").then(function(b) {
+    var pTex = !okGL ? Promise.resolve(false) : idbGet(chaveTex()).then(function(b) {
       if (!b) return false;
       return blobToTexCanvas(b).then(function(c) {
         return setTextureFrom(c);
@@ -4717,6 +4740,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     idbDel("tex-custom");
     idbDel("borders");
+    idbDel("tex-proc");
+    for (var m = 0; m < 12; m++) if ("tex-proc-m" + m !== chaveTex()) idbDel("tex-proc-m" + m);
     pTex.then(function(okTex) {
       if (okTex) setStatus("Textura carregada do aparelho. Carregando fronteiras…");
       return loadD3Topo().then(function() {
@@ -4724,15 +4749,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
           return setupGeo();
         });
       });
-    }).then(function(m) {
+    }).then(function(m2) {
       emitir("fronteiras-carregadas");
       updateOpts();
       if (!okGL) {
-        setStatus("Fronteiras carregadas (" + m + " países com contorno). Este aparelho não suporta a textura 3D.", 7e3);
+        setStatus("Fronteiras carregadas (" + m2 + " países com contorno). Este aparelho não suporta a textura 3D.", 7e3);
         return;
       }
       if (estadoRender.useTex) {
-        setStatus("Pronto: fronteiras carregadas (" + m + " países com contorno).", 3500);
+        setStatus("Pronto: fronteiras carregadas (" + m2 + " países com contorno).", 3500);
         return;
       }
       genTexture();
@@ -4887,46 +4912,66 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.textAlign = "left";
   }
   var TIPOS = {
-    d: ["desertos", "🏜️", "#8a4b12", "#ffd59a", "rgba(240,196,100,.42)", "#d99a2b"],
-    f: ["florestas", "🌳", "#1d6b2f", "#b4f5b4", "rgba(46,160,70,.40)", "#2e8b3e"],
-    m: ["montanhas", "⛰️", "#5b3a24", "#ecd9c6", "rgba(130,82,48,.40)", "#8b5a2b"],
-    p: ["montanhas", "🏔️", "#6b5238", "#e2d3bf", "rgba(185,150,105,.30)", "#a98656"]
+    d: ["desertos", "🏜️", "#8a5a12", "#ffe2a8"],
+    f: ["florestas", "🌳", "#1f6a33", "#bdf2c4"],
+    m: ["montanhas", "⛰️", "#5a4a44", "#f1ece6"],
+    p: ["montanhas", "🏔️", "#6b5a45", "#e8dcc8"]
+  };
+  var ESTILO = {
+    sat: {
+      d: ["rgba(255,214,140,.16)", "rgba(255,214,140,.85)", [], null],
+      f: ["rgba(110,215,130,.13)", "rgba(140,230,150,.75)", [], null],
+      m: ["rgba(255,255,255,.07)", "rgba(255,255,255,.6)", [], function(g) {
+        g.strokeStyle = "rgba(255,255,255,.28)";
+        g.lineWidth = 1;
+        g.beginPath();
+        g.moveTo(0, 8);
+        g.lineTo(4, 3);
+        g.lineTo(8, 8);
+        g.stroke();
+      }],
+      p: [null, "rgba(236,220,190,.6)", [5, 4], null]
+    },
+    atlas: {
+      d: ["rgba(244,214,150,.45)", "rgba(196,150,70,.8)", [], function(g) {
+        g.fillStyle = "rgba(180,130,50,.45)";
+        g.fillRect(1, 2, 1.2, 1.2);
+        g.fillRect(5, 6, 1.2, 1.2);
+      }],
+      f: ["rgba(80,165,95,.22)", "rgba(55,130,70,.75)", [], null],
+      m: ["rgba(150,130,120,.14)", "rgba(110,90,80,.7)", [], function(g) {
+        g.strokeStyle = "rgba(110,90,80,.5)";
+        g.lineWidth = 1;
+        g.beginPath();
+        g.moveTo(0, 8);
+        g.lineTo(4, 3);
+        g.lineTo(8, 8);
+        g.stroke();
+      }],
+      p: [null, "rgba(150,125,90,.75)", [5, 4], null]
+    }
   };
   var PADROES = {};
-  function padrao(t) {
-    if (PADROES[t] !== void 0) return PADROES[t];
-    var c = document.createElement("canvas");
-    c.width = c.height = 10;
-    var g = c.getContext("2d");
-    if (t === "d") {
-      g.fillStyle = "rgba(150,95,20,.55)";
-      g.fillRect(2, 2, 1.4, 1.4);
-      g.fillRect(7, 6, 1.4, 1.4);
-    } else if (t === "m") {
-      g.strokeStyle = "rgba(80,45,20,.55)";
-      g.lineWidth = 1.2;
-      g.beginPath();
-      g.moveTo(0, 10);
-      g.lineTo(10, 0);
-      g.stroke();
-    } else if (t === "f") {
-      g.fillStyle = "rgba(10,90,30,.5)";
-      g.beginPath();
-      g.arc(3, 3, 1.5, 0, 7);
-      g.arc(8, 8, 1.5, 0, 7);
-      g.fill();
-    } else {
-      PADROES[t] = null;
+  function padrao(modo2, t) {
+    var k = modo2 + t;
+    if (PADROES[k] !== void 0) return PADROES[k];
+    var f = ESTILO[modo2][t][3];
+    if (!f) {
+      PADROES[k] = null;
       return null;
     }
-    PADROES[t] = ctx.createPattern(c, "repeat");
-    return PADROES[t];
+    var c = document.createElement("canvas");
+    c.width = c.height = 8;
+    f(c.getContext("2d"));
+    PADROES[k] = ctx.createPattern(c, "repeat");
+    return PADROES[k];
   }
   function desenharAreas(tracar, terra) {
     var cam = estadoRender.camadas;
     if (!cam.desertos && !cam.florestas && !cam.montanhas) return;
+    var modo2 = estadoRender.atlas && estadoRender.feats ? "atlas" : "sat";
     ["p", "m", "d", "f"].forEach(function(t) {
-      var T = TIPOS[t];
+      var T = TIPOS[t], E = ESTILO[modo2][t];
       if (!cam[T[0]]) return;
       ctx.save();
       if (t === "f") {
@@ -4936,17 +4981,19 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       }
       ctx.beginPath();
       for (var k = 0; k < REGIOES.length; k++) if (REGIOES[k].tipo === t) tracar(REGIOES[k]);
-      ctx.fillStyle = T[4];
-      ctx.fill();
-      var pd = padrao(t);
+      if (E[0]) {
+        ctx.fillStyle = E[0];
+        ctx.fill();
+      }
+      var pd = padrao(modo2, t);
       if (pd) {
         ctx.fillStyle = pd;
         ctx.fill();
       }
       ctx.lineJoin = "round";
-      ctx.lineWidth = 1.3;
-      ctx.strokeStyle = T[5];
-      if (t === "p") ctx.setLineDash([4, 3]);
+      ctx.lineWidth = 1.1;
+      ctx.strokeStyle = E[1];
+      ctx.setLineDash(E[2]);
       ctx.stroke();
       ctx.restore();
     });
@@ -5373,7 +5420,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     ctx.fill();
     drawGeo(R, cx, cy);
-    ganchos.desenharArco(R, cx, cy);
     function ptGlobo(lat, lng) {
       var a3 = lat * PI / 180, b3 = lng * PI / 180, q3 = rot(Math.cos(a3) * Math.sin(b3), Math.sin(a3), Math.cos(a3) * Math.cos(b3));
       return [cx + R * q3[0], cy - R * q3[1], q3[2]];
@@ -5402,6 +5448,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     desenharNatureza(projGlobo, estadoCamera.zoom, usados);
     desenharAguas(projGlobo, R, estadoCamera.zoom, usados);
     rotulosZonas(ptGlobo, lngC - 38, lngC + 38, usados);
+    ganchos.desenharArco(R, cx, cy);
     var vis = [], i, d;
     for (i = 0; i < D.length; i++) {
       d = D[i];
@@ -5511,6 +5558,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/cartao-detalhes.js
   var cartao_detalhes_exports = {};
   __export(cartao_detalhes_exports, {
+    aplicarCompacto: () => aplicarCompacto,
     card: () => card,
     closeCard: () => closeCard,
     estadoCartao: () => estadoCartao,
@@ -5522,6 +5570,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     tourStop: () => tourStop
   });
   var estadoCartao = {
+    /** O usuário abriu "Mais informações" (vale até fechar o cartão). */
+    expandido: false,
     cardH: 0,
     /** Intervalo do passeio automático pela rota (null = parado). */
     passeio: null,
@@ -5567,6 +5617,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     n.textContent = "Valores aproximados (estimativas por volta de 2024). Confira em fonte oficial antes de citar.";
     box.appendChild(n);
   }
+  function aplicarCompacto() {
+    card.classList.toggle("compacto", !estadoCartao.expandido);
+    var b = $("cexpandir");
+    b.textContent = estadoCartao.expandido ? "▴ Menos informações" : "ℹ️ Mais informações";
+    b.setAttribute("aria-expanded", estadoCartao.expandido ? "true" : "false");
+  }
   function measureCard() {
     estadoCartao.cardH = card.style.display === "block" ? card.offsetHeight + 10 : 0;
   }
@@ -5583,6 +5639,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoBrasil.selSt = null;
     card.style.display = "none";
     estadoCartao.cardH = 0;
+    estadoCartao.expandido = false;
+    aplicarCompacto();
     tourStop();
   }
   function tourStop() {
@@ -5598,6 +5656,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ganchos.alturaCartao = function() {
       return estadoCartao.cardH;
     };
+    $("cexpandir").onclick = function() {
+      estadoCartao.expandido = !estadoCartao.expandido;
+      aplicarCompacto();
+      card.scrollTop = 0;
+      setTimeout(measureCard, 40);
+    };
+    aplicarCompacto();
     $("moreb").onclick = function() {
       var b = $("cinfo");
       b.hidden = !b.hidden;
@@ -6829,7 +6894,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     iniciar: () => iniciar21,
     mostrarDistancia: () => mostrarDistancia,
     sairDistancia: () => sairDistancia,
-    slerp: () => slerp
+    slerp: () => slerp,
+    toqueNaRota: () => toqueNaRota
   });
 
   // web/src/js/dados/aeroportos.js
@@ -7184,15 +7250,18 @@ NAN|Nadi|-17.76|177.44`;
   function corRota(modo2) {
     return (estadoRender.atlas && estadoRender.feats ? COR_ATLAS : COR)[modo2] || COR.voo;
   }
-  function etiqueta(txt, x, y) {
+  var siglas = [];
+  function etiqueta(txt, x, y, info) {
     ctx.font = "800 11px system-ui,sans-serif";
     var w = ctx.measureText(txt).width + 10;
+    if (info) siglas.push({ x: x - w / 2 - 6, y: y + 3, w: w + 12, h: 28, cx: x, cy: y, info });
     ctx.fillStyle = "rgba(10,16,30,.85)";
     ctx.fillRect(x - w / 2, y + 9, w, 16);
     ctx.fillStyle = "#fff";
     ctx.fillText(txt, x, y + 17.5);
   }
   function drawArc(R, cx, cy) {
+    siglas = [];
     var arc = estadoDistancia.arc;
     if (!arc) return;
     var cor = corRota(arc.modo), atlas = estadoRender.atlas && !!estadoRender.feats, larg = arc.modo === "reta" ? 2 : 2.4;
@@ -7227,7 +7296,7 @@ NAN|Nadi|-17.76|177.44`;
       ctx.lineWidth = 2;
       ctx.strokeStyle = "#ff9f43";
       ctx.stroke();
-      etiqueta(h.cod, p.x, p.y);
+      etiqueta(h.cod, p.x, p.y, { cod: h.cod, txt: "Escala em " + h.cidade });
     });
     var pontos = arc.pontos || [], letras = {};
     pontos.forEach(function(i, n) {
@@ -7242,7 +7311,7 @@ NAN|Nadi|-17.76|177.44`;
       ctx.strokeStyle = cor;
       ctx.stroke();
       var c = codAero(D[i]);
-      if (c && arc.modo === "voo") etiqueta(c, p.x, p.y + 2);
+      if (c && arc.modo === "voo") etiqueta(c, p.x, p.y + 2, { cod: c, txt: "Aeroporto que atende " + capShort(D[i]) + ", capital de " + dflag(D[i]) + " " + short(D[i]) });
       if (pontos.length > 2) {
         var t = letras[i].join("·");
         ctx.font = "800 12px system-ui,sans-serif";
@@ -7321,6 +7390,31 @@ NAN|Nadi|-17.76|177.44`;
   var ALC_LONGO = 13e3;
   var CUSTO_ESCALA = 1500;
   var modo = "voo";
+  function toqueNaRota(x, y) {
+    var b = $("dbaero");
+    for (var k = siglas.length - 1; k >= 0; k--) {
+      var s = siglas[k];
+      if (x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h) {
+        b.innerHTML = "";
+        var t = document.createElement("b");
+        t.textContent = "✈️ " + s.info.cod;
+        var p = document.createElement("span");
+        p.textContent = s.info.txt;
+        b.appendChild(t);
+        b.appendChild(p);
+        b.hidden = false;
+        b.style.left = Math.max(8, Math.min(W - 228, s.cx - 110)) + "px";
+        b.style.top = Math.max(8, s.cy + 34) + "px";
+        clearTimeout(b._t);
+        b._t = setTimeout(function() {
+          b.hidden = true;
+        }, 5e3);
+        return true;
+      }
+    }
+    b.hidden = true;
+    return false;
+  }
   function codAero(d) {
     return AEROPORTO_DA_CAPITAL[d.cc] || "";
   }
@@ -7483,6 +7577,7 @@ NAN|Nadi|-17.76|177.44`;
     if (!estadoDistancia.ativo) return;
     estadoDistancia.ativo = false;
     document.body.classList.remove("dist");
+    $("dbaero").hidden = true;
   }
   function iniciar21() {
     ganchos.desenharArco = drawArc;
@@ -7560,7 +7655,11 @@ NAN|Nadi|-17.76|177.44`;
     }
   }
   function tap(px, py) {
-    if (estadoDistancia.ativo) return;
+    if (estadoDistancia.ativo) {
+      var rr = cv.getBoundingClientRect();
+      toqueNaRota(px - rr.left, py - rr.top);
+      return;
+    }
     if (estadoCamera.plano2D && !estadoBrasil.statesMode) {
       tap2D(px, py);
       return;

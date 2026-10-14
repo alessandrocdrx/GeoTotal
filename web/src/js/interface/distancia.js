@@ -7,7 +7,7 @@
  */
 
 import { AEROPORTO_DA_CAPITAL, HUBS } from '../dados/aeroportos.js';
-import { D, norm } from '../dados/paises.js';
+import { D, dflag, norm } from '../dados/paises.js';
 import { byName, capShort, short } from '../dados/vizinhos.js';
 import { haversine } from '../nucleo/geo.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
@@ -15,7 +15,7 @@ import { fitTo } from '../visualizacao/animacao.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { proj2D, R2now } from '../visualizacao/mapa-2d.js';
 import { estadoRender } from '../visualizacao/projecao.js';
-import { ctx, estadoCamera, rot } from '../visualizacao/tela.js';
+import { ctx, estadoCamera, rot, W } from '../visualizacao/tela.js';
 import { closeCard } from './cartao-detalhes.js';
 import { hidePick } from './lista-proximos.js';
 
@@ -51,11 +51,15 @@ const COR = {reta:'#ffffff',voo:'#ffe066'};
 const COR_ATLAS = {reta:'#1d3557',voo:'#d62828'};
 function corRota(modo){return (estadoRender.atlas&&estadoRender.feats?COR_ATLAS:COR)[modo]||COR.voo;}
 /* etiqueta escura com o código do aeroporto, embaixo do ponto */
-function etiqueta(txt,x,y){
+/* onde cada sigla foi desenhada neste quadro, para o toque saber qual aeroporto é */
+let siglas = [];
+function etiqueta(txt,x,y,info){
   ctx.font='800 11px system-ui,sans-serif';var w=ctx.measureText(txt).width+10;
+  if(info)siglas.push({x:x-w/2-6,y:y+3,w:w+12,h:28,cx:x,cy:y,info:info});
   ctx.fillStyle='rgba(10,16,30,.85)';ctx.fillRect(x-w/2,y+9,w,16);ctx.fillStyle='#fff';ctx.fillText(txt,x,y+17.5);
 }
 function drawArc(R,cx,cy){
+  siglas=[];
   var arc=estadoDistancia.arc;if(!arc)return;
   var cor=corRota(arc.modo),atlas=estadoRender.atlas&&!!estadoRender.feats,larg=arc.modo==='reta'?2:2.4;
   ctx.save();ctx.lineJoin='round';
@@ -74,7 +78,7 @@ function drawArc(R,cx,cy){
   (arc.escalas||[]).forEach(function(h){
     var p=naTela(xyz(h),R,cx,cy);if(!p)return;
     ctx.beginPath();ctx.arc(p.x,p.y,5,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#ff9f43';ctx.stroke();
-    etiqueta(h.cod,p.x,p.y);
+    etiqueta(h.cod,p.x,p.y,{cod:h.cod,txt:'Escala em '+h.cidade});
   });
   /* paradas: a mesma capital duas vezes (ida e volta) ganha as duas letras, ex.: A·E */
   var pontos=arc.pontos||[],letras={};
@@ -82,7 +86,7 @@ function drawArc(R,cx,cy){
   Object.keys(letras).forEach(function(i){
     var p=naTela(xyz(D[i]),R,cx,cy);if(!p)return;
     ctx.beginPath();ctx.arc(p.x,p.y,8,0,7);ctx.lineWidth=2.4;ctx.strokeStyle=cor;ctx.stroke();
-    var c=codAero(D[i]);if(c&&arc.modo==='voo')etiqueta(c,p.x,p.y+2);
+    var c=codAero(D[i]);if(c&&arc.modo==='voo')etiqueta(c,p.x,p.y+2,{cod:c,txt:'Aeroporto que atende '+capShort(D[i])+', capital de '+dflag(D[i])+' '+short(D[i])});
     if(pontos.length>2){
       var t=letras[i].join('·');ctx.font='800 12px system-ui,sans-serif';
       var w=Math.max(18,ctx.measureText(t).width+10);
@@ -125,6 +129,24 @@ const DESVIO = 1.05;           /* voos reais fazem ~5% a mais que a linha reta (
 const ALC_REGIONAL = 3500, ALC_LONGO = 13000, CUSTO_ESCALA = 1500;
 let modo = 'voo';
 /** Código do aeroporto da capital (ex.: BSB), ou '' se não houver um por perto. */
+/** Toque na tela da Distância: numa sigla, diz que aeroporto é (balão perto dela). Devolve true se tratou. */
+function toqueNaRota(x,y){
+  var b=$('dbaero');
+  for(var k=siglas.length-1;k>=0;k--){
+    var s=siglas[k];
+    if(x>=s.x&&x<=s.x+s.w&&y>=s.y&&y<=s.y+s.h){
+      b.innerHTML='';
+      var t=document.createElement('b');t.textContent='✈️ '+s.info.cod;
+      var p=document.createElement('span');p.textContent=s.info.txt;
+      b.appendChild(t);b.appendChild(p);b.hidden=false;
+      b.style.left=Math.max(8,Math.min(W-228,s.cx-110))+'px';b.style.top=Math.max(8,s.cy+34)+'px';
+      clearTimeout(b._t);b._t=setTimeout(function(){b.hidden=true;},5000);
+      return true;
+    }
+  }
+  b.hidden=true;
+  return false;
+}
 function codAero(d){return AEROPORTO_DA_CAPITAL[d.cc]||'';}
 function rotulo(d){var c=codAero(d);return (c?c+' ':'')+capShort(d);}
 function km(a,b){return haversine(a,b);}
@@ -221,7 +243,7 @@ function mostrarDistancia(lista){
 function sairDistancia(){
   if(estadoDistancia.arc&&!estadoDistancia.arc.quiz)estadoDistancia.arc=null;
   if(!estadoDistancia.ativo)return;
-  estadoDistancia.ativo=false;document.body.classList.remove('dist');
+  estadoDistancia.ativo=false;document.body.classList.remove('dist');$('dbaero').hidden=true;
 }
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
@@ -246,4 +268,4 @@ function iniciar() {
   $('dbmais').onclick=function(){var l=$('dblegs');l.hidden=!l.hidden;this.textContent=this.textContent.replace(/[▾▴]$/,l.hidden?'▾':'▴');};
 }
 
-export { drawArc, estadoDistancia, fillCountrySelect, iniciar, mostrarDistancia, sairDistancia, slerp };
+export { drawArc, estadoDistancia, fillCountrySelect, iniciar, mostrarDistancia, sairDistancia, slerp, toqueNaRota };

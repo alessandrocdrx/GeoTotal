@@ -19,6 +19,8 @@ function idbDel(k){return idb().then(function(db){return new Promise(function(ok
 function blobToImg(b){return new Promise(function(ok,no){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){ok(im);};im.onerror=no;im.src=fr.result;};fr.onerror=no;fr.readAsDataURL(b);});}
 function blobToTexCanvas(b){return blobToImg(b).then(function(im){var c=document.createElement('canvas');c.width=2048;c.height=1024;c.getContext('2d').drawImage(im,0,0,2048,1024);return c;});}
 let texCanvas = null;
+/* a textura muda com a neve de cada mês: uma chave por mês (as dos outros meses são apagadas) */
+function chaveTex(){return 'tex-proc-m'+new Date().getMonth();}
 function setTextureFrom(c){
   if(uploadTexture(c)){estadoRender.useTex=true;texCanvas=c;updateOpts();return true;}
   return false;
@@ -29,7 +31,7 @@ function genTexture(){
   buildTexture(function(tc){
     if(setTextureFrom(tc)){
       setStatus('Pronto: textura gerada e salva neste aparelho.',3500);
-      tc.toBlob(function(b){if(b)idbSet('tex-proc',b);},'image/jpeg',.9);
+      tc.toBlob(function(b){if(b)idbSet(chaveTex(),b);},'image/jpeg',.9);
     }else setStatus('A textura não pôde ser usada neste aparelho.',7000);
   },function(p){setStatus('Gerando a textura do globo… '+p+'%');});
 }
@@ -44,12 +46,13 @@ function startMap(){
   var okGL=initGL();
   setStatus('Carregando o mapa…');
   var pTex=!okGL?Promise.resolve(false):
-    idbGet('tex-proc').then(function(b){
+    idbGet(chaveTex()).then(function(b){
       if(!b)return false;
       return blobToTexCanvas(b).then(function(c){return setTextureFrom(c);}).catch(function(){return false;});
     });
   /* textura e fronteiras importadas por versões antigas (a importação saiu do menu): apaga as sobras */
-  idbDel('tex-custom');idbDel('borders');
+  idbDel('tex-custom');idbDel('borders');idbDel('tex-proc');
+  for(var m=0;m<12;m++)if('tex-proc-m'+m!==chaveTex())idbDel('tex-proc-m'+m);
   pTex.then(function(okTex){
     if(okTex)setStatus('Textura carregada do aparelho. Carregando fronteiras…');
     return loadD3Topo().then(function(){

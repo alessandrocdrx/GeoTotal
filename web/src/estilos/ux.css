@@ -537,3 +537,15 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
 .camadas .mswrow b{font-size:14px}
 .camadas .mswrow small{font-size:11.5px}
 .camadas .mswrow .mi{font-size:18px}
+
+/* cartão do país pequeno: bandeira, nome, capital e o botão grande de mais informações */
+#card.compacto #cstat,#card.compacto #cbody{display:none}
+#card .cexpandir{display:block;width:100%;margin:10px 0 0;padding:13px 12px;border:0;border-radius:14px;background:linear-gradient(135deg,#4da3ff,#2f6fe0);color:#fff;font-size:16px;font-weight:800;line-height:1.2;font-family:inherit;cursor:pointer;box-shadow:0 6px 16px rgba(47,111,224,.35)}
+#card:not(.compacto) .cexpandir{background:var(--chip);color:var(--fg);box-shadow:none;border:1px solid var(--border);font-size:14px;padding:9px 12px}
+#card.compacto .nav{margin-top:8px;padding:8px 0 10px}
+#card.compacto .nav button{height:42px}
+
+/* balão da sigla do aeroporto (tela da Distância) */
+.dbaero{position:absolute;z-index:12;width:220px;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:12px;padding:8px 10px;box-shadow:0 8px 22px rgba(0,0,0,.35);font-size:13px;line-height:1.35;animation:qpop .18s ease-out}
+.dbaero[hidden]{display:none}
+.dbaero b{display:block;font-size:15px;margin-bottom:2px}
