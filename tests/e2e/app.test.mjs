@@ -403,7 +403,7 @@ test('boas-vindas: cartão Livre abre o Livre; tour passa por todos os passos e 
   assert.equal(await pagina.isVisible('#guia'), true, 'tour aparece');
   assert.equal(await pagina.evaluate(() => window.__geoTotal.quiz.open), true, 'tour abre o Treino');
   const passos = [];
-  for (let k = 0; k < 10 && await pagina.isVisible('#guia'); k++) {
+  for (let k = 0; k < 20 && await pagina.isVisible('#guia'); k++) {
     passos.push(await pagina.textContent('#guiapasso'));
     await pagina.click('#guiaprox');
     await pagina.waitForTimeout(150);

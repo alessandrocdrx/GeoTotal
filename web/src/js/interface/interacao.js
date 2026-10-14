@@ -11,6 +11,7 @@ import { select } from './cartao-pais.js';
 import { ganchosInterface } from './ganchos.js';
 import { hidePick } from './lista-proximos.js';
 import { tocar } from '../nucleo/som.js';
+import { setStatus } from '../nucleo/utilitarios.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { inv2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
@@ -41,13 +42,30 @@ function endPtr(e){
 
 /* com uma camada ligada (🏷️), tocar numa área natural abre o cartão dela; um toque bem em cima do
    marcador de um país continua abrindo o país */
-function tocarArea(ll){
-  if(!ll||Math.abs(ll[1])>90)return false;
-  var a=areaEm(ll[0],ll[1],terraEm(ll[0],ll[1]));
-  if(!a)return false;
+function areaSob(ll){
+  if(!ll||Math.abs(ll[1])>90)return null;
+  return areaEm(ll[0],ll[1],terraEm(ll[0],ll[1]));
+}
+function abrirAreaTocada(a){
   if(estadoMapa.selected)closeCard();
   tocar('toque');abrirArea(a,function(d){select(d,true);});
-  return true;
+}
+/* camadas uma por toque: o país (ou a capital) vem primeiro; tocar de novo no mesmo lugar mostra a área
+   natural que está embaixo (deserto, floresta, mar…), e mais um toque volta ao país */
+let ultimoToque = null;
+function decidirToque(x,y,chosen,grp,a){
+  var agora=performance.now(),u=ultimoToque;
+  var mesmo=u&&(u.x-x)*(u.x-x)+(u.y-y)*(u.y-y)<30*30&&agora-u.t<6000;
+  var camada=(chosen&&a)?(mesmo&&u.camada==='pais'?'area':'pais'):(chosen?'pais':(a?'area':null));
+  ultimoToque=camada?{x:x,y:y,t:agora,camada:camada}:null;
+  if(camada==='area'){abrirAreaTocada(a);return;}
+  if(camada==='pais'){
+    if(grp.indexOf(chosen)<0)grp.unshift(chosen);
+    tocar('toque');select(chosen,false,grp);
+    if(a&&!mesmo)setStatus('👆 Toque de novo aqui para ver '+a.nome,2400);
+    return;
+  }
+  if(estadoMapa.selected)closeCard();
 }
 /* oceano: só tocando no nome escrito (não tem contorno, e assim um toque no mar não abre por engano) */
 function tocarOceano(x,y){
@@ -77,14 +95,9 @@ function tap(px,py){
   hidePick();
   /* toque preciso no ponto vence; senão vale o país sob o dedo; senão, o ponto mais próximo */
   var precise=cand.length&&cand[0].dd<14*14;
-  if(!precise&&tocarArea(lngLatEm(x,y)))return;
   var poly=precise?null:countryAt(x,y);
   var chosen=precise?cand[0].d:(poly||(cand.length?cand[0].d:null));
-  if(chosen){
-    var grp=cand.map(function(c){return c.d;});
-    if(grp.indexOf(chosen)<0)grp.unshift(chosen);
-    tocar('toque');select(chosen,false,grp);
-  }else if(estadoMapa.selected)closeCard();
+  decidirToque(x,y,chosen,cand.map(function(c){return c.d;}),areaSob(lngLatEm(x,y)));
 }
 
 function tap2D(px,py){
@@ -100,18 +113,14 @@ function tap2D(px,py){
   }
   cand2.sort(function(a,b){return a.dd-b.dd;});
   var precise=cand2.length&&cand2[0].dd<14*14;
-  if(!precise){var llA=inv2D(x,y,R2,cx,cy);llA[0]=((llA[0]+540)%360)-180;if(tocarArea(llA))return;}
+  var llA=inv2D(x,y,R2,cx,cy);llA[0]=((llA[0]+540)%360)-180;
   var poly2=null;
   if(!precise&&estadoRender.feats){
     var ll2=inv2D(x,y,R2,cx,cy);
     for(i=0;i<D.length;i++){if(estadoMapa.on[i]&&estadoRender.FEAT[i]&&inFeat(estadoRender.FEAT[i],ll2[0],ll2[1])){poly2=D[i];break;}}
   }
   var chosen=precise?cand2[0].d:(poly2||(cand2.length?cand2[0].d:null));
-  if(chosen){
-    var grp=cand2.map(function(c){return c.d;});
-    if(grp.indexOf(chosen)<0)grp.unshift(chosen);
-    tocar('toque');select(chosen,false,grp);
-  }else if(estadoMapa.selected)closeCard();
+  decidirToque(x,y,chosen,cand2.map(function(c){return c.d;}),areaSob(llA));
 }
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {

@@ -49,6 +49,26 @@ function iniciar() {
   $('mclose').onclick=function(){$('msheet').style.display='none';};
   $('msheet').addEventListener('pointerdown',function(e){if(e.target===$('msheet'))$('msheet').style.display='none';});
   $('txtd').addEventListener('pointerdown',function(e){if(e.target===$('txtd'))$('txtd').style.display='none';});
+  /* o que abre pelo menu volta para o menu (← Voltar ou o voltar do Android), na mesma página dele */
+  var VOLTA={study:'studyclose',passsheet:'passclose',badgesheet:'badgesclose',statsheet:'statsclose',dbar:'dexit',stbar:'stexit'};
+  function visivel(el){return !!el&&el.getClientRects().length>0;}
+  var origem=null;
+  $('msheet').addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b||b.hasAttribute('data-p')||b.id==='mback'||b.id==='mclose')return;
+    var pg=null;Array.prototype.forEach.call(document.querySelectorAll('#msheet .mpage'),function(p){if(!p.hidden)pg=p.id;});
+    setTimeout(function(){
+      if(visivel($('msheet')))return;
+      var alvo=Object.keys(VOLTA).filter(function(id){return visivel($(id));})[0];
+      origem=alvo?{tela:alvo,pagina:pg}:null;
+    },80);
+  });
+  Object.keys(VOLTA).forEach(function(id){
+    $(VOLTA[id]).addEventListener('click',function(){
+      if(!origem||origem.tela!==id)return;
+      var pg=origem.pagina;origem=null;
+      setTimeout(function(){if(visivel($(id)))return;$('mbtn').click();if(pg)mShow(pg);},0);
+    });
+  });
 }
 
 export { iniciar, ligarSeg };

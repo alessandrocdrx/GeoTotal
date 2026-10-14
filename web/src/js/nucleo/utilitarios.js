@@ -29,4 +29,13 @@ function setStatus(t,ms){
 }
 let statusT = 0;
 
-export { $, confirmTap, lsGet, lsSet, setStatus };
+/** Aviso recolhido num ícone ⓘ (como nos sites): o título fica à vista, o texto abre com um toque. */
+function notaAjuda(texto,titulo){
+  var d=document.createElement('details');d.className='ajuda';
+  var s=document.createElement('summary');var i=document.createElement('i');i.textContent='i';i.setAttribute('aria-hidden','true');
+  s.appendChild(i);s.appendChild(document.createTextNode(titulo||'Sobre estes dados'));
+  var p=document.createElement('p');p.textContent=texto;
+  d.appendChild(s);d.appendChild(p);return d;
+}
+
+export { $, confirmTap, lsGet, lsSet, notaAjuda, setStatus };

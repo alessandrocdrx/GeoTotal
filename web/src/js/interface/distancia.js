@@ -253,10 +253,9 @@ function mostrarDistancia(lista){
     ((nOf?(nEst?'Trechos marcados "OpenFlights": voos que existiam em 2014, nos dados abertos do OpenFlights. Trechos marcados "estimativa": sem dado, montados pelos grandes aeroportos de conexão. ':'Rota com voos que existiam em 2014, segundo os dados abertos do OpenFlights. As companhias mudam as rotas o tempo todo: confira antes de viajar. '):'Estimativa: sem dado do OpenFlights para esta rota, ela foi montada pelos grandes aeroportos de conexão. ')+
     (escalas.length?'Escalas: '+escalas.map(function(h){return h.cod+' '+h.cidade;}).join(', ')+'. ':'')+
     'Km e horas são estimados (5% a mais que a linha reta, 30 min para subir e descer e 2 h em cada escala).');
-  $('dbnota').hidden=true;
+  $('dbnota').textContent=nota;
   Array.prototype.forEach.call($('dbmodo').children,function(bt){bt.setAttribute('aria-pressed',bt.dataset.v===modo?'true':'false');});
   var lg=$('dblegs');lg.innerHTML='';
-  var ex=document.createElement('p');ex.textContent=nota;lg.appendChild(ex);
   /* editar as paradas aqui mesmo: trocar o país, tirar qualquer uma; entre elas, os km do trecho */
   lista.forEach(function(i,n){
     var row=document.createElement('div');row.className='dstop';
@@ -287,8 +286,10 @@ function mostrarDistancia(lista){
       lg.appendChild(li);
     }
   });
-  $('dbmais').textContent='✏️ Paradas '+(lg.hidden?'▾':'▴');
-  $('dbadd').hidden=lista.length>=MAX_PARADAS;
+  /* um botão só: cada parada nova já aparece na lista acima; no limite, ele dá lugar ao aviso */
+  var cheio=lista.length>=MAX_PARADAS;
+  $('dbadd').hidden=cheio;$('dbmax').hidden=!cheio;$('dbmax').textContent='Máximo de '+MAX_PARADAS+' paradas: tire uma para trocar.';
+  $('dbadd').options[0].textContent='＋ Adicionar parada ('+lista.length+' de '+MAX_PARADAS+')';
   fitTo(lista);
 }
 /** Fecha a tela da Distância e apaga a rota. */
@@ -305,7 +306,7 @@ function iniciar() {
   ganchos.alturaDistancia = function(){var b=$('dbar');return b.offsetTop+b.offsetHeight;};
   paradas=[byName[norm('Brasil')],byName[norm('Japão')]];
   /* menu ⋯ > Distância abre direto a tela, com as paradas à vista para editar */
-  $('mdist').onclick=function(){$('dblegs').hidden=false;mostrarDistancia(paradas);};
+  $('mdist').onclick=function(){mostrarDistancia(paradas);};
   $('dexit').onclick=sairDistancia;
   modo=lsGet('globo.dist.modo','voo');if(!MODOS.some(function(m){return m[0]===modo;}))modo='voo';
   MODOS.forEach(function(m){
@@ -317,7 +318,6 @@ function iniciar() {
   var add=$('dbadd');fillCountrySelect(add,'Brasil');add.dataset.titulo='Adicionar parada';
   var o=document.createElement('option');o.value='';o.textContent='＋ Parada';add.insertBefore(o,add.firstChild);add.value='';
   add.onchange=function(){if(add.value!==''){paradas.push(+add.value);add.value='';mostrarDistancia();}};
-  $('dbmais').onclick=function(){var l=$('dblegs');l.hidden=!l.hidden;this.textContent=this.textContent.replace(/[▾▴]$/,l.hidden?'▾':'▴');};
 }
 
 export { drawArc, estadoDistancia, fillCountrySelect, iniciar, mostrarDistancia, sairDistancia, slerp, toqueNaRota };

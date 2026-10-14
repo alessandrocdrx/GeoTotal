@@ -20,11 +20,10 @@
     <div id="status"></div>
     <div id="pick"></div>
     <div id="dbar">
-      <div class="dbtop"><div class="dbtxt"><b id="dbtit"></b><span id="dbtot"></span></div><button id="dexit" class="closeb">✕ Sair</button></div>
+      <div class="dbtop"><button id="dexit" class="closeb voltar" aria-label="Voltar">← Voltar</button><div class="dbtxt"><b id="dbtit"></b><span id="dbtot"></span><details id="dbinfo" class="ajuda"><summary aria-label="Como a rota é calculada"><i>i</i>De onde vem esta rota</summary><p id="dbnota"></p></details></div></div>
       <div id="dbmodo" class="aseg dbmodo"></div>
-      <div id="dbnota" class="dbnota"></div>
-      <div class="dbacoes"><select id="dbadd" class="dbadd" aria-label="Adicionar parada"></select><button id="dbmais" class="dbmais"></button></div>
-      <div id="dblegs" hidden></div>
+      <div id="dblegs"></div>
+      <div class="dbacoes"><select id="dbadd" class="dbadd" aria-label="Adicionar parada"></select><small id="dbmax" class="dbmax" hidden></small></div>
     </div>
     <div id="dbaero" class="dbaero" hidden></div>
     <div id="ncard" class="ncard" role="dialog" aria-live="polite" hidden>
@@ -32,9 +31,9 @@
       <div class="ncfatos" id="ncfatos"></div>
       <p class="nctexto" id="nctexto"></p>
       <div class="sect" id="ncpaises"></div>
-      <div class="inote" id="ncnota"></div>
+      <details class="ajuda"><summary><i aria-hidden="true">i</i>Sobre estes dados</summary><p id="ncnota"></p></details>
     </div>
-    <div id="stbar"><span>🇧🇷 Estados</span><span class="stbtns"><button id="sttreino">🎯 Treinar</button><button id="stexit">← Países</button></span></div>
+    <div id="stbar"><span>🇧🇷 Estados</span><span class="stbtns"><button id="sttreino">🎯 Treinar</button><button id="stexit">← Voltar</button></span></div>
     <div class="seg" role="group" aria-label="Rótulos" hidden>
       <button id="lp" aria-pressed="true">País</button>
       <button id="lc" aria-pressed="false">Capital</button>

@@ -6,7 +6,7 @@
 
 import { appendLang, appendRel } from '../dados/linguas.js';
 import { INFO_MIC } from '../dados/micronacoes.js';
-import { $, setStatus } from '../nucleo/utilitarios.js';
+import { $, notaAjuda, setStatus } from '../nucleo/utilitarios.js';
 import { folhaArrastavel } from './folha-arrastavel.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { ganchos } from '../visualizacao/ganchos.js';
@@ -48,9 +48,7 @@ function infoMicronacao(box,mi){
     var l=document.createElement('a');l.className='micsite';l.href=mi.site;l.target='_blank';l.rel='noopener';
     l.textContent='🌐 Site oficial: '+mi.site.replace(/^https?:\/\/(www\.)?/,'');box.appendChild(l);
   }
-  var n=document.createElement('div');n.className='inote';
-  n.textContent='Micronação: se declara país, mas nenhum país da ONU a reconhece. Informações públicas até 2025; confira no site oficial.';
-  box.appendChild(n);
+  box.appendChild(notaAjuda('Micronação: se declara país, mas nenhum país da ONU a reconhece. Informações públicas até 2025; confira no site oficial.','O que é uma micronação'));
 }
 function fillInfo(d){
   var box=$('cinfo');box.innerHTML='';
@@ -65,9 +63,7 @@ function fillInfo(d){
   });
   appendLang(box,d);
   appendRel(box,d);
-  var n=document.createElement('div');n.className='inote';
-  n.textContent='Valores aproximados (estimativas por volta de 2024). Confira em fonte oficial antes de citar.';
-  box.appendChild(n);
+  box.appendChild(notaAjuda('Valores aproximados (estimativas por volta de 2024). Confira em fonte oficial antes de citar.'));
 }
 /* o cartão abre pequeno (bandeira, nome e capital) para sobrar mapa; o resto fica no botão grande */
 function aplicarCompacto(){

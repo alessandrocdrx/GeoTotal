@@ -210,6 +210,12 @@ TO|Tonganês:96;Inglês e outras:4
 `;
 const LANG = {};
 const LPAL = ['#4da3ff','#f59e0b','#2fd67f','#ef4444','#a78bfa','#22d3ee','#f472b6','#84cc16','#fb923c','#38bdf8','#e879f9','#facc15'];
+/* aviso no ícone ⓘ (o mesmo de notaAjuda, em nucleo/utilitarios.js; os dados não importam o núcleo) */
+function nota(texto){
+  var d=document.createElement('details');d.className='ajuda';
+  var s=document.createElement('summary');s.innerHTML='<i aria-hidden="true">i</i>Sobre estes dados';
+  var p=document.createElement('p');p.textContent=texto;d.appendChild(s);d.appendChild(p);return d;
+}
 function langColor(n){
   if(/^outras?\b/i.test(n))return '#94a3b8';
   var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;
@@ -244,9 +250,7 @@ function appendDist(box,obj,title,colorFn,notePrefix){
       box.appendChild(sub);
     }
   });
-  var n=document.createElement('div');n.className='inote';
-  n.textContent=notePrefix+(obj.note?' '+obj.note+'.':'');
-  box.appendChild(n);
+  box.appendChild(nota(notePrefix+(obj.note?' '+obj.note+'.':'')));
 }
 function appendLang(box,d){
   appendDist(box,d.lang,'Línguas (aprox., % da população por língua materna)',langColor,'Estimativas aproximadas de censos e pesquisas (por volta de 2010–2023). Muitos falam mais de uma língua, então o uso real pode diferir da língua materna.');
@@ -292,9 +296,7 @@ function appendRel(box,d){
       box.appendChild(sub);
     }
   });
-  var n=document.createElement('div');n.className='inote';
-  n.textContent='Subgrupos: % da população total. Estimativas aproximadas de censos e pesquisas (por volta de 2010–2023); mudam conforme a fonte e o critério (filiação × prática).'+(d.rel.note?' '+d.rel.note+'.':'');
-  box.appendChild(n);
+  box.appendChild(nota('Subgrupos: % da população total. Estimativas aproximadas de censos e pesquisas (por volta de 2010–2023); mudam conforme a fonte e o critério (filiação × prática).'+(d.rel.note?' '+d.rel.note+'.':'')));
 }
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */

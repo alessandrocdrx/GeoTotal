@@ -614,3 +614,17 @@ body.dist .ncard{display:none}
 .dleg .dfonte.of{background:rgba(46,160,70,.18);color:#2e9a4a}
 .dleg .dfonte.est{background:rgba(240,150,40,.18);color:#d08000}
 .qlocal{margin-top:6px;font-size:.88em;font-weight:700;opacity:.85}
+/* telas: "← Voltar" sempre à esquerda, título logo depois */
+.shead .voltar~*{margin-right:auto}
+.closeb.voltar{order:-1}
+/* ⓘ ajuda: aviso recolhido num ícone; toque abre o texto */
+details.ajuda{font-size:12px;color:var(--muted);line-height:1.4;margin-top:6px}
+details.ajuda>summary{list-style:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:700;color:var(--muted);padding:2px 0;-webkit-tap-highlight-color:transparent}
+details.ajuda>summary::-webkit-details-marker{display:none}
+details.ajuda>summary i{font-style:normal;font-family:Georgia,serif;font-weight:800;width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;flex:none}
+details.ajuda[open]>summary{color:#4da3ff}
+details.ajuda>p,details.ajuda>div{margin:4px 0 0;padding:8px 10px;border-radius:10px;background:var(--chip);color:var(--fg)}
+#dbar .dbacoes .dbadd{max-width:none;width:100%;border-style:dashed;padding:9px 10px;font-size:13.5px;text-align:center}
+.dbmax{font-size:12px;color:var(--muted)}
+.dbmax[hidden]{display:none}
+#dbar .dbtop{align-items:center}

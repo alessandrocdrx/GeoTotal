@@ -902,6 +902,20 @@ body.dist .ncard{display:none}
 .dleg .dfonte.of{background:rgba(46,160,70,.18);color:#2e9a4a}
 .dleg .dfonte.est{background:rgba(240,150,40,.18);color:#d08000}
 .qlocal{margin-top:6px;font-size:.88em;font-weight:700;opacity:.85}
+/* telas: "← Voltar" sempre à esquerda, título logo depois */
+.shead .voltar~*{margin-right:auto}
+.closeb.voltar{order:-1}
+/* ⓘ ajuda: aviso recolhido num ícone; toque abre o texto */
+details.ajuda{font-size:12px;color:var(--muted);line-height:1.4;margin-top:6px}
+details.ajuda>summary{list-style:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:700;color:var(--muted);padding:2px 0;-webkit-tap-highlight-color:transparent}
+details.ajuda>summary::-webkit-details-marker{display:none}
+details.ajuda>summary i{font-style:normal;font-family:Georgia,serif;font-weight:800;width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;flex:none}
+details.ajuda[open]>summary{color:#4da3ff}
+details.ajuda>p,details.ajuda>div{margin:4px 0 0;padding:8px 10px;border-radius:10px;background:var(--chip);color:var(--fg)}
+#dbar .dbacoes .dbadd{max-width:none;width:100%;border-style:dashed;padding:9px 10px;font-size:13.5px;text-align:center}
+.dbmax{font-size:12px;color:var(--muted)}
+.dbmax[hidden]{display:none}
+#dbar .dbtop{align-items:center}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -926,11 +940,10 @@ body.dist .ncard{display:none}
     <div id="status"></div>
     <div id="pick"></div>
     <div id="dbar">
-      <div class="dbtop"><div class="dbtxt"><b id="dbtit"></b><span id="dbtot"></span></div><button id="dexit" class="closeb">✕ Sair</button></div>
+      <div class="dbtop"><button id="dexit" class="closeb voltar" aria-label="Voltar">← Voltar</button><div class="dbtxt"><b id="dbtit"></b><span id="dbtot"></span><details id="dbinfo" class="ajuda"><summary aria-label="Como a rota é calculada"><i>i</i>De onde vem esta rota</summary><p id="dbnota"></p></details></div></div>
       <div id="dbmodo" class="aseg dbmodo"></div>
-      <div id="dbnota" class="dbnota"></div>
-      <div class="dbacoes"><select id="dbadd" class="dbadd" aria-label="Adicionar parada"></select><button id="dbmais" class="dbmais"></button></div>
-      <div id="dblegs" hidden></div>
+      <div id="dblegs"></div>
+      <div class="dbacoes"><select id="dbadd" class="dbadd" aria-label="Adicionar parada"></select><small id="dbmax" class="dbmax" hidden></small></div>
     </div>
     <div id="dbaero" class="dbaero" hidden></div>
     <div id="ncard" class="ncard" role="dialog" aria-live="polite" hidden>
@@ -938,9 +951,9 @@ body.dist .ncard{display:none}
       <div class="ncfatos" id="ncfatos"></div>
       <p class="nctexto" id="nctexto"></p>
       <div class="sect" id="ncpaises"></div>
-      <div class="inote" id="ncnota"></div>
+      <details class="ajuda"><summary><i aria-hidden="true">i</i>Sobre estes dados</summary><p id="ncnota"></p></details>
     </div>
-    <div id="stbar"><span>🇧🇷 Estados</span><span class="stbtns"><button id="sttreino">🎯 Treinar</button><button id="stexit">← Países</button></span></div>
+    <div id="stbar"><span>🇧🇷 Estados</span><span class="stbtns"><button id="sttreino">🎯 Treinar</button><button id="stexit">← Voltar</button></span></div>
     <div class="seg" role="group" aria-label="Rótulos" hidden>
       <button id="lp" aria-pressed="true">País</button>
       <button id="lc" aria-pressed="false">Capital</button>
@@ -998,7 +1011,7 @@ body.dist .ncard{display:none}
 </div>
 
 <div id="sheet"><div class="box">
-  <div class="shead"><b>Filtros</b><button id="sclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="sclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>Filtros</b></div>
   <div class="inote" id="sheetcount" style="margin-top:-4px"></div>
   <div class="row2"><button id="allon">Ligar todos</button><button id="alloff">Desligar todos</button><button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶ Desfazer</button></div>
   <div class="nbbox">
@@ -1070,10 +1083,10 @@ body.dist .ncard{display:none}
     <div class="sobre">
       <i class="marca-logo grande" aria-hidden="true"></i>
       <h3 class="marca">geo<span>Total</span></h3>
-      <p class="sobrev">Países e Capitais · versão 1.39</p>
+      <p class="sobrev">Países e Capitais · versão 1.40</p>
       <p>Criado por <b>alessandrocdrx</b>.</p>
       <p>Gratuito, sem anúncios, funciona sem internet e não pede nenhuma permissão.</p>
-      <p class="sobrecred"><b>Créditos:</b> D3.js (BSD), TopoJSON (BSD), DataMaps (MIT) e mapa dos estados do Brasil da amCharts (licença incluída no app). Dados de países aproximados, de fontes públicas.</p>
+      <p class="sobrecred"><b>Créditos:</b> D3.js (BSD), TopoJSON (BSD), DataMaps (MIT) e mapa dos estados do Brasil da amCharts (licença incluída no app), desertos, florestas, relevo e mares do Natural Earth (domínio público) e rotas de voo do OpenFlights (ODbL). Dados de países aproximados, de fontes públicas.</p>
     </div>
   </div>
   <div class="mpage" id="mp-cmp" data-t="Comparar países" hidden>
@@ -1132,7 +1145,7 @@ body.dist .ncard{display:none}
   </div>
 </div>
 <div id="scopesheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><b>Onde você quer treinar?</b><button id="scopeclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="scopeclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>Onde você quer treinar?</b></div>
   <button id="qscopeback" class="qbackrow" hidden></button>
   <button id="qrestart" class="restartrow" hidden></button>
   <div id="scopetiles" class="scopetiles"></div>
@@ -1143,22 +1156,22 @@ body.dist .ncard{display:none}
   </details>
 </div></div>
 <div id="jogosheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><b>🎮 Escolha o jogo</b><button id="jogoclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="jogoclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>🎮 Escolha o jogo</b></div>
   <div id="qmodes" class="qseg"></div>
 </div></div>
 <div id="ajsheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><b>⚙️ Ajustes da partida</b><button id="ajclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="ajclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>⚙️ Ajustes da partida</b></div>
   <div id="ajbody"></div>
   <button id="ajok" class="scopeapplybtn">Pronto, jogar</button>
 </div></div>
 <div id="statsheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><b>📊 Seu histórico</b><button id="statsclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="statsclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>📊 Seu histórico</b></div>
   <div class="htabs" role="tablist"><button id="htabC" aria-pressed="true">Por país</button><button id="htabR" aria-pressed="false">Por região</button></div>
   <div id="statsbody"></div>
 </div></div>
 
 <div id="sharesheet" class="ov" style="z-index:90"><div class="box">
-  <div class="shead"><b>Compartilhar resultado</b><button id="shareclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="shareclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>Compartilhar resultado</b></div>
   <img id="shareimg" alt="Imagem do resultado" style="width:100%;border-radius:14px;display:block">
   <div class="inote">Para salvar a imagem, toque e segure nela. O texto abaixo pode ser colado em qualquer conversa.</div>
   <textarea id="sharetxt" readonly style="width:100%;height:84px;margin-top:8px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;padding:8px;font-family:inherit"></textarea>
@@ -1166,22 +1179,22 @@ body.dist .ncard{display:none}
 </div></div>
 
 <div id="badgesheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><b id="badgeshead">Conquistas</b><button id="badgesclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="badgesclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b id="badgeshead">Conquistas</b></div>
   <div id="badgesbody"></div>
 </div></div>
 
 <div id="passsheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><b id="passhead">🛂 Passaporte</b><button id="passclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="passclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b id="passhead">🛂 Passaporte</b></div>
   <div id="passbody"></div>
 </div></div>
 <div id="study" class="ov"><div class="box">
-  <div class="shead"><b>Folha de estudo</b><button id="studyclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="studyclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>Folha de estudo</b></div>
   <button id="studyprint" class="cstreinar">🖨️ Imprimir ou salvar em PDF</button>
   <div id="studybody"></div>
 </div></div>
 
 <div id="txtd" class="ov"><div class="box">
-  <div class="shead"><b id="txtname">Arquivo</b><button id="txtclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="txtclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b id="txtname">Arquivo</b></div>
   <div class="inote">O download direto não está disponível aqui. Copie o texto abaixo e cole em um arquivo .csv.</div>
   <textarea id="txta" readonly></textarea>
   <div class="row2"><button id="txtcopy">Copiar tudo</button></div>
@@ -2419,6 +2432,17 @@ TO|Tonganês:96;Inglês e outras:4
 `;
   var LANG = {};
   var LPAL = ["#4da3ff", "#f59e0b", "#2fd67f", "#ef4444", "#a78bfa", "#22d3ee", "#f472b6", "#84cc16", "#fb923c", "#38bdf8", "#e879f9", "#facc15"];
+  function nota(texto) {
+    var d = document.createElement("details");
+    d.className = "ajuda";
+    var s = document.createElement("summary");
+    s.innerHTML = '<i aria-hidden="true">i</i>Sobre estes dados';
+    var p = document.createElement("p");
+    p.textContent = texto;
+    d.appendChild(s);
+    d.appendChild(p);
+    return d;
+  }
   function langColor(n) {
     if (/^outras?\b/i.test(n)) return "#94a3b8";
     var h = 0;
@@ -2474,10 +2498,7 @@ TO|Tonganês:96;Inglês e outras:4
         box.appendChild(sub);
       }
     });
-    var n = document.createElement("div");
-    n.className = "inote";
-    n.textContent = notePrefix + (obj.note ? " " + obj.note + "." : "");
-    box.appendChild(n);
+    box.appendChild(nota(notePrefix + (obj.note ? " " + obj.note + "." : "")));
   }
   function appendLang(box, d) {
     appendDist(box, d.lang, "Línguas (aprox., % da população por língua materna)", langColor, "Estimativas aproximadas de censos e pesquisas (por volta de 2010–2023). Muitos falam mais de uma língua, então o uso real pode diferir da língua materna.");
@@ -2542,10 +2563,7 @@ TO|Tonganês:96;Inglês e outras:4
         box.appendChild(sub);
       }
     });
-    var n = document.createElement("div");
-    n.className = "inote";
-    n.textContent = "Subgrupos: % da população total. Estimativas aproximadas de censos e pesquisas (por volta de 2010–2023); mudam conforme a fonte e o critério (filiação × prática)." + (d.rel.note ? " " + d.rel.note + "." : "");
-    box.appendChild(n);
+    box.appendChild(nota("Subgrupos: % da população total. Estimativas aproximadas de censos e pesquisas (por volta de 2010–2023); mudam conforme a fonte e o critério (filiação × prática)." + (d.rel.note ? " " + d.rel.note + "." : "")));
   }
   function iniciar5() {
     LANG_RAW.trim().split("\n").forEach(function(l) {
@@ -3023,6 +3041,7 @@ Brunei:Malásia
     confirmTap: () => confirmTap,
     lsGet: () => lsGet,
     lsSet: () => lsSet,
+    notaAjuda: () => notaAjuda,
     setStatus: () => setStatus
   });
   function $(id) {
@@ -3076,6 +3095,21 @@ Brunei:Malásia
     }, ms);
   }
   var statusT = 0;
+  function notaAjuda(texto, titulo) {
+    var d = document.createElement("details");
+    d.className = "ajuda";
+    var s = document.createElement("summary");
+    var i = document.createElement("i");
+    i.textContent = "i";
+    i.setAttribute("aria-hidden", "true");
+    s.appendChild(i);
+    s.appendChild(document.createTextNode(titulo || "Sobre estes dados"));
+    var p = document.createElement("p");
+    p.textContent = texto;
+    d.appendChild(s);
+    d.appendChild(p);
+    return d;
+  }
 
   // web/src/js/visualizacao/tela.js
   var PI = Math.PI;
@@ -5878,10 +5912,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       l.textContent = "🌐 Site oficial: " + mi.site.replace(/^https?:\/\/(www\.)?/, "");
       box.appendChild(l);
     }
-    var n = document.createElement("div");
-    n.className = "inote";
-    n.textContent = "Micronação: se declara país, mas nenhum país da ONU a reconhece. Informações públicas até 2025; confira no site oficial.";
-    box.appendChild(n);
+    box.appendChild(notaAjuda("Micronação: se declara país, mas nenhum país da ONU a reconhece. Informações públicas até 2025; confira no site oficial.", "O que é uma micronação"));
   }
   function fillInfo(d) {
     var box = $("cinfo");
@@ -5908,10 +5939,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     appendLang(box, d);
     appendRel(box, d);
-    var n = document.createElement("div");
-    n.className = "inote";
-    n.textContent = "Valores aproximados (estimativas por volta de 2024). Confira em fonte oficial antes de citar.";
-    box.appendChild(n);
+    box.appendChild(notaAjuda("Valores aproximados (estimativas por volta de 2024). Confira em fonte oficial antes de citar."));
   }
   function aplicarCompacto() {
     card.classList.toggle("compacto", !estadoCartao.expandido);
@@ -7492,7 +7520,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     mestre.connect(ac.destination);
     return ac;
   }
-  function nota(tipo, f, t0, dur, vol, destino) {
+  function nota2(tipo, f, t0, dur, vol, destino) {
     var c = contexto();
     if (!c) return;
     var t = c.currentTime + t0, o = c.createOscillator(), g = c.createGain();
@@ -7532,39 +7560,39 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     acerto: function(o) {
       o = o || {};
       var k = [0, 2, 4, 5, 7, 9, 11, 12][Math.min(7, Math.max(0, (o.combo || 1) - 1))], t = TIMBRES[o.regiao] || TIMBRES.padrao;
-      nota(t.onda, hz(t.base + k), 0, t.dur, 0.18);
-      nota(t.onda, hz(t.base + 5 + k), 0.08, t.dur * 1.6, 0.2);
-      if (t.brilho) nota("sine", hz(t.base + 24 + k), 0.08, t.dur, 0.05);
+      nota2(t.onda, hz(t.base + k), 0, t.dur, 0.18);
+      nota2(t.onda, hz(t.base + 5 + k), 0.08, t.dur * 1.6, 0.2);
+      if (t.brilho) nota2("sine", hz(t.base + 24 + k), 0.08, t.dur, 0.05);
     },
     /** erro: duas notas graves descendo, sem agressividade */
     erro: function() {
-      nota("sine", hz(-9), 0, 0.18, 0.22);
-      nota("sine", hz(-13), 0.12, 0.3, 0.2);
+      nota2("sine", hz(-9), 0, 0.18, 0.22);
+      nota2("sine", hz(-13), 0.12, 0.3, 0.2);
     },
     /** toque num país */
     toque: function() {
-      nota("sine", hz(19), 0, 0.06, 0.06);
+      nota2("sine", hz(19), 0, 0.06, 0.06);
     },
     /** subiu de nível */
     nivel: function() {
       [3, 7, 10, 15].forEach(function(s, i) {
-        nota("triangle", hz(s), i * 0.09, 0.3, 0.16);
+        nota2("triangle", hz(s), i * 0.09, 0.3, 0.16);
       });
     },
     /** meta do dia */
     meta: function() {
       [0, 4, 7, 12].forEach(function(s, i) {
-        nota("triangle", hz(s), i * 0.1, 0.35, 0.16);
+        nota2("triangle", hz(s), i * 0.1, 0.35, 0.16);
       });
-      nota("sine", hz(24), 0.4, 0.6, 0.05);
+      nota2("sine", hz(24), 0.4, 0.6, 0.05);
     },
     /** conquista ou medalha */
     conquista: function() {
       [0, 4, 7, 12, 16].forEach(function(s, i) {
-        nota("triangle", hz(s), i * 0.08, 0.4, 0.15);
+        nota2("triangle", hz(s), i * 0.08, 0.4, 0.15);
       });
       [19, 24].forEach(function(s, i) {
-        nota("sine", hz(s), 0.45 + i * 0.12, 0.7, 0.05);
+        nota2("sine", hz(s), 0.45 + i * 0.12, 0.7, 0.05);
       });
     }
   };
@@ -7604,13 +7632,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       var ac0 = ACORDES[acorde % ACORDES.length];
       acorde++;
       ac0.forEach(function(s2) {
-        nota("sine", hz(s2), 0, 9, 0.035, busMusica);
+        nota2("sine", hz(s2), 0, 9, 0.035, busMusica);
       });
     }
     passoMusica.n++;
     var s = ESCALA[Math.floor(Math.random() * ESCALA.length)];
-    nota("triangle", hz(s), 0.1, 2.2, 0.05, busMusica);
-    if (Math.random() < 0.35) nota("sine", hz(ESCALA[Math.floor(Math.random() * ESCALA.length)] + 12), 0.9, 1.6, 0.025, busMusica);
+    nota2("triangle", hz(s), 0.1, 2.2, 0.05, busMusica);
+    if (Math.random() < 0.35) nota2("sine", hz(ESCALA[Math.floor(Math.random() * ESCALA.length)] + 12), 0.9, 1.6, 0.025, busMusica);
     timerMusica = setTimeout(passoMusica, 2200 + Math.random() * 900);
   }
   passoMusica.n = 0;
@@ -8425,18 +8453,15 @@ NAN|Nadi|-17.76|177.44`;
     var nOf = trechos.filter(function(t2) {
       return t2.fonte === "of";
     }).length, nEst = trechos.length - nOf;
-    var nota2 = modo === "reta" ? "O caminho mais curto pela superfície da Terra, sem pensar em aviões." : (nOf ? nEst ? 'Trechos marcados "OpenFlights": voos que existiam em 2014, nos dados abertos do OpenFlights. Trechos marcados "estimativa": sem dado, montados pelos grandes aeroportos de conexão. ' : "Rota com voos que existiam em 2014, segundo os dados abertos do OpenFlights. As companhias mudam as rotas o tempo todo: confira antes de viajar. " : "Estimativa: sem dado do OpenFlights para esta rota, ela foi montada pelos grandes aeroportos de conexão. ") + (escalas.length ? "Escalas: " + escalas.map(function(h) {
+    var nota3 = modo === "reta" ? "O caminho mais curto pela superfície da Terra, sem pensar em aviões." : (nOf ? nEst ? 'Trechos marcados "OpenFlights": voos que existiam em 2014, nos dados abertos do OpenFlights. Trechos marcados "estimativa": sem dado, montados pelos grandes aeroportos de conexão. ' : "Rota com voos que existiam em 2014, segundo os dados abertos do OpenFlights. As companhias mudam as rotas o tempo todo: confira antes de viajar. " : "Estimativa: sem dado do OpenFlights para esta rota, ela foi montada pelos grandes aeroportos de conexão. ") + (escalas.length ? "Escalas: " + escalas.map(function(h) {
       return h.cod + " " + h.cidade;
     }).join(", ") + ". " : "") + "Km e horas são estimados (5% a mais que a linha reta, 30 min para subir e descer e 2 h em cada escala).";
-    $("dbnota").hidden = true;
+    $("dbnota").textContent = nota3;
     Array.prototype.forEach.call($("dbmodo").children, function(bt) {
       bt.setAttribute("aria-pressed", bt.dataset.v === modo ? "true" : "false");
     });
     var lg = $("dblegs");
     lg.innerHTML = "";
-    var ex = document.createElement("p");
-    ex.textContent = nota2;
-    lg.appendChild(ex);
     lista.forEach(function(i, n) {
       var row = document.createElement("div");
       row.className = "dstop";
@@ -8487,8 +8512,11 @@ NAN|Nadi|-17.76|177.44`;
         lg.appendChild(li);
       }
     });
-    $("dbmais").textContent = "✏️ Paradas " + (lg.hidden ? "▾" : "▴");
-    $("dbadd").hidden = lista.length >= MAX_PARADAS;
+    var cheio = lista.length >= MAX_PARADAS;
+    $("dbadd").hidden = cheio;
+    $("dbmax").hidden = !cheio;
+    $("dbmax").textContent = "Máximo de " + MAX_PARADAS + " paradas: tire uma para trocar.";
+    $("dbadd").options[0].textContent = "＋ Adicionar parada (" + lista.length + " de " + MAX_PARADAS + ")";
     fitTo(lista);
   }
   function sairDistancia() {
@@ -8509,7 +8537,6 @@ NAN|Nadi|-17.76|177.44`;
     };
     paradas = [byName[norm("Brasil")], byName[norm("Japão")]];
     $("mdist").onclick = function() {
-      $("dblegs").hidden = false;
       mostrarDistancia(paradas);
     };
     $("dexit").onclick = sairDistancia;
@@ -8543,11 +8570,6 @@ NAN|Nadi|-17.76|177.44`;
         mostrarDistancia();
       }
     };
-    $("dbmais").onclick = function() {
-      var l = $("dblegs");
-      l.hidden = !l.hidden;
-      this.textContent = this.textContent.replace(/[▾▴]$/, l.hidden ? "▾" : "▴");
-    };
   }
 
   // web/src/js/interface/interacao.js
@@ -8574,16 +8596,35 @@ NAN|Nadi|-17.76|177.44`;
       estadoCamera.dragging = true;
     }
   }
-  function tocarArea(ll) {
-    if (!ll || Math.abs(ll[1]) > 90) return false;
-    var a = areaEm(ll[0], ll[1], terraEm(ll[0], ll[1]));
-    if (!a) return false;
+  function areaSob(ll) {
+    if (!ll || Math.abs(ll[1]) > 90) return null;
+    return areaEm(ll[0], ll[1], terraEm(ll[0], ll[1]));
+  }
+  function abrirAreaTocada(a) {
     if (estadoMapa.selected) closeCard();
     tocar("toque");
     abrirArea(a, function(d) {
       select(d, true);
     });
-    return true;
+  }
+  var ultimoToque = null;
+  function decidirToque(x, y, chosen, grp, a) {
+    var agora = performance.now(), u = ultimoToque;
+    var mesmo = u && (u.x - x) * (u.x - x) + (u.y - y) * (u.y - y) < 30 * 30 && agora - u.t < 6e3;
+    var camada = chosen && a ? mesmo && u.camada === "pais" ? "area" : "pais" : chosen ? "pais" : a ? "area" : null;
+    ultimoToque = camada ? { x, y, t: agora, camada } : null;
+    if (camada === "area") {
+      abrirAreaTocada(a);
+      return;
+    }
+    if (camada === "pais") {
+      if (grp.indexOf(chosen) < 0) grp.unshift(chosen);
+      tocar("toque");
+      select(chosen, false, grp);
+      if (a && !mesmo) setStatus("👆 Toque de novo aqui para ver " + a.nome, 2400);
+      return;
+    }
+    if (estadoMapa.selected) closeCard();
   }
   function tocarOceano(x, y) {
     if (!estadoRender.camadas.oceanos || estadoBrasil.statesMode) return false;
@@ -8623,17 +8664,11 @@ NAN|Nadi|-17.76|177.44`;
     if (ganchosInterface.toqueNoGlobo(x, y, cand)) return;
     hidePick();
     var precise = cand.length && cand[0].dd < 14 * 14;
-    if (!precise && tocarArea(lngLatEm(x, y))) return;
     var poly = precise ? null : countryAt(x, y);
     var chosen = precise ? cand[0].d : poly || (cand.length ? cand[0].d : null);
-    if (chosen) {
-      var grp = cand.map(function(c) {
-        return c.d;
-      });
-      if (grp.indexOf(chosen) < 0) grp.unshift(chosen);
-      tocar("toque");
-      select(chosen, false, grp);
-    } else if (estadoMapa.selected) closeCard();
+    decidirToque(x, y, chosen, cand.map(function(c) {
+      return c.d;
+    }), areaSob(lngLatEm(x, y)));
   }
   function tap2D(px, py) {
     var r = cv.getBoundingClientRect(), x = px - r.left, y = py - r.top, R2 = R2now(), cx = W / 2, cy = H * estadoCamera.cyFrac, i;
@@ -8650,11 +8685,8 @@ NAN|Nadi|-17.76|177.44`;
       return a.dd - b.dd;
     });
     var precise = cand2.length && cand2[0].dd < 14 * 14;
-    if (!precise) {
-      var llA = inv2D(x, y, R2, cx, cy);
-      llA[0] = (llA[0] + 540) % 360 - 180;
-      if (tocarArea(llA)) return;
-    }
+    var llA = inv2D(x, y, R2, cx, cy);
+    llA[0] = (llA[0] + 540) % 360 - 180;
     var poly2 = null;
     if (!precise && estadoRender.feats) {
       var ll2 = inv2D(x, y, R2, cx, cy);
@@ -8666,14 +8698,9 @@ NAN|Nadi|-17.76|177.44`;
       }
     }
     var chosen = precise ? cand2[0].d : poly2 || (cand2.length ? cand2[0].d : null);
-    if (chosen) {
-      var grp = cand2.map(function(c) {
-        return c.d;
-      });
-      if (grp.indexOf(chosen) < 0) grp.unshift(chosen);
-      tocar("toque");
-      select(chosen, false, grp);
-    } else if (estadoMapa.selected) closeCard();
+    decidirToque(x, y, chosen, cand2.map(function(c) {
+      return c.d;
+    }), areaSob(llA));
   }
   function iniciar23() {
     cv.addEventListener("pointerdown", function(e) {
@@ -11028,13 +11055,13 @@ NAN|Nadi|-17.76|177.44`;
     });
     if (perto.length < qtd + 2) perto = cands;
     var nome = short(arr[i]);
-    var nota2 = perto.map(function(x) {
+    var nota3 = perto.map(function(x) {
       return { x, n: parecido(alvo, optLabel(x)) + 0.8 * parecido(nome, short(arr[x])) + (viz.indexOf(x) >= 0 ? 0.3 : 0) + Math.random() * 0.15 };
     });
-    nota2.sort(function(a, b) {
+    nota3.sort(function(a, b) {
       return b.n - a.n;
     });
-    return nota2.slice(0, Math.max(qtd + 2, 6)).map(function(o) {
+    return nota3.slice(0, Math.max(qtd + 2, 6)).map(function(o) {
       return o.x;
     });
   }
@@ -12925,6 +12952,38 @@ NAN|Nadi|-17.76|177.44`;
     $("txtd").addEventListener("pointerdown", function(e) {
       if (e.target === $("txtd")) $("txtd").style.display = "none";
     });
+    var VOLTA = { study: "studyclose", passsheet: "passclose", badgesheet: "badgesclose", statsheet: "statsclose", dbar: "dexit", stbar: "stexit" };
+    function visivel(el2) {
+      return !!el2 && el2.getClientRects().length > 0;
+    }
+    var origem = null;
+    $("msheet").addEventListener("click", function(e) {
+      var b = e.target.closest("button");
+      if (!b || b.hasAttribute("data-p") || b.id === "mback" || b.id === "mclose") return;
+      var pg = null;
+      Array.prototype.forEach.call(document.querySelectorAll("#msheet .mpage"), function(p) {
+        if (!p.hidden) pg = p.id;
+      });
+      setTimeout(function() {
+        if (visivel($("msheet"))) return;
+        var alvo = Object.keys(VOLTA).filter(function(id) {
+          return visivel($(id));
+        })[0];
+        origem = alvo ? { tela: alvo, pagina: pg } : null;
+      }, 80);
+    });
+    Object.keys(VOLTA).forEach(function(id) {
+      $(VOLTA[id]).addEventListener("click", function() {
+        if (!origem || origem.tela !== id) return;
+        var pg = origem.pagina;
+        origem = null;
+        setTimeout(function() {
+          if (visivel($(id))) return;
+          $("mbtn").click();
+          if (pg) mShow(pg);
+        }, 0);
+      });
+    });
   }
 
   // web/src/js/brasil/cartao-estado.js
@@ -12947,10 +13006,7 @@ NAN|Nadi|-17.76|177.44`;
       row.appendChild(b);
       box.appendChild(row);
     });
-    var n = document.createElement("div");
-    n.className = "inote";
-    n.textContent = "Valores aproximados (Censo 2022 e áreas do IBGE, arredondados). Confira em fonte oficial antes de citar.";
-    box.appendChild(n);
+    box.appendChild(notaAjuda("Valores aproximados (Censo 2022 e áreas do IBGE, arredondados). Confira em fonte oficial antes de citar."));
   }
   function refreshNbC() {
     estadoBrasil.stNbC = estadoBrasil.stSaved && estadoBrasil.selSt ? estadoBrasil.selSt.cn.slice() : [];
@@ -13548,7 +13604,10 @@ NAN|Nadi|-17.76|177.44`;
     { alvo: "#qscore", texto: "⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥." },
     { alvo: "#qbody", texto: "👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final." },
     { alvo: ".tools", texto: "🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países." },
-    { alvo: "#mbtn", texto: "⋯ No menu: passaporte, conquistas, histórico, explorar o mapa, som e visual, salvar progresso e este tour de novo." }
+    { alvo: "#msom", texto: "🔊 Som: liga e desliga tudo. ☀️ Ao lado, a sombra da noite de verdade no globo." },
+    { alvo: "#mestilotop", texto: "🛰️ Estilo do mapa: satélite (foto) ou atlas (uma cor por país)." },
+    { alvo: "#camb", texto: "🏷️ O que aparece no mapa: oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais. No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo." },
+    { alvo: "#mbtn", texto: "⋯ No menu: passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, som e visual, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados." }
   ];
   var passo = -1;
   function fecharTour() {

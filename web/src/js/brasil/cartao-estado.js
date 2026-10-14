@@ -16,7 +16,7 @@ import { ganchosInterface } from '../interface/ganchos.js';
 import { hidePick } from '../interface/lista-proximos.js';
 import { emitir } from '../nucleo/eventos.js';
 import { horaAgora } from '../nucleo/hora.js';
-import { $, setStatus } from '../nucleo/utilitarios.js';
+import { $, notaAjuda, setStatus } from '../nucleo/utilitarios.js';
 import { flyTo } from '../visualizacao/animacao.js';
 import { countryView, zoomFor } from '../visualizacao/enquadramento.js';
 import { estadoBrasil, fitStates, stateAt, stateView } from '../visualizacao/estados.js';
@@ -32,9 +32,7 @@ function fillInfoSt(st){
     var b=document.createElement('b');b.textContent=r[1];
     row.appendChild(a);row.appendChild(b);box.appendChild(row);
   });
-  var n=document.createElement('div');n.className='inote';
-  n.textContent='Valores aproximados (Censo 2022 e áreas do IBGE, arredondados). Confira em fonte oficial antes de citar.';
-  box.appendChild(n);
+  box.appendChild(notaAjuda('Valores aproximados (Censo 2022 e áreas do IBGE, arredondados). Confira em fonte oficial antes de citar.'));
 }
 function refreshNbC(){
   estadoBrasil.stNbC=(estadoBrasil.stSaved&&estadoBrasil.selSt)?estadoBrasil.selSt.cn.slice():[];

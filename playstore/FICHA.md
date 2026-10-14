@@ -6,7 +6,7 @@ Tudo o que o Play Console pede, pronto para copiar. Imagens nesta pasta:
 | --- | --- |
 | Ícone do app (512×512, PNG 32 bits) | `icone-512.png` |
 | Gráfico de recursos (1024×500) | `destaque-1024x500.png` |
-| Capturas de tela do telefone (2 a 8) | `capturas/1-treino.png` … `capturas/8-inicio.png` (1080×2160) |
+| Capturas de tela do telefone (2 a 8) | `capturas/1-globo.png` … `capturas/8-jogos.png` (1080×1920, na ordem) |
 
 Para baixar pelo celular: abra o arquivo no GitHub e toque em **Download raw** (ícone ⬇).
 
@@ -31,6 +31,15 @@ Suba de Turista a Lenda do Mapa, ganhe medalha de ouro, prata ou bronze em cada 
 
 🌍 EXPLORE O MUNDO
 Toque em qualquer país e veja capital, bandeira, população, área, idiomas, moeda, a hora agora (comparada com Brasília) e curiosidades. Globo realista com relevo e dia e noite em tempo real (ou sempre de dia), e mapa plano. Passeio automático pelos países.
+
+🗺️ MAPA CHEIO DE CAMADAS
+Satélite ou atlas com um toque. Ligue oceanos, 104 mares, zonas climáticas, desertos, florestas e cordilheiras, cada um com cartão de tamanho, países e curiosidades. Escolha o mês e veja a neve do globo mudar com a estação.
+
+✈️ DISTÂNCIA E ROTAS DE VOO
+Distância entre capitais em linha reta ou de avião, com escalas reais dos dados abertos do OpenFlights e até 6 paradas.
+
+🏴 LUGARES ESPECIAIS
+Países não reconhecidos e micronações como Liberland e Sealand, com história, curiosidades e um passaporte alternativo para colecionar.
 
 🇧🇷 ESTADOS DO BRASIL
 Os 27 estados e suas capitais, com contornos, fusos horários e estados vizinhos.
@@ -73,6 +82,22 @@ Código aberto (Apache 2.0), criado por alessandrocdrx: github.com/alessandrocdr
     coleta, pois nunca são transmitidos.)
 - **App do governo / financeiro / saúde / notícias:** Não.
 - **Declaração de ID de publicidade:** "Não, meu app não usa ID de publicidade".
+
+## Notas da versão 1.40 (campo "Notas da versão", até 500 caracteres)
+
+```
+<pt-BR>
+Novidades da versão 1.40:
+• Satélite ou atlas e o botão 🏷️ com oceanos, mares, climas, desertos, florestas e relevo
+• Toque num país; toque de novo no mesmo lugar para ver o deserto ou a floresta embaixo
+• Neve do globo muda com o mês
+• Rotas de voo com escalas reais e até 6 paradas
+• Liberland, Sealand e outras micronações, com passaporte alternativo
+• Busca digitando nas listas
+• Telas com "← Voltar" que levam ao menu
+• Correções
+</pt-BR>
+```
 
 ## Teste fechado (12 testadores por 14 dias)
 
