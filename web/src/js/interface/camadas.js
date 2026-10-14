@@ -8,6 +8,7 @@
 
 import { ouvir } from '../nucleo/eventos.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
+import { ganchos } from '../visualizacao/ganchos.js';
 import { estadoRender } from '../visualizacao/projecao.js';
 import { estadoMapa } from '../visualizacao/tela.js';
 import { ligarLugar, setIncludeDep, setIncludeDisputed, setIncludeUni } from './filtros.js';
@@ -19,7 +20,14 @@ function mostrar(){
   CHAVES.forEach(function(c){$(c[0]).checked=estadoRender.camadas[c[1]];});
   $('cDis').checked=estadoMapa.includeDisputed;$('cDep').checked=estadoMapa.includeDep;$('cUni').checked=estadoMapa.includeUni;
 }
-function abrir(v){$('camadas').hidden=!v;$('camb').setAttribute('aria-expanded',v?'true':'false');if(v)mostrar();}
+function abrir(v){
+  var cx=$('camadas');cx.hidden=!v;$('camb').setAttribute('aria-expanded',v?'true':'false');
+  if(!v)return;
+  mostrar();
+  /* no treino o cartão de perguntas cobre a parte de baixo da tela: o painel termina acima dele */
+  var st=$('stage').getBoundingClientRect(),livre=ganchos.treinoAberto()?ganchos.alturaTreino():0;
+  cx.style.maxHeight=Math.max(160,st.height-livre-16)+'px';
+}
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {

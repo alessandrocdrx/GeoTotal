@@ -7982,9 +7982,13 @@ NAN|Nadi|-17.76|177.44`;
     $("cUni").checked = estadoMapa.includeUni;
   }
   function abrir(v) {
-    $("camadas").hidden = !v;
+    var cx = $("camadas");
+    cx.hidden = !v;
     $("camb").setAttribute("aria-expanded", v ? "true" : "false");
-    if (v) mostrar();
+    if (!v) return;
+    mostrar();
+    var st = $("stage").getBoundingClientRect(), livre = ganchos.treinoAberto() ? ganchos.alturaTreino() : 0;
+    cx.style.maxHeight = Math.max(160, st.height - livre - 16) + "px";
   }
   function iniciar28() {
     CHAVES.forEach(function(c) {
