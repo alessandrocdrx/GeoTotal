@@ -1,14 +1,8 @@
 # geoTotal — ficha da Play Store
 
-Tudo o que o Play Console pede, pronto para copiar. Imagens nesta pasta:
-
-| Campo no Play Console | Arquivo |
-| --- | --- |
-| Ícone do app (512×512, PNG 32 bits) | `icone-512.png` |
-| Gráfico de recursos (1024×500) | `destaque-1024x500.png` |
-| Capturas de tela do telefone (2 a 8) | `capturas/1-globo.png` … `capturas/8-jogos.png` (1080×1920, na ordem) |
-
-Para baixar pelo celular: abra o arquivo no GitHub e toque em **Download raw** (ícone ⬇).
+Tudo o que o Play Console pede, pronto para copiar. As imagens (ícone 512×512, gráfico de
+recursos 1024×500 e as 8 capturas 1080×1920) não ficam no repositório: são entregues à parte e
+enviadas direto no Play Console.
 
 ## Detalhes do app
 
