@@ -497,3 +497,7 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
 .dadd[hidden]{display:none}
 #dblegs p{margin:0 0 4px;color:var(--muted)}
 .dbnota[hidden]{display:none}
+.dleg{font-size:12px;color:var(--muted);font-weight:700;margin:-2px 0 -2px 34px}
+#dblegs .dstop{margin:4px 0}
+#dblegs .dstop select{width:100%;padding:7px 8px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:14px;font-family:inherit}
+#dblegs .dstop button{width:34px;height:34px}

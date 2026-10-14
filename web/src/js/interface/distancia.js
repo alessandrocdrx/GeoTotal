@@ -108,24 +108,6 @@ function fillCountrySelect(sel,first){
 function fmtKm(km){return Math.round(km).toLocaleString('pt-BR')+' km';}
 function letra(n){return String.fromCharCode(65+n);}
 
-/* ---------- página do menu: lista de paradas ---------- */
-function montarParadas(){
-  var box=$('dstops');box.innerHTML='';
-  paradas.forEach(function(i,n){
-    var row=document.createElement('div');row.className='dstop';
-    var l=document.createElement('b');l.textContent=letra(n);row.appendChild(l);
-    var sel=document.createElement('select');sel.setAttribute('aria-label','Parada '+letra(n));
-    fillCountrySelect(sel,'Brasil');sel.value=i;sel.onchange=function(){paradas[n]=+sel.value;};
-    row.appendChild(sel);
-    if(paradas.length>2){
-      var x=document.createElement('button');x.textContent='✕';x.setAttribute('aria-label','Tirar a parada '+letra(n));
-      x.onclick=function(){paradas.splice(n,1);montarParadas();};row.appendChild(x);
-    }
-    box.appendChild(row);
-  });
-  $('dadd').hidden=paradas.length>=MAX_PARADAS;
-}
-
 /* ---------- rotas: linha reta, voo direto e voo com escalas ---------- */
 const MODOS = [['reta','📏 Reta'],['direto','✈️ Direto'],['escalas','🛫 Escalas']];
 const VOO_MAIS_LONGO = 15300;  /* km, perto do voo comercial sem escala mais longo de hoje */
@@ -169,11 +151,11 @@ function fmtHoras(h){var min=Math.round(h*60),hh=Math.floor(min/60),m=min%60;ret
 /** Abre (ou refaz) a tela da Distância com a rota pelas paradas (índices em D). */
 function mostrarDistancia(lista){
   lista=(lista||paradas).filter(function(i,n,l){return n===0||i!==l[n-1];});
-  if(lista.length<2){$('dres').textContent='Escolha pelo menos dois países diferentes.';return;}
-  paradas=lista.slice();montarParadas();
+  if(lista.length<2){paradas=lista.concat(lista[0]===byName[norm('Brasil')]?byName[norm('Japão')]:byName[norm('Brasil')]);lista=paradas.slice();}
+  paradas=lista.slice();
   /* tela própria: sai do Treino, fecha o menu, o cartão e a lista de países */
   if($('quiz').style.display==='block')$('qclose').click();
-  closeCard();hidePick();$('msheet').style.display='none';$('dres').textContent='';
+  closeCard();hidePick();$('msheet').style.display='none';
   var pts=[],trechos=[],escalas=[],tot=0,horas=0,longe=false,k,j;
   for(k=1;k<lista.length;k++){
     var a=D[lista[k-1]],b=D[lista[k]];
@@ -206,13 +188,23 @@ function mostrarDistancia(lista){
   Array.prototype.forEach.call($('dbmodo').children,function(bt){bt.setAttribute('aria-pressed',bt.dataset.v===modo?'true':'false');});
   var lg=$('dblegs');lg.innerHTML='';
   if(!(modo==='direto'&&longe)){var ex=document.createElement('p');ex.textContent=nota;lg.appendChild(ex);}
-  trechos.forEach(function(tr,n){
-    var li=document.createElement('div');
-    li.textContent=letra(n)+' → '+letra(n+1)+': '+tr.a.flag+' '+capShort(tr.a)+(tr.via.length?' → '+tr.via.map(function(h){return h.cod;}).join(' → '):'')+' → '+tr.b.flag+' '+capShort(tr.b)+' · '+fmtKm(tr.km);
-    lg.appendChild(li);
+  /* editar as paradas aqui mesmo: trocar o país, tirar qualquer uma; entre elas, os km do trecho */
+  lista.forEach(function(i,n){
+    var row=document.createElement('div');row.className='dstop';
+    var l=document.createElement('b');l.textContent=letra(n);row.appendChild(l);
+    var sel=document.createElement('select');sel.setAttribute('aria-label','Parada '+letra(n));
+    fillCountrySelect(sel,'Brasil');sel.value=i;sel.onchange=function(){paradas[n]=+sel.value;mostrarDistancia();};
+    row.appendChild(sel);
+    if(lista.length>2){
+      var x=document.createElement('button');x.textContent='✕';x.setAttribute('aria-label','Tirar a parada '+letra(n));
+      x.onclick=function(){paradas.splice(n,1);mostrarDistancia();};row.appendChild(x);
+    }
+    lg.appendChild(row);
+    var tr=trechos[n];
+    if(tr){var li=document.createElement('div');li.className='dleg';li.textContent='↓ '+fmtKm(tr.km)+(tr.via.length?' · via '+tr.via.map(function(h){return h.cod;}).join(', '):'');lg.appendChild(li);}
   });
-  $('dbmais').textContent='Detalhes '+(lg.hidden?'▾':'▴');
-  $('dbmenos').hidden=lista.length<=2;$('dbadd').hidden=lista.length>=MAX_PARADAS;
+  $('dbmais').textContent='✏️ Paradas '+(lg.hidden?'▾':'▴');
+  $('dbadd').hidden=lista.length>=MAX_PARADAS;
   fitTo(lista);
 }
 /** Fecha a tela da Distância e apaga a rota. */
@@ -226,10 +218,10 @@ function sairDistancia(){
 function iniciar() {
   ganchos.desenharArco = drawArc;
   ganchos.distanciaAberta = function(){return estadoDistancia.ativo;};
+  ganchos.alturaDistancia = function(){var b=$('dbar');return b.offsetTop+b.offsetHeight;};
   paradas=[byName[norm('Brasil')],byName[norm('Japão')]];
-  montarParadas();
-  $('dadd').onclick=function(){if(paradas.length<MAX_PARADAS){paradas.push(paradas[paradas.length-1]);montarParadas();}};
-  $('dgo').onclick=function(){mostrarDistancia(paradas);};
+  /* menu ⋯ > Distância abre direto a tela, com as paradas à vista para editar */
+  $('mdist').onclick=function(){$('dblegs').hidden=false;mostrarDistancia(paradas);};
   $('dexit').onclick=sairDistancia;
   modo=lsGet('globo.dist.modo','direto');if(!MODOS.some(function(m){return m[0]===modo;}))modo='direto';
   MODOS.forEach(function(m){
@@ -241,7 +233,6 @@ function iniciar() {
   var add=$('dbadd');fillCountrySelect(add,'Brasil');
   var o=document.createElement('option');o.value='';o.textContent='＋ Parada';add.insertBefore(o,add.firstChild);add.value='';
   add.onchange=function(){if(add.value!==''){paradas.push(+add.value);add.value='';mostrarDistancia();}};
-  $('dbmenos').onclick=function(){if(paradas.length>2){paradas.pop();mostrarDistancia();}};
   $('dbmais').onclick=function(){var l=$('dblegs');l.hidden=!l.hidden;this.textContent=this.textContent.replace(/[▾▴]$/,l.hidden?'▾':'▴');};
 }
 

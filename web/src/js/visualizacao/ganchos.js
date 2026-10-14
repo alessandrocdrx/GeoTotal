@@ -28,6 +28,8 @@ const ganchos = {
   desenharArco: (/* R, cx, cy */) => {},
   /** A tela da Distância está aberta (o globo para de girar sozinho). */
   distanciaAberta: () => false,
+  /** Altura ocupada pela barra da Distância, em cima (o globo desce para não ficar embaixo dela). */
+  alturaDistancia: () => 0,
   /** Pulso que destaca a região escolhida para o treino. */
   desenharPulsoEscopo: (/* R, cx, cy */) => {},
   /** Selo com o nome do país da resposta, depois de responder. */
