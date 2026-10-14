@@ -14,9 +14,9 @@ import { drawGeo } from './fronteiras.js';
 import { ganchos } from './ganchos.js';
 import { draw2D } from './mapa-2d.js';
 import { shapePath, SHAPES } from './marcadores.js';
-import { desenharNatureza, desenharZonas, rotulosZonas } from './natureza.js';
+import { desenharAreas, desenharNatureza, desenharZonas, rotulosZonas } from './natureza.js';
 import { OCEANO } from './atlas.js';
-import { estadoRender } from './projecao.js';
+import { estadoRender, projCfg } from './projecao.js';
 import { paintSelBadge, selBadgeMetrics } from './selo.js';
 import { ctx, dpr, estadoCamera, estadoMapa, FONT, girar, H, PI, R0, rot, W } from './tela.js';
 import { glDraw } from './webgl.js';
@@ -113,6 +113,13 @@ function draw(){
   var usados=[],lngC=0,melhor=-2;
   for(k=-180;k<180;k+=5){var zc=ptGlobo(0,k)[2];if(zc>melhor){melhor=zc;lngC=k;}}
   desenharZonas(ptGlobo,false);
+  if(estadoRender.gpath){
+    projCfg(R,cx,cy);
+    desenharAreas(estadoRender.gpath,function(){
+      for(var t=0;t<D.length;t++)if(estadoRender.FEAT[t])estadoRender.gpath(estadoRender.FEAT[t]);
+      for(t=0;t<estadoRender.EXTRA.length;t++)estadoRender.gpath(estadoRender.EXTRA[t]);
+    });
+  }
   desenharNatureza(projGlobo,estadoCamera.zoom,usados);
   desenharAguas(projGlobo,R,estadoCamera.zoom,usados);
   rotulosZonas(ptGlobo,lngC-38,lngC+38,usados);

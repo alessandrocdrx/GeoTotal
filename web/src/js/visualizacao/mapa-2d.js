@@ -13,7 +13,7 @@ import { BORDA, corAtlas, OCEANO, PALETA, SEM_PAIS } from './atlas.js';
 import { texCanvas } from './carregamento.js';
 import { ganchos } from './ganchos.js';
 import { shapePath, SHAPES } from './marcadores.js';
-import { desenharNatureza, desenharZonas, rotulosZonas } from './natureza.js';
+import { desenharAreas, desenharNatureza, desenharZonas, rotulosZonas } from './natureza.js';
 import { estadoRender } from './projecao.js';
 import { paintSelBadge, selBadgeMetrics } from './selo.js';
 import { avail, ctx, dpr, estadoCamera, estadoMapa, FONT, H, PI, W } from './tela.js';
@@ -118,6 +118,10 @@ function draw2D(){
   var lamG=estadoCamera.lam*180/PI,largG=W/R2*180/PI;
   function pt2(la2,lo2){var q=proj2D(lo2,la2,R2,cx,cy);return [q.x,q.y,1];}
   desenharZonas(pt2,true);
+  if(estadoRender.feats)desenharAreas(function(f){walkFeat2D(f,R2,cx,cy);},function(){
+    for(var t=0;t<D.length;t++)if(estadoRender.FEAT[t])walkFeat2D(estadoRender.FEAT[t],R2,cx,cy);
+    for(t=0;t<estadoRender.EXTRA.length;t++)walkFeat2D(estadoRender.EXTRA[t],R2,cx,cy);
+  });
   desenharNatureza(proj2,estadoCamera.zoom*1.6,usados);
   desenharAguas(proj2,R2*2.4,estadoCamera.zoom*1.6,usados);
   rotulosZonas(pt2,lamG-largG*.28,lamG+largG*.22,usados);
