@@ -14,6 +14,7 @@ import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { fitTo } from '../visualizacao/animacao.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { proj2D, R2now } from '../visualizacao/mapa-2d.js';
+import { estadoRender } from '../visualizacao/projecao.js';
 import { ctx, estadoCamera, rot } from '../visualizacao/tela.js';
 import { closeCard } from './cartao-detalhes.js';
 import { hidePick } from './lista-proximos.js';
@@ -46,6 +47,9 @@ function naTela(p,R,cx,cy){
 /* no 2D, um salto de meia tela é a rota cruzando a borda do mapa */
 function salto(a,b){return estadoCamera.plano2D&&Math.abs(a.x-b.x)>R2now()*2;}
 const COR = {reta:'#ffffff',voo:'#ffe066'};
+/* no atlas o mar e as terras são claros: traço escuro, com contorno branco por baixo */
+const COR_ATLAS = {reta:'#1d3557',voo:'#d62828'};
+function corRota(modo){return (estadoRender.atlas&&estadoRender.feats?COR_ATLAS:COR)[modo]||COR.voo;}
 /* etiqueta escura com o código do aeroporto, embaixo do ponto */
 function etiqueta(txt,x,y){
   ctx.font='800 11px system-ui,sans-serif';var w=ctx.measureText(txt).width+10;
@@ -53,8 +57,8 @@ function etiqueta(txt,x,y){
 }
 function drawArc(R,cx,cy){
   var arc=estadoDistancia.arc;if(!arc)return;
-  var cor=COR[arc.modo]||'#ffe066';
-  ctx.save();ctx.setLineDash(arc.modo==='reta'?[]:[7,5]);ctx.lineWidth=arc.modo==='reta'?2:2.4;ctx.strokeStyle=cor;ctx.lineJoin='round';
+  var cor=corRota(arc.modo),atlas=estadoRender.atlas&&!!estadoRender.feats,larg=arc.modo==='reta'?2:2.4;
+  ctx.save();ctx.lineJoin='round';
   ctx.beginPath();
   var prev=null,k,s;
   for(k=0;k<arc.pts.length;k++){
@@ -62,7 +66,9 @@ function drawArc(R,cx,cy){
     if(s&&prev&&!salto(s,prev))ctx.lineTo(s.x,s.y);else if(s)ctx.moveTo(s.x,s.y);
     prev=s;
   }
-  ctx.stroke();ctx.restore();
+  ctx.lineWidth=larg+3;ctx.strokeStyle=atlas?'rgba(255,255,255,.9)':'rgba(4,16,36,.55)';ctx.stroke();
+  ctx.setLineDash(arc.modo==='reta'?[]:[7,5]);ctx.lineWidth=atlas?larg+.6:larg;ctx.strokeStyle=cor;ctx.stroke();
+  ctx.restore();
   ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
   /* escalas: bolinha branca com o código do aeroporto */
   (arc.escalas||[]).forEach(function(h){
@@ -82,7 +88,7 @@ function drawArc(R,cx,cy){
       var w=Math.max(18,ctx.measureText(t).width+10);
       ctx.fillStyle=cor;ctx.beginPath();
       if(ctx.roundRect)ctx.roundRect(p.x-w/2,p.y-27,w,18,9);else ctx.rect(p.x-w/2,p.y-27,w,18);
-      ctx.fill();ctx.fillStyle='#1a1400';ctx.fillText(t,p.x,p.y-17.5);
+      ctx.fill();ctx.fillStyle=atlas?'#fff':'#1a1400';ctx.fillText(t,p.x,p.y-17.5);
     }
   });
   ctx.restore();

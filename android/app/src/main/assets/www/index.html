@@ -7180,6 +7180,10 @@ NAN|Nadi|-17.76|177.44`;
     return estadoCamera.plano2D && Math.abs(a.x - b.x) > R2now() * 2;
   }
   var COR = { reta: "#ffffff", voo: "#ffe066" };
+  var COR_ATLAS = { reta: "#1d3557", voo: "#d62828" };
+  function corRota(modo2) {
+    return (estadoRender.atlas && estadoRender.feats ? COR_ATLAS : COR)[modo2] || COR.voo;
+  }
   function etiqueta(txt, x, y) {
     ctx.font = "800 11px system-ui,sans-serif";
     var w = ctx.measureText(txt).width + 10;
@@ -7191,11 +7195,8 @@ NAN|Nadi|-17.76|177.44`;
   function drawArc(R, cx, cy) {
     var arc = estadoDistancia.arc;
     if (!arc) return;
-    var cor = COR[arc.modo] || "#ffe066";
+    var cor = corRota(arc.modo), atlas = estadoRender.atlas && !!estadoRender.feats, larg = arc.modo === "reta" ? 2 : 2.4;
     ctx.save();
-    ctx.setLineDash(arc.modo === "reta" ? [] : [7, 5]);
-    ctx.lineWidth = arc.modo === "reta" ? 2 : 2.4;
-    ctx.strokeStyle = cor;
     ctx.lineJoin = "round";
     ctx.beginPath();
     var prev = null, k, s;
@@ -7205,6 +7206,12 @@ NAN|Nadi|-17.76|177.44`;
       else if (s) ctx.moveTo(s.x, s.y);
       prev = s;
     }
+    ctx.lineWidth = larg + 3;
+    ctx.strokeStyle = atlas ? "rgba(255,255,255,.9)" : "rgba(4,16,36,.55)";
+    ctx.stroke();
+    ctx.setLineDash(arc.modo === "reta" ? [] : [7, 5]);
+    ctx.lineWidth = atlas ? larg + 0.6 : larg;
+    ctx.strokeStyle = cor;
     ctx.stroke();
     ctx.restore();
     ctx.save();
@@ -7245,7 +7252,7 @@ NAN|Nadi|-17.76|177.44`;
         if (ctx.roundRect) ctx.roundRect(p.x - w / 2, p.y - 27, w, 18, 9);
         else ctx.rect(p.x - w / 2, p.y - 27, w, 18);
         ctx.fill();
-        ctx.fillStyle = "#1a1400";
+        ctx.fillStyle = atlas ? "#fff" : "#1a1400";
         ctx.fillText(t, p.x, p.y - 17.5);
       }
     });
