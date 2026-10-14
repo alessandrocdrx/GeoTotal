@@ -4,7 +4,7 @@
  * Filtros de países (chips, árvore, vizinhança), categorias de territórios e histórico para o Desfazer.
  */
 
-import { D, dflag, N_DEP, N_UNI, norm, REG } from '../dados/paises.js';
+import { D, dflag, N_DEP, N_MIC, N_UNI, norm, REG } from '../dados/paises.js';
 import { byName, capShort, NB, short } from '../dados/vizinhos.js';
 import { closeCard, tourStop } from './cartao-detalhes.js';
 import { buscaNoSelect } from './escolha-pais.js';
@@ -145,7 +145,7 @@ let sheet;
 function setIncludeDisputed(v){
   estadoMapa.includeDisputed=v;lsSet('globo.includeDisputed',v);
   $('oDisputed').checked=v;
-  if(v)D.forEach(function(d){if(d.dis)estadoMapa.on[d.i]=1;});
+  if(v)D.forEach(function(d){if(d.dis&&!d.mic)estadoMapa.on[d.i]=1;});
   afterFilter();
   emitir('categorias-mudaram',{placar:false});
 }
@@ -153,6 +153,13 @@ function setIncludeDep(v){
   estadoMapa.includeDep=v;lsSet('globo.includeDep',v);
   $('oDep').checked=v;
   if(v)D.forEach(function(d){if(d.dep)estadoMapa.on[d.i]=1;});
+  afterFilter();
+  emitir('categorias-mudaram',{placar:true});
+}
+function setIncludeMic(v){
+  estadoMapa.includeMic=v;lsSet('globo.includeMic',v);
+  $('oMic').checked=v;
+  if(v)D.forEach(function(d){if(d.mic)estadoMapa.on[d.i]=1;});
   afterFilter();
   emitir('categorias-mudaram',{placar:true});
 }
@@ -182,7 +189,8 @@ function buildCatList(){
       t.appendChild(n);t.appendChild(o);r.appendChild(f);r.appendChild(t);box.appendChild(r);
     });
   }
-  grupo('⚠️ Não reconhecidos pela ONU',D.filter(function(d){return d.dis;}));
+  grupo('⚠️ Não reconhecidos pela ONU',D.filter(function(d){return d.dis&&!d.mic;}));
+  grupo('🏴 Micronações',D.filter(function(d){return d.mic;}));
   grupo('◇ Territórios dependentes',D.filter(function(d){return d.dep;}));
   grupo('❄️ Desabitados e Antártida',D.filter(function(d){return d.uni;}));
 }
@@ -208,11 +216,12 @@ function iniciar() {
   document.getElementById('nbadd').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,true);};
   /* lugares especiais (menu ⋯ → Lugares no jogo e no mapa): valem para o Livre e para o treino */
   $('catlista').addEventListener('toggle',buildCatList);
-  $('nDis').textContent='('+D.filter(function(d){return d.dis;}).length+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
+  $('nDis').textContent='('+D.filter(function(d){return d.dis&&!d.mic;}).length+')';$('nMic').textContent='('+N_MIC+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
   $('oDisputed').checked=estadoMapa.includeDisputed;
   $('oUni').checked=estadoMapa.includeUni;
   $('oDep').checked=estadoMapa.includeDep;
-  ligarLugar($('oDisputed'),setIncludeDisputed);ligarLugar($('oUni'),setIncludeUni);ligarLugar($('oDep'),setIncludeDep);
+  $('oMic').checked=estadoMapa.includeMic;
+  ligarLugar($('oDisputed'),setIncludeDisputed);ligarLugar($('oUni'),setIncludeUni);ligarLugar($('oDep'),setIncludeDep);ligarLugar($('oMic'),setIncludeMic);
 }
 
-export { afterFilter, ligarLugar, buildChips, buildTree, chips, estadoFiltros, hist, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, snap, toggleNb, updateNbBtn, updateUndo };
+export { afterFilter, ligarLugar, setIncludeMic, buildChips, buildTree, chips, estadoFiltros, hist, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, snap, toggleNb, updateNbBtn, updateUndo };

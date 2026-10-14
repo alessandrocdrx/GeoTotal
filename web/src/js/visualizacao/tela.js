@@ -29,6 +29,8 @@ const estadoMapa = {
   includeDisputed: undefined,
   includeDep: undefined,
   includeUni: undefined,
+  /** Micronações (Liberland, Sealand…) no mapa. */
+  includeMic: undefined,
   on: undefined,
 };
 let cv;
@@ -37,8 +39,9 @@ let W = 0;
 let H = 0;
 let R0 = 0;
 let dpr = 1;
-function avail(d){return (!d.dis||estadoMapa.includeDisputed)&&(!d.dep||estadoMapa.includeDep)&&(!d.uni||estadoMapa.includeUni);}
-function availCount(){return D.filter(avail).length;}
+function avail(d){return (!d.mic||estadoMapa.includeMic)&&(!d.dis||d.mic||estadoMapa.includeDisputed)&&(!d.dep||estadoMapa.includeDep)&&(!d.uni||estadoMapa.includeUni);}
+/* as contagens de "países" não incluem as micronações (elas têm a chave e o modo próprios) */
+function availCount(){return D.filter(function(d){return avail(d)&&!d.mic;}).length;}
 let reduce;
 const FONT = 'system-ui,-apple-system,Segoe UI,Roboto,"Noto Color Emoji",sans-serif';
 function resize(){
@@ -71,6 +74,7 @@ function iniciar() {
   estadoMapa.includeDisputed = lsGet('globo.includeDisputed',true);
   estadoMapa.includeDep = lsGet('globo.includeDep',false);
   estadoMapa.includeUni = lsGet('globo.includeUni',false);
+  estadoMapa.includeMic = lsGet('globo.includeMic',true);
   estadoMapa.on = D.map(function(d){return avail(d)?1:0;});
   reduce = window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduce)estadoCamera.auto=false;

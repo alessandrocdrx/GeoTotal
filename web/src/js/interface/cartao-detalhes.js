@@ -5,6 +5,7 @@
  */
 
 import { appendLang, appendRel } from '../dados/linguas.js';
+import { INFO_MIC } from '../dados/micronacoes.js';
 import { $, setStatus } from '../nucleo/utilitarios.js';
 import { folhaArrastavel } from './folha-arrastavel.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
@@ -31,9 +32,30 @@ function fmtPop(p){
   return 'cerca de '+Math.round(p*1000)+' habitantes';
 }
 function fmtArea(a){return (a<10?String(a).replace('.',','):Math.round(a).toLocaleString('pt-BR'))+' km²';}
+/* micronação: nome oficial, história, curiosidades e o site oficial */
+function infoMicronacao(box,mi){
+  function tit(t){var h=document.createElement('div');h.className='st micst';h.textContent=t;box.appendChild(h);}
+  var no=document.createElement('div');no.className='irow';
+  var a=document.createElement('span');a.textContent='Nome oficial';var b=document.createElement('b');b.textContent=mi.nomeOficial;
+  no.appendChild(a);no.appendChild(b);box.appendChild(no);
+  tit('📜 História');
+  mi.historia.forEach(function(t){var p=document.createElement('p');p.className='micp';p.textContent=t;box.appendChild(p);});
+  tit('💡 Curiosidades');
+  var ul=document.createElement('ul');ul.className='micul';
+  mi.curiosidades.forEach(function(t){var li=document.createElement('li');li.textContent=t;ul.appendChild(li);});
+  box.appendChild(ul);
+  if(mi.site){
+    var l=document.createElement('a');l.className='micsite';l.href=mi.site;l.target='_blank';l.rel='noopener';
+    l.textContent='🌐 Site oficial: '+mi.site.replace(/^https?:\/\/(www\.)?/,'');box.appendChild(l);
+  }
+  var n=document.createElement('div');n.className='inote';
+  n.textContent='Micronação: se declara país, mas nenhum país da ONU a reconhece. Informações públicas até 2025; confira no site oficial.';
+  box.appendChild(n);
+}
 function fillInfo(d){
   var box=$('cinfo');box.innerHTML='';
-  var x=d.info;
+  var x=d.info,mi=d.mic&&INFO_MIC[d.cc];
+  if(mi){infoMicronacao(box,mi);return;}
   if(!x){box.textContent='Sem dados adicionais para este território.';return;}
   [['Fuso horário',x.tz],['Telefone (DDI)',x.dial],['Domínio de internet',x.tld]].forEach(function(r){
     var row=document.createElement('div');row.className='irow';

@@ -80,7 +80,10 @@ function poolIdx(){
   var arr=QD(),p=[];
   for(var i=0;i<arr.length;i++){
     if(!inScopeActive(arr[i]))continue;
-    if(arr[i].dis&&!estadoMapa.includeDisputed)continue;
+    /* micronações só no modo Lugares especiais; lá entram mesmo com as chaves de lugares desligadas */
+    var esp=estadoTreino.quizScope.t==='especiais';
+    if(arr[i].mic&&!esp)continue;
+    if(arr[i].dis&&!esp&&!estadoMapa.includeDisputed)continue;
     if(arr[i].dep&&!estadoMapa.includeDep)continue;
     if(arr[i].uni&&(!estadoMapa.includeUni||quiz.mode!=='map'))continue;
     if(arr[i].pseudo&&(quiz.mode==='flag'||quiz.mode==='code'))continue;

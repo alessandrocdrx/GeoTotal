@@ -8,6 +8,7 @@ import { D, dflag, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
 import { card, closeCard, fillInfo, fmtArea, fmtPop, measureCard, tourStop } from './cartao-detalhes.js';
 import { afterFilter, toggleNb, updateNbBtn } from './filtros.js';
+import { INFO_MIC } from '../dados/micronacoes.js';
 import { fecharArea } from './cartao-natural.js';
 import { ganchosInterface } from './ganchos.js';
 import { emitir } from '../nucleo/eventos.js';
@@ -60,7 +61,7 @@ function select(d,fly,group){
   document.getElementById('cname').textContent=d.name;
   var dtag=document.getElementById('cdis');
   if(!dtag){dtag=document.createElement('span');dtag.id='cdis';dtag.className='distag';document.getElementById('cname').insertAdjacentElement('afterend',dtag);}
-  dtag.textContent=d.dis?'Não reconhecido pela ONU':(d.dep?'Território dependente':(d.uni?(d.r===7?'Antártida e ilhas remotas':'Território desabitado'):''));dtag.style.display=(d.dis||d.dep||d.uni)?'inline-block':'none';dtag.classList.toggle('dep',!!(d.dep||d.uni));
+  dtag.textContent=d.mic?'Micronação · nenhum país reconhece':d.dis?'Não reconhecido pela ONU':(d.dep?'Território dependente':(d.uni?(d.r===7?'Antártida e ilhas remotas':'Território desabitado'):''));dtag.style.display=(d.dis||d.dep||d.uni)?'inline-block':'none';dtag.classList.toggle('dep',!!(d.dep||d.uni));
   document.getElementById('ccap').textContent=d.cap;
   /* observação sobre a capital fica junto dela; o resto vira "Saiba mais" */
   ganchosInterface.mostrarDesempenho(d.cc,false);
@@ -71,7 +72,12 @@ function select(d,fly,group){
   var hr=horaAgora(d.cc,x&&x.tz),varios=x&&/\(|fusos|de [−-]?\d/.test(x.tz||'');
   var hrow=hr?[['🕐 Hora agora'+(varios?' (na capital)':''),hr.hora+(hr.dia?' de '+hr.dia:'')+' · '+hr.dif]]:[];
   renderFacts(hrow.concat(x?[['👥 População',fmtPop(x.pop)],['📐 Área',fmtArea(x.area)],['🗣️ Idioma',x.lang],['💰 Moeda',x.cur]]:[]));
-  renderChips('Fronteiras por terra',NB[d.i].map(function(i){return {t:dflag(D[i])+' '+short(D[i]),f:function(){select(D[i],true);}};}),
+  var mi=d.mic&&INFO_MIC[d.cc];
+  if(mi){
+    /* micronação: os fatos principais e onde fica (em vez de fronteiras) */
+    renderFacts(mi.fatos);
+    renderChips(mi.perto[0],mi.perto[1].map(function(c){var p=D.filter(function(x){return x.cc===c;})[0];return {t:dflag(p)+' '+short(p),f:function(){select(p,true);}};}),'');
+  }else renderChips('Fronteiras por terra',NB[d.i].map(function(i){return {t:dflag(D[i])+' '+short(D[i]),f:function(){select(D[i],true);}};}),
     'Não faz fronteira terrestre com outro país.');
   card.style.display='block';
   updateNbBtn();ganchosInterface.atualizarBotaoEstados();

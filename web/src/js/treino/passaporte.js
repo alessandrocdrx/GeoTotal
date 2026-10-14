@@ -10,7 +10,9 @@ import { estadoTreino } from './estado.js';
 
 /* o carimbo é o mesmo critério do "Domina …" e do dourado no globo: 3 acertos seguidos da capital */
 function carimbado(d){var e=(estadoTreino.QS.m.cap||{})[d.cc];return !!(e&&e.s>=3);}
-function paisesDoPassaporte(){return D.filter(function(d){return !d.dep&&!d.uni;});}
+function paisesDoPassaporte(){return D.filter(function(d){return !d.dep&&!d.uni&&!d.dis;});}
+/* Passaporte alternativo: não reconhecidos e micronações, com carimbos de mentirinha */
+function lugaresAlternativos(){return D.filter(function(d){return d.dis;});}
 function contarCarimbos(){var l=paisesDoPassaporte();return [l.filter(carimbado).length,l.length];}
 
 function abrirPassaporte(){
@@ -37,6 +39,23 @@ function abrirPassaporte(){
     });
     box.appendChild(g);
   });
+  /* passaporte alternativo, no fim: os lugares que se dizem países */
+  var alt=lugaresAlternativos(),fa=alt.filter(carimbado).length;
+  var ha=document.createElement('div');ha.className='passreg passalt';
+  var ta=document.createElement('b');ta.textContent='🏴 Passaporte alternativo';var na=document.createElement('span');na.textContent=fa+' de '+alt.length;
+  ha.appendChild(ta);ha.appendChild(na);box.appendChild(ha);
+  var ia=document.createElement('div');ia.className='passintro';
+  ia.textContent='Carimbos de brincadeira dos lugares que se declaram países, mas não são reconhecidos (Kosovo, Somalilândia…) e das micronações (Liberland, Sealand…). Jogue em Treino › Região › Lugares especiais.';
+  box.appendChild(ia);
+  var ga=document.createElement('div');ga.className='passgrid alt';
+  alt.slice().sort(function(a,b){return (carimbado(b)-carimbado(a))||a.name.localeCompare(b.name);}).forEach(function(d){
+    var on=carimbado(d),cel=document.createElement('div');cel.className='carimbo alt'+(on?' on':'');
+    cel.title=d.name+(on?'':' (ainda sem carimbo)');
+    var f=document.createElement('span');f.className='cbandeira sig';f.textContent=d.cc;
+    var nm=document.createElement('small');nm.textContent=d.name;
+    cel.appendChild(f);cel.appendChild(nm);ga.appendChild(cel);
+  });
+  box.appendChild(ga);
   $('passsheet').style.display='block';
 }
 

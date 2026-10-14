@@ -4,6 +4,8 @@
  * Países, territórios dependentes e desabitados (nome, capital, coordenadas, região) e a rota de vizinhança D.
  */
 
+import { RAW_MIC } from './micronacoes.js';
+
 /* ---------- Dados (ordem de vizinhança do documento) ----------
    país | capital | lat | lng | região | sub-região | observação  */
 const REG = [
@@ -296,6 +298,7 @@ function norm(s){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowe
 let N_BASE;
 let N_DEP;
 let N_UNI;
+let N_MIC;
 
 function dflag(d){return d.dis?('['+d.cc+']'):d.flag;}
 function qcapDisp(d){return d.cc==='NR'?'Yaren':d.cap.split(' (')[0];}
@@ -307,18 +310,20 @@ function iniciar() {
     base.forEach(function(l){out.push(l);var a=DEP_AFTER[l.split('|')[7]];
       if(a)a.split(' ').forEach(function(c){if(dep[c]){out.push(dep[c]);used[c]=1;}});});
     Object.keys(dep).forEach(function(c){if(!used[c])out.push(dep[c]);});
-    return out;
+    /* micronações no fim: os índices dos outros lugares não mudam */
+    return out.concat(RAW_MIC.trim().split('\n'));
   })().map(function(l,i){
     var p=l.split('|'); var lat=+p[2]*Math.PI/180, lng=+p[3]*Math.PI/180;
     return {i:i,name:p[0],cap:p[1],lat:+p[2],lng:+p[3],r:(+p[4]===2?1:+p[4]),sub:p[5],obs:p[6]||'',cc:p[7],flag:(function(c){return String.fromCodePoint(0x1F1E6+c.charCodeAt(0)-65,0x1F1E6+c.charCodeAt(1)-65);})(p[9]||p[7]),
       x:Math.cos(lat)*Math.sin(lng),y:Math.sin(lat),z:Math.cos(lat)*Math.cos(lng),
-      dis:p[7].charAt(0)==='X'&&p[7].length===2,dep:p[8]==='dep',uni:p[8]==='uni',pseudo:!!p[9],
+      dis:(p[7].charAt(0)==='X'&&p[7].length===2)||p[8]==='mic',mic:p[8]==='mic',dep:p[8]==='dep',uni:p[8]==='uni',pseudo:!!p[9],
       key:norm(p[0]+' '+p[1])};
   });
-  N_BASE = D.filter(function(d){return !d.dep&&!d.uni;}).length;
+  N_BASE = D.filter(function(d){return !d.dep&&!d.uni&&!d.mic;}).length;
+  N_MIC = D.filter(function(d){return d.mic;}).length;
   N_DEP = D.filter(function(d){return d.dep;}).length;
   N_UNI = D.filter(function(d){return d.uni;}).length;
   document.getElementById('count').textContent=N_BASE;
 }
 
-export { D, dflag, iniciar, N_BASE, N_DEP, N_UNI, norm, qcapDisp, REG };
+export { D, dflag, iniciar, N_BASE, N_DEP, N_MIC, N_UNI, norm, qcapDisp, REG };

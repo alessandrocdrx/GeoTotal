@@ -12,7 +12,7 @@ import { trocarMes } from '../visualizacao/carregamento.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { estadoRender } from '../visualizacao/projecao.js';
 import { estadoMapa } from '../visualizacao/tela.js';
-import { ligarLugar, setIncludeDep, setIncludeDisputed, setIncludeUni } from './filtros.js';
+import { ligarLugar, setIncludeDep, setIncludeDisputed, setIncludeMic, setIncludeUni } from './filtros.js';
 
 /* chave na tela → camada (o valor inicial de cada uma está em estadoRender.camadas) */
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -22,7 +22,7 @@ const CHAVES = [['cOce','oceanos'],['cMar','mares'],['cZon','zonas'],['cDes','de
 
 function mostrar(){
   CHAVES.forEach(function(c){$(c[0]).checked=estadoRender.camadas[c[1]];});
-  $('cDis').checked=estadoMapa.includeDisputed;$('cDep').checked=estadoMapa.includeDep;$('cUni').checked=estadoMapa.includeUni;
+  $('cDis').checked=estadoMapa.includeDisputed;$('cDep').checked=estadoMapa.includeDep;$('cUni').checked=estadoMapa.includeUni;$('cMic').checked=estadoMapa.includeMic;
 }
 function abrir(v){
   var cx=$('camadas');cx.hidden=!v;$('camb').setAttribute('aria-expanded',v?'true':'false');
@@ -39,7 +39,7 @@ function iniciar() {
   CHAVES.forEach(function(c){
     $(c[0]).onchange=function(){estadoRender.camadas[c[1]]=this.checked;lsSet('globo.cam.'+c[1],this.checked);};
   });
-  ligarLugar($('cDis'),setIncludeDisputed);ligarLugar($('cDep'),setIncludeDep);ligarLugar($('cUni'),setIncludeUni);
+  ligarLugar($('cDis'),setIncludeDisputed);ligarLugar($('cDep'),setIncludeDep);ligarLugar($('cUni'),setIncludeUni);ligarLugar($('cMic'),setIncludeMic);
   ouvir('categorias-mudaram',mostrar);
   /* época do ano: a neve do globo muda com o mês (no Brasil, as estações ao contrário do norte) */
   var sel=$('cMes'),hoje=new Date().getMonth(),agora=document.createElement('option');

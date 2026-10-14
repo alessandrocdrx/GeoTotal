@@ -65,6 +65,8 @@ function buildScopeTiles(){
     if(n&&EMOJI_REG[ri])tile(EMOJI_REG[ri],rg.n,n,{t:'reg',r:ri},rg.c);
   });
   tile('🇧🇷','Estados do Brasil',BRS.length,{t:'br'},'#1fa85a','estados');
+  /* não reconhecidos e micronações (Liberland, Sealand…), com o Passaporte alternativo */
+  tile('🏴','Lugares especiais',D.filter(function(d){return d.dis;}).length,{t:'especiais'},'#c77dff','lugares');
 }
 function buildScopeList(filterStr){
   buildScopeTiles();
@@ -89,6 +91,7 @@ function buildScopeList(filterStr){
   var rv=reviewList();
   if(rv.length)item('🧠 Revisão do dia: '+(rv.length===1?'o que você mais erra':'os '+rv.length+' que você mais erra'),rv.length,{t:'review',cc:rv},0);
   item('🌍 Mundo',availCount(),{t:'world'},0);
+  item('🏴 Lugares especiais (não reconhecidos e micronações)',D.filter(function(d){return d.dis;}).length,{t:'especiais'},0);
   REG.forEach(function(rg,ri){
     var list=D.filter(function(d){return d.r===ri&&avail(d);});
     if(!list.length)return;

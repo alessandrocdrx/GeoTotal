@@ -658,6 +658,8 @@ test('passaporte: carimbo ao dominar um país e tela com as bandeiras por regiã
     const g = window.__geoTotal;
     g.applyScopeChange({ t: 'world' });
     g.quizSetMode('cap');
+    /* um país reconhecido (os não reconhecidos ficam no Passaporte alternativo) */
+    g.quiz.cur = g.QD().findIndex((x) => x.cc === 'BR');
     const d = g.QD()[g.quiz.cur];
     g.estadoTreino.QS.m.cap[d.cc] = { r: 2, w: 0, s: 2, l: 0 };
     g.quiz.answered = false; g.finishQ(true);
@@ -666,9 +668,10 @@ test('passaporte: carimbo ao dominar um país e tela com as bandeiras por regiã
     return { toast, head: document.getElementById('passhead').textContent, on: document.querySelectorAll('#passbody .carimbo.on').length, total: document.querySelectorAll('#passbody .carimbo').length };
   });
   assert.match(r.toast, /Carimbo novo no passaporte/);
-  assert.match(r.head, /1 de 204/);
+  assert.match(r.head, /1 de 198/);
   assert.equal(r.on, 1);
-  assert.equal(r.total, 204);
+  /* 198 países + 11 do Passaporte alternativo (6 não reconhecidos e 5 micronações) */
+  assert.equal(r.total, 209);
   assert.deepEqual(erros, []);
   await fechar();
 });

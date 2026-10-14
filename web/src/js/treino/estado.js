@@ -68,6 +68,7 @@ const AMERICAS_R = [0,1,2];
 function inScope(d){
   var sc=estadoTreino.quizScope;
   if(sc.t==='world')return true;
+  if(sc.t==='especiais')return !!d.dis;
   if(sc.t==='filter')return !!estadoMapa.on[d.i];
   if(sc.t==='review')return (sc.cc||[]).indexOf(d.cc)>=0;
   if(sc.t==='super')return AMERICAS_R.indexOf(d.r)>=0;
@@ -79,6 +80,7 @@ function inScope(d){
 function scopeLabel(sc){
   sc=sc||estadoTreino.quizScope;
   if(sc.t==='world')return 'Mundo';
+  if(sc.t==='especiais')return 'Lugares especiais';
   if(sc.t==='review')return 'Revisão dos erros';
   if(sc.t==='filter')return 'Filtros atuais';
   if(sc.t==='super')return 'Américas';
