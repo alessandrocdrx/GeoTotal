@@ -501,3 +501,23 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
 #dblegs .dstop{margin:4px 0}
 #dblegs .dstop select{width:100%;padding:7px 8px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:14px;font-family:inherit}
 #dblegs .dstop button{width:34px;height:34px}
+/* ajustes ⚙️: o que quase ninguém muda fica em "Mais ajustes" */
+.ajmais{border-top:1px solid var(--border);padding:8px 2px 0}
+.ajmais summary{cursor:pointer;font-weight:700;font-size:13.5px;color:var(--muted);padding:6px 0}
+.ajmais .ajrow:first-of-type{border-top:0}
+/* tela de início ao voltar (js/app/inicio.js) */
+#inicio{position:fixed;inset:0;z-index:118;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,10,25,.72);backdrop-filter:blur(3px);transition:opacity .25s}
+#inicio[hidden]{display:none}
+#inicio.out{opacity:0}
+#inicio .ibox{width:100%;max-width:400px;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:22px;padding:20px 16px 14px;box-shadow:0 18px 50px rgba(0,0,0,.4);animation:qpop .35s ease-out}
+#inicio h2{margin:0;font-size:26px;text-align:center}
+#inicio h2 span{color:var(--marca)}
+#inicio .isub{margin:2px 0 14px;text-align:center;color:var(--muted);font-weight:700;font-size:14px}
+.ibtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:8px 0 0;padding:12px 14px;border-radius:16px;border:1px solid var(--border);background:var(--chip);color:var(--fg);text-align:left;font-family:inherit;cursor:pointer}
+.ibtn b{font-size:16.5px}
+.ibtn span{font-size:13px;color:var(--muted);font-weight:600}
+.ibtn.iprin{margin-top:0;border:0;background:linear-gradient(90deg,#1fa85a,#2ecc71);color:#fff;min-height:64px;box-shadow:0 6px 18px rgba(46,204,113,.35)}
+.ibtn.iprin b{font-size:19px}
+.ibtn.iprin span{color:rgba(255,255,255,.92)}
+.izero{display:block;margin:10px auto 0;border:0;background:none;color:var(--muted);font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;padding:6px}
+.izero.armado{color:#e5484d}

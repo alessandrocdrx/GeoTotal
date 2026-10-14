@@ -66,15 +66,19 @@ test('⚙️ abre os ajustes da partida com as alternativas à vista e vale na h
   await pagina.click('#qbtn');
   await pagina.click('#qajustb');
   const linhas = await pagina.evaluate(() => [...document.querySelectorAll('#ajbody .ajrow > b')].map((b) => b.textContent));
-  assert.deepEqual(linhas, ['Nível', 'Responder', 'Perguntas', 'Ordem', 'Tamanho da rodada', 'Cronômetro', 'Sobrevivência', 'Meta do dia']);
-  const cron = '#ajbody .ajrow:nth-child(6) .aseg button';
-  await pagina.locator(cron).nth(2).click();
-  const r = await pagina.evaluate((sel) => ({
-    tempo: window.__geoTotal.quiz.timerLen,
-    marcado: document.querySelectorAll(sel)[2].getAttribute('aria-pressed'),
-    rodada: document.querySelector('#ajbody .ajrow:nth-child(5) .aseg button[aria-pressed="true"]').textContent,
-    aberto: document.getElementById('ajsheet').style.display,
-  }), cron);
+  assert.deepEqual(linhas, ['Nível', 'Responder', 'Meta do dia', 'Perguntas', 'Ordem', 'Tamanho da rodada', 'Cronômetro', 'Sobrevivência']);
+  const linha = (t) => `#ajbody .ajrow:has(> b:text-is("${t}"))`;
+  await pagina.click('#ajbody .ajmais summary');
+  await pagina.locator(`${linha('Cronômetro')} .aseg button`).nth(2).click();
+  const r = await pagina.evaluate(() => {
+    const achar = (t) => [...document.querySelectorAll('#ajbody .ajrow')].find((x) => x.querySelector('b').textContent === t);
+    return {
+      tempo: window.__geoTotal.quiz.timerLen,
+      marcado: achar('Cronômetro').querySelectorAll('.aseg button')[2].getAttribute('aria-pressed'),
+      rodada: achar('Tamanho da rodada').querySelector('.aseg button[aria-pressed="true"]').textContent,
+      aberto: document.getElementById('ajsheet').style.display,
+    };
+  });
   assert.deepEqual(r, { tempo: 60, marcado: 'true', rodada: 'Sem fim', aberto: 'block' }, 'cronômetro liga, desliga a rodada fechada e a tela continua aberta');
   await pagina.click('#ajok');
   assert.equal(await pagina.evaluate(() => document.getElementById('ajsheet').style.display), 'none');
@@ -184,6 +188,7 @@ test('toques e categorias passam pelos ganchos da interface', async () => {
 test('som: efeitos e música ligam e desligam pelo menu, sem erros', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.click('#mbtn');
+  await pagina.click('[data-p="mp-visual"]');
   const antes = await pagina.evaluate(() => ({ e: document.getElementById('msfx').checked, m: document.getElementById('mmusic').checked }));
   await pagina.click('label:has(#mmusic)');
   await pagina.evaluate(() => { const g = window.__geoTotal; ['acerto', 'erro', 'toque', 'nivel', 'meta', 'conquista'].forEach(g.tocar); });
@@ -539,6 +544,7 @@ test('dia e noite no topo e no menu ⋯, tema com as três opções à vista', a
   const topo = await pagina.evaluate(() => ({ noite: window.__geoTotal.optNight, icone: document.getElementById('mvisual').textContent, chave: document.getElementById('oNight').checked }));
   assert.deepEqual(topo, { noite: true, icone: '🌗', chave: true }, 'o botão do topo liga o dia e noite e a chave do menu acompanha');
   await pagina.click('#mbtn');
+  await pagina.click('[data-p="mp-visual"]');
   await pagina.click('label:has(#oNight)');
   await pagina.click('label:has(#oNight)');
   const noite = await pagina.evaluate(() => window.__geoTotal.optNight);
@@ -853,6 +859,22 @@ test('avaliação: pede depois de um momento bom, só para quem já jogou 3 dias
     return { poucosDias, pediu, repetiu: n };
   });
   assert.deepEqual(r, { poucosDias: 0, pediu: 1, repetiu: 1 });
+  assert.deepEqual(erros, []);
+  await fechar();
+});
+
+test('tela de início ao voltar depois de um tempo: continuar, desafio, relâmpago ou explorar', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  /* como se a última visita tivesse sido há 2 horas (o script roda antes do app, a cada carregamento) */
+  await pagina.addInitScript(() => { localStorage.setItem('globo.ultima.visita', String(Date.now() - 2 * 3600e3)); });
+  await pagina.reload();
+  await pagina.waitForTimeout(1500);
+  const visivel = await pagina.evaluate(() => !document.getElementById('inicio').hidden);
+  assert.equal(visivel, true, 'mostra a tela de início');
+  await pagina.click('#irelampago');
+  await pagina.waitForTimeout(400);
+  const r = await pagina.evaluate(() => ({ fechou: document.getElementById('inicio').hidden, jogo: window.__geoTotal.quiz.jogoRapido, intro: !!document.querySelector('.jogointro') }));
+  assert.deepEqual(r, { fechou: true, jogo: 'relampago', intro: true });
   assert.deepEqual(erros, []);
   await fechar();
 });

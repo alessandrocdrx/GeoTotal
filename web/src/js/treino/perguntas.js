@@ -330,6 +330,8 @@ function nextQ(){
 /* partida parada há algumas horas (ex.: voltou no outro dia): pergunta se continua ou começa do zero */
 const PAUSA_LONGA = 3*3600e3;
 const jaPerguntou = {};
+/** A tela de início já ofereceu continuar ou recomeçar: não pergunta de novo nesta pausa. */
+function pularRetomar(){jaPerguntou[runKey()]=Date.now();if($('qbody').querySelector('.retomar'))nextQ();}
 function haQuanto(ms){
   var min=Math.round(ms/6e4),h=Math.round(ms/36e5),d=Math.round(ms/864e5);
   return min<60?('há '+min+' min'):h<24?('há '+h+(h===1?' hora':' horas')):d===1?'ontem':('há '+d+' dias');
@@ -557,4 +559,4 @@ function iniciar() {
   confirmTap($('qreset'),'Toque de novo para zerar tudo',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();zerarProgresso();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Tudo zerado: treino, medalhas, nível e conquistas.',3000);});
 }
 
-export { buildModeButtons, definirNivel, definirOrdem, mostrarIntro, definirResposta, definirRodada, definirSobrevivencia, definirTempo, iniciar, iniciarJogoRapido, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, recordeRelampago, runRestart, sairJogoRapido };
+export { buildModeButtons, definirNivel, definirOrdem, mostrarIntro, pularRetomar, definirResposta, definirRodada, definirSobrevivencia, definirTempo, iniciar, iniciarJogoRapido, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, recordeRelampago, runRestart, sairJogoRapido };

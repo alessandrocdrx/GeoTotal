@@ -13,28 +13,32 @@ import { curRun, runPool } from './partida.js';
 import { definirNivel, definirOrdem, definirResposta, definirRodada, definirSobrevivencia, definirTempo, runRestart } from './perguntas.js';
 import { definirMeta, metaDoDia } from './progressao.js';
 
-/* [título, explicação, alternativas [valor, rótulo], valor atual, definir(valor)] */
+/* [título, explicação, alternativas [valor, rótulo], valor atual, definir(valor), em "Mais ajustes"?] */
 const LINHAS = [
   ['Nível','Muda as alternativas. Fácil: lugares bem diferentes. Difícil: nomes parecidos e vizinhos (+2 XP por acerto).',[['facil','😊 Fácil'],['normal','🙂 Normal'],['dificil','😈 Difícil']],
     function(){return quiz.nivel||'normal';},definirNivel],
   ['Responder','Vizinhos e Achar no mapa são sempre de tocar.',[['choice','👆 Escolher'],['type','⌨️ Digitar']],
     function(){return quiz.type;},definirResposta],
-  ['Perguntas','',[['mix','Todas'],['new','Só novas'],['wrong','Que errei']],
-    function(){return estadoTreino.quizFocus;},definirFoco],
-  ['Ordem','',[['random','🔀 Aleatória'],['seq','➡️ Em sequência']],
-    function(){return quiz.order==='seq'?'seq':'random';},definirOrdem],
-  ['Tamanho da rodada','No Mundo. Numa região, a rodada vai até completar a região.',[[0,'Sem fim'],[10,'10'],[20,'20']],
-    function(){return quiz.sessionLen;},definirRodada],
-  ['Cronômetro','Responda o máximo que der antes do tempo acabar.',[[0,'Sem tempo'],[30,'30 s'],[60,'60 s']],
-    function(){return quiz.timerLen;},definirTempo],
-  ['Sobrevivência','Errou uma vez, a rodada acaba.',[[false,'Não'],[true,'💀 Sim']],
-    function(){return !!quiz.survivalMode;},definirSobrevivencia],
   ['Meta do dia','Respostas por dia para manter a sequência 🔥.',[[5,'5'],[10,'10'],[20,'20'],[30,'30']],
     metaDoDia,definirMeta],
+  ['Perguntas','',[['mix','Todas'],['new','Só novas'],['wrong','Que errei']],
+    function(){return estadoTreino.quizFocus;},definirFoco,true],
+  ['Ordem','',[['random','🔀 Aleatória'],['seq','➡️ Em sequência']],
+    function(){return quiz.order==='seq'?'seq':'random';},definirOrdem,true],
+  ['Tamanho da rodada','No Mundo. Numa região, a rodada vai até completar a região.',[[0,'Sem fim'],[10,'10'],[20,'20']],
+    function(){return quiz.sessionLen;},definirRodada,true],
+  ['Cronômetro','Responda o máximo que der antes do tempo acabar.',[[0,'Sem tempo'],[30,'30 s'],[60,'60 s']],
+    function(){return quiz.timerLen;},definirTempo,true],
+  ['Sobrevivência','Errou uma vez, a rodada acaba.',[[false,'Não'],[true,'💀 Sim']],
+    function(){return !!quiz.survivalMode;},definirSobrevivencia,true],
 ];
 
 function montarAjustes(){
   var box=$('ajbody');box.innerHTML='';
+  /* o que quase ninguém muda fica fechado em "Mais ajustes" (abre se algum deles estiver diferente do normal) */
+  var mais=document.createElement('details');mais.className='ajmais';
+  var sm=document.createElement('summary');sm.textContent='Mais ajustes: perguntas, ordem, rodada, cronômetro, sobrevivência';mais.appendChild(sm);
+  mais.open=!!(estadoTreino.quizFocus!=='mix'||quiz.order==='seq'||quiz.sessionLen||quiz.timerLen||quiz.survivalMode||abrirMais);
   LINHAS.forEach(function(l){
     var row=document.createElement('div');row.className='ajrow';
     var t=document.createElement('b');t.textContent=l[0];row.appendChild(t);
@@ -49,8 +53,10 @@ function montarAjustes(){
     });
     row.appendChild(seg);
     if(l[1]){var d=document.createElement('small');d.textContent=l[1];row.appendChild(d);}
-    box.appendChild(row);
+    (l[5]?mais:box).appendChild(row);
   });
+  mais.ontoggle=function(){abrirMais=mais.open;};
+  box.appendChild(mais);
   montarRecomecar(box);
 }
 /* recomeçar a partida da região atual (medalhas, nível e conquistas ficam); pede dois toques */
@@ -71,6 +77,7 @@ function montarRecomecar(box){
   var d=document.createElement('small');d.textContent='Medalhas, nível e conquistas continuam.';row.appendChild(d);
   box.appendChild(row);
 }
+let abrirMais = false;
 function abrirAjustes(){montarAjustes();$('ajsheet').style.display='block';}
 function fecharAjustes(){$('ajsheet').style.display='none';}
 

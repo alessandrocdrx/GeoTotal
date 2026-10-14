@@ -225,4 +225,4 @@ function iniciar() {
   startMap();
 }
 
-export { addXP, celebrate, definirMeta, iniciar, metaDoDia, recordProgress, updateProgUI, xpAtual, zerarProgresso };
+export { addXP, celebrate, definirMeta, displayStreak, iniciar, levelOf, metaDoDia, recordProgress, updateProgUI, xpAtual, zerarProgresso };

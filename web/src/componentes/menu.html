@@ -1,6 +1,6 @@
 <!-- @arquivo componentes/menu.html · Camada: Interface
-     Menu "⋯" numa página só: atalhos do progresso, explorar, som e visual (com as escolhas à vista),
-     lugares incluídos, seus dados e ajuda. Só "Explorar" abre páginas internas (têm formulário). -->
+     Menu "⋯": atalhos do progresso, explorar e ajuda à vista; som e visual, lugares no jogo e seus
+     dados ficam em páginas internas (mais curto de ler). -->
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
   <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Mais</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <nav id="mlist" class="mlist">
@@ -16,7 +16,19 @@
     <button id="mdist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Rota de avião com várias paradas</small></span><span class="mc">›</span></button>
     <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
 
-    <div class="mgrp">🎨 Som e visual</div>
+    <div class="mgrp">⚙️ Configurar</div>
+    <button data-p="mp-visual"><span class="mi">🎨</span><span class="mt"><b>Som e visual</b><small>Efeitos, música, tema, fronteiras e nomes</small></span><span class="mc">›</span></button>
+    <button data-p="mp-lugares"><span class="mi">🗺️</span><span class="mt"><b>Lugares no jogo</b><small>Territórios, lugares disputados e Antártida</small></span><span class="mc">›</span></button>
+    <button data-p="mp-dados"><span class="mi">💾</span><span class="mt"><b>Seus dados</b><small>Salvar, restaurar ou zerar o progresso</small></span><span class="mc">›</span></button>
+
+    <div class="mgrp">❓ Ajuda</div>
+    <button id="mavaliar"><span class="mi">⭐</span><span class="mt"><b>Avaliar o geoTotal</b><small>Na Play Store · ajuda muito o jogo a crescer</small></span><span class="mc">›</span></button>
+    <button id="mtour"><span class="mi">👀</span><span class="mt"><b>Como jogar</b><small>Tour rápido pelos botões</small></span><span class="mc">›</span></button>
+    <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
+    <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
+  </nav>
+  <div class="mpage" id="mp-visual" data-t="Som e visual" hidden>
+<div class="mlist">
     <label class="mswrow"><span class="mi">🔔</span><span class="mt"><b>Efeitos sonoros</b></span><input type="checkbox" id="msfx" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🎵</span><span class="mt"><b>Música</b><small>Toca no modo Livre</small></span><input type="checkbox" id="mmusic" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <div class="msegrow"><span class="mi">🌓</span><span class="mt"><b>Tema</b></span><div class="aseg" id="mtema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div>
@@ -26,23 +38,25 @@
     <input type="checkbox" id="oTex" checked disabled hidden>
     <div class="msegrow"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b></span><div class="aseg" id="mlabels"><button data-v="p">Países</button><button data-v="c">Capitais</button></div></div>
 
-    <div class="mgrp">🗺️ Lugares no jogo e no mapa</div>
+</div>
+  </div>
+  <div class="mpage" id="mp-lugares" data-t="Lugares no jogo" hidden>
+<div class="mlist">
     <label class="mswrow"><span class="mi">⚠️</span><span class="mt"><b>Não reconhecidos pela ONU <small class="tgn" id="nDis"></small></b><small>Kosovo, Somalilândia, Transnístria…</small></span><input type="checkbox" id="oDisputed" role="switch" checked><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">◇</span><span class="mt"><b>Territórios dependentes <small class="tgn" id="nDep"></small></b><small>Porto Rico, Groenlândia, Hong Kong…</small></span><input type="checkbox" id="oDep" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">❄️</span><span class="mt"><b>Desabitados e Antártida <small class="tgn" id="nUni"></small></b><small>No treino, só em "Achar no mapa"</small></span><input type="checkbox" id="oUni" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <details id="catlista" class="catlista"><summary>📋 Quais são esses lugares?</summary><div id="catbody"></div></details>
 
-    <div class="mgrp">💾 Seus dados</div>
+</div>
+  </div>
+  <div class="mpage" id="mp-dados" data-t="Seus dados" hidden>
+<div class="mlist">
     <button id="msave"><span class="mi">💾</span><span class="mt"><b>Salvar meu progresso</b><small>Guarde o arquivo (no Drive, por exemplo) para trocar de celular</small></span><span class="mc">↓</span></button>
     <label class="mrowfile"><span class="mi">📂</span><span class="mt"><b>Restaurar progresso</b><small>Abra um arquivo salvo antes</small></span><span class="mc">›</span><input id="mload" type="file" accept=".json,application/json" hidden></label>
     <button id="qreset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar todo o progresso</b><small>Treino, medalhas, nível e conquistas · toque duas vezes</small></span></button>
 
-    <div class="mgrp">❓ Ajuda</div>
-    <button id="mavaliar"><span class="mi">⭐</span><span class="mt"><b>Avaliar o geoTotal</b><small>Na Play Store · ajuda muito o jogo a crescer</small></span><span class="mc">›</span></button>
-    <button id="mtour"><span class="mi">👀</span><span class="mt"><b>Como jogar</b><small>Tour rápido pelos botões</small></span><span class="mc">›</span></button>
-    <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
-    <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
-  </nav>
+</div>
+  </div>
   <div class="mpage" id="mp-sobre" data-t="Sobre o geoTotal" hidden>
     <div class="sobre">
       <i class="marca-logo grande" aria-hidden="true"></i>
