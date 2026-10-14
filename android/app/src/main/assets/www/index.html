@@ -6346,6 +6346,253 @@ NAN|Nadi|-17.76|177.44`;
       z: Math.cos(lat * r) * Math.cos(lng * r)
     };
   });
+  var AEROPORTO_DA_CAPITAL = {
+    BR: "BSB",
+    GF: "CAY",
+    SR: "PBM",
+    GY: "GEO",
+    VE: "CCS",
+    CO: "BOG",
+    EC: "UIO",
+    PE: "LIM",
+    BO: "LPB",
+    CL: "SCL",
+    AR: "EZE",
+    PY: "ASU",
+    UY: "MVD",
+    PA: "PTY",
+    CR: "SJO",
+    NI: "MGA",
+    HN: "XPL",
+    SV: "SAL",
+    GT: "GUA",
+    BZ: "BZE",
+    CU: "HAV",
+    JM: "KIN",
+    BS: "NAS",
+    HT: "PAP",
+    DO: "SDQ",
+    KN: "SKB",
+    AG: "ANU",
+    DM: "DOM",
+    LC: "SLU",
+    VC: "SVD",
+    BB: "BGI",
+    GD: "GND",
+    TT: "POS",
+    MX: "MEX",
+    US: "IAD",
+    CA: "YOW",
+    ZA: "JNB",
+    LS: "MSU",
+    SZ: "SHO",
+    BW: "GBE",
+    NA: "WDH",
+    ZM: "LUN",
+    ZW: "HRE",
+    MZ: "MPM",
+    MG: "TNR",
+    MU: "MRU",
+    SC: "SEZ",
+    KM: "HAH",
+    MW: "LLW",
+    TZ: "DOD",
+    BI: "BJM",
+    RW: "KGL",
+    UG: "EBB",
+    KE: "NBO",
+    SO: "MGQ",
+    XS: "HGA",
+    DJ: "JIB",
+    ER: "ASM",
+    ET: "ADD",
+    SS: "JUB",
+    AO: "NBJ",
+    CD: "FIH",
+    CG: "BZV",
+    GA: "LBV",
+    ST: "TMS",
+    GQ: "SSG",
+    CM: "NSI",
+    CF: "BGF",
+    TD: "NDJ",
+    NE: "NIM",
+    NG: "ABV",
+    BJ: "COO",
+    TG: "LFW",
+    BF: "OUA",
+    GH: "ACC",
+    CI: "ASK",
+    LR: "ROB",
+    SL: "FNA",
+    GN: "CKY",
+    GW: "OXB",
+    GM: "BJL",
+    SN: "DSS",
+    CV: "RAI",
+    MR: "NKC",
+    ML: "BKO",
+    EH: "EUN",
+    MA: "RBA",
+    DZ: "ALG",
+    TN: "TUN",
+    LY: "MJI",
+    EG: "CAI",
+    SD: "KRT",
+    PT: "LIS",
+    ES: "MAD",
+    AD: "LEU",
+    MC: "NCE",
+    SM: "RMI",
+    IT: "FCO",
+    VA: "FCO",
+    MT: "MLA",
+    GR: "ATH",
+    TR: "ESB",
+    FR: "CDG",
+    IE: "DUB",
+    GB: "LHR",
+    NL: "AMS",
+    BE: "BRU",
+    DE: "BER",
+    LU: "LUX",
+    LI: "ZRH",
+    CH: "BRN",
+    AT: "VIE",
+    IS: "KEF",
+    DK: "CPH",
+    SE: "ARN",
+    NO: "OSL",
+    FI: "HEL",
+    EE: "TLL",
+    LV: "RIX",
+    LT: "VNO",
+    RU: "SVO",
+    BY: "MSQ",
+    PL: "WAW",
+    CZ: "PRG",
+    SK: "BTS",
+    HU: "BUD",
+    SI: "LJU",
+    HR: "ZAG",
+    BA: "SJJ",
+    ME: "TGD",
+    XK: "PRN",
+    AL: "TIA",
+    CY: "LCA",
+    XN: "ECN",
+    MK: "SKP",
+    RS: "BEG",
+    RO: "OTP",
+    BG: "SOF",
+    MD: "RMO",
+    XT: "RMO",
+    UA: "KBP",
+    XA: "SUI",
+    GE: "TBS",
+    AM: "EVN",
+    AZ: "GYD",
+    SY: "DAM",
+    LB: "BEY",
+    PS: "AMM",
+    IL: "TLV",
+    JO: "AMM",
+    SA: "RUH",
+    YE: "SAH",
+    OM: "MCT",
+    AE: "AUH",
+    QA: "DOH",
+    BH: "BAH",
+    KW: "KWI",
+    IQ: "BGW",
+    IR: "IKA",
+    AF: "KBL",
+    KZ: "NQZ",
+    UZ: "TAS",
+    TM: "ASB",
+    KG: "FRU",
+    TJ: "DYU",
+    PK: "ISB",
+    IN: "DEL",
+    MV: "MLE",
+    LK: "CMB",
+    BD: "DAC",
+    BT: "PBH",
+    NP: "KTM",
+    MN: "UBN",
+    CN: "PEK",
+    KP: "FNJ",
+    KR: "ICN",
+    JP: "HND",
+    TW: "TPE",
+    MM: "NYT",
+    TH: "BKK",
+    LA: "VTE",
+    VN: "HAN",
+    KH: "KTI",
+    MY: "KUL",
+    SG: "SIN",
+    ID: "CGK",
+    BN: "BWN",
+    PH: "MNL",
+    TL: "DIL",
+    AU: "CBR",
+    NZ: "WLG",
+    PG: "POM",
+    SB: "HIR",
+    VU: "VLI",
+    FJ: "SUV",
+    PW: "ROR",
+    FM: "PNI",
+    MH: "MAJ",
+    NR: "INU",
+    KI: "TRW",
+    TV: "FUN",
+    WS: "APW",
+    TO: "TBU",
+    PR: "SJU",
+    VI: "STT",
+    VG: "EIS",
+    AI: "AXA",
+    MS: "MNI",
+    KY: "GCM",
+    TC: "GDT",
+    AW: "AUA",
+    CW: "CUR",
+    SX: "SXM",
+    BQ: "BON",
+    GP: "PTP",
+    MQ: "FDF",
+    MF: "SFG",
+    BL: "SBH",
+    BM: "BDA",
+    GL: "GOH",
+    PM: "FSP",
+    FK: "MPN",
+    RE: "RUN",
+    YT: "DZA",
+    SH: "HLE",
+    GI: "GIB",
+    FO: "FAE",
+    IM: "IOM",
+    JE: "JER",
+    GG: "GCI",
+    AX: "MHQ",
+    SJ: "LYR",
+    HK: "HKG",
+    MO: "MFM",
+    GU: "GUM",
+    MP: "SPN",
+    AS: "PPG",
+    PF: "PPT",
+    NC: "NOU",
+    WF: "WLS",
+    CK: "RAR",
+    NU: "IUE",
+    NF: "NLK",
+    CX: "XCH",
+    CC: "CCK"
+  };
 
   // web/src/js/nucleo/geo.js
   var geo_exports = {};
@@ -6391,7 +6638,15 @@ NAN|Nadi|-17.76|177.44`;
   function salto(a, b) {
     return estadoCamera.plano2D && Math.abs(a.x - b.x) > R2now() * 2;
   }
-  var COR = { reta: "#ffffff", direto: "#ffe066", escalas: "#ff9f43" };
+  var COR = { reta: "#ffffff", voo: "#ffe066" };
+  function etiqueta(txt, x, y) {
+    ctx.font = "800 11px system-ui,sans-serif";
+    var w = ctx.measureText(txt).width + 10;
+    ctx.fillStyle = "rgba(10,16,30,.85)";
+    ctx.fillRect(x - w / 2, y + 9, w, 16);
+    ctx.fillStyle = "#fff";
+    ctx.fillText(txt, x, y + 17.5);
+  }
   function drawArc(R, cx, cy) {
     var arc = estadoDistancia.arc;
     if (!arc) return;
@@ -6422,14 +6677,9 @@ NAN|Nadi|-17.76|177.44`;
       ctx.fillStyle = "#fff";
       ctx.fill();
       ctx.lineWidth = 2;
-      ctx.strokeStyle = cor;
+      ctx.strokeStyle = "#ff9f43";
       ctx.stroke();
-      ctx.font = "800 11px system-ui,sans-serif";
-      var w = ctx.measureText(h.cod).width + 10;
-      ctx.fillStyle = "rgba(10,16,30,.85)";
-      ctx.fillRect(p.x - w / 2, p.y + 8, w, 16);
-      ctx.fillStyle = "#fff";
-      ctx.fillText(h.cod, p.x, p.y + 16.5);
+      etiqueta(h.cod, p.x, p.y);
     });
     var pontos = arc.pontos || [], letras = {};
     pontos.forEach(function(i, n) {
@@ -6443,6 +6693,8 @@ NAN|Nadi|-17.76|177.44`;
       ctx.lineWidth = 2.4;
       ctx.strokeStyle = cor;
       ctx.stroke();
+      var c = codAero(D[i]);
+      if (c && arc.modo === "voo") etiqueta(c, p.x, p.y + 2);
       if (pontos.length > 2) {
         var t = letras[i].join("·");
         ctx.font = "800 12px system-ui,sans-serif";
@@ -6515,13 +6767,19 @@ NAN|Nadi|-17.76|177.44`;
   function letra(n) {
     return String.fromCharCode(65 + n);
   }
-  var MODOS = [["reta", "📏 Reta"], ["direto", "✈️ Direto"], ["escalas", "🛫 Escalas"]];
-  var VOO_MAIS_LONGO = 15300;
+  var MODOS = [["reta", "📏 Reta"], ["voo", "✈️ Voo"]];
   var DESVIO = 1.05;
   var ALC_REGIONAL = 3500;
   var ALC_LONGO = 13e3;
   var CUSTO_ESCALA = 1500;
-  var modo = "direto";
+  var modo = "voo";
+  function codAero(d) {
+    return AEROPORTO_DA_CAPITAL[d.cc] || "";
+  }
+  function rotulo(d) {
+    var c = codAero(d);
+    return (c ? c + " " : "") + capShort(d);
+  }
   function km(a, b) {
     return haversine(a, b);
   }
@@ -6594,23 +6852,19 @@ NAN|Nadi|-17.76|177.44`;
     closeCard();
     hidePick();
     $("msheet").style.display = "none";
-    var pts = [], trechos = [], escalas = [], tot = 0, horas = 0, longe = false, k, j;
+    var pts = [], trechos = [], escalas = [], tot = 0, horas = 0, k, j;
     for (k = 1; k < lista.length; k++) {
       var a = D[lista[k - 1]], b = D[lista[k]];
-      var nos = modo === "escalas" ? rotaComEscalas(a, b) : [a, b], kmTrecho = 0;
+      var nos = modo === "voo" ? rotaComEscalas(a, b) : [a, b], kmTrecho = 0;
       for (j = 1; j < nos.length; j++) {
-        var d = km(nos[j - 1], nos[j]);
+        var d = km(nos[j - 1], nos[j]) * (modo === "voo" ? DESVIO : 1);
         kmTrecho += d;
         for (var t = 0; t <= 1.0001; t += 1 / 80) pts.push(slerp(xyz(nos[j - 1]), xyz(nos[j]), Math.min(1, t)));
-        if (modo !== "reta") horas += d * (modo === "direto" ? DESVIO : 1) / VELOCIDADE + 0.5;
+        if (modo === "voo") horas += d / VELOCIDADE + 0.5;
         if (j < nos.length - 1) {
           escalas.push(nos[j]);
           horas += 2;
         }
-      }
-      if (modo === "direto") {
-        kmTrecho *= DESVIO;
-        if (kmTrecho > VOO_MAIS_LONGO) longe = true;
       }
       tot += kmTrecho;
       trechos.push({ a, b, km: kmTrecho, via: nos.slice(1, -1) });
@@ -6619,29 +6873,23 @@ NAN|Nadi|-17.76|177.44`;
     estadoDistancia.ativo = true;
     document.body.classList.add("dist");
     var ida = D[lista[0]], fim = D[lista[lista.length - 1]];
-    $("dbtit").textContent = ida.flag + " " + capShort(ida) + " → " + (lista.length > 2 ? "… → " : "") + fim.flag + " " + capShort(fim);
+    $("dbtit").textContent = ida.flag + " " + rotulo(ida) + " → " + (lista.length > 2 ? "… → " : "") + fim.flag + " " + rotulo(fim);
     var txt = fmtKm(tot);
     if (modo === "reta") txt += " em linha reta pela superfície";
-    else txt += " · ~" + fmtHoras(horas) + (modo === "escalas" ? escalas.length ? " com " + escalas.length + (escalas.length === 1 ? " escala" : " escalas") : " sem escala" : " de voo");
+    else txt += " · ~" + fmtHoras(horas) + (escalas.length ? " com " + escalas.length + (escalas.length === 1 ? " escala" : " escalas") : " sem escala");
     $("dbtot").textContent = txt;
-    var nota2 = "";
-    if (modo === "direto") nota2 = longe ? "⚠️ Nenhum avião de linha faz um trecho assim sem parar: o voo sem escala mais longo de hoje tem uns 15.300 km." : "Voo sem parar: uns 5% a mais que a linha reta, por causa das rotas aéreas e do vento.";
-    else if (modo === "escalas") nota2 = escalas.length ? "Escalas típicas, aproximadas: " + escalas.map(function(h) {
-      return h.cidade + " (" + h.cod + ")";
-    }).join(", ") + ". Conta 2 h de espera em cada." : "Dá para ir sem escala.";
-    else nota2 = "O caminho mais curto pela superfície da Terra, sem pensar em aviões.";
-    $("dbnota").textContent = nota2;
-    $("dbnota").hidden = !(modo === "direto" && longe);
+    var nota2 = modo === "reta" ? "O caminho mais curto pela superfície da Terra, sem pensar em aviões." : escalas.length ? "Escalas típicas, aproximadas: " + escalas.map(function(h) {
+      return h.cod + " " + h.cidade;
+    }).join(", ") + ". Conta 2 h de espera em cada." : "Voo sem escala: uns 5% a mais que a linha reta, por causa das rotas aéreas e do vento.";
+    $("dbnota").hidden = true;
     Array.prototype.forEach.call($("dbmodo").children, function(bt) {
       bt.setAttribute("aria-pressed", bt.dataset.v === modo ? "true" : "false");
     });
     var lg = $("dblegs");
     lg.innerHTML = "";
-    if (!(modo === "direto" && longe)) {
-      var ex = document.createElement("p");
-      ex.textContent = nota2;
-      lg.appendChild(ex);
-    }
+    var ex = document.createElement("p");
+    ex.textContent = nota2;
+    lg.appendChild(ex);
     lista.forEach(function(i, n) {
       var row = document.createElement("div");
       row.className = "dstop";
@@ -6672,9 +6920,9 @@ NAN|Nadi|-17.76|177.44`;
       if (tr) {
         var li = document.createElement("div");
         li.className = "dleg";
-        li.textContent = "↓ " + fmtKm(tr.km) + (tr.via.length ? " · via " + tr.via.map(function(h) {
+        li.textContent = "↓ " + fmtKm(tr.km) + (modo === "voo" ? " · " + [codAero(tr.a) || capShort(tr.a)].concat(tr.via.map(function(h) {
           return h.cod;
-        }).join(", ") : "");
+        }), [codAero(tr.b) || capShort(tr.b)]).join(" → ") : "");
         lg.appendChild(li);
       }
     });
@@ -6703,10 +6951,10 @@ NAN|Nadi|-17.76|177.44`;
       mostrarDistancia(paradas);
     };
     $("dexit").onclick = sairDistancia;
-    modo = lsGet("globo.dist.modo", "direto");
+    modo = lsGet("globo.dist.modo", "voo");
     if (!MODOS.some(function(m) {
       return m[0] === modo;
-    })) modo = "direto";
+    })) modo = "voo";
     MODOS.forEach(function(m) {
       var bt = document.createElement("button");
       bt.dataset.v = m[0];
@@ -9338,7 +9586,7 @@ NAN|Nadi|-17.76|177.44`;
     if (estadoTreino.qBadge != null) desenharSelo(D[estadoTreino.qBadge], R, cx, cy, true, false);
     else if (estadoTreino.qPino != null) desenharSelo(D[estadoTreino.qPino], R, cx, cy, false, false, "📍 " + qcapD(D[estadoTreino.qPino]));
   }
-  function desenharSelo(d, R, cx, cy, comBandeira, espia, rotulo) {
+  function desenharSelo(d, R, cx, cy, comBandeira, espia, rotulo2) {
     var X, Y;
     if (estadoCamera.plano2D) {
       var R2 = R2now(), pp = proj2D(d.lng, d.lat, R2, cx, cy);
@@ -9359,7 +9607,7 @@ NAN|Nadi|-17.76|177.44`;
     ctx.arc(X, Y, 4.5, 0, 7);
     ctx.fillStyle = REG[d.r].c;
     ctx.fill();
-    var name = rotulo || short(d), fs = espia ? 13 : 15;
+    var name = rotulo2 || short(d), fs = espia ? 13 : 15;
     ctx.font = "700 " + fs + "px " + FONT;
     var tw = ctx.measureText(name).width, bw = Math.min(W - 12, tw + (comBandeira ? 58 : 24)), bh = espia ? 34 : 40;
     var bx = Math.max(6, Math.min(X - bw / 2, W - bw - 6)), by = Y - bh - 16;
@@ -11856,17 +12104,17 @@ NAN|Nadi|-17.76|177.44`;
     row.appendChild(t);
     var b = document.createElement("button");
     b.className = "ajzerar";
-    function rotulo() {
+    function rotulo2() {
       b.classList.remove("armado");
       b.textContent = "↺ Recomeçar do zero (" + feitos + " de " + n + " feitos)";
     }
-    rotulo();
+    rotulo2();
     b.onclick = function() {
       if (!b.classList.contains("armado")) {
         b.classList.add("armado");
         b.textContent = "Toque de novo para recomeçar";
         clearTimeout(b._t);
-        b._t = setTimeout(rotulo, 4e3);
+        b._t = setTimeout(rotulo2, 4e3);
         return;
       }
       clearTimeout(b._t);

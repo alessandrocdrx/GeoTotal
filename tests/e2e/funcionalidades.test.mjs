@@ -152,7 +152,7 @@ test('modo Livre: cartão, filtros, busca, globo, 2D, Brasil e ferramentas', asy
     ['distância entre capitais', () => { document.getElementById('mbtn').click(); document.getElementById('mdist').click(); if (!document.body.classList.contains('dist')) throw new Error('não abriu a tela da distância'); }],
     ['distância: parada pela barra', () => { const add = document.getElementById('dbadd'); add.selectedIndex = 30; add.dispatchEvent(new Event('change')); if (document.querySelectorAll('#dblegs .dstop').length !== 3) throw new Error('não somou a parada'); }],
     ['distância: trocar e tirar parada', () => { const s = document.querySelector('#dblegs .dstop select'); s.selectedIndex = 9; s.dispatchEvent(new Event('change')); document.querySelector('#dblegs .dstop button').click(); if (document.querySelectorAll('#dblegs .dstop').length !== 2) throw new Error('não tirou'); }],
-    ['distância: três tipos de rota', () => ['reta', 'escalas', 'direto'].forEach((m) => document.querySelector('#dbmodo [data-v="' + m + '"]').click())],
+    ['distância: reta e voo', () => ['reta', 'voo'].forEach((m) => document.querySelector('#dbmodo [data-v="' + m + '"]').click())],
     ['distância: tocar no globo não abre cartão', () => { const r = document.getElementById('g').getBoundingClientRect(); window.__geoTotal.tap(r.left + r.width / 2, r.top + r.height / 2); if (document.getElementById('card').style.display === 'block') throw new Error('abriu cartão'); }],
     ['sair da distância', CLICAR, 'dexit'],
     ['tema', () => { document.getElementById('mback').click(); ['dark', 'light', 'auto'].forEach((v) => document.querySelector(`#mtema [data-v="${v}"]`).click()); }],
