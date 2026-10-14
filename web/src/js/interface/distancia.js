@@ -18,6 +18,7 @@ import { proj2D, R2now } from '../visualizacao/mapa-2d.js';
 import { estadoRender } from '../visualizacao/projecao.js';
 import { ctx, estadoCamera, rot, W } from '../visualizacao/tela.js';
 import { closeCard } from './cartao-detalhes.js';
+import { buscaNoSelect } from './escolha-pais.js';
 import { hidePick } from './lista-proximos.js';
 
 /** Estado compartilhado com outros módulos (leitura e escrita por estadoDistancia.nome). */
@@ -120,6 +121,7 @@ function fillCountrySelect(sel,first){
     var o=document.createElement('option');o.value=d.i;o.textContent=d.flag+' '+short(d);sel.appendChild(o);
   });
   sel.value=byName[norm(first)];
+  buscaNoSelect(sel);
 }
 function fmtKm(km){return Math.round(km).toLocaleString('pt-BR')+' km';}
 function letra(n){return String.fromCharCode(65+n);}
@@ -283,7 +285,7 @@ function iniciar() {
     $('dbmodo').appendChild(bt);
   });
   /* mais uma parada direto da barra, sem voltar ao menu */
-  var add=$('dbadd');fillCountrySelect(add,'Brasil');
+  var add=$('dbadd');fillCountrySelect(add,'Brasil');add.dataset.titulo='Adicionar parada';
   var o=document.createElement('option');o.value='';o.textContent='＋ Parada';add.insertBefore(o,add.firstChild);add.value='';
   add.onchange=function(){if(add.value!==''){paradas.push(+add.value);add.value='';mostrarDistancia();}};
   $('dbmais').onclick=function(){var l=$('dblegs');l.hidden=!l.hidden;this.textContent=this.textContent.replace(/[▾▴]$/,l.hidden?'▾':'▴');};

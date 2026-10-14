@@ -7,6 +7,7 @@
 import { D, dflag, N_DEP, N_UNI, norm, REG } from '../dados/paises.js';
 import { byName, capShort, NB, short } from '../dados/vizinhos.js';
 import { closeCard, tourStop } from './cartao-detalhes.js';
+import { buscaNoSelect } from './escolha-pais.js';
 import { ganchosInterface } from './ganchos.js';
 import { emitir, ouvir } from '../nucleo/eventos.js';
 import { $, lsSet } from '../nucleo/utilitarios.js';
@@ -196,7 +197,7 @@ function iniciar() {
   D.slice().sort(function(a,b){return short(a).localeCompare(short(b),'pt');}).forEach(function(d){
     var o=document.createElement('option');o.value=d.i;o.textContent=d.flag+' '+short(d);sel.appendChild(o);
   });
-  sel.value=byName[norm('Brasil')];
+  sel.value=byName[norm('Brasil')];buscaNoSelect(sel,'País da vizinhança');
   sheet = document.getElementById('sheet');
   document.getElementById('fbtn').onclick=function(){sheet.style.display='block';};
   document.getElementById('sclose').onclick=function(){sheet.style.display='none';};

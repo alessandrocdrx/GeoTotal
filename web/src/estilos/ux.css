@@ -577,3 +577,18 @@ body.dist .ncard{display:none}
 .camadas .msegrow{display:flex;align-items:center;gap:10px;padding:7px 2px}
 .camadas .msegrow .mt{flex:1}
 .camadas .cmes{max-width:150px;padding:6px 8px;border-radius:10px;border:1px solid var(--border);background:var(--chip);color:var(--fg);font-family:inherit;font-size:13px}
+
+/* escolher país digitando */
+.escolha{position:fixed;inset:0;z-index:140;background:rgba(5,10,25,.55);display:flex;align-items:flex-start;justify-content:center;padding:max(12px,var(--sat,0px)) 10px 10px}
+.escolha[hidden]{display:none}
+.escolha .esbox{width:100%;max-width:520px;max-height:100%;display:flex;flex-direction:column;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:18px;padding:12px;box-shadow:0 18px 50px rgba(0,0,0,.45);animation:qpop .18s ease-out}
+.escolha .eshead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.escolha .eshead b{font-size:17px}
+.escolha input{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--chip);color:var(--fg);font-size:16px;font-family:inherit}
+.escolha .eslista{overflow:auto;margin-top:8px;display:flex;flex-direction:column;gap:2px;min-height:120px}
+.escolha .esitem{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;color:var(--fg);padding:9px 8px;border-radius:10px;font-family:inherit;font-size:15px;cursor:pointer}
+.escolha .esitem:hover,.escolha .esitem.on{background:var(--chip)}
+.escolha .esflag{font-size:22px}
+.escolha .esnome{display:flex;flex-direction:column;font-weight:700}
+.escolha .esnome small{font-weight:500;color:var(--muted);font-size:12.5px}
+.escolha .esvazio{padding:16px;color:var(--muted);text-align:center}
