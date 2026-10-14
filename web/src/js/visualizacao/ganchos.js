@@ -24,8 +24,10 @@ const ganchos = {
   ocultarMarcadoresEstados: () => false,
   /** País piscando no treino: { i, kind: 'ok' | 'ask' | 'reveal' } ou null. */
   destaquePais: () => null,
-  /** Arco da distância entre duas capitais. */
+  /** Rota da distância entre capitais (globo; no mapa 2D, R vem 0). */
   desenharArco: (/* R, cx, cy */) => {},
+  /** A tela da Distância está aberta (o globo para de girar sozinho). */
+  distanciaAberta: () => false,
   /** Pulso que destaca a região escolhida para o treino. */
   desenharPulsoEscopo: (/* R, cx, cy */) => {},
   /** Selo com o nome do país da resposta, depois de responder. */

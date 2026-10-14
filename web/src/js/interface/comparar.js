@@ -10,7 +10,7 @@ import { capShort, NB, short } from '../dados/vizinhos.js';
 import { haversine } from '../nucleo/geo.js';
 import { $ } from '../nucleo/utilitarios.js';
 import { fmtArea, fmtPop } from './cartao-detalhes.js';
-import { fillCountrySelect } from './distancia.js';
+import { fillCountrySelect, mostrarDistancia } from './distancia.js';
 
 function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
 function num(v){return v.toLocaleString('pt-BR',{maximumFractionDigits:1});}
@@ -81,7 +81,7 @@ function comparar(){
   curiosidades(a,b).forEach(function(t){cur.appendChild(el('p',null,t));});
   box.appendChild(cur);
   var ver=el('button','cstreinar','📏 Ver a distância no globo');
-  ver.onclick=function(){$('dA').value=a.i;$('dB').value=b.i;$('dgo').click();};
+  ver.onclick=function(){mostrarDistancia([a.i,b.i]);};
   box.appendChild(ver);
   /* quesitos sem vencedor: só lado a lado */
   var tab=el('div','duelinfo');

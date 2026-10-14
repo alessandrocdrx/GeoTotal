@@ -15,6 +15,7 @@ import { ganchos } from '../visualizacao/ganchos.js';
 import { inv2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
 import { countryAt, estadoRender, inFeat } from '../visualizacao/projecao.js';
 import { cv, estadoCamera, estadoMapa, H, PI, R0, rot, W } from '../visualizacao/tela.js';
+import { estadoDistancia } from './distancia.js';
 
 /* ---------- Interação ---------- */
 const ptrs = {};
@@ -36,6 +37,8 @@ function endPtr(e){
 }
 
 function tap(px,py){
+  /* na tela da Distância, tocar no mapa não abre países (só arrasta e dá zoom) */
+  if(estadoDistancia.ativo)return;
   if(estadoCamera.plano2D&&!estadoBrasil.statesMode){tap2D(px,py);return;}
   var r=cv.getBoundingClientRect(),x=px-r.left,y=py-r.top,R=R0*estadoCamera.zoom,cand=[];
   if(ganchosInterface.toqueAntes(x,y))return;

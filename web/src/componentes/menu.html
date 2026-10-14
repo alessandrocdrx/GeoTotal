@@ -13,7 +13,7 @@
     <div class="mgrp">🧭 Explorar</div>
     <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
     <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Duelo: quem é maior, mais populoso…</small></span><span class="mc">›</span></button>
-    <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Calcula e mostra no globo</small></span><span class="mc">›</span></button>
+    <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Rota de avião com várias paradas</small></span><span class="mc">›</span></button>
     <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
 
     <div class="mgrp">🎨 Som e visual</div>
@@ -59,9 +59,10 @@
     <div id="cmpres"></div>
   </div>
   <div class="mpage" id="mp-dist" data-t="Distância entre capitais" hidden>
-    <select id="dA" aria-label="País de origem"></select>
-    <select id="dB" aria-label="País de destino"></select>
-    <div class="row2"><button id="dgo">Calcular e mostrar no globo</button><button id="dclear">Limpar</button></div>
+    <p class="mdesc">Escolha de 2 a 6 capitais. A rota aparece no globo numa tela só dela, com o avião fazendo o caminho mais curto.</p>
+    <div id="dstops"></div>
+    <button id="dadd" class="dadd">＋ Adicionar parada</button>
+    <button id="dgo" class="cstreinar">✈️ Mostrar a rota no globo</button>
     <div id="dres" class="inote"></div>
   </div>
   <div class="mpage" id="mp-br" data-t="Estados do Brasil" hidden>

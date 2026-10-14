@@ -9,7 +9,7 @@ import { BRS } from '../dados/estados-brasil.js';
 import { D, dflag, norm, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
 import { closeCard, tourStop } from '../interface/cartao-detalhes.js';
-import { estadoDistancia, slerp } from '../interface/distancia.js';
+import { estadoDistancia, sairDistancia, slerp } from '../interface/distancia.js';
 import { setIncludeUni } from '../interface/filtros.js';
 import { hidePick } from '../interface/lista-proximos.js';
 import { emitir, ouvir } from '../nucleo/eventos.js';
@@ -362,7 +362,7 @@ function quizMapAnswer(cn){
   var km=Math.round(haversine(cn,d)),near=km<800;
   var pts=[],A=[cn.x,cn.y,cn.z],B=[d.x,d.y,d.z];
   for(var t=0;t<=1.0001;t+=1/60)pts.push(slerp(A,B,Math.min(1,t)));
-  estadoDistancia.arc={a:cn.i,b:i,pts:pts,quiz:true};
+  estadoDistancia.arc={pontos:[cn.i,i],pts:pts,quiz:true};
   if(near)addXP(3);
   finishQ(false,'Você tocou em '+dflag(cn)+' '+short(cn)+', a '+km.toLocaleString('pt-BR')+' km (entre as capitais).'+(near?' Quase! +3 XP':''));
 }
@@ -439,7 +439,7 @@ function quizOpen(){
   if(estadoBrasil.statesMode)exitStates(false);
   tourStop();closeCard();hidePick();
   /* a linha da Distância entre capitais (e o aviso com os km) é do modo Livre: some ao entrar no treino */
-  estadoDistancia.arc=null;setStatus('');
+  sairDistancia();estadoDistancia.arc=null;setStatus('');
   quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncModeSw();
   document.body.classList.add('quizing');$('quiz').classList.add('map');pausarMusica(true);
   $('quiz').style.display='block';

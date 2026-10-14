@@ -472,3 +472,19 @@ h1.marca{flex:none}
 #study table{table-layout:fixed}
 #study td:nth-child(2){width:45%}
 #study td{overflow-wrap:anywhere}
+/* tela da Distância (js/interface/distancia.js): barra em cima e nada do modo Livre por cima do globo */
+#dbar{display:none;position:absolute;left:12px;right:66px;top:8px;z-index:7;align-items:flex-start;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:8px 8px 8px 12px;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+body.dist #dbar{display:flex}
+body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist #status,body.dist .seg,body.dist .seg2{display:none!important}
+#dbar .dbtxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#dbar .dbtxt b{font-size:14px;overflow-wrap:anywhere}
+#dbar .dbtxt span{font-size:13px;font-weight:700;color:var(--muted)}
+#dbar .dbmais{align-self:flex-start;border:0;background:none;color:#4da3ff;font-weight:800;font-size:12.5px;padding:2px 0;cursor:pointer;font-family:inherit}
+#dblegs{font-size:12.5px;line-height:1.5;max-height:30vh;overflow:auto}
+#dbar .closeb{flex:none;padding:7px 12px!important;font-size:13px!important}
+.dstop{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:8px;margin:6px 0}
+.dstop b{width:26px;height:26px;border-radius:50%;background:#ffe066;color:#1a1400;display:flex;align-items:center;justify-content:center;font-size:13px}
+.dstop select{margin:0!important}
+.dstop button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;width:40px;height:40px;cursor:pointer;font-family:inherit}
+.dadd{width:100%;margin:4px 0 2px;padding:10px;border:1px dashed var(--border);border-radius:12px;background:none;color:var(--fg);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+.dadd[hidden]{display:none}

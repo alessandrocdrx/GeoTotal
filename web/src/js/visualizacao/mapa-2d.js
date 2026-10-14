@@ -105,7 +105,7 @@ function draw2D(){
     if(p2.x<-40||p2.x>W+40||p2.y<-40||p2.y>H+40)continue;
     d.sx=p2.x;d.sy=p2.y;d.vz=1;vis.push(d);
   }
-  if(ganchos.ocultarMarcadores())vis=[];
+  if(ganchos.ocultarMarcadores()||ganchos.distanciaAberta())vis=[];
   var mr=Math.max(3.2,Math.min(6,R2*0.032));
   for(i=0;i<vis.length;i++){
     d=vis[i];
@@ -140,6 +140,7 @@ function draw2D(){
     }
     if(selB)paintSelBadge(selB);
   }
+  ganchos.desenharArco(0,cx,cy);
   ganchos.desenharSeloResposta(0,cx,cy);
 }
 function setFlat2D(v){

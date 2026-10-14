@@ -6,6 +6,7 @@
 
 import { D, qcapDisp, REG } from '../dados/paises.js';
 import { short } from '../dados/vizinhos.js';
+import { folhaPdf } from './pdf.js';
 import { $, setStatus } from '../nucleo/utilitarios.js';
 import { estadoMapa } from '../visualizacao/tela.js';
 
@@ -38,17 +39,24 @@ function buildStudy(){
 
 /* Imprimir: no app Android abre a impressão do sistema (dá para salvar em PDF). Dentro de uma página
    embutida (iframe, como no claude.ai) o navegador bloqueia a impressão sem avisar; aí a folha vira um
-   arquivo .html para baixar, que abre a impressão sozinho. */
+   PDF para baixar (recursos/pdf.js), com as bandeiras. */
+function gruposDaFolha(){
+  var out=[];
+  REG.forEach(function(rg,ri){
+    var list=D.filter(function(d){return d.r===ri&&estadoMapa.on[d.i];});
+    if(list.length)out.push({titulo:rg.n+' ('+list.length+')',linhas:list.map(function(d){return [d.flag,short(d),qcapDisp(d)];})});
+  });
+  return out;
+}
 function imprimirFolha(){
   var embutido=false;try{embutido=window.self!==window.top;}catch(e){embutido=true;}
   if(window.AndroidBridge||!embutido){try{window.print();return;}catch(e){}}
-  /* colunas com a mesma largura em todas as tabelas; bandeiras pela fonte Noto Color Emoji (o Windows
-     não desenha bandeira em emoji); a impressão abre depois que a fonte carregar */
-  var css='body{font-family:system-ui,sans-serif;margin:24px;color:#000}h1{font-size:20px}h3{margin:16px 0 4px;font-size:15px;break-after:avoid}table{width:100%;border-collapse:collapse;table-layout:fixed}tr{break-inside:avoid}td{padding:5px 6px;border-bottom:1px solid #ccc;font-size:13px;overflow-wrap:anywhere}td.fl{width:40px;font-size:20px;font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif}td:nth-child(2){width:45%}';
-  var abrir='window.onload=function(){var p=function(){window.print();};if(document.fonts&&document.fonts.load){document.fonts.load(\'20px "Noto Color Emoji"\',\'\\uD83C\\uDDE7\\uD83C\\uDDF7\').then(p,p);}else p();};';
-  var html='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Folha de estudo · geoTotal</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"><style>'+css+'</style></head><body><h1>Folha de estudo · geoTotal</h1>'+$('studybody').innerHTML+'<script>'+abrir+'<'+'/script></body></html>';
-  offerFile('folha-de-estudo.html',html);
-  setStatus('Abra o arquivo baixado: ele abre a impressão (dá para salvar em PDF).',6000);
+  if(!dlNS){setStatus('Aqui não dá para baixar arquivos. Use o app no celular para imprimir.',5000);return;}
+  setStatus('Gerando o PDF…');
+  folhaPdf('Folha de estudo · geoTotal',gruposDaFolha()).then(function(pdf){
+    setStatus('');
+    return dlNS.save({filename:'folha-de-estudo-geototal.pdf',data:pdf}).then(function(){setStatus('PDF salvo.',3000);});
+  }).catch(function(e){if(e&&e.code==='declined')return;setStatus('Não consegui gerar o PDF.',4000);});
 }
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */

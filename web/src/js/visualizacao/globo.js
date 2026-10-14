@@ -124,7 +124,7 @@ function draw(){
     p=rot(d.x,d.y,d.z);
     if(p[2]>0.05){d.sx=cx+R*p[0];d.sy=cy-R*p[1];d.vz=p[2];vis.push(d);}
   }
-  if(ganchos.ocultarMarcadores()||estadoBrasil.statesMode)vis=[];
+  if(ganchos.ocultarMarcadores()||ganchos.distanciaAberta()||estadoBrasil.statesMode)vis=[];
   var mr=Math.max(3.2,Math.min(6,R*0.0125));
   for(i=0;i<vis.length;i++){
     d=vis[i];
@@ -177,7 +177,7 @@ function frame(){
     var dl=shortest(estadoCamera.lam,estadoCamera.target.lam),dp=estadoCamera.target.phi-estadoCamera.phi,dz=estadoCamera.target.zoom-estadoCamera.zoom;
     estadoCamera.lam+=dl*.14;estadoCamera.phi+=dp*.14;estadoCamera.zoom+=dz*.14;
     if(Math.abs(dl)<.0008&&Math.abs(dp)<.0008&&Math.abs(dz)<.004)estadoCamera.target=null;
-  }else if(estadoCamera.auto&&!estadoCamera.dragging&&!estadoMapa.selected&&!ganchos.treinoAberto()&&!estadoBrasil.statesMode&&!estadoBrasil.selSt&&(performance.now()-estadoCamera.lastInteract>2500)){
+  }else if(estadoCamera.auto&&!estadoCamera.dragging&&!estadoMapa.selected&&!ganchos.treinoAberto()&&!estadoBrasil.statesMode&&!estadoBrasil.selSt&&!ganchos.distanciaAberta()&&(performance.now()-estadoCamera.lastInteract>2500)){
     estadoCamera.lam+=0.0022;
   }
   var wantCy=((estadoMapa.selected||estadoBrasil.selSt)&&!ganchos.treinoAberto())?Math.max(.26,Math.min(.5,(H-ganchos.alturaCartao())/(2*H))):(ganchos.treinoAberto()?Math.max(.24,Math.min(.5,(H-ganchos.alturaTreino())/(2*H))):.5);estadoCamera.cyFrac+=(wantCy-estadoCamera.cyFrac)*.15;
