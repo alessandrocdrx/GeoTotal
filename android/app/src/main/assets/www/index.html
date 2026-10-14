@@ -858,7 +858,7 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
 .izero.armado{color:#e5484d}
 
 /* botão 🏷️: o que aparece no mapa */
-.camadas{position:absolute;right:60px;top:8px;z-index:7;width:min(310px,calc(100% - 76px));max-height:calc(100% - 16px);overflow:auto;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:16px;padding:8px 10px 6px;box-shadow:0 12px 34px rgba(0,0,0,.35);animation:qpop .2s ease-out}
+.camadas{position:absolute;right:8px;top:8px;z-index:9;width:min(330px,calc(100% - 16px));max-height:calc(100% - 16px);overflow:auto;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:16px;padding:8px 10px 6px;box-shadow:0 12px 34px rgba(0,0,0,.35);animation:qpop .2s ease-out}
 .camadas[hidden]{display:none}
 .camadas .camtit{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 4px}
 .camadas .camtit b{font-size:15px}
@@ -880,7 +880,7 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
   <header>
     <div class="htop">
       <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
-      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite">☀️</button><button id="mestilotop" class="hsom" aria-label="Estilo do mapa: satélite" title="Satélite ou atlas">🛰️</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite">☀️</button><button id="mestilotop" class="hsom" aria-label="Estilo do mapa: satélite" title="Satélite ou atlas">🛰️</button><button id="camb" class="hsom" aria-label="O que aparece no mapa" title="O que aparece no mapa" aria-expanded="false">🏷️</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -913,7 +913,6 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
       <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true">🔄</button>
       <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países">🎬</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
-      <button id="camb" aria-label="O que aparece no mapa" title="O que aparece no mapa" aria-expanded="false">🏷️</button>
     </div>
     <div id="camadas" class="camadas" hidden>
       <div class="camtit"><b>O que aparece no mapa</b><button id="camfechar" class="closeb" aria-label="Fechar">✕</button></div>
