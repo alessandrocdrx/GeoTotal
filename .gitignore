@@ -23,3 +23,8 @@ release*.keystore
 *.iml
 .DS_Store
 Thumbs.db
+
+# Imagens da Play Store e prints de teste ficam fora do repositório
+playstore/**/*.png
+playstore/*.zip
+/*.png
