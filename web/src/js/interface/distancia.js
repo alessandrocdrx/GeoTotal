@@ -88,7 +88,7 @@ function drawArc(R,cx,cy){
   Object.keys(letras).forEach(function(i){
     var p=naTela(xyz(D[i]),R,cx,cy);if(!p)return;
     ctx.beginPath();ctx.arc(p.x,p.y,8,0,7);ctx.lineWidth=2.4;ctx.strokeStyle=cor;ctx.stroke();
-    var c=codAero(D[i]);if(c&&arc.modo==='voo')etiqueta(c,p.x,p.y+2,{cod:c,txt:'Aeroporto que atende '+capShort(D[i])+', capital de '+dflag(D[i])+' '+short(D[i])});
+    var c=codAero(D[i]);if(c&&arc.modo==='voo')etiqueta(c,p.x,p.y+2,infoCapital(D[i]));
     if(pontos.length>2){
       var t=letras[i].join('·');ctx.font='800 12px system-ui,sans-serif';
       var w=Math.max(18,ctx.measureText(t).width+10);
@@ -138,20 +138,31 @@ function toqueNaRota(x,y){
   /* a sigla mais perto do toque, até uns 44 px (dedo não é mouse) */
   var melhor=null,md=44*44;
   siglas.forEach(function(g){var gx=g.x+g.w/2,gy=g.y+g.h/2,dd=(gx-x)*(gx-x)+(gy-y)*(gy-y);if(dd<md){md=dd;melhor=g;}});
-  if(melhor){
-    var s=melhor;{
-      b.innerHTML='';
-      var t=document.createElement('b');t.textContent='✈️ '+s.info.cod;
-      var p=document.createElement('span');p.textContent=s.info.txt;
-      b.appendChild(t);b.appendChild(p);b.hidden=false;
-      b.style.left=Math.max(8,Math.min(W-228,s.cx-110))+'px';b.style.top=Math.max(8,s.cy+34)+'px';
-      clearTimeout(b._t);b._t=setTimeout(function(){b.hidden=true;},5000);
-      return true;
-    }
-  }
+  if(melhor){mostrarAeroporto(melhor.info,melhor.cx,melhor.cy+34);return true;}
   b.hidden=true;
   return false;
 }
+/** Balão com o que é a sigla, perto de (x, y) da tela do mapa. */
+function mostrarAeroporto(info,x,y){
+  var b=$('dbaero');b.innerHTML='';
+  var t=document.createElement('b');t.textContent='✈️ '+info.cod;
+  var p=document.createElement('span');p.textContent=info.txt;
+  b.appendChild(t);b.appendChild(p);b.hidden=false;
+  b.style.left=Math.max(8,Math.min(W-228,x-110))+'px';b.style.top=Math.max(8,y)+'px';
+  clearTimeout(b._t);b._t=setTimeout(function(){b.hidden=true;},6000);
+}
+/* sigla como botão no texto da barra: toca e aparece o balão logo abaixo da barra */
+function botaoSigla(info){
+  var s=document.createElement('button');s.className='sigla';s.textContent=info.cod;
+  s.setAttribute('aria-label','Aeroporto '+info.cod);
+  s.onclick=function(e){
+    e.stopPropagation();
+    var st=$('stage').getBoundingClientRect(),r=s.getBoundingClientRect();
+    mostrarAeroporto(info,r.left-st.left+r.width/2,r.bottom-st.top+6);
+  };
+  return s;
+}
+function infoCapital(d){return {cod:codAero(d),txt:'Aeroporto que atende '+capShort(d)+', capital de '+dflag(d)+' '+short(d)};}
 function codAero(d){return AEROPORTO_DA_CAPITAL[d.cc]||'';}
 function rotulo(d){var c=codAero(d);return (c?c+' ':'')+capShort(d);}
 function km(a,b){return haversine(a,b);}
@@ -197,7 +208,10 @@ function cidadeDaEscala(e){
 /** Voo entre duas capitais: pelas rotas do OpenFlights (2014) quando há dado; senão, a estimativa. */
 function rotaVoo(a,b){
   var ca=codAero(a),cb=codAero(b),of=ca&&cb?escalasOpenFlights(ca,cb):null;
-  if(of)return {fonte:'of',nos:[a].concat(of.map(function(e){return {cod:e.cod,cidade:cidadeDaEscala(e),lat:e.lat,lng:e.lng};}),[b])};
+  if(of)return {fonte:'of',nos:[a].concat(of.map(function(e){
+    var r=Math.PI/180,la=e.lat*r,lo=e.lng*r;
+    return {cod:e.cod,cidade:cidadeDaEscala(e),lat:e.lat,lng:e.lng,x:Math.cos(la)*Math.sin(lo),y:Math.sin(la),z:Math.cos(la)*Math.cos(lo)};
+  }),[b])};
   return {fonte:'est',nos:rotaComEscalas(a,b)};
 }
 function fmtHoras(h){var min=Math.round(h*60),hh=Math.floor(min/60),m=min%60;return hh?(hh+' h'+(m?' '+m+' min':'')):(m+' min');}
@@ -256,7 +270,22 @@ function mostrarDistancia(lista){
     }
     lg.appendChild(row);
     var tr=trechos[n];
-    if(tr){var li=document.createElement('div');li.className='dleg';li.textContent='↓ '+fmtKm(tr.km)+(modo==='voo'?' · '+[codAero(tr.a)||capShort(tr.a)].concat(tr.via.map(function(h){return h.cod;}),[codAero(tr.b)||capShort(tr.b)]).join(' → ')+(tr.fonte==='of'?' · OpenFlights 2014':' · estimativa'):'');lg.appendChild(li);}
+    if(tr){
+      var li=document.createElement('div');li.className='dleg';
+      li.appendChild(document.createTextNode('↓ '+fmtKm(tr.km)+(modo==='voo'?' · ':'')));
+      if(modo==='voo'){
+        /* siglas destacadas e tocáveis: capital de saída, escalas e capital de chegada */
+        var fonteTxt=tr.fonte==='of'?' (OpenFlights 2014)':' (estimativa)';
+        var cods=[codAero(tr.a)?infoCapital(tr.a):null].concat(tr.via.map(function(h){return {cod:h.cod,txt:'Escala em '+h.cidade+fonteTxt};}),[codAero(tr.b)?infoCapital(tr.b):null]);
+        cods.forEach(function(c,k){
+          if(k)li.appendChild(document.createTextNode(' → '));
+          if(c)li.appendChild(botaoSigla(c));else li.appendChild(document.createTextNode(capShort(k?tr.b:tr.a)));
+        });
+        var f=document.createElement('span');f.className='dfonte '+(tr.fonte==='of'?'of':'est');f.textContent=tr.fonte==='of'?'OpenFlights 2014':'estimativa';
+        li.appendChild(document.createTextNode(' '));li.appendChild(f);
+      }
+      lg.appendChild(li);
+    }
   });
   $('dbmais').textContent='✏️ Paradas '+(lg.hidden?'▾':'▴');
   $('dbadd').hidden=lista.length>=MAX_PARADAS;

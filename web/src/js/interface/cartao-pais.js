@@ -9,6 +9,7 @@ import { NB, short } from '../dados/vizinhos.js';
 import { card, closeCard, fillInfo, fmtArea, fmtPop, measureCard, tourStop } from './cartao-detalhes.js';
 import { afterFilter, toggleNb, updateNbBtn } from './filtros.js';
 import { INFO_MIC } from '../dados/micronacoes.js';
+import { relacaoSoberana, SOBERANO } from '../dados/soberania.js';
 import { fecharArea } from './cartao-natural.js';
 import { ganchosInterface } from './ganchos.js';
 import { emitir } from '../nucleo/eventos.js';
@@ -62,6 +63,10 @@ function select(d,fly,group){
   var dtag=document.getElementById('cdis');
   if(!dtag){dtag=document.createElement('span');dtag.id='cdis';dtag.className='distag';document.getElementById('cname').insertAdjacentElement('afterend',dtag);}
   dtag.textContent=d.mic?'Micronação · nenhum país reconhece':d.dis?'Não reconhecido pela ONU':(d.dep?'Território dependente':(d.uni?(d.r===7?'Antártida e ilhas remotas':'Território desabitado'):''));dtag.style.display=(d.dis||d.dep||d.uni)?'inline-block':'none';dtag.classList.toggle('dep',!!(d.dep||d.uni));
+  /* de quem é: logo no alto do cartão, e tocar leva ao país */
+  var sob=SOBERANO[d.cc]&&D.filter(function(x){return x.cc===SOBERANO[d.cc];})[0];
+  dtag.onclick=null;dtag.classList.toggle('link',!!sob);dtag.removeAttribute('role');
+  if(sob){dtag.textContent=relacaoSoberana(d.cc)+' '+sob.flag+' '+short(sob)+' ›';dtag.setAttribute('role','button');dtag.onclick=function(){select(sob,true);};}
   document.getElementById('ccap').textContent=d.cap;
   /* observação sobre a capital fica junto dela; o resto vira "Saiba mais" */
   ganchosInterface.mostrarDesempenho(d.cc,false);

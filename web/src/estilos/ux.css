@@ -604,3 +604,12 @@ body.dist .ncard{display:none}
 .carimbo.alt{border-style:dashed}
 .carimbo.alt .cbandeira.sig{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:26px;padding:0 4px;border-radius:7px;background:#c77dff;color:#1a0b2e;font:800 12px system-ui,sans-serif}
 .carimbo.alt.on{border-color:#c77dff;box-shadow:inset 0 0 0 1px #c77dff}
+#card .distag.link{cursor:pointer;text-decoration:none}
+#card .distag.link:hover{filter:brightness(1.15)}
+/* siglas dos aeroportos no texto da Distância: destacadas e tocáveis */
+.dleg .sigla{display:inline-block;margin:1px 0;padding:2px 7px;border-radius:7px;border:0;background:#1a2340;color:#ffe066;font:800 12px/1.3 system-ui,sans-serif;letter-spacing:.04em;cursor:pointer;vertical-align:baseline}
+[data-theme="light"] .dleg .sigla{background:#1a2340;color:#ffe066}
+.dleg .sigla:hover,.dleg .sigla:focus-visible{background:#2f6fe0;color:#fff}
+.dleg .dfonte{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:800}
+.dleg .dfonte.of{background:rgba(46,160,70,.18);color:#2e9a4a}
+.dleg .dfonte.est{background:rgba(240,150,40,.18);color:#d08000}
