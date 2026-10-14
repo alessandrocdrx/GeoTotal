@@ -132,7 +132,8 @@ function iniciar() {
     sessionLen:lsGet('globo.quiz.sesslen',0),sessionAsked:0,sessionLog:[],
     order:lsGet('globo.quiz.order2','random'),
     timerLen:lsGet('globo.quiz.timerlen',0),timerStart:0,timerInt:null,
-    survivalMode:lsGet('globo.quiz.survival',false),lastOk:null,nbAnswer:-1};
+    survivalMode:lsGet('globo.quiz.survival',false),lastOk:null,nbAnswer:-1,
+    nivel:lsGet('globo.quiz.nivel','normal')};
 }
 
 export { accList, AMERICAS_R, estadoTreino, freshQS, iniciar, inScope, matches, measureQ, qHide, quiz, resetSession, scopeLabel, stopTimerTick };

@@ -4,6 +4,7 @@
  * Domínio ativo (mundo ou estados do Brasil) e conjunto de perguntas (poolIdx).
  */
 
+import { ensureStateShapes } from '../brasil/importar-contornos.js';
 import { BRREG, BRS } from '../dados/estados-brasil.js';
 import { D, dflag, norm, qcapDisp, REG } from '../dados/paises.js';
 import { byName, NB } from '../dados/vizinhos.js';
@@ -32,6 +33,7 @@ function applyDomainForScope(){
     estadoBrasil.statesMode=true;
     estadoBrasil.onS=BRS.map(function(s){return (estadoTreino.quizScope.t==='brreg')?(s.r===estadoTreino.quizScope.r?1:0):1;});
     if(quiz.mode==='flag')quiz.mode='cap';
+    ensureStateShapes();
   }else{
     /* sigla só faz sentido nos estados (SP, RJ…); a dos países (ISO) não tem graça */
     if(quiz.mode==='code')quiz.mode='cap';

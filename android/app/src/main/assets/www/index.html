@@ -769,6 +769,40 @@ h1.marca{flex:none}
 .qjr .mcard{padding:8px 8px!important}
 .qjr .mcard b{font-size:12.5px;white-space:nowrap}
 .qjr .mcard small{font-size:11px}
+#stbar .stbtns{display:flex;gap:6px}
+/* recomeçar a partida nos ajustes ⚙️ e pergunta ao voltar depois de uma pausa longa */
+.ajzerar{display:block;width:100%;margin-top:6px;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--chip);color:var(--fg);font-size:14px;font-weight:700;font-family:inherit;text-align:left;cursor:pointer}
+.ajzerar.armado{background:#e5484d;border-color:#e5484d;color:#fff}
+.retomar{text-align:center;padding:4px 0 8px}
+.retomar .qrow button{min-height:52px}
+.retomar .qrow .rfjogar{flex:1.4;font-size:17px;background:linear-gradient(90deg,#1fa85a,#2ecc71);color:#fff;border:0}
+/* tempo de jogo da partida (sem cronômetro) discreto; a contagem regressiva continua em destaque */
+#qtimer{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+#qtimer.contagem{color:#e8a400}
+/* comparar países como duelo (js/interface/comparar.js) */
+.duelhead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:10px 0 6px;text-align:center}
+.duelpais{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.duelpais b{font-size:15px;overflow-wrap:anywhere}
+.duelbig{font-size:46px;line-height:1.1;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif;animation:qpop .45s ease-out both}
+.duelpais.b .duelbig{animation-delay:.12s}
+.duelvs{font-weight:900;font-size:18px;color:#fff;background:linear-gradient(135deg,#f72585,#fb8500);border-radius:999px;padding:6px 10px;box-shadow:0 4px 12px rgba(247,37,133,.35)}
+.duelrow{padding:9px 0;border-top:1px solid var(--border)}
+.dueltit{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+.duellado{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:8px;margin:3px 0;font-size:13px}
+.duellado b{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.duelflag{font-size:18px;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
+.duelbar{height:12px;border-radius:6px;background:var(--border);overflow:hidden}
+.duelbar i{display:block;height:100%;width:0;border-radius:6px;background:#8a93a6;transition:width .7s cubic-bezier(.2,.9,.3,1) var(--atraso,0s)}
+.duellado.a .duelbar i{background:#4da3ff}.duellado.b .duelbar i{background:#ff8a3d}
+.duellado.vence b::after{content:' 🏆'}
+.duelplacar{margin:12px 0 8px;padding:12px;border-radius:14px;text-align:center;font-weight:900;font-size:17px;background:linear-gradient(90deg,rgba(77,163,255,.18),rgba(255,138,61,.18));border:1px solid var(--border)}
+.duelcurio p{margin:6px 0;font-size:14px;line-height:1.4}
+.duelinfo{margin-top:12px}
+@media (prefers-reduced-motion: reduce){.duelbig{animation:none}.duelbar i{transition:none}}
+/* explicação antes do Relâmpago e do Desafio do dia */
+.jogointro{text-align:center;padding:4px 0 8px}
+.jogointro p{margin:8px 0;font-size:15px;line-height:1.4;text-align:left}
+.jogointro .rfjogar{margin-top:10px}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -792,7 +826,7 @@ h1.marca{flex:none}
     <canvas id="g" aria-label="Globo terrestre interativo"></canvas>
     <div id="status"></div>
     <div id="pick"></div>
-    <div id="stbar"><span>🇧🇷 Estados e capitais</span><button id="stexit">← Países</button></div>
+    <div id="stbar"><span>🇧🇷 Estados</span><span class="stbtns"><button id="sttreino">🎯 Treinar</button><button id="stexit">← Países</button></span></div>
     <div class="seg" role="group" aria-label="Rótulos" hidden>
       <button id="lp" aria-pressed="true">País</button>
       <button id="lc" aria-pressed="false">Capital</button>
@@ -855,7 +889,7 @@ h1.marca{flex:none}
 
     <div class="mgrp">🧭 Explorar</div>
     <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
-    <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Dois países lado a lado</small></span><span class="mc">›</span></button>
+    <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Duelo: quem é maior, mais populoso…</small></span><span class="mc">›</span></button>
     <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Calcula e mostra no globo</small></span><span class="mc">›</span></button>
     <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
 
@@ -898,7 +932,7 @@ h1.marca{flex:none}
   <div class="mpage" id="mp-cmp" data-t="Comparar países" hidden>
     <select id="cmpA" aria-label="Primeiro país"></select>
     <select id="cmpB" aria-label="Segundo país"></select>
-    <div class="row2"><button id="cmpGo">Comparar</button></div>
+    <div class="row2"><button id="cmpTroca">⇄ Trocar</button><button id="cmpSort">🎲 Sortear dois</button></div>
     <div id="cmpres"></div>
   </div>
   <div class="mpage" id="mp-dist" data-t="Distância entre capitais" hidden>
@@ -908,8 +942,12 @@ h1.marca{flex:none}
     <div id="dres" class="inote"></div>
   </div>
   <div class="mpage" id="mp-br" data-t="Estados do Brasil" hidden>
+    <div class="mlab">🎯 Jogar</div>
+    <button id="stTreino" class="cstreinar">🎯 Treinar os 27 estados</button>
+    <p class="mdesc">Capitais, siglas, vizinhos e achar no mapa. Também dá para escolher uma região (Sul, Nordeste…) em 🗺️ Região, no Treino.</p>
+    <div class="mlab">🔎 Explorar</div>
     <select id="stSel" aria-label="Estado"></select>
-    <div class="row2"><button id="stGo">Ir para o estado</button><button id="stAll">Ver todos os estados</button></div>
+    <div class="row2"><button id="stGo">Ir para o estado</button><button id="stAll">Ver todos no mapa</button></div>
   </div>
 </div></div>
 <div id="quiz"><div class="qpanel">
@@ -6604,10 +6642,181 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     };
   }
 
+  // web/src/js/interface/comparar.js
+  var comparar_exports = {};
+  __export(comparar_exports, {
+    comparar: () => comparar,
+    iniciar: () => iniciar27
+  });
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  function num(v) {
+    return v.toLocaleString("pt-BR", { maximumFractionDigits: 1 });
+  }
+  function dens(x) {
+    return x && x.pop && x.area ? x.pop * 1e3 / x.area : 0;
+  }
+  function vezes(a, b) {
+    var r = a / b;
+    return r >= 10 ? Math.round(r).toLocaleString("pt-BR") : r.toFixed(1).replace(".", ",");
+  }
+  var QUESITOS = [
+    ["👥", "População", function(d) {
+      return d.info ? d.info.pop : 0;
+    }, function(d) {
+      return d.info ? fmtPop(d.info.pop) : "—";
+    }],
+    ["📐", "Área", function(d) {
+      return d.info ? d.info.area : 0;
+    }, function(d) {
+      return d.info ? fmtArea(d.info.area) : "—";
+    }],
+    ["🏙️", "Gente por km²", function(d) {
+      return dens(d.info);
+    }, function(d) {
+      var v = dens(d.info);
+      return v ? num(Math.round(v)) + " hab./km²" : "—";
+    }],
+    ["🤝", "Vizinhos", function(d) {
+      return (NB[d.i] || []).length;
+    }, function(d) {
+      var n = (NB[d.i] || []).length;
+      return n ? n + (n === 1 ? " país" : " países") : "Nenhum (ilha)";
+    }]
+  ];
+  function linhaQuesito(box, q2, a, b, ordem) {
+    var va = q2[2](a), vb = q2[2](b), mx = Math.max(va, vb) || 1;
+    var r = el("div", "duelrow");
+    r.style.setProperty("--atraso", ordem * 0.12 + "s");
+    r.appendChild(el("div", "dueltit", q2[0] + " " + q2[1]));
+    [[a, va, "a"], [b, vb, "b"]].forEach(function(p) {
+      var lado = el("div", "duellado " + p[2] + (p[1] > (p[2] === "a" ? vb : va) ? " vence" : ""));
+      var barra = el("div", "duelbar");
+      var fill = el("i");
+      barra.appendChild(fill);
+      lado.appendChild(el("span", "duelflag", dflag(p[0])));
+      lado.appendChild(barra);
+      lado.appendChild(el("b", null, q2[3](p[0])));
+      r.appendChild(lado);
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          fill.style.width = Math.max(3, Math.round(100 * p[1] / mx)) + "%";
+        });
+      });
+    });
+    box.appendChild(r);
+    return va === vb ? 0 : va > vb ? 1 : -1;
+  }
+  function curiosidades(a, b) {
+    var out = [], ia = a.info, ib = b.info;
+    if ((NB[a.i] || []).indexOf(b.i) >= 0) out.push("🤝 São vizinhos: " + dflag(a) + " e " + dflag(b) + " fazem fronteira.");
+    if (ia && ib && ia.area && ib.area) {
+      var g = ia.area >= ib.area ? a : b, p = g === a ? b : a, gi = g.info.area, pi = p.info.area;
+      if (gi / pi >= 1.2) out.push("📐 " + dflag(g) + " é " + vezes(gi, pi) + " vezes maior que " + dflag(p) + " em área.");
+      else out.push("📐 Têm quase o mesmo tamanho.");
+    }
+    if (ia && ib && ia.pop && ib.pop) {
+      var mg = ia.pop >= ib.pop ? a : b, mp = mg === a ? b : a;
+      if (mg.info.pop / mp.info.pop >= 1.2) out.push("👥 Para cada pessoa em " + dflag(mp) + ", há " + vezes(mg.info.pop, mp.info.pop) + " em " + dflag(mg) + ".");
+    }
+    var km = Math.round(haversine(a, b));
+    out.push("✈️ De " + capShort(a) + " a " + capShort(b) + ": " + km.toLocaleString("pt-BR") + " km, umas " + (km / 850).toFixed(1).replace(".", ",") + " h de voo direto.");
+    if (ia && ib && ia.lang && ib.lang) {
+      var la = ia.lang.split(/,| e /)[0].trim(), lb = ib.lang.split(/,| e /)[0].trim();
+      if (la === lb) out.push("🗣️ Nos dois se fala " + la.toLowerCase() + ".");
+    }
+    if (ia && ib && ia.cur && ia.cur === ib.cur) out.push("💰 Usam a mesma moeda: " + ia.cur.replace(/\s*\(.*\)$/, "").toLowerCase() + ".");
+    return out;
+  }
+  function comparar() {
+    var a = D[+$("cmpA").value], b = D[+$("cmpB").value], box = $("cmpres");
+    box.innerHTML = "";
+    if (a === b) {
+      box.textContent = "Escolha dois países diferentes.";
+      return;
+    }
+    var head = el("div", "duelhead");
+    [[a, "a"], [b, "b"]].forEach(function(p, k) {
+      var c = el("div", "duelpais " + p[1]);
+      c.appendChild(el("span", "duelbig", dflag(p[0])));
+      c.appendChild(el("b", null, short(p[0])));
+      head.appendChild(c);
+      if (k === 0) head.appendChild(el("div", "duelvs", "VS"));
+    });
+    box.appendChild(head);
+    var pa = 0, pb = 0;
+    QUESITOS.forEach(function(q2, k) {
+      var v = linhaQuesito(box, q2, a, b, k);
+      if (v > 0) pa++;
+      else if (v < 0) pb++;
+    });
+    var placar = el("div", "duelplacar");
+    placar.textContent = pa === pb ? "Empate: " + pa + " × " + pb : "🏆 " + short(pa > pb ? a : b) + " vence por " + Math.max(pa, pb) + " × " + Math.min(pa, pb);
+    box.appendChild(placar);
+    var cur = el("div", "duelcurio");
+    curiosidades(a, b).forEach(function(t) {
+      cur.appendChild(el("p", null, t));
+    });
+    box.appendChild(cur);
+    var ver = el("button", "cstreinar", "📏 Ver a distância no globo");
+    ver.onclick = function() {
+      $("dA").value = a.i;
+      $("dB").value = b.i;
+      $("dgo").click();
+    };
+    box.appendChild(ver);
+    var tab = el("div", "duelinfo");
+    [["🗣️ Idioma", "lang"], ["💰 Moeda", "cur"], ["🕐 Fuso", "tz"]].forEach(function(f) {
+      var r = el("div", "cmprow");
+      r.appendChild(el("div", "cmpv", a.info ? a.info[f[1]] : "—"));
+      r.appendChild(el("div", "cmpl", f[0]));
+      r.appendChild(el("div", "cmpv", b.info ? b.info[f[1]] : "—"));
+      tab.appendChild(r);
+    });
+    box.appendChild(tab);
+    box.appendChild(el("div", "inote", "Valores aproximados. Confira em fonte oficial antes de citar."));
+  }
+  function sortear() {
+    var ok = D.filter(function(d) {
+      return d.info && d.info.pop && !d.uni && !d.dep;
+    });
+    var a = ok[Math.floor(Math.random() * ok.length)], b;
+    var perto = Math.random() < 0.5 ? (NB[a.i] || []).map(function(i) {
+      return D[i];
+    }).filter(function(d) {
+      return ok.indexOf(d) >= 0;
+    }) : [];
+    if (!perto.length) perto = ok.filter(function(d) {
+      return d.r === a.r && d !== a;
+    });
+    b = perto.length ? perto[Math.floor(Math.random() * perto.length)] : ok[(ok.indexOf(a) + 1) % ok.length];
+    $("cmpA").value = a.i;
+    $("cmpB").value = b.i;
+    comparar();
+  }
+  function iniciar27() {
+    fillCountrySelect($("cmpA"), "Brasil");
+    fillCountrySelect($("cmpB"), "Argentina");
+    document.querySelector('#mlist [data-p="mp-cmp"]').addEventListener("click", comparar);
+    $("cmpA").onchange = comparar;
+    $("cmpB").onchange = comparar;
+    $("cmpSort").onclick = sortear;
+    $("cmpTroca").onclick = function() {
+      var t = $("cmpA").value;
+      $("cmpA").value = $("cmpB").value;
+      $("cmpB").value = t;
+      comparar();
+    };
+  }
+
   // web/src/js/recursos/exportar.js
   var exportar_exports = {};
   __export(exportar_exports, {
-    iniciar: () => iniciar27,
+    iniciar: () => iniciar28,
     offerFile: () => offerFile
   });
   var dlNS = null;
@@ -6654,7 +6863,26 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     if (!n) box.textContent = "Nenhum país ligado nos filtros.";
   }
-  function iniciar27() {
+  function imprimirFolha() {
+    var embutido = false;
+    try {
+      embutido = window.self !== window.top;
+    } catch (e) {
+      embutido = true;
+    }
+    if (window.AndroidBridge || !embutido) {
+      try {
+        window.print();
+        return;
+      } catch (e) {
+      }
+    }
+    var css = "body{font-family:system-ui,sans-serif;margin:24px;color:#000}h1{font-size:20px}h3{margin:16px 0 4px;font-size:15px}table{width:100%;border-collapse:collapse}td{padding:5px 4px;border-bottom:1px solid #ccc;font-size:13px}td.fl{width:30px;font-size:18px}";
+    var html = '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Folha de estudo · geoTotal</title><style>' + css + "</style></head><body><h1>Folha de estudo · geoTotal</h1>" + $("studybody").innerHTML + "<script>window.onload=function(){window.print();};<\/script></body></html>";
+    offerFile("folha-de-estudo.html", html);
+    setStatus("Abra o arquivo baixado: ele abre a impressão (dá para salvar em PDF).", 6e3);
+  }
+  function iniciar28() {
     setTimeout(function() {
       try {
         if (window.claude && claude.use) claude.use("downloads").then(function(n) {
@@ -6692,13 +6920,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("studyclose").onclick = function() {
       $("study").style.display = "none";
     };
-    $("studyprint").onclick = function() {
-      try {
-        window.print();
-      } catch (e) {
-        setStatus("Impressão indisponível aqui. Tire uma captura de tela da folha.", 5e3);
-      }
-    };
+    $("studyprint").onclick = imprimirFolha;
   }
 
   // web/src/js/treino/estado.js
@@ -6709,7 +6931,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoTreino: () => estadoTreino,
     freshQS: () => freshQS,
     inScope: () => inScope,
-    iniciar: () => iniciar28,
+    iniciar: () => iniciar29,
     matches: () => matches,
     measureQ: () => measureQ,
     qHide: () => qHide,
@@ -6825,7 +7047,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       quiz.timerInt = null;
     }
   }
-  function iniciar28() {
+  function iniciar29() {
     ganchos.treinoAberto = function() {
       return quiz.open;
     };
@@ -6899,7 +7121,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       timerInt: null,
       survivalMode: lsGet("globo.quiz.survival", false),
       lastOk: null,
-      nbAnswer: -1
+      nbAnswer: -1,
+      nivel: lsGet("globo.quiz.nivel", "normal")
     };
   }
 
@@ -6925,6 +7148,102 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     updateScopeBackBtn: () => updateScopeBackBtn,
     updateScopeBtn: () => updateScopeBtn
   });
+
+  // web/src/js/brasil/importar-contornos.js
+  var importar_contornos_exports = {};
+  __export(importar_contornos_exports, {
+    ensureStateShapes: () => ensureStateShapes
+  });
+
+  // web/src/js/dados/contornos-estados.js
+  var CONTORNOS_ESTADOS = { "type": "FeatureCollection", "features": [{ "type": "Feature", "id": "BR-AC", "properties": { "id": "BR-AC", "name": "Acre" }, "geometry": { "type": "Polygon", "coordinates": [[[-73.7951, -7.1226], [-72.645, -7.601], [-71.1289, -7.9625], [-70.3515, -8.1629], [-68.6572, -9.0664], [-66.8306, -9.8381], [-66.6403, -9.9183], [-67.077, -10.2688], [-67.5825, -10.5045], [-67.7424, -10.7129], [-68.0176, -10.6603], [-68.2809, -10.9797], [-68.7667, -11.1371], [-68.8489, -11.0161], [-69.4122, -10.9378], [-69.7379, -10.9616], [-69.926, -10.9141], [-70.3289, -11.0692], [-70.5264, -10.9357], [-70.6314, -11.0092], [-70.6289, -9.8959], [-70.5886, -9.4408], [-71.014, -9.8208], [-71.2964, -9.9954], [-72.1858, -10.0025], [-72.3015, -9.5332], [-72.73, -9.4131], [-73.2007, -9.4008], [-72.9664, -9.1431], [-72.9624, -8.9885], [-73.1667, -8.7142], [-73.3457, -8.6024], [-73.5332, -8.3524], [-73.7067, -7.7764], [-74.0046, -7.5544], [-73.9311, -7.3592], [-73.7382, -7.334], [-73.7951, -7.1226]]] } }, { "type": "Feature", "id": "BR-AL", "properties": { "id": "BR-AL", "name": "Alagoas" }, "geometry": { "type": "Polygon", "coordinates": [[[-38.0023, -9.5297], [-38.2347, -9.3324], [-37.97, -9.1463], [-37.7596, -8.8546], [-37.5192, -8.9439], [-37.2342, -9.2073], [-36.9978, -9.3048], [-36.5614, -9.2748], [-36.2517, -9.1396], [-36.0053, -8.8864], [-35.7336, -8.9254], [-35.4754, -8.8309], [-35.1488, -8.9133], [-35.3275, -9.2289], [-35.8485, -9.7832], [-36.0431, -10.074], [-36.2561, -10.2567], [-36.4048, -10.4988], [-36.4433, -10.4158], [-36.9217, -10.1302], [-37.005, -9.9747], [-37.3525, -9.7798], [-37.5883, -9.7195], [-38.0023, -9.5297]]] } }, { "type": "Feature", "id": "BR-AM", "properties": { "id": "BR-AM", "name": "Amazonas" }, "geometry": { "type": "Polygon", "coordinates": [[[-63.38, 2.2291], [-62.9905, 2.0156], [-62.6906, 1.9182], [-62.7948, 1.6074], [-62.6194, 1.3661], [-62.4421, 0.8123], [-62.5463, 0.7178], [-62.4809, 0.5137], [-62.5669, 0.2552], [-62.5481, -0.0659], [-62.3761, -0.3181], [-62.3039, -0.597], [-62.5077, -0.7721], [-62.1867, -1.0573], [-62.0275, -1.1442], [-61.8664, -1.3818], [-61.6233, -1.2909], [-61.5832, -0.915], [-61.4649, -0.6426], [-61.1113, -0.4908], [-60.9304, -0.551], [-60.7516, -0.8443], [-60.5548, -0.8295], [-60.334, -0.7032], [-60.3867, -0.4634], [-60.3086, -0.2202], [-60.0553, 0.2294], [-58.8706, 0.2253], [-58.845, -0.3723], [-58.7365, -0.4271], [-58.7505, -0.6342], [-58.4475, -0.8422], [-58.3906, -1.0492], [-57.6726, -1.5846], [-57.1683, -1.7639], [-56.8247, -2.0356], [-56.7541, -2.1753], [-56.4874, -2.2456], [-56.3717, -2.3534], [-58.2872, -6.4834], [-58.4303, -6.6397], [-58.4164, -6.9236], [-58.2223, -7.097], [-58.1356, -7.3392], [-58.2233, -7.6222], [-58.3819, -7.8335], [-58.3042, -8.0993], [-58.4682, -8.7014], [-58.5453, -8.7484], [-61.6114, -8.7686], [-61.7209, -8.6815], [-61.9221, -8.8739], [-62.1299, -8.7795], [-62.305, -8.5779], [-62.3855, -8.3692], [-62.5481, -8.307], [-62.713, -8.0725], [-62.8508, -8.0006], [-63.5421, -8.0043], [-63.7521, -8.2881], [-63.9109, -8.322], [-63.9214, -8.5398], [-64.1289, -8.755], [-64.1204, -8.9636], [-64.3681, -8.9342], [-64.5814, -9.0263], [-64.7799, -8.9839], [-65.072, -9.43], [-65.2, -9.2576], [-65.6317, -9.4425], [-65.7679, -9.5734], [-65.9626, -9.4013], [-66.3996, -9.4061], [-66.3996, -9.5239], [-66.8306, -9.8381], [-68.6572, -9.0664], [-70.3515, -8.1629], [-71.1289, -7.9625], [-72.645, -7.601], [-73.7951, -7.1226], [-73.7545, -6.8942], [-73.3612, -6.582], [-73.2167, -6.5667], [-73.1186, -6.3815], [-73.2297, -6.0936], [-72.962, -5.6486], [-72.8986, -5.1728], [-72.4033, -4.8746], [-71.9025, -4.5182], [-71.6506, -4.5089], [-71.1694, -4.3578], [-70.9563, -4.3822], [-70.7624, -4.1477], [-70.5842, -4.1956], [-70.3202, -4.1397], [-70.1978, -4.3327], [-69.9796, -4.3125], [-69.882, -3.9203], [-69.4526, -1.526], [-69.3785, -1.3379], [-69.442, -1.0178], [-69.6126, -0.7559], [-69.6065, -0.5199], [-69.9335, -0.3043], [-70.0581, -0.1575], [-70.0447, 0.585], [-69.7957, 0.6015], [-69.4593, 0.7366], [-69.2875, 0.6229], [-69.1278, 0.644], [-69.1403, 0.8635], [-69.3385, 1.0729], [-69.8422, 1.0722], [-69.8461, 1.7104], [-69.5539, 1.7838], [-69.3725, 1.728], [-68.1531, 1.7241], [-67.8117, 1.7843], [-67.586, 2.053], [-67.3397, 2.113], [-67.1609, 1.8186], [-67.0569, 1.5201], [-67.0753, 1.1725], [-66.8704, 1.2209], [-66.338, 0.7658], [-66.1271, 0.7341], [-65.7353, 0.9828], [-65.5101, 0.9019], [-65.1658, 0.9694], [-65.1363, 1.1184], [-64.8191, 1.2795], [-64.5953, 1.33], [-64.3943, 1.5118], [-64.2645, 1.4761], [-64.078, 1.6354], [-64.0519, 1.8905], [-63.7392, 2.003], [-63.38, 2.2291]]] } }, { "type": "Feature", "id": "BR-AP", "properties": { "id": "BR-AP", "name": "Amapá" }, "geometry": { "type": "Polygon", "coordinates": [[[-51.9014, -1.1506], [-52.2732, -1.1325], [-52.5136, -0.8797], [-52.5262, -0.649], [-52.6296, -0.3895], [-52.8173, -0.1779], [-52.9196, -0.1895], [-53.0072, 0.1369], [-53.1282, 0.3874], [-53.1238, 0.7475], [-53.4173, 0.9402], [-53.4103, 1.1846], [-53.6668, 1.4301], [-53.8904, 1.4024], [-54.1654, 1.6614], [-54.3714, 1.7608], [-54.7326, 1.7675], [-54.7676, 1.8955], [-54.7121, 2.2722], [-54.7754, 2.4568], [-54.6875, 2.3255], [-54.4646, 2.2117], [-54.1097, 2.1134], [-53.7461, 2.371], [-53.5278, 2.2495], [-53.3199, 2.348], [-52.9547, 2.1762], [-52.6756, 2.3741], [-52.352, 3.04], [-51.7718, 3.9835], [-51.5403, 4.1536], [-51.3321, 4.2302], [-51.0794, 3.8868], [-51.0661, 3.3789], [-51.0236, 3.13], [-50.8503, 2.7405], [-50.6797, 2.1647], [-50.4669, 1.8425], [-50.1932, 1.825], [-49.9321, 1.7099], [-49.8825, 1.5389], [-49.9147, 1.1503], [-50.2369, 0.8886], [-50.45, 0.6618], [-50.7604, 0.196], [-50.9581, 0.1387], [-51.0912, -0.0536], [-51.3192, -0.225], [-51.453, -0.4885], [-51.7, -0.7525], [-51.7123, -1.0238], [-51.9014, -1.1506]]] } }, { "type": "Feature", "id": "BR-BA", "properties": { "id": "BR-BA", "name": "Bahia" }, "geometry": { "type": "Polygon", "coordinates": [[[-40.2068, -17.9785], [-40.2207, -17.748], [-40.4855, -17.5604], [-40.6085, -17.399], [-40.5222, -16.925], [-40.311, -16.885], [-40.2714, -16.5889], [-39.9539, -16.3283], [-39.86, -16.1374], [-39.9365, -16.0015], [-40.222, -15.8209], [-40.9449, -15.6738], [-41.1239, -15.7659], [-41.3275, -15.7512], [-41.356, -15.5052], [-41.7736, -15.1196], [-42.0791, -15.1853], [-42.5706, -14.9303], [-42.9122, -14.715], [-43.1577, -14.6344], [-43.4839, -14.7868], [-43.8256, -14.6953], [-43.872, -14.5156], [-43.789, -14.3445], [-44.3214, -14.2442], [-44.5667, -14.3431], [-44.8808, -14.6011], [-45.2265, -14.7426], [-45.4031, -14.9125], [-45.5585, -14.9359], [-45.7436, -15.1442], [-45.9262, -15.1285], [-46.0232, -14.8689], [-45.9125, -14.6978], [-45.9209, -14.3511], [-46.1267, -14.1874], [-46.2353, -13.9711], [-46.2722, -13.6536], [-46.1862, -13.1924], [-46.0648, -12.944], [-46.2394, -12.7893], [-46.1686, -12.4875], [-46.2622, -12.4567], [-46.3453, -12.3364], [-46.3295, -12.0992], [-46.0697, -11.9221], [-46.2502, -11.8429], [-46.1203, -11.6785], [-46.2075, -11.54], [-46.437, -11.4975], [-46.5561, -11.3739], [-46.3024, -10.7585], [-45.8517, -10.4645], [-45.7577, -10.3309], [-45.6082, -10.3296], [-45.4735, -10.4804], [-45.3264, -10.7783], [-45.0584, -10.8961], [-44.8079, -10.8743], [-44.7388, -10.769], [-44.4066, -10.5861], [-44.2263, -10.6305], [-43.9492, -10.45], [-43.7139, -10.0754], [-43.6872, -9.7808], [-43.8271, -9.4395], [-43.6194, -9.3347], [-43.3514, -9.4334], [-43.1263, -9.3712], [-42.8748, -9.5358], [-42.4789, -9.4814], [-42.3299, -9.3185], [-42.0531, -9.2118], [-41.8543, -9.2554], [-41.7418, -8.9879], [-41.4961, -8.9325], [-41.3708, -8.7119], [-41.0983, -8.7389], [-40.8898, -8.8596], [-40.8479, -9.1572], [-40.7064, -9.215], [-40.6306, -9.4884], [-40.3325, -9.3598], [-40.2831, -9.1321], [-39.9588, -9.0381], [-39.8937, -8.8346], [-39.6829, -8.6593], [-39.4147, -8.5382], [-38.9906, -8.7598], [-38.6981, -8.8582], [-38.3139, -9.0787], [-38.2347, -9.3324], [-38.0023, -9.5297], [-38.0314, -9.739], [-37.774, -10.0947], [-37.827, -10.4509], [-37.778, -10.6254], [-38.0047, -10.7598], [-38.1863, -10.7115], [-38.1819, -10.9809], [-37.9774, -11.2374], [-37.9994, -11.3781], [-37.6733, -11.5761], [-37.4879, -11.5203], [-37.4234, -11.5453], [-37.6845, -12.1025], [-37.9955, -12.5761], [-38.3179, -12.9372], [-38.5305, -13.016], [-38.5074, -12.7265], [-38.7217, -12.6186], [-38.7595, -12.985], [-39.057, -13.4934], [-38.9635, -13.6861], [-39.03, -13.8434], [-38.9247, -14.0353], [-39.0667, -14.6504], [-39.0036, -14.9818], [-38.9355, -15.6623], [-38.8719, -15.8742], [-39.0139, -16.287], [-39.2091, -17.1661], [-39.1896, -17.5816], [-39.1322, -17.6863], [-39.2755, -17.8692], [-39.4517, -17.9497], [-39.6689, -18.3256], [-40.2068, -17.9785]]] } }, { "type": "Feature", "id": "BR-CE", "properties": { "id": "BR-CE", "name": "Ceará" }, "geometry": { "type": "Polygon", "coordinates": [[[-37.2409, -4.8314], [-37.5542, -4.9334], [-37.7216, -5.0628], [-38.0746, -5.7551], [-38.2942, -6.0794], [-38.4431, -6.0681], [-38.5875, -6.2686], [-38.5258, -6.3817], [-38.7298, -6.8899], [-38.6742, -7.1709], [-38.5289, -7.3095], [-38.6972, -7.6203], [-38.9667, -7.8507], [-39.2495, -7.6824], [-39.3437, -7.5503], [-39.6436, -7.3756], [-40.0609, -7.4068], [-40.5379, -7.3903], [-40.5831, -7.2005], [-40.414, -6.8577], [-40.4627, -6.7392], [-40.7104, -6.6671], [-40.876, -5.9691], [-40.9505, -5.3392], [-40.9128, -5.2378], [-41.0158, -4.9168], [-41.0353, -4.5653], [-40.9867, -4.4291], [-41.3041, -3.8022], [-41.4189, -3.4981], [-41.4261, -3.3215], [-41.2481, -3.0236], [-41.2228, -2.8803], [-40.7909, -2.8658], [-40.4728, -2.7959], [-39.9988, -2.8465], [-39.7386, -3.0153], [-38.9945, -3.3956], [-38.6612, -3.6786], [-38.4966, -3.7249], [-38.0722, -4.1969], [-37.5491, -4.6395], [-37.3236, -4.7009], [-37.2409, -4.8314]]] } }, { "type": "Feature", "id": "BR-DF", "properties": { "id": "BR-DF", "name": "Distrito Federal" }, "geometry": { "type": "Polygon", "coordinates": [[[-47.3051, -16.039], [-48.2464, -16.038], [-48.2796, -15.8356], [-48.1967, -15.4903], [-47.4307, -15.4911], [-47.3136, -15.614], [-47.3614, -15.9764], [-47.3051, -16.039]]] } }, { "type": "Feature", "id": "BR-ES", "properties": { "id": "BR-ES", "name": "Espírito Santo" }, "geometry": { "type": "Polygon", "coordinates": [[[-41.8644, -20.777], [-41.8561, -20.3613], [-41.7358, -20.2107], [-41.4056, -20.2131], [-41.2375, -19.9206], [-41.1654, -19.677], [-40.9594, -19.4716], [-40.9439, -19.1431], [-41.0253, -18.9717], [-40.9415, -18.8155], [-41.0076, -18.4273], [-41.1453, -18.3026], [-40.9317, -18.1047], [-40.8776, -17.9665], [-40.428, -17.8947], [-40.2068, -17.9785], [-39.6689, -18.3256], [-39.7282, -18.5302], [-39.7403, -18.9239], [-39.6942, -19.2989], [-39.8099, -19.642], [-39.9858, -19.7264], [-40.4061, -20.5995], [-40.6271, -20.8312], [-40.7619, -20.8547], [-40.9644, -21.2766], [-41.2599, -21.235], [-41.6978, -21.1064], [-41.7409, -20.8229], [-41.8644, -20.777]]] } }, { "type": "Feature", "id": "BR-GO", "properties": { "id": "BR-GO", "name": "Goiás" }, "geometry": { "type": "Polygon", "coordinates": [[[-47.3051, -16.039], [-47.3614, -15.9764], [-47.3136, -15.614], [-47.4307, -15.4911], [-48.1967, -15.4903], [-48.2796, -15.8356], [-48.2464, -16.038], [-47.3051, -16.039], [-47.3193, -16.2301], [-47.4561, -16.497], [-47.2559, -16.6561], [-47.1505, -16.9746], [-47.5064, -17.3271], [-47.5339, -17.4585], [-47.2755, -17.5703], [-47.3543, -17.8473], [-47.2777, -18.0589], [-47.5503, -18.1974], [-47.6359, -18.321], [-47.9492, -18.4887], [-48.3081, -18.3574], [-48.7995, -18.3561], [-48.9282, -18.3018], [-49.3796, -18.6418], [-49.5817, -18.5364], [-49.7865, -18.6364], [-50.0242, -18.5988], [-50.326, -18.6906], [-50.5435, -19.1086], [-50.6787, -19.1246], [-50.9234, -19.4567], [-51.1096, -19.2932], [-51.4151, -19.1619], [-51.6322, -19.1334], [-52.4682, -18.7113], [-52.89, -18.6781], [-52.7663, -18.4017], [-53.0581, -18.2831], [-53.0539, -18.0167], [-53.1261, -17.6717], [-53.2271, -17.493], [-53.201, -17.2836], [-53.0382, -17.0464], [-53.0135, -16.8668], [-52.8391, -16.7675], [-52.636, -16.5332], [-52.5827, -16.3502], [-52.2417, -15.8797], [-51.877, -15.8006], [-51.7043, -15.4813], [-51.6633, -15.2264], [-51.5164, -15.0595], [-51.2631, -15.0225], [-51.0967, -14.8884], [-50.9676, -14.5262], [-50.9622, -14.2339], [-50.8598, -14.0411], [-50.8671, -13.7165], [-50.7897, -13.6681], [-50.5704, -13.2371], [-50.5806, -13.0661], [-50.4841, -12.8449], [-49.8224, -12.9588], [-49.3231, -13.1418], [-49.2183, -12.7685], [-49.0489, -12.5567], [-48.9085, -12.7578], [-48.798, -13.1853], [-48.622, -13.0447], [-48.1553, -13.0328], [-48.1767, -13.1775], [-47.7175, -13.307], [-47.4094, -13.225], [-47.2475, -13.0946], [-46.8584, -13.0317], [-46.5828, -12.8782], [-46.2394, -12.7893], [-46.0648, -12.944], [-46.1862, -13.1924], [-46.2722, -13.6536], [-46.2353, -13.9711], [-46.1267, -14.1874], [-45.9209, -14.3511], [-45.9125, -14.6978], [-46.0232, -14.8689], [-46.2943, -14.9108], [-46.5071, -14.7087], [-46.5822, -14.8015], [-46.5449, -15.0367], [-46.8839, -15.0392], [-46.9359, -15.4171], [-46.8282, -15.8493], [-47.3051, -16.039]]] } }, { "type": "Feature", "id": "BR-MA", "properties": { "id": "BR-MA", "name": "Maranhão" }, "geometry": { "type": "Polygon", "coordinates": [[[-41.8403, -2.7669], [-41.8395, -3.0387], [-42.2186, -3.4407], [-42.4825, -3.46], [-42.6697, -3.6792], [-42.7237, -3.9123], [-42.9879, -4.2372], [-42.862, -4.4965], [-42.9531, -4.7753], [-42.852, -4.9556], [-42.8366, -5.3384], [-43.0992, -5.6223], [-43.0703, -6.0644], [-42.853, -6.2533], [-42.9172, -6.68], [-42.9944, -6.7641], [-43.4889, -6.8289], [-43.6493, -6.7123], [-44.0445, -6.7763], [-44.3349, -7.1122], [-44.93, -7.4688], [-45.3404, -7.5609], [-45.4767, -7.6856], [-45.6047, -8.2136], [-45.8235, -8.7094], [-45.9794, -8.9261], [-45.9042, -9.2525], [-45.793, -9.4471], [-45.8441, -9.5689], [-45.8524, -9.9731], [-45.946, -10.3177], [-46.1832, -10.1771], [-46.3428, -10.1786], [-46.4924, -9.8697], [-46.6292, -9.7665], [-46.5383, -9.5127], [-46.787, -9.3889], [-46.8782, -9.1154], [-47.0677, -8.9818], [-46.8992, -8.8198], [-46.8325, -8.4744], [-46.5178, -8.2964], [-46.4821, -7.977], [-46.5974, -7.8996], [-47.0084, -8.0453], [-47.405, -7.532], [-47.4989, -7.2897], [-47.7377, -7.2069], [-47.5014, -6.9881], [-47.4835, -6.6707], [-47.37, -6.2761], [-47.4139, -5.8678], [-47.5387, -5.4809], [-47.8349, -5.3872], [-47.8955, -5.2558], [-48.1576, -5.2654], [-48.336, -5.1682], [-48.5167, -5.1985], [-48.7189, -5.3586], [-47.8081, -4.5934], [-47.6573, -4.6084], [-47.3567, -4.2606], [-47.317, -4.0754], [-47.089, -3.8962], [-46.9384, -3.3945], [-46.7182, -3.1821], [-46.5969, -2.8364], [-46.6637, -2.7343], [-46.428, -2.535], [-46.4042, -2.2759], [-46.2924, -2.1748], [-46.2067, -1.831], [-46.1666, -1.3059], [-46.0871, -1.2103], [-45.8615, -1.2596], [-45.2436, -1.5727], [-45.0917, -1.4641], [-44.879, -1.503], [-44.695, -1.8178], [-44.5389, -1.8322], [-44.5044, -2.1486], [-44.3617, -2.3203], [-44.5821, -2.5668], [-44.6914, -2.9952], [-44.6161, -3.11], [-44.4231, -2.9345], [-44.357, -2.5267], [-44.1048, -2.4139], [-43.9283, -2.5485], [-43.4483, -2.5378], [-43.2833, -2.3734], [-42.7067, -2.5628], [-42.5045, -2.7317], [-41.9521, -2.845], [-41.8403, -2.7669]]] } }, { "type": "Feature", "id": "BR-MG", "properties": { "id": "BR-MG", "name": "Minas Gerais" }, "geometry": { "type": "Polygon", "coordinates": [[[-40.2068, -17.9785], [-40.428, -17.8947], [-40.8776, -17.9665], [-40.9317, -18.1047], [-41.1453, -18.3026], [-41.0076, -18.4273], [-40.9415, -18.8155], [-41.0253, -18.9717], [-40.9439, -19.1431], [-40.9594, -19.4716], [-41.1654, -19.677], [-41.2375, -19.9206], [-41.4056, -20.2131], [-41.7358, -20.2107], [-41.8561, -20.3613], [-41.8644, -20.777], [-42.0946, -21.0075], [-42.3673, -21.5933], [-42.2761, -21.7135], [-43.047, -22.0434], [-43.3634, -22.0049], [-43.8086, -22.0609], [-44.2482, -22.2591], [-44.4458, -22.2529], [-44.8313, -22.406], [-45.0522, -22.4625], [-45.3689, -22.637], [-45.6717, -22.6468], [-45.779, -22.8461], [-46.1306, -22.8989], [-46.3432, -22.8668], [-46.4728, -22.6701], [-46.4281, -22.5261], [-46.658, -22.4034], [-46.6744, -21.8329], [-46.555, -21.67], [-46.5218, -21.4411], [-46.7591, -21.3619], [-46.994, -21.4079], [-47.2224, -20.9152], [-47.1132, -20.6759], [-47.2925, -20.4391], [-47.2505, -20.1717], [-47.4595, -19.9689], [-47.5975, -20.025], [-47.8559, -19.9848], [-47.8909, -20.1091], [-48.302, -20.1125], [-49.0633, -20.162], [-49.2072, -20.3052], [-49.2971, -20.0371], [-49.5438, -19.9036], [-49.8822, -19.9474], [-50.5756, -19.8186], [-51.0064, -20.0793], [-51.024, -19.726], [-50.9234, -19.4567], [-50.6787, -19.1246], [-50.5435, -19.1086], [-50.326, -18.6906], [-50.0242, -18.5988], [-49.7865, -18.6364], [-49.5817, -18.5364], [-49.3796, -18.6418], [-48.9282, -18.3018], [-48.7995, -18.3561], [-48.3081, -18.3574], [-47.9492, -18.4887], [-47.6359, -18.321], [-47.5503, -18.1974], [-47.2777, -18.0589], [-47.3543, -17.8473], [-47.2755, -17.5703], [-47.5339, -17.4585], [-47.5064, -17.3271], [-47.1505, -16.9746], [-47.2559, -16.6561], [-47.4561, -16.497], [-47.3193, -16.2301], [-47.3051, -16.039], [-46.8282, -15.8493], [-46.9359, -15.4171], [-46.8839, -15.0392], [-46.5449, -15.0367], [-46.5822, -14.8015], [-46.5071, -14.7087], [-46.2943, -14.9108], [-46.0232, -14.8689], [-45.9262, -15.1285], [-45.7436, -15.1442], [-45.5585, -14.9359], [-45.4031, -14.9125], [-45.2265, -14.7426], [-44.8808, -14.6011], [-44.5667, -14.3431], [-44.3214, -14.2442], [-43.789, -14.3445], [-43.872, -14.5156], [-43.8256, -14.6953], [-43.4839, -14.7868], [-43.1577, -14.6344], [-42.9122, -14.715], [-42.5706, -14.9303], [-42.0791, -15.1853], [-41.7736, -15.1196], [-41.356, -15.5052], [-41.3275, -15.7512], [-41.1239, -15.7659], [-40.9449, -15.6738], [-40.222, -15.8209], [-39.9365, -16.0015], [-39.86, -16.1374], [-39.9539, -16.3283], [-40.2714, -16.5889], [-40.311, -16.885], [-40.5222, -16.925], [-40.6085, -17.399], [-40.4855, -17.5604], [-40.2207, -17.748], [-40.2068, -17.9785]]] } }, { "type": "Feature", "id": "BR-MS", "properties": { "id": "BR-MS", "name": "Mato Grosso do Sul" }, "geometry": { "type": "Polygon", "coordinates": [[[-51.0064, -20.0793], [-51.0318, -20.2279], [-51.3386, -20.3771], [-51.5776, -20.5961], [-51.6273, -20.8742], [-51.87, -21.1477], [-51.855, -21.3203], [-52.0609, -21.5966], [-52.0562, -21.7199], [-52.4907, -22.212], [-52.9753, -22.4823], [-53.1569, -22.7059], [-53.5751, -22.8891], [-53.7261, -23.3069], [-53.9678, -23.4465], [-54.0682, -23.9138], [-54.2439, -24.0537], [-54.6257, -23.805], [-54.9247, -23.9653], [-55.1964, -24.0194], [-55.4121, -23.9543], [-55.5208, -23.6053], [-55.5492, -23.1375], [-55.6484, -22.8149], [-55.6092, -22.6385], [-55.8497, -22.2889], [-56.2029, -22.2748], [-56.4953, -22.0884], [-56.6342, -22.252], [-56.8775, -22.2742], [-57.1533, -22.2037], [-57.3746, -22.2178], [-57.9851, -22.0918], [-57.8526, -21.3417], [-57.8146, -20.9787], [-57.8596, -20.7348], [-57.9678, -20.7101], [-58.1589, -20.1681], [-57.8519, -19.9755], [-58.1211, -19.7414], [-57.7767, -19.0475], [-57.7703, -18.9061], [-57.5211, -18.2039], [-57.7189, -17.845], [-57.7173, -17.7276], [-57.4689, -17.9012], [-57.1091, -17.7801], [-56.7525, -17.3148], [-56.3308, -17.2925], [-56.2447, -17.2159], [-55.5971, -17.396], [-55.5295, -17.5114], [-55.175, -17.686], [-54.8858, -17.6472], [-54.6816, -17.5083], [-54.5258, -17.5125], [-54.326, -17.6788], [-54.1243, -17.6283], [-53.7647, -17.2589], [-53.7574, -17.6573], [-53.9789, -17.8736], [-53.7866, -18.0193], [-53.0539, -18.0167], [-53.0581, -18.2831], [-52.7663, -18.4017], [-52.89, -18.6781], [-52.4682, -18.7113], [-51.6322, -19.1334], [-51.4151, -19.1619], [-51.1096, -19.2932], [-50.9234, -19.4567], [-51.024, -19.726], [-51.0064, -20.0793]]] } }, { "type": "Feature", "id": "BR-MT", "properties": { "id": "BR-MT", "name": "Mato Grosso" }, "geometry": { "type": "Polygon", "coordinates": [[[-60.7443, -13.6824], [-60.3868, -13.4313], [-60.2619, -13.0402], [-60.0975, -12.9392], [-59.8926, -12.5931], [-59.8522, -12.3439], [-59.9853, -11.9102], [-60.0798, -11.88], [-60.0983, -11.5915], [-59.9107, -11.3656], [-60.0013, -11.1385], [-60.3651, -11.1095], [-60.4277, -11.004], [-61.5272, -11.0009], [-61.4694, -10.4306], [-61.5811, -10.0936], [-61.4813, -9.6416], [-61.6143, -9.3174], [-61.4832, -8.9091], [-61.6114, -8.7686], [-58.5453, -8.7484], [-58.4682, -8.7014], [-58.3042, -8.0993], [-58.3819, -7.8335], [-58.2233, -7.6222], [-58.1356, -7.3392], [-57.9034, -7.6678], [-57.7903, -8.0332], [-57.6561, -8.2603], [-57.5936, -8.7089], [-57.3032, -8.9555], [-57.0867, -9.0637], [-57.0599, -9.2248], [-56.842, -9.2678], [-56.4478, -9.4689], [-54.2669, -9.6228], [-50.2325, -9.8442], [-50.3801, -10.1083], [-50.5836, -10.7139], [-50.6211, -11.0886], [-50.7417, -11.4678], [-50.6487, -11.6065], [-50.6739, -12.1995], [-50.6122, -12.4276], [-50.6597, -12.6014], [-50.4841, -12.8449], [-50.5806, -13.0661], [-50.5704, -13.2371], [-50.7897, -13.6681], [-50.8671, -13.7165], [-50.8598, -14.0411], [-50.9622, -14.2339], [-50.9676, -14.5262], [-51.0967, -14.8884], [-51.2631, -15.0225], [-51.5164, -15.0595], [-51.6633, -15.2264], [-51.7043, -15.4813], [-51.877, -15.8006], [-52.2417, -15.8797], [-52.5827, -16.3502], [-52.636, -16.5332], [-52.8391, -16.7675], [-53.0135, -16.8668], [-53.0382, -17.0464], [-53.201, -17.2836], [-53.2271, -17.493], [-53.1261, -17.6717], [-53.0539, -18.0167], [-53.7866, -18.0193], [-53.9789, -17.8736], [-53.7574, -17.6573], [-53.7647, -17.2589], [-54.1243, -17.6283], [-54.326, -17.6788], [-54.5258, -17.5125], [-54.6816, -17.5083], [-54.8858, -17.6472], [-55.175, -17.686], [-55.5295, -17.5114], [-55.5971, -17.396], [-56.2447, -17.2159], [-56.3308, -17.2925], [-56.7525, -17.3148], [-57.1091, -17.7801], [-57.4689, -17.9012], [-57.7173, -17.7276], [-57.9017, -17.462], [-58.0917, -17.4556], [-58.3711, -17.2789], [-58.4758, -16.6746], [-58.3464, -16.5061], [-58.4392, -16.3297], [-60.1603, -16.2631], [-60.2272, -15.4786], [-60.5714, -15.0976], [-60.2589, -15.0936], [-60.2811, -14.6234], [-60.482, -14.1679], [-60.3845, -13.9873], [-60.4768, -13.8035], [-60.7443, -13.6824]]] } }, { "type": "Feature", "id": "BR-PA", "properties": { "id": "BR-PA", "name": "Pará" }, "geometry": { "type": "MultiPolygon", "coordinates": [[[[-48.8767, -1.4878], [-49.1664, -1.6139], [-49.5132, -1.6271], [-49.813, -1.8145], [-50.0543, -1.7085], [-50.3746, -1.8357], [-50.5795, -1.7987], [-50.6466, -1.6399], [-50.8008, -1.4446], [-50.775, -0.6442], [-50.6466, -0.2625], [-50.3289, -0.1003], [-49.6456, -0.2484], [-49.19, -0.1358], [-48.4102, -0.2622], [-48.5392, -0.9003], [-48.8767, -1.4878]]], [[[-49.7698, 0], [-49.651, 0.0773], [-49.4186, 0.0355], [-49.4372, -0.1181], [-49.6947, -0.1564], [-49.7698, 0]]], [[[-50.8578, -0.2831], [-50.9728, -0.09], [-50.6986, -56e-4], [-50.557, -0.0625], [-50.8578, -0.2831]]], [[[-51.39, -0.4861], [-51.2388, -0.2017], [-51.1375, -0.2853], [-51.39, -0.4861]]], [[[-51.9014, -1.4767], [-51.8849, -1.1834], [-51.7199, -1.1386], [-51.6097, -0.7339], [-51.3823, -0.543], [-51.1983, -0.5303], [-51.1521, -0.6827], [-51.2768, -1.02], [-51.4833, -1.2403], [-51.9014, -1.4767]]], [[[-50.0764, 0], [-50.3683, 0.0389], [-50.3919, 0.1897], [-50.0333, 0.2979], [-49.725, 0.3369], [-49.6437, 0.2103], [-49.9213, -0.0392], [-50.0764, 0]]], [[[-50.2542, 0.3419], [-50.3081, 0.5064], [-50.0761, 0.6505], [-50.0231, 0.5419], [-50.2542, 0.3419]]], [[[-50.2325, -9.8442], [-54.2669, -9.6228], [-56.4478, -9.4689], [-56.842, -9.2678], [-57.0599, -9.2248], [-57.0867, -9.0637], [-57.3032, -8.9555], [-57.5936, -8.7089], [-57.6561, -8.2603], [-57.7903, -8.0332], [-57.9034, -7.6678], [-58.1356, -7.3392], [-58.2223, -7.097], [-58.4164, -6.9236], [-58.4303, -6.6397], [-58.2872, -6.4834], [-56.3717, -2.3534], [-56.4874, -2.2456], [-56.7541, -2.1753], [-56.8247, -2.0356], [-57.1683, -1.7639], [-57.6726, -1.5846], [-58.3906, -1.0492], [-58.4475, -0.8422], [-58.7505, -0.6342], [-58.7365, -0.4271], [-58.845, -0.3723], [-58.8706, 0.2253], [-58.9728, 1.3197], [-58.8107, 1.1868], [-58.5196, 1.2696], [-58.5023, 1.4547], [-58.2972, 1.5828], [-58.0072, 1.5157], [-57.7594, 1.7178], [-57.5281, 1.7158], [-57.4255, 1.9014], [-57.1002, 2.0227], [-57.0039, 1.9229], [-56.7707, 1.8756], [-56.6282, 1.9394], [-56.327, 1.9253], [-56.0275, 1.8362], [-55.904, 2.0477], [-56.1158, 2.2491], [-55.9825, 2.5221], [-55.7137, 2.4001], [-54.9694, 2.5505], [-54.7754, 2.4568], [-54.7121, 2.2722], [-54.7676, 1.8955], [-54.7326, 1.7675], [-54.3714, 1.7608], [-54.1654, 1.6614], [-53.8904, 1.4024], [-53.6668, 1.4301], [-53.4103, 1.1846], [-53.4173, 0.9402], [-53.1238, 0.7475], [-53.1282, 0.3874], [-53.0072, 0.1369], [-52.9196, -0.1895], [-52.8173, -0.1779], [-52.6296, -0.3895], [-52.5262, -0.649], [-52.5136, -0.8797], [-52.2732, -1.1325], [-51.9014, -1.1506], [-51.9275, -1.3349], [-52.2933, -1.535], [-52.1532, -1.6274], [-51.8737, -1.5531], [-51.4495, -1.3271], [-50.8264, -0.9288], [-50.8355, -1.3401], [-50.8146, -1.4446], [-50.7625, -1.5481], [-50.6787, -1.6354], [-50.6672, -1.7717], [-50.7849, -1.8901], [-51.2639, -1.7536], [-50.9911, -2.0296], [-50.8229, -1.96], [-50.678, -1.8104], [-50.4164, -1.9522], [-50.0029, -1.821], [-49.8417, -1.9028], [-49.2769, -1.7664], [-49.5058, -2.2575], [-49.4331, -2.3979], [-49.1735, -1.8809], [-48.9705, -1.8406], [-48.7307, -1.4986], [-48.4812, -1.3049], [-48.3398, -1.3175], [-48.3128, -0.9847], [-48.0564, -0.7081], [-47.9618, -0.7763], [-47.774, -0.6418], [-47.6644, -0.7361], [-47.4314, -0.5825], [-47.2856, -0.5992], [-46.9261, -0.8406], [-46.6302, -0.8256], [-46.5393, -1.0288], [-46.192, -0.9575], [-46.0871, -1.2103], [-46.1666, -1.3059], [-46.2067, -1.831], [-46.2924, -2.1748], [-46.4042, -2.2759], [-46.428, -2.535], [-46.6637, -2.7343], [-46.5969, -2.8364], [-46.7182, -3.1821], [-46.9384, -3.3945], [-47.089, -3.8962], [-47.317, -4.0754], [-47.3567, -4.2606], [-47.6573, -4.6084], [-47.8081, -4.5934], [-48.7189, -5.3586], [-48.3698, -5.4022], [-48.1426, -5.6132], [-48.2954, -5.7431], [-48.2244, -5.9191], [-48.2836, -6.0954], [-48.4181, -6.156], [-48.6623, -6.525], [-48.6681, -6.654], [-49.0471, -6.8043], [-49.2176, -6.9404], [-49.1862, -7.2514], [-49.3586, -7.4932], [-49.3193, -7.6471], [-49.1549, -7.7977], [-49.3103, -8.3845], [-49.6077, -8.8575], [-49.7625, -8.9265], [-50.056, -9.3261], [-50.2325, -9.8442]]]] } }, { "type": "Feature", "id": "BR-PB", "properties": { "id": "BR-PB", "name": "Paraíba" }, "geometry": { "type": "Polygon", "coordinates": [[[-34.8932, -7.5431], [-35.0539, -7.412], [-35.2763, -7.3814], [-35.5191, -7.5317], [-35.5475, -7.6471], [-35.9225, -7.8123], [-36.3109, -7.8145], [-36.5656, -7.918], [-36.7712, -8.2198], [-36.9627, -8.2836], [-37.1265, -8.1732], [-37.1921, -7.5695], [-37.0251, -7.3934], [-37.2492, -7.2701], [-37.4867, -7.3773], [-37.9784, -7.7739], [-38.2512, -7.8506], [-38.3382, -7.7068], [-38.5187, -7.7692], [-38.6972, -7.6203], [-38.5289, -7.3095], [-38.6742, -7.1709], [-38.7298, -6.8899], [-38.5258, -6.3817], [-38.1237, -6.5228], [-37.7897, -6.2986], [-37.7566, -6.1713], [-37.2529, -6.0191], [-37.1771, -6.1286], [-37.3683, -6.3348], [-37.5206, -6.6782], [-37.294, -6.7113], [-37.2354, -6.829], [-37.0333, -6.7486], [-36.7951, -6.7626], [-36.7181, -6.9833], [-36.5003, -6.7992], [-36.5058, -6.3875], [-36.3004, -6.2983], [-36.2404, -6.4186], [-35.9872, -6.4665], [-35.6136, -6.4417], [-35.3172, -6.5313], [-34.9664, -6.5041], [-34.9605, -6.6575], [-34.7929, -7.1728], [-34.8103, -7.5042], [-34.8932, -7.5431]]] } }, { "type": "Feature", "id": "BR-PE", "properties": { "id": "BR-PE", "name": "Pernambuco" }, "geometry": { "type": "Polygon", "coordinates": [[[-38.2347, -9.3324], [-38.3139, -9.0787], [-38.6981, -8.8582], [-38.9906, -8.7598], [-39.4147, -8.5382], [-39.6829, -8.6593], [-39.8937, -8.8346], [-39.9588, -9.0381], [-40.2831, -9.1321], [-40.3325, -9.3598], [-40.6306, -9.4884], [-40.7064, -9.215], [-40.8479, -9.1572], [-40.8898, -8.8596], [-41.0983, -8.7389], [-41.3708, -8.7119], [-41.0422, -8.4661], [-40.8334, -8.3633], [-40.5846, -8.1164], [-40.5329, -7.8594], [-40.6556, -7.7234], [-40.6862, -7.4218], [-40.5379, -7.3903], [-40.0609, -7.4068], [-39.6436, -7.3756], [-39.3437, -7.5503], [-39.2495, -7.6824], [-38.9667, -7.8507], [-38.6972, -7.6203], [-38.5187, -7.7692], [-38.3382, -7.7068], [-38.2512, -7.8506], [-37.9784, -7.7739], [-37.4867, -7.3773], [-37.2492, -7.2701], [-37.0251, -7.3934], [-37.1921, -7.5695], [-37.1265, -8.1732], [-36.9627, -8.2836], [-36.7712, -8.2198], [-36.5656, -7.918], [-36.3109, -7.8145], [-35.9225, -7.8123], [-35.5475, -7.6471], [-35.5191, -7.5317], [-35.2763, -7.3814], [-35.0539, -7.412], [-34.8932, -7.5431], [-34.8152, -7.9353], [-35.1488, -8.9133], [-35.4754, -8.8309], [-35.7336, -8.9254], [-36.0053, -8.8864], [-36.2517, -9.1396], [-36.5614, -9.2748], [-36.9978, -9.3048], [-37.2342, -9.2073], [-37.5192, -8.9439], [-37.7596, -8.8546], [-37.97, -9.1463], [-38.2347, -9.3324]]] } }, { "type": "Feature", "id": "BR-PI", "properties": { "id": "BR-PI", "name": "Piauí" }, "geometry": { "type": "Polygon", "coordinates": [[[-41.2481, -3.0236], [-41.4261, -3.3215], [-41.4189, -3.4981], [-41.3041, -3.8022], [-40.9867, -4.4291], [-41.0353, -4.5653], [-41.0158, -4.9168], [-40.9128, -5.2378], [-40.9505, -5.3392], [-40.876, -5.9691], [-40.7104, -6.6671], [-40.4627, -6.7392], [-40.414, -6.8577], [-40.5831, -7.2005], [-40.5379, -7.3903], [-40.6862, -7.4218], [-40.6556, -7.7234], [-40.5329, -7.8594], [-40.5846, -8.1164], [-40.8334, -8.3633], [-41.0422, -8.4661], [-41.3708, -8.7119], [-41.4961, -8.9325], [-41.7418, -8.9879], [-41.8543, -9.2554], [-42.0531, -9.2118], [-42.3299, -9.3185], [-42.4789, -9.4814], [-42.8748, -9.5358], [-43.1263, -9.3712], [-43.3514, -9.4334], [-43.6194, -9.3347], [-43.8271, -9.4395], [-43.6872, -9.7808], [-43.7139, -10.0754], [-43.9492, -10.45], [-44.2263, -10.6305], [-44.4066, -10.5861], [-44.7388, -10.769], [-44.8079, -10.8743], [-45.0584, -10.8961], [-45.3264, -10.7783], [-45.4735, -10.4804], [-45.6082, -10.3296], [-45.7577, -10.3309], [-45.946, -10.3177], [-45.8524, -9.9731], [-45.8441, -9.5689], [-45.793, -9.4471], [-45.9042, -9.2525], [-45.9794, -8.9261], [-45.8235, -8.7094], [-45.6047, -8.2136], [-45.4767, -7.6856], [-45.3404, -7.5609], [-44.93, -7.4688], [-44.3349, -7.1122], [-44.0445, -6.7763], [-43.6493, -6.7123], [-43.4889, -6.8289], [-42.9944, -6.7641], [-42.9172, -6.68], [-42.853, -6.2533], [-43.0703, -6.0644], [-43.0992, -5.6223], [-42.8366, -5.3384], [-42.852, -4.9556], [-42.9531, -4.7753], [-42.862, -4.4965], [-42.9879, -4.2372], [-42.7237, -3.9123], [-42.6697, -3.6792], [-42.4825, -3.46], [-42.2186, -3.4407], [-41.8395, -3.0387], [-41.8403, -2.7669], [-41.6747, -2.8831], [-41.3321, -2.9305], [-41.2481, -3.0236]]] } }, { "type": "Feature", "id": "BR-PR", "properties": { "id": "BR-PR", "name": "Paraná" }, "geometry": { "type": "Polygon", "coordinates": [[[-48.5841, -25.9812], [-49.2087, -26.0253], [-49.51, -26.2311], [-49.9961, -26.0125], [-50.6396, -26.0645], [-50.8442, -26.2564], [-51.0727, -26.2332], [-51.2914, -26.4354], [-51.2369, -26.6078], [-52.0091, -26.5828], [-52.1861, -26.4546], [-52.7983, -26.3368], [-53.1203, -26.3681], [-53.2703, -26.2573], [-53.6503, -26.2631], [-53.8269, -25.9514], [-53.8886, -25.6338], [-54.1075, -25.4964], [-54.4525, -25.633], [-54.6165, -25.4457], [-54.4275, -25.1531], [-54.4536, -25.0172], [-54.2495, -24.3536], [-54.3367, -24.1481], [-54.2439, -24.0537], [-54.0682, -23.9138], [-53.9678, -23.4465], [-53.7261, -23.3069], [-53.5751, -22.8891], [-53.1569, -22.7059], [-52.9483, -22.5698], [-52.2361, -22.6192], [-52.0896, -22.5243], [-51.5893, -22.6803], [-51.2716, -22.6553], [-50.8843, -22.8121], [-50.7983, -22.9209], [-50.1725, -22.9536], [-49.9823, -22.9028], [-49.6229, -23.2668], [-49.6333, -23.6197], [-49.4825, -24.0228], [-49.2198, -24.3575], [-49.3174, -24.5439], [-49.1936, -24.6981], [-48.5866, -24.6791], [-48.5939, -25.0079], [-48.3906, -24.8733], [-48.2049, -24.8974], [-48.1837, -25.2042], [-48.0827, -25.3149], [-48.395, -25.2961], [-48.3793, -25.5517], [-48.5841, -25.9812]]] } }, { "type": "Feature", "id": "BR-RJ", "properties": { "id": "BR-RJ", "name": "Rio de Janeiro" }, "geometry": { "type": "Polygon", "coordinates": [[[-44.7257, -23.3533], [-44.8608, -23.2353], [-44.7942, -23.0034], [-44.5737, -22.8751], [-44.2686, -22.8202], [-44.2108, -22.5947], [-44.6345, -22.6021], [-44.8313, -22.406], [-44.4458, -22.2529], [-44.2482, -22.2591], [-43.8086, -22.0609], [-43.3634, -22.0049], [-43.047, -22.0434], [-42.2761, -21.7135], [-42.3673, -21.5933], [-42.0946, -21.0075], [-41.8644, -20.777], [-41.7409, -20.8229], [-41.6978, -21.1064], [-41.2599, -21.235], [-40.9644, -21.2766], [-41.0433, -21.5766], [-40.9702, -21.9825], [-41.1993, -22.1278], [-41.5817, -22.2437], [-41.9874, -22.5657], [-41.9875, -22.8311], [-42.1509, -22.9497], [-42.5703, -22.9395], [-42.9411, -22.9808], [-43.1294, -22.8906], [-43.2894, -23.013], [-43.6068, -23.0189], [-43.8587, -22.8968], [-44.2367, -23.0483], [-44.323, -22.9207], [-44.6753, -23.0557], [-44.7257, -23.3533]]] } }, { "type": "Feature", "id": "BR-RN", "properties": { "id": "BR-RN", "name": "Rio Grande do Norte" }, "geometry": { "type": "Polygon", "coordinates": [[[-34.9664, -6.5041], [-35.3172, -6.5313], [-35.6136, -6.4417], [-35.9872, -6.4665], [-36.2404, -6.4186], [-36.3004, -6.2983], [-36.5058, -6.3875], [-36.5003, -6.7992], [-36.7181, -6.9833], [-36.7951, -6.7626], [-37.0333, -6.7486], [-37.2354, -6.829], [-37.294, -6.7113], [-37.5206, -6.6782], [-37.3683, -6.3348], [-37.1771, -6.1286], [-37.2529, -6.0191], [-37.7566, -6.1713], [-37.7897, -6.2986], [-38.1237, -6.5228], [-38.5258, -6.3817], [-38.5875, -6.2686], [-38.4431, -6.0681], [-38.2942, -6.0794], [-38.0746, -5.7551], [-37.7216, -5.0628], [-37.5542, -4.9334], [-37.2409, -4.8314], [-37.1559, -4.9281], [-36.8771, -4.9537], [-36.6846, -5.0985], [-36.2865, -5.1111], [-35.9743, -5.0492], [-35.6044, -5.1109], [-35.3732, -5.279], [-35.2256, -5.5836], [-34.9664, -6.5041]]] } }, { "type": "Feature", "id": "BR-RO", "properties": { "id": "BR-RO", "name": "Rondônia" }, "geometry": { "type": "Polygon", "coordinates": [[[-66.6403, -9.9183], [-66.8306, -9.8381], [-66.3996, -9.5239], [-66.3996, -9.4061], [-65.9626, -9.4013], [-65.7679, -9.5734], [-65.6317, -9.4425], [-65.2, -9.2576], [-65.072, -9.43], [-64.7799, -8.9839], [-64.5814, -9.0263], [-64.3681, -8.9342], [-64.1204, -8.9636], [-64.1289, -8.755], [-63.9214, -8.5398], [-63.9109, -8.322], [-63.7521, -8.2881], [-63.5421, -8.0043], [-62.8508, -8.0006], [-62.713, -8.0725], [-62.5481, -8.307], [-62.3855, -8.3692], [-62.305, -8.5779], [-62.1299, -8.7795], [-61.9221, -8.8739], [-61.7209, -8.6815], [-61.6114, -8.7686], [-61.4832, -8.9091], [-61.6143, -9.3174], [-61.4813, -9.6416], [-61.5811, -10.0936], [-61.4694, -10.4306], [-61.5272, -11.0009], [-60.4277, -11.004], [-60.3651, -11.1095], [-60.0013, -11.1385], [-59.9107, -11.3656], [-60.0983, -11.5915], [-60.0798, -11.88], [-59.9853, -11.9102], [-59.8522, -12.3439], [-59.8926, -12.5931], [-60.0975, -12.9392], [-60.2619, -13.0402], [-60.3868, -13.4313], [-60.7443, -13.6824], [-61.039, -13.4931], [-61.4928, -13.5533], [-61.8101, -13.5487], [-62.0856, -13.2714], [-62.1137, -13.1537], [-62.3847, -13.1459], [-62.7697, -13.0059], [-62.9942, -12.8394], [-63.0671, -12.6599], [-63.2471, -12.7059], [-63.672, -12.4706], [-63.9279, -12.5473], [-64.3731, -12.4684], [-64.5165, -12.2422], [-64.7386, -12.1501], [-64.8096, -12.0286], [-65.0084, -11.9895], [-65.0624, -11.7549], [-65.3103, -11.4941], [-65.4019, -11.1698], [-65.3026, -10.9856], [-65.438, -10.6188], [-65.442, -10.4735], [-65.2886, -10.1955], [-65.3018, -9.8422], [-65.4423, -9.6792], [-65.5693, -9.8352], [-65.7458, -9.7706], [-66.0776, -9.7756], [-66.6403, -9.9183]]] } }, { "type": "Feature", "id": "BR-RR", "properties": { "id": "BR-RR", "name": "Roraima" }, "geometry": { "type": "Polygon", "coordinates": [[[-58.9728, 1.3197], [-58.8706, 0.2253], [-60.0553, 0.2294], [-60.3086, -0.2202], [-60.3867, -0.4634], [-60.334, -0.7032], [-60.5548, -0.8295], [-60.7516, -0.8443], [-60.9304, -0.551], [-61.1113, -0.4908], [-61.4649, -0.6426], [-61.5832, -0.915], [-61.6233, -1.2909], [-61.8664, -1.3818], [-62.0275, -1.1442], [-62.1867, -1.0573], [-62.5077, -0.7721], [-62.3039, -0.597], [-62.3761, -0.3181], [-62.5481, -0.0659], [-62.5669, 0.2552], [-62.4809, 0.5137], [-62.5463, 0.7178], [-62.4421, 0.8123], [-62.6194, 1.3661], [-62.7948, 1.6074], [-62.6906, 1.9182], [-62.9905, 2.0156], [-63.38, 2.2291], [-63.3464, 2.4061], [-63.8218, 2.4258], [-64.0341, 2.4713], [-63.9878, 2.7186], [-64.2053, 3.1933], [-64.1902, 3.5896], [-64.6267, 3.9655], [-64.7132, 4.144], [-64.3356, 4.1541], [-64.1264, 4.1096], [-64.0527, 3.9084], [-63.848, 3.9588], [-63.4191, 3.9671], [-63.2423, 3.8981], [-62.9906, 3.6043], [-62.7813, 3.6043], [-62.7275, 3.7311], [-62.7578, 4.0203], [-62.4401, 4.1827], [-62.1427, 4.0932], [-61.7629, 4.243], [-61.5544, 4.2488], [-61.5074, 4.3905], [-61.3136, 4.5067], [-60.9871, 4.5193], [-60.8865, 4.7097], [-60.7203, 4.7761], [-60.5785, 4.9526], [-60.6552, 5.1813], [-60.1146, 5.2457], [-59.9831, 5.0225], [-60.0258, 4.7072], [-59.9418, 4.508], [-59.6744, 4.3851], [-59.7311, 4.2191], [-59.5817, 3.9988], [-59.6655, 3.7114], [-59.8319, 3.5242], [-59.8108, 3.3596], [-59.9628, 3.0258], [-59.9885, 2.6882], [-59.8932, 2.3641], [-59.727, 2.2412], [-59.749, 1.8614], [-59.5075, 1.6875], [-59.244, 1.3865], [-58.9728, 1.3197]]] } }, { "type": "Feature", "id": "BR-RS", "properties": { "id": "BR-RS", "name": "Rio Grande do Sul" }, "geometry": { "type": "Polygon", "coordinates": [[[-53.8388, -27.1711], [-53.4046, -27.1271], [-52.8256, -27.2008], [-52.7031, -27.2667], [-52.2596, -27.2442], [-51.956, -27.377], [-51.892, -27.5165], [-51.6681, -27.4801], [-51.0783, -27.8248], [-50.5347, -28.4145], [-50.1059, -28.4747], [-49.7561, -28.4711], [-49.7, -28.6036], [-49.9143, -28.7164], [-50.0049, -29.106], [-49.7024, -29.3247], [-50.0421, -29.8159], [-50.3114, -30.4617], [-50.7153, -31.0414], [-51.0639, -31.4083], [-51.1922, -31.4015], [-51.1589, -31.0778], [-50.7508, -30.8111], [-50.5681, -30.4576], [-50.5375, -30.2867], [-50.9106, -30.3165], [-51.1312, -30.2581], [-51.6557, -31.2218], [-51.9182, -31.308], [-52.0668, -31.6738], [-52.2176, -31.745], [-52.1784, -31.9427], [-52.2276, -32.2547], [-52.3759, -32.5003], [-52.4995, -32.8728], [-52.7361, -33.251], [-53.3743, -33.7407], [-53.5344, -33.657], [-53.5303, -33.1995], [-53.4804, -33.0749], [-53.0983, -32.7235], [-53.4041, -32.5681], [-53.6308, -32.358], [-53.6648, -32.2069], [-53.9185, -31.9422], [-54.1644, -31.8873], [-54.4634, -31.6726], [-54.5941, -31.4609], [-54.8071, -31.4357], [-55.2287, -31.2498], [-55.4217, -30.9631], [-55.5842, -30.8462], [-55.8379, -31.0728], [-56.0089, -31.0798], [-56.0017, -30.7958], [-56.2358, -30.5584], [-56.8114, -30.1053], [-57.071, -30.1089], [-57.2139, -30.2921], [-57.5768, -30.1971], [-57.3255, -29.9782], [-57.2799, -29.8057], [-57.1039, -29.7622], [-56.6958, -29.3433], [-56.6442, -29.2008], [-56.4274, -29.0696], [-56.2756, -28.7767], [-56.0111, -28.5612], [-55.8931, -28.3697], [-55.6263, -28.141], [-55.4478, -28.0867], [-55.3212, -27.9221], [-55.0217, -27.834], [-54.8136, -27.5356], [-54.6861, -27.5553], [-54.2803, -27.4246], [-54.0058, -27.1911], [-53.8388, -27.1711]]] } }, { "type": "Feature", "id": "BR-SC", "properties": { "id": "BR-SC", "name": "Santa Catarina" }, "geometry": { "type": "Polygon", "coordinates": [[[-49.7024, -29.3247], [-50.0049, -29.106], [-49.9143, -28.7164], [-49.7, -28.6036], [-49.7561, -28.4711], [-50.1059, -28.4747], [-50.5347, -28.4145], [-51.0783, -27.8248], [-51.6681, -27.4801], [-51.892, -27.5165], [-51.956, -27.377], [-52.2596, -27.2442], [-52.7031, -27.2667], [-52.8256, -27.2008], [-53.4046, -27.1271], [-53.8388, -27.1711], [-53.6986, -26.8829], [-53.7117, -26.3641], [-53.6503, -26.2631], [-53.2703, -26.2573], [-53.1203, -26.3681], [-52.7983, -26.3368], [-52.1861, -26.4546], [-52.0091, -26.5828], [-51.2369, -26.6078], [-51.2914, -26.4354], [-51.0727, -26.2332], [-50.8442, -26.2564], [-50.6396, -26.0645], [-49.9961, -26.0125], [-49.51, -26.2311], [-49.2087, -26.0253], [-48.5841, -25.9812], [-48.581, -26.1758], [-48.7556, -26.2894], [-48.6098, -26.4397], [-48.6847, -26.7053], [-48.6131, -27.109], [-48.6421, -27.6476], [-48.5639, -27.8645], [-48.6525, -28.2256], [-48.8425, -28.6178], [-49.3914, -28.9705], [-49.7024, -29.3247]]] } }, { "type": "Feature", "id": "BR-SE", "properties": { "id": "BR-SE", "name": "Sergipe" }, "geometry": { "type": "Polygon", "coordinates": [[[-37.4879, -11.5203], [-37.6733, -11.5761], [-37.9994, -11.3781], [-37.9774, -11.2374], [-38.1819, -10.9809], [-38.1863, -10.7115], [-38.0047, -10.7598], [-37.778, -10.6254], [-37.827, -10.4509], [-37.774, -10.0947], [-38.0314, -9.739], [-38.0023, -9.5297], [-37.5883, -9.7195], [-37.3525, -9.7798], [-37.005, -9.9747], [-36.9217, -10.1302], [-36.4433, -10.4158], [-36.4048, -10.4988], [-36.5575, -10.5473], [-37.0253, -10.8589], [-37.3221, -11.4201], [-37.4879, -11.5203]]] } }, { "type": "Feature", "id": "BR-SP", "properties": { "id": "BR-SP", "name": "São Paulo" }, "geometry": { "type": "Polygon", "coordinates": [[[-48.0827, -25.3149], [-48.1837, -25.2042], [-48.2049, -24.8974], [-48.3906, -24.8733], [-48.5939, -25.0079], [-48.5866, -24.6791], [-49.1936, -24.6981], [-49.3174, -24.5439], [-49.2198, -24.3575], [-49.4825, -24.0228], [-49.6333, -23.6197], [-49.6229, -23.2668], [-49.9823, -22.9028], [-50.1725, -22.9536], [-50.7983, -22.9209], [-50.8843, -22.8121], [-51.2716, -22.6553], [-51.5893, -22.6803], [-52.0896, -22.5243], [-52.2361, -22.6192], [-52.9483, -22.5698], [-53.1569, -22.7059], [-52.9753, -22.4823], [-52.4907, -22.212], [-52.0562, -21.7199], [-52.0609, -21.5966], [-51.855, -21.3203], [-51.87, -21.1477], [-51.6273, -20.8742], [-51.5776, -20.5961], [-51.3386, -20.3771], [-51.0318, -20.2279], [-51.0064, -20.0793], [-50.5756, -19.8186], [-49.8822, -19.9474], [-49.5438, -19.9036], [-49.2971, -20.0371], [-49.2072, -20.3052], [-49.0633, -20.162], [-48.302, -20.1125], [-47.8909, -20.1091], [-47.8559, -19.9848], [-47.5975, -20.025], [-47.4595, -19.9689], [-47.2505, -20.1717], [-47.2925, -20.4391], [-47.1132, -20.6759], [-47.2224, -20.9152], [-46.994, -21.4079], [-46.7591, -21.3619], [-46.5218, -21.4411], [-46.555, -21.67], [-46.6744, -21.8329], [-46.658, -22.4034], [-46.4281, -22.5261], [-46.4728, -22.6701], [-46.3432, -22.8668], [-46.1306, -22.8989], [-45.779, -22.8461], [-45.6717, -22.6468], [-45.3689, -22.637], [-45.0522, -22.4625], [-44.8313, -22.406], [-44.6345, -22.6021], [-44.2108, -22.5947], [-44.2686, -22.8202], [-44.5737, -22.8751], [-44.7942, -23.0034], [-44.8608, -23.2353], [-44.7257, -23.3533], [-44.9064, -23.3413], [-45.06, -23.4961], [-45.4108, -23.6289], [-45.3947, -23.8031], [-45.8351, -23.7589], [-46.0858, -23.8361], [-46.1956, -23.9923], [-46.4361, -24.0214], [-46.9244, -24.2709], [-47.2147, -24.5631], [-47.5455, -24.7086], [-48.0542, -25.0514], [-47.895, -25.1036], [-48.0827, -25.3149]]] } }, { "type": "Feature", "id": "BR-TO", "properties": { "id": "BR-TO", "name": "Tocantins" }, "geometry": { "type": "Polygon", "coordinates": [[[-46.2394, -12.7893], [-46.5828, -12.8782], [-46.8584, -13.0317], [-47.2475, -13.0946], [-47.4094, -13.225], [-47.7175, -13.307], [-48.1767, -13.1775], [-48.1553, -13.0328], [-48.622, -13.0447], [-48.798, -13.1853], [-48.9085, -12.7578], [-49.0489, -12.5567], [-49.2183, -12.7685], [-49.3231, -13.1418], [-49.8224, -12.9588], [-50.4841, -12.8449], [-50.6597, -12.6014], [-50.6122, -12.4276], [-50.6739, -12.1995], [-50.6487, -11.6065], [-50.7417, -11.4678], [-50.6211, -11.0886], [-50.5836, -10.7139], [-50.3801, -10.1083], [-50.2325, -9.8442], [-50.056, -9.3261], [-49.7625, -8.9265], [-49.6077, -8.8575], [-49.3103, -8.3845], [-49.1549, -7.7977], [-49.3193, -7.6471], [-49.3586, -7.4932], [-49.1862, -7.2514], [-49.2176, -6.9404], [-49.0471, -6.8043], [-48.6681, -6.654], [-48.6623, -6.525], [-48.4181, -6.156], [-48.2836, -6.0954], [-48.2244, -5.9191], [-48.2954, -5.7431], [-48.1426, -5.6132], [-48.3698, -5.4022], [-48.7189, -5.3586], [-48.5167, -5.1985], [-48.336, -5.1682], [-48.1576, -5.2654], [-47.8955, -5.2558], [-47.8349, -5.3872], [-47.5387, -5.4809], [-47.4139, -5.8678], [-47.37, -6.2761], [-47.4835, -6.6707], [-47.5014, -6.9881], [-47.7377, -7.2069], [-47.4989, -7.2897], [-47.405, -7.532], [-47.0084, -8.0453], [-46.5974, -7.8996], [-46.4821, -7.977], [-46.5178, -8.2964], [-46.8325, -8.4744], [-46.8992, -8.8198], [-47.0677, -8.9818], [-46.8782, -9.1154], [-46.787, -9.3889], [-46.5383, -9.5127], [-46.6292, -9.7665], [-46.4924, -9.8697], [-46.3428, -10.1786], [-46.1832, -10.1771], [-45.946, -10.3177], [-45.7577, -10.3309], [-45.8517, -10.4645], [-46.3024, -10.7585], [-46.5561, -11.3739], [-46.437, -11.4975], [-46.2075, -11.54], [-46.1203, -11.6785], [-46.2502, -11.8429], [-46.0697, -11.9221], [-46.3295, -12.0992], [-46.3453, -12.3364], [-46.2622, -12.4567], [-46.1686, -12.4875], [-46.2394, -12.7893]]] } }] };
+
+  // web/src/js/brasil/importar-contornos.js
+  function stFeatIndex(f) {
+    var p = f.properties || {};
+    var idc = [p.id, p.ID, f.id, p.iso_3166_2, p["ISO3166-2"], p.ISO_3166_2, p.hasc, p.HASC_1];
+    for (var a = 0; a < idc.length; a++) {
+      var v = idc[a];
+      if (typeof v === "string") {
+        var m = v.match(/^(?:BR[-.])?([A-Za-z]{2})$/);
+        if (m && BRBY[m[1].toUpperCase()] !== void 0) return BRBY[m[1].toUpperCase()];
+      }
+    }
+    var cands = [p.SIGLA, p.sigla, p.UF, p.uf, p.SIGLA_UF, p.sigla_uf, p.abbrev_state, p.abbrev, p.postal];
+    for (var i = 0; i < cands.length; i++) {
+      var c = cands[i];
+      if (typeof c === "string" && BRBY[c.toUpperCase()] !== void 0) return BRBY[c.toUpperCase()];
+    }
+    var codes = [p.codarea, p.CD_UF, p.CD_GEOCUF, p.GEOCODIGO, p.cod_uf, p.codigo_ibge, p.id, f.id];
+    for (var j = 0; j < codes.length; j++) {
+      var q2 = codes[j];
+      if (q2 == null || !/^\d{2}/.test(String(q2))) continue;
+      q2 = String(q2).slice(0, 2);
+      for (var k = 0; k < BRS.length; k++) if (BRS[k].ibge === q2) return k;
+    }
+    var names = [p.name, p.NAME, p.NOME, p.nome, p.NM_UF, p.NM_ESTADO, p.estado, p.ESTADO, p.name_1, p.NAME_1];
+    for (var m2 = 0; m2 < names.length; m2++) {
+      var n = names[m2];
+      if (typeof n !== "string") continue;
+      n = norm(n);
+      for (var t = 0; t < BRS.length; t++) if (norm(BRS[t].name) === n) return t;
+      if (n === "federal district") return BRBY.DF;
+    }
+    return -1;
+  }
+  function setupStates(list) {
+    estadoBrasil.STFEAT = BRS.map(function() {
+      return null;
+    });
+    estadoBrasil.STGEOM = {};
+    var m = 0;
+    list.forEach(function(f) {
+      var k = stFeatIndex(f);
+      if (k >= 0 && !estadoBrasil.STFEAT[k]) {
+        estadoBrasil.STFEAT[k] = f;
+        m++;
+      }
+    });
+    return m;
+  }
+  function ingestStates(json) {
+    var fs = null;
+    if (json.type === "FeatureCollection") fs = json.features;
+    else if (json.type === "Topology" && window.topojson) {
+      var k = Object.keys(json.objects)[0];
+      fs = topojson.feature(json, json.objects[k]).features;
+    }
+    if (!fs) throw new Error("formato não reconhecido");
+    var out = [], m = 0;
+    fs.forEach(function(f) {
+      if (!f.geometry) return;
+      var nf = { type: "Feature", id: f.id, properties: f.properties || {}, geometry: JSON.parse(JSON.stringify(f.geometry)) };
+      if (stFeatIndex(nf) >= 0) m++;
+      out.push(fixWind(nf));
+    });
+    if (m < 25) throw new Error("só reconheci " + m + " dos 27 estados");
+    return out;
+  }
+  var espera = 0;
+  function ensureStateShapes() {
+    if (estadoBrasil.STFEAT.some(function(f) {
+      return f;
+    })) return;
+    if (!estadoRender.feats || !window.d3) {
+      if (!espera) espera = setTimeout(function() {
+        espera = 0;
+        ensureStateShapes();
+      }, 500);
+      return;
+    }
+    try {
+      setupStates(ingestStates(CONTORNOS_ESTADOS));
+    } catch (e) {
+      setStatus("Não consegui montar os limites dos estados.", 6e3);
+    }
+  }
+
+  // web/src/js/treino/dominio.js
   function QD() {
     return estadoTreino.quizDomain === "br" ? BRS : D;
   }
@@ -6953,6 +7272,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         return estadoTreino.quizScope.t === "brreg" ? s.r === estadoTreino.quizScope.r ? 1 : 0 : 1;
       });
       if (quiz.mode === "flag") quiz.mode = "cap";
+      ensureStateShapes();
     } else {
       if (quiz.mode === "code") quiz.mode = "cap";
     }
@@ -7059,11 +7379,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoPartida: () => estadoPartida,
     fbText: () => fbText,
     finishQ: () => finishQ,
+    fmtRelogio: () => fmtRelogio,
     fmtTime: () => fmtTime,
-    iniciar: () => iniciar31,
+    iniciar: () => iniciar32,
     makeNeighborOptions: () => makeNeighborOptions,
     makeOptions: () => makeOptions,
     medalFor: () => medalFor,
+    nivelAtual: () => nivelAtual,
     optLabel: () => optLabel,
     pickQ: () => pickQ,
     recordable: () => recordable,
@@ -7081,7 +7403,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var estatisticas_exports = {};
   __export(estatisticas_exports, {
     fillQStat: () => fillQStat,
-    iniciar: () => iniciar29,
+    iniciar: () => iniciar30,
     modeName: () => modeName,
     openHistory: () => openHistory
   });
@@ -7367,7 +7689,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     box.appendChild(bar);
     box.appendChild(lg);
   }
-  function fillQStat(el, o) {
+  function fillQStat(el2, o) {
     var key = qcc(o), r = 0, w = 0;
     Object.keys(estadoTreino.QS.m).forEach(function(m) {
       var e = estadoTreino.QS.m[m][key];
@@ -7376,10 +7698,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         w += e.w || 0;
       }
     });
-    el.hidden = !(r + w);
-    el.textContent = r + w ? "📊 Neste país: " + r + (r === 1 ? " acerto" : " acertos") + " · " + w + (w === 1 ? " erro" : " erros") : "";
+    el2.hidden = !(r + w);
+    el2.textContent = r + w ? "📊 Neste país: " + r + (r === 1 ? " acerto" : " acertos") + " · " + w + (w === 1 ? " erro" : " erros") : "";
   }
-  function iniciar29() {
+  function iniciar30() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
     $("htabC").onclick = function() {
       histTab = "c";
@@ -7425,7 +7747,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     addXP: () => addXP,
     celebrate: () => celebrate,
     definirMeta: () => definirMeta,
-    iniciar: () => iniciar30,
+    iniciar: () => iniciar31,
     metaDoDia: () => metaDoDia,
     recordProgress: () => recordProgress,
     updateProgUI: () => updateProgUI,
@@ -7492,11 +7814,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
   }
   function updateStreakPill() {
-    var el = $("streakpill"), n = displayStreak();
+    var el2 = $("streakpill"), n = displayStreak();
     if (n > 0) {
-      el.style.display = "flex";
-      el.textContent = "🔥 " + n;
-    } else el.style.display = "none";
+      el2.style.display = "flex";
+      el2.textContent = "🔥 " + n;
+    } else el2.style.display = "none";
   }
   function definirMeta(n) {
     PROG.dailyGoal = n;
@@ -7536,17 +7858,17 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var msg = toastQ[0];
     var host = quiz.open ? $("quiz") : $("stage");
     if (!host) return;
-    var el = document.createElement("div");
-    el.className = "qtoast";
-    el.textContent = msg;
-    host.insertBefore(el, host.firstChild);
+    var el2 = document.createElement("div");
+    el2.className = "qtoast";
+    el2.textContent = msg;
+    host.insertBefore(el2, host.firstChild);
     requestAnimationFrame(function() {
-      el.classList.add("show");
+      el2.classList.add("show");
     });
     setTimeout(function() {
-      el.classList.remove("show");
+      el2.classList.remove("show");
       setTimeout(function() {
-        el.remove();
+        el2.remove();
         toastQ.shift();
         showNextToast();
       }, 250);
@@ -7787,7 +8109,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("badgeshead").textContent = "Conquistas (" + n + "/" + tot + ")";
     $("badgesheet").style.display = "block";
   }
-  function iniciar30() {
+  function iniciar31() {
     PROG = lsGet("globo.prog.v1", progNovo());
     $("streakpill").onclick = function() {
       var n = displayStreak(), f = PROG.freezes || 0;
@@ -7865,6 +8187,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function fmtTime(ms) {
     var s2 = Math.max(1, Math.round(ms / 1e3)), m = Math.floor(s2 / 60);
     return m ? m + " min " + s2 % 60 + " s" : s2 + " s";
+  }
+  function fmtRelogio(ms) {
+    var t = Math.floor(Math.max(0, ms) / 1e3), h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s2 = t % 60;
+    return (h ? h + ":" + (m < 10 ? "0" : "") : "") + m + ":" + (s2 < 10 ? "0" : "") + s2;
   }
   function saveRuns() {
     lsSet("globo.runs.v1", estadoPartida.RUNS);
@@ -8149,6 +8475,45 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     return out;
   }
+  function bigramas(t) {
+    t = t.toLowerCase().normalize("NFD").replace(/[^a-z]/g, "");
+    var o = [];
+    for (var k = 0; k < t.length - 1; k++) o.push(t.substr(k, 2));
+    return o;
+  }
+  function parecido(a, b) {
+    var x = bigramas(a), y = bigramas(b), n = 0, usados = {};
+    x.forEach(function(g) {
+      for (var k = 0; k < y.length; k++) if (!usados[k] && y[k] === g) {
+        usados[k] = 1;
+        n++;
+        break;
+      }
+    });
+    var d = x.length + y.length ? 2 * n / (x.length + y.length) : 0;
+    if (a.charAt(0).toLowerCase() === b.charAt(0).toLowerCase()) d += 0.25;
+    return d;
+  }
+  function opcoesDificeis(i, cands, qtd) {
+    var arr = QD(), alvo = optLabel(i), viz = estadoTreino.quizDomain === "br" ? arr[i].nb || [] : NB[i] || [];
+    var perto = cands.filter(function(x) {
+      return arr[x].r === arr[i].r || viz.indexOf(x) >= 0;
+    });
+    if (perto.length < qtd + 2) perto = cands;
+    var nome = short(arr[i]);
+    var nota2 = perto.map(function(x) {
+      return { x, n: parecido(alvo, optLabel(x)) + 0.8 * parecido(nome, short(arr[x])) + (viz.indexOf(x) >= 0 ? 0.3 : 0) + Math.random() * 0.15 };
+    });
+    nota2.sort(function(a, b) {
+      return b.n - a.n;
+    });
+    return nota2.slice(0, Math.max(qtd + 2, 6)).map(function(o) {
+      return o.x;
+    });
+  }
+  function nivelAtual() {
+    return quiz.nivel || "normal";
+  }
   function makeOptions(i) {
     var arr = QD(), label = optLabel(i), labels = {}, out = [i];
     labels[label] = 1;
@@ -8164,12 +8529,22 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         return !arr[x].dis;
       });
     }
-    var same = sc.filter(function(x) {
+    var nv = nivelAtual(), same;
+    var conhecidos = wd.filter(function(x) {
+      return !arr[x].dep || arr[i].dep;
+    });
+    if (nv === "facil") {
+      var longe = conhecidos.filter(function(x) {
+        return arr[x].r !== arr[i].r;
+      });
+      same = longe.length >= 3 ? longe : sc;
+    } else if (nv === "dificil") same = opcoesDificeis(i, conhecidos, 3);
+    else same = sc.filter(function(x) {
       return arr[x].r === arr[i].r;
     });
     guard = 0;
     while (out.length < 4 && guard++ < 400 && sc.length) {
-      var src = Math.random() < 0.85 && same.length ? same : sc;
+      var src = (nv !== "normal" || Math.random() < 0.85) && same.length ? same : sc;
       var c = src[Math.floor(Math.random() * src.length)], l = optLabel(c);
       if (labels[l]) continue;
       labels[l] = 1;
@@ -8192,8 +8567,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function renderScore() {
     updateProgUI();
     var n = poolIdx().length, r = curRun(), done = n ? n - runPool().length : 0;
-    var vezes = (estadoPartida.RECS[runKey()] || {}).n || 0;
-    $("qruntxt").textContent = estadoTreino.desafio ? "🗓️ Desafio do dia · " + Math.min(quiz.sessionAsked, 10) + "/10" : n ? done + " de " + n + (r.e ? " · " + r.e + " " + (r.e === 1 ? "erro" : "erros") : "") + (vezes ? " · 🏁 " + vezes + "×" : "") : "";
+    var vezes2 = (estadoPartida.RECS[runKey()] || {}).n || 0;
+    $("qruntxt").textContent = estadoTreino.desafio ? "🗓️ Desafio do dia · " + Math.min(quiz.sessionAsked, 10) + "/10" : n ? done + " de " + n + (r.e ? " · " + r.e + " " + (r.e === 1 ? "erro" : "erros") : "") + (vezes2 ? " · 🏁 " + vezes2 + "×" : "") : "";
     if (quiz.jogoRapido) {
       var certas = quiz.sessionLog.filter(function(x) {
         return x.ok;
@@ -8266,15 +8641,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     s.sessionLog.push({ label: (qflag(QD()[s.cur]) + " " + short(QD()[s.cur])).trim(), ok, xp: ganho || 0, rapido: !!rapido, combo: s.streak });
   }
   function mostrarCombo() {
-    var el = $("qcomb");
-    if (!el) return;
+    var el2 = $("qcomb");
+    if (!el2) return;
     if (quiz.streak >= 2) {
-      el.hidden = false;
-      el.textContent = "🔥 x" + quiz.streak;
-      el.classList.remove("pulsa");
-      void el.offsetWidth;
-      el.classList.add("pulsa");
-    } else el.hidden = true;
+      el2.hidden = false;
+      el2.textContent = "🔥 x" + quiz.streak;
+      el2.classList.remove("pulsa");
+      void el2.offsetWidth;
+      el2.classList.add("pulsa");
+    } else el2.hidden = true;
   }
   function curiosidade(d) {
     var x = d && d.info;
@@ -8283,8 +8658,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (x.pop >= 1e3) op.push(nm + " tem cerca de " + (x.pop >= 1e6 ? (x.pop / 1e6).toFixed(1).replace(".", ",") + " bilhão de" : (x.pop >= 1e4 ? Math.round(x.pop / 1e3) : (x.pop / 1e3).toFixed(1).replace(".", ",")) + " milhões de") + " habitantes.");
     else if (x.pop > 0) op.push(nm + " tem só cerca de " + (x.pop * 1e3).toLocaleString("pt-BR") + " habitantes.");
     if (x.area) {
-      var vezes = 8515767 / x.area;
-      op.push(vezes >= 2 ? "Cabem uns " + Math.round(vezes).toLocaleString("pt-BR") + " " + nm + " dentro do Brasil." : nm + " tem " + x.area.toLocaleString("pt-BR") + " km².");
+      var vezes2 = 8515767 / x.area;
+      op.push(vezes2 >= 2 ? "Cabem uns " + Math.round(vezes2).toLocaleString("pt-BR") + " " + nm + " dentro do Brasil." : nm + " tem " + x.area.toLocaleString("pt-BR") + " km².");
     }
     if (x.lang) op.push("Em " + nm + " se fala " + x.lang.charAt(0).toLowerCase() + x.lang.slice(1) + ".");
     if (x.cur) op.push("A moeda de " + nm + " é " + x.cur.replace(/\s*\(.*\)$/, "").toLowerCase() + ".");
@@ -8303,9 +8678,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       p.style.setProperty("--dy", Math.round(Math.sin(a) * dist - 30) + "px");
       p.style.background = cores[k % cores.length];
       b.appendChild(p);
-      setTimeout(/* @__PURE__ */ (function(el) {
+      setTimeout(/* @__PURE__ */ (function(el2) {
         return function() {
-          el.remove();
+          el2.remove();
         };
       })(p), 900);
     }
@@ -8323,6 +8698,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     recordProgress(ok, quiz.hinted);
     if (rapido) addXP(3);
     if (ok && quiz.streak >= 2) addXP(Math.min(quiz.streak - 1, 5));
+    if (ok && !quiz.hinted && nivelAtual() === "dificil" && quiz.type === "choice" && quiz.mode !== "map" && quiz.mode !== "neighbor") addXP(2);
     if (estadoTreino.QS.q && !lsGet("globo.dicaLivre", false) && (quiz.total || 0) >= 4) {
       lsSet("globo.dicaLivre", true);
       setTimeout(function() {
@@ -8469,7 +8845,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.fillStyle = "#fff";
     ctx.fillText(name, bx + 44, by + bh / 2 + 1);
   }
-  function iniciar31() {
+  function iniciar32() {
     ganchos.desenharSeloResposta = drawBadge;
     estadoPartida.RUNS = lsGet("globo.runs.v1", {});
     estadoPartida.RECS = lsGet("globo.recs.v1", {});
@@ -8548,13 +8924,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var perguntas_exports = {};
   __export(perguntas_exports, {
     buildModeButtons: () => buildModeButtons,
+    definirNivel: () => definirNivel,
     definirOrdem: () => definirOrdem,
     definirResposta: () => definirResposta,
     definirRodada: () => definirRodada,
     definirSobrevivencia: () => definirSobrevivencia,
     definirTempo: () => definirTempo,
-    iniciar: () => iniciar33,
+    iniciar: () => iniciar34,
     iniciarJogoRapido: () => iniciarJogoRapido,
+    mostrarIntro: () => mostrarIntro,
     nextQ: () => nextQ,
     pickStateNear: () => pickStateNear,
     quizMapAnswer: () => quizMapAnswer,
@@ -8570,7 +8948,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var modo_estados_exports = {};
   __export(modo_estados_exports, {
     exitStates: () => exitStates,
-    iniciar: () => iniciar32,
+    iniciar: () => iniciar33,
     updateStBtn: () => updateStBtn
   });
   function updateStBtn() {
@@ -8589,10 +8967,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     afterFilter();
     if (goBrazil !== false) select(D[byName[norm("Brasil")]], true);
   }
-  function iniciar32() {
+  function iniciar33() {
     ganchosInterface.atualizarBotaoEstados = updateStBtn;
     $("stexit").onclick = function() {
       exitStates(true);
+    };
+    $("sttreino").onclick = function() {
+      emitir("treinar-estados");
     };
   }
 
@@ -8611,16 +8992,48 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("scopesheet").style.display = "none";
     resetSession();
     quiz.last = -1;
-    if (quiz.timerLen) startTimerTick();
-    else {
-      stopTimerTick();
-      updateTimerDisplay();
-    }
-    nextQ();
+    stopTimerTick();
     buildModeButtons();
     rotuloJogoRapido();
     renderScore();
     updateScopeBtn();
+    if (tipo === "relampago") {
+      var rc = recordeRelampago();
+      $("qtimer").textContent = "⏱️ 60s";
+      mostrarIntro("⚡ Relâmpago", ["⏱️ Você tem 60 segundos.", "🔀 As perguntas vêm misturadas: capital, país, bandeira e vizinho.", "👆 Responda rápido. Errou? Passa sozinho para a próxima.", rc ? "🏆 Seu recorde: " + rc + " certas. Dá para bater?" : "🏆 Vale quantas você acertar: faça o seu primeiro recorde."], "▶ Começar (60 s)", function() {
+        startTimerTick();
+        nextQ();
+      });
+      return;
+    }
+    updateTimerDisplay();
+    nextQ();
+  }
+  function mostrarIntro(titulo, linhas, botao, comecar) {
+    var body = $("qbody"), fb = $("qfb");
+    body.innerHTML = "";
+    fb.textContent = "";
+    fb.className = "";
+    $("qnext").style.display = "none";
+    $("qpool").textContent = "";
+    quiz.cur = -1;
+    quiz.answered = true;
+    estadoTreino.qBadge = null;
+    estadoTreino.qFlash = null;
+    estadoTreino.qPino = null;
+    var box = document.createElement("div");
+    box.className = "jogointro";
+    box.appendChild(Object.assign(document.createElement("div"), { className: "rftit", textContent: titulo }));
+    linhas.forEach(function(t) {
+      box.appendChild(Object.assign(document.createElement("p"), { textContent: t }));
+    });
+    var b = document.createElement("button");
+    b.className = "rfjogar";
+    b.textContent = botao;
+    b.onclick = comecar;
+    box.appendChild(b);
+    body.appendChild(box);
+    measureQ();
   }
   function sairJogoRapido() {
     if (!quiz.jogoRapido) return;
@@ -8648,8 +9061,28 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     return Math.max(0, quiz.timerLen * 1e3 - (Date.now() - quiz.timerStart));
   }
   function updateTimerDisplay() {
-    var el = $("qtimer"), r = timerRemaining();
-    el.textContent = r == null ? "" : "⏱️ " + Math.ceil(r / 1e3) + "s";
+    var el2 = $("qtimer"), r = timerRemaining();
+    el2.classList.toggle("contagem", r != null);
+    el2.textContent = r == null ? tempoDaPartida() : "⏱️ " + Math.ceil(r / 1e3) + "s";
+  }
+  function tempoDaPartida() {
+    if (quiz.jogoRapido || estadoTreino.desafio || !poolIdx().length) return "";
+    var rr = estadoPartida.RUNS[runKey()];
+    if (!rr) return "⏱️ 0:00";
+    var t = rr.at || 0;
+    if (!rr.fin && quiz.cur >= 0 && !quiz.answered && $("qbody").querySelector(".qq") && !$("qbody").querySelector(".retomar")) t += Math.min(6e4, Math.max(0, Date.now() - (rr.la || Date.now())));
+    return "⏱️ " + fmtRelogio(t);
+  }
+  var relogioInt = 0;
+  function ligarRelogio() {
+    clearInterval(relogioInt);
+    relogioInt = setInterval(function() {
+      if (!quiz.open) {
+        clearInterval(relogioInt);
+        return;
+      }
+      if (!quiz.timerLen) updateTimerDisplay();
+    }, 1e3);
   }
   function startTimerTick() {
     stopTimerTick();
@@ -8811,9 +9244,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       p.style.background = cores[k % cores.length];
       p.style.animationDelay = Math.random() * 0.5 + "s";
       host.appendChild(p);
-      setTimeout(/* @__PURE__ */ (function(el) {
+      setTimeout(/* @__PURE__ */ (function(el2) {
         return function() {
-          el.remove();
+          el2.remove();
         };
       })(p), 2200);
     }
@@ -8868,6 +9301,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     resetSession();
   }
+  function definirNivel(v) {
+    quiz.nivel = v;
+    lsSet("globo.quiz.nivel", v);
+    if (quiz.cur >= 0 && !quiz.answered) nextQ();
+  }
   function definirResposta(v) {
     quiz.type = v;
     buildModeButtons();
@@ -8893,8 +9331,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       delete estadoPartida.RUNS[rk];
       saveRuns();
     }
-    var arr = QD(), i = pickQ();
     var body = $("qbody"), fb = $("qfb");
+    if (perguntarRetomar(rk, body, fb)) return;
+    var arr = QD(), i = pickQ();
     body.innerHTML = "";
     fb.textContent = "";
     fb.className = "";
@@ -9103,6 +9542,55 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     rotuloJogoRapido();
   }
+  var PAUSA_LONGA = 3 * 36e5;
+  var jaPerguntou = {};
+  function haQuanto(ms) {
+    var min = Math.round(ms / 6e4), h = Math.round(ms / 36e5), d = Math.round(ms / 864e5);
+    return min < 60 ? "há " + min + " min" : h < 24 ? "há " + h + (h === 1 ? " hora" : " horas") : d === 1 ? "ontem" : "há " + d + " dias";
+  }
+  function perguntarRetomar(rk, body, fb) {
+    if (quiz.jogoRapido || estadoTreino.desafio) return false;
+    var r = estadoPartida.RUNS[rk], n = poolIdx().length;
+    if (!r || r.fin || !n || (jaPerguntou[rk] || 0) > (r.la || 0)) return false;
+    var feitos = n - runPool().length, parado = Date.now() - (r.la || Date.now());
+    if (!feitos && !r.e || parado < PAUSA_LONGA) return false;
+    jaPerguntou[rk] = Date.now();
+    body.innerHTML = "";
+    fb.textContent = "";
+    fb.className = "";
+    $("qnext").style.display = "none";
+    var box = document.createElement("div");
+    box.className = "retomar";
+    var h = document.createElement("div");
+    h.className = "qq";
+    h.textContent = "Você parou " + haQuanto(parado) + " em " + scopeLabel();
+    var sub = document.createElement("div");
+    sub.className = "qhint";
+    sub.textContent = feitos + " de " + n + " feitos · " + r.e + " " + (r.e === 1 ? "erro" : "erros") + " · ⏱️ " + fmtRelogio(r.at || 0);
+    var row = document.createElement("div");
+    row.className = "qrow";
+    var cont = document.createElement("button");
+    cont.className = "rfjogar";
+    cont.textContent = "▶ Continuar";
+    cont.onclick = function() {
+      nextQ();
+    };
+    var zero = document.createElement("button");
+    zero.textContent = "↺ Começar do zero";
+    zero.onclick = function() {
+      runRestart();
+      setStatus("Partida recomeçada do zero. Medalhas e conquistas continuam.", 3e3);
+    };
+    row.appendChild(cont);
+    row.appendChild(zero);
+    box.appendChild(h);
+    box.appendChild(sub);
+    box.appendChild(row);
+    body.appendChild(box);
+    $("qpool").textContent = "";
+    measureQ();
+    return true;
+  }
   function quizMapAnswer(cn) {
     if (!estadoTreino.qMap || quiz.answered) return;
     var i = quiz.cur, d = D[i], ok = !!cn && cn.i === i;
@@ -9196,7 +9684,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var jr = document.createElement("div");
     jr.className = "qjr";
     var rc = recordeRelampago();
-    [["relampago", "⚡ Relâmpago", "60 segundos" + (rc ? " · recorde " + rc : "")], ["misto", "🎲 Misto", "10 perguntas variadas"], ["desafio", "🗓️ Desafio", "Do dia, igual para todos"]].forEach(function(j) {
+    [["relampago", "⚡ Relâmpago", "Quantas você acerta em 60 s?" + (rc ? " Recorde: " + rc : "")], ["misto", "🎲 Misto", "10 perguntas de tipos variados"], ["desafio", "🗓️ Desafio do dia", "10 capitais, iguais para todos, 1 vez por dia"]].forEach(function(j) {
       var b = document.createElement("button");
       b.className = "mcard";
       b.id = "jr-" + j[0];
@@ -9241,6 +9729,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     tourStop();
     closeCard();
     hidePick();
+    estadoDistancia.arc = null;
     quiz.open = true;
     quiz.ok = 0;
     quiz.total = 0;
@@ -9255,6 +9744,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     updateScopeBackBtn();
     if (quiz.timerLen) startTimerTick();
     else updateTimerDisplay();
+    ligarRelogio();
     setTimeout(function() {
       resize();
       measureQ();
@@ -9271,6 +9761,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     syncModeSw();
     if (estadoDistancia.arc && estadoDistancia.arc.quiz) estadoDistancia.arc = null;
     stopTimerTick();
+    clearInterval(relogioInt);
     if (estadoTreino.quizDomain === "br") {
       estadoBrasil.statesMode = false;
       estadoBrasil.selSt = null;
@@ -9436,10 +9927,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   function iniciarContagem(ri, box) {
     pararContagem();
-    var s = 10, el = box.querySelector(".proxcont"), a = box.querySelector(".proxbtn");
+    var s = 10, el2 = box.querySelector(".proxcont"), a = box.querySelector(".proxbtn");
     if (a) a.classList.add("auto");
     function mostra() {
-      if (el) el.textContent = "começa em " + s + "s";
+      if (el2) el2.textContent = "começa em " + s + "s";
     }
     mostra();
     contagemT = setInterval(function() {
@@ -9455,7 +9946,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       }
     }, 1e3);
   }
-  function iniciar33() {
+  function iniciar34() {
     ouvir("modo-estados-abriu", function() {
       if (quiz.open) quizClose();
     });
@@ -9498,7 +9989,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(destaque_escopo_exports, {
     drawScopePulse: () => drawScopePulse,
     firePulseForScope: () => firePulseForScope,
-    iniciar: () => iniciar34
+    iniciar: () => iniciar35
   });
   var scopePulse = null;
   function firePulse(pts) {
@@ -9532,7 +10023,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     ctx.restore();
   }
-  function iniciar34() {
+  function iniciar35() {
     ganchos.desenharPulsoEscopo = drawScopePulse;
   }
 
@@ -9541,7 +10032,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(escopo_exports, {
     applyScopeChange: () => applyScopeChange,
     definirFoco: () => definirFoco,
-    iniciar: () => iniciar35
+    iniciar: () => iniciar36
   });
   function applyScopeChange(newScope) {
     sairJogoRapido();
@@ -9589,7 +10080,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       var n = document.createElement("b");
       n.textContent = nome;
       var c = document.createElement("small");
-      c.textContent = count + " " + (unid || (count === 1 ? "país" : "países")) + (rc && rc.medal ? " · " + MEDAL[rc.medal].i : "");
+      c.textContent = count + " " + (unid || (count === 1 ? "país" : "países")) + (rc && rc.medal ? " · " + MEDAL[rc.medal].i : "") + (rc && rc.bestT ? " · ⏱️ " + fmtRelogio(rc.bestT) : "");
       b.appendChild(i);
       b.appendChild(n);
       b.appendChild(c);
@@ -9686,10 +10177,14 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     b.hidden = !(n && !estadoTreino.desafio && (feitos > 0 || r.e > 0) && !r.fin);
     b.textContent = "↺ Recomeçar " + scopeLabel() + " do zero (" + feitos + " de " + n + " feitos)";
   }
-  function iniciar35() {
+  function iniciar36() {
     ouvir("treinar-regiao", function(o) {
       if (!quiz.open) quizOpen();
       applyScopeChange({ t: "reg", r: o.r });
+    });
+    ouvir("treinar-estados", function() {
+      if (!quiz.open) quizOpen();
+      applyScopeChange({ t: "br" });
     });
     ouvir("categorias-mudaram", function(o) {
       if (quiz.open) {
@@ -9739,7 +10234,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
-    iniciar: () => iniciar36,
+    iniciar: () => iniciar37,
     ligarSeg: () => ligarSeg
   });
   var themeMode;
@@ -9774,7 +10269,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     marca(atual);
     return marca;
   }
-  function iniciar36() {
+  function iniciar37() {
     themeMode = lsGet("globo.theme", "auto");
     applyTheme();
     ligarSeg($("mtema"), themeMode, function(v) {
@@ -9841,161 +10336,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     enterStates: () => enterStates,
     iniciar: () => iniciar38
   });
-
-  // web/src/js/brasil/importar-contornos.js
-  var importar_contornos_exports = {};
-  __export(importar_contornos_exports, {
-    ensureStateShapes: () => ensureStateShapes,
-    iniciar: () => iniciar37
-  });
-  function stFeatIndex(f) {
-    var p = f.properties || {};
-    var idc = [p.id, p.ID, f.id, p.iso_3166_2, p["ISO3166-2"], p.ISO_3166_2, p.hasc, p.HASC_1];
-    for (var a = 0; a < idc.length; a++) {
-      var v = idc[a];
-      if (typeof v === "string") {
-        var m = v.match(/^(?:BR[-.])?([A-Za-z]{2})$/);
-        if (m && BRBY[m[1].toUpperCase()] !== void 0) return BRBY[m[1].toUpperCase()];
-      }
-    }
-    var cands = [p.SIGLA, p.sigla, p.UF, p.uf, p.SIGLA_UF, p.sigla_uf, p.abbrev_state, p.abbrev, p.postal];
-    for (var i = 0; i < cands.length; i++) {
-      var c = cands[i];
-      if (typeof c === "string" && BRBY[c.toUpperCase()] !== void 0) return BRBY[c.toUpperCase()];
-    }
-    var codes = [p.codarea, p.CD_UF, p.CD_GEOCUF, p.GEOCODIGO, p.cod_uf, p.codigo_ibge, p.id, f.id];
-    for (var j = 0; j < codes.length; j++) {
-      var q2 = codes[j];
-      if (q2 == null || !/^\d{2}/.test(String(q2))) continue;
-      q2 = String(q2).slice(0, 2);
-      for (var k = 0; k < BRS.length; k++) if (BRS[k].ibge === q2) return k;
-    }
-    var names = [p.name, p.NAME, p.NOME, p.nome, p.NM_UF, p.NM_ESTADO, p.estado, p.ESTADO, p.name_1, p.NAME_1];
-    for (var m2 = 0; m2 < names.length; m2++) {
-      var n = names[m2];
-      if (typeof n !== "string") continue;
-      n = norm(n);
-      for (var t = 0; t < BRS.length; t++) if (norm(BRS[t].name) === n) return t;
-      if (n === "federal district") return BRBY.DF;
-    }
-    return -1;
-  }
-  function setupStates(list) {
-    estadoBrasil.STFEAT = BRS.map(function() {
-      return null;
-    });
-    estadoBrasil.STGEOM = {};
-    var m = 0;
-    list.forEach(function(f) {
-      var k = stFeatIndex(f);
-      if (k >= 0 && !estadoBrasil.STFEAT[k]) {
-        estadoBrasil.STFEAT[k] = f;
-        m++;
-      }
-    });
-    return m;
-  }
-  function ingestStates(json) {
-    var fs = null;
-    if (json.type === "FeatureCollection") fs = json.features;
-    else if (json.type === "Topology" && window.topojson) {
-      var k = Object.keys(json.objects)[0];
-      fs = topojson.feature(json, json.objects[k]).features;
-    }
-    if (!fs) throw new Error("formato não reconhecido");
-    var out = [], m = 0;
-    fs.forEach(function(f) {
-      if (!f.geometry) return;
-      var nf = { type: "Feature", id: f.id, properties: f.properties || {}, geometry: JSON.parse(JSON.stringify(f.geometry)) };
-      if (stFeatIndex(nf) >= 0) m++;
-      out.push(fixWind(nf));
-    });
-    if (m < 25) throw new Error("só reconheci " + m + " dos 27 estados");
-    return out;
-  }
-  function saveStates(list) {
-    var slim = list.map(function(x) {
-      var k = stFeatIndex(x);
-      return { type: "Feature", id: "S" + k, properties: { SIGLA: k >= 0 ? BRS[k].sigla : "" }, geometry: x.geometry };
-    });
-    idbSet("br-states", JSON.stringify({ type: "FeatureCollection", features: slim }));
-  }
-  var stAuto = 0;
-  function loadAmcharts() {
-    return new Promise(function(ok, no) {
-      if (window.am5geodata_brazilLow) return ok(window.am5geodata_brazilLow);
-      var oe = window.exports, om = window.module;
-      window.exports = {};
-      window.module = { exports: window.exports };
-      function restore() {
-        if (oe === void 0) delete window.exports;
-        else window.exports = oe;
-        if (om === void 0) delete window.module;
-        else window.module = om;
-      }
-      var urls = ["lib/brazilLow.js","https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5.1.4/brazilLow.js", "https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5/brazilLow.js"];
-      (function next(i) {
-        if (i >= urls.length) {
-          restore();
-          return no(new Error("indisponível"));
-        }
-        var sc = document.createElement("script");
-        sc.src = urls[i];
-        sc.onload = function() {
-          var g = window.am5geodata_brazilLow || window.module && window.module.exports && (window.module.exports.default || window.module.exports) || window.exports && (window.exports.default || window.exports);
-          if (g && g.features && g.features.length) {
-            restore();
-            ok(g);
-          } else next(i + 1);
-        };
-        sc.onerror = function() {
-          next(i + 1);
-        };
-        document.head.appendChild(sc);
-      })(0);
-    });
-  }
-  function ensureStateShapes() {
-    if (estadoBrasil.STFEAT.some(function(f) {
-      return f;
-    }) || stAuto === 1) return;
-    if (!estadoRender.feats || !window.d3) {
-      setStatus("Os limites dos estados aparecem depois que o mapa carregar.", 6e3);
-      return;
-    }
-    stAuto = 1;
-    setStatus("Carregando os limites dos estados…");
-    loadAmcharts().then(function(g) {
-      var list = ingestStates(g), m = setupStates(list);
-      saveStates(list);
-      stAuto = 2;
-      setStatus("Limites dos estados carregados (" + m + " de 27). Dados: amCharts geodata / Natural Earth.", 6e3);
-    }).catch(function() {
-      stAuto = 0;
-      setStatus("Não consegui carregar os limites dos estados sozinho. Tente de novo mais tarde.", 9e3);
-    });
-  }
-  function loadSavedStates() {
-    idbGet("br-states").then(function(str) {
-      if (!str) return;
-      var tries = 0;
-      (function wait() {
-        if (window.d3 && estadoRender.feats) {
-          try {
-            setupStates(JSON.parse(str).features);
-          } catch (e) {
-          }
-          return;
-        }
-        if (++tries < 80) setTimeout(wait, 500);
-      })();
-    });
-  }
-  function iniciar37() {
-    loadSavedStates();
-  }
-
-  // web/src/js/brasil/cartao-estado.js
   function fillInfoSt(st) {
     var box = $("cinfo");
     box.innerHTML = "";
@@ -10059,9 +10399,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var ob = $("cobs");
     ob.textContent = st.note;
     ob.style.display = st.note ? "block" : "none";
-    var dens = st.pop / st.area;
+    var dens2 = st.pop / st.area;
     var hr = horaAgora("BR-" + st.sigla);
-    renderFacts((hr ? [["🕐 Hora agora", hr.hora + " · " + hr.dif]] : []).concat([["👥 População", fmtPop(st.pop / 1e3)], ["📐 Área", fmtArea(st.area)], ["🏙️ Densidade", (dens < 10 ? dens.toFixed(1) : Math.round(dens)).toString().replace(".", ",") + " hab./km²"], ["🧭 Região", BRREG[st.reg].n]]));
+    renderFacts((hr ? [["🕐 Hora agora", hr.hora + " · " + hr.dif]] : []).concat([["👥 População", fmtPop(st.pop / 1e3)], ["📐 Área", fmtArea(st.area)], ["🏙️ Densidade", (dens2 < 10 ? dens2.toFixed(1) : Math.round(dens2)).toString().replace(".", ",") + " hab./km²"], ["🧭 Região", BRREG[st.reg].n]]));
     renderChips("Estados vizinhos", st.nb.map(function(k) {
       return { t: BRS[k].sigla + " · " + BRS[k].name, f: function() {
         selectSt(BRS[k], true);
@@ -10245,29 +10585,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(menu_exports2, {
     iniciar: () => iniciar40
   });
-  function cmpRow(box, label, va, vb) {
-    var r = document.createElement("div");
-    r.className = "cmprow";
-    var l = document.createElement("div");
-    l.className = "cmpv";
-    l.textContent = va;
-    var m = document.createElement("div");
-    m.className = "cmpl";
-    m.textContent = label;
-    var rr = document.createElement("div");
-    rr.className = "cmpv";
-    rr.textContent = vb;
-    r.appendChild(l);
-    r.appendChild(m);
-    r.appendChild(rr);
-    box.appendChild(r);
-  }
-  function cmpDens(x) {
-    return x && x.pop && x.area ? Math.round(x.pop * 1e3 / x.area).toLocaleString("pt-BR") + " hab./km²" : "—";
-  }
-  function cmpRelTop(d) {
-    return d.rel && d.rel.items[0] ? d.rel.items[0].n + (d.rel.items[0].p != null ? " " + d.rel.items[0].p + "%" : "") : "—";
-  }
   function iniciar40() {
     BRS.forEach(function(s) {
       var o = document.createElement("option");
@@ -10279,44 +10596,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       $("msheet").style.display = "none";
       enterStates(BRS[+$("stSel").value]);
     };
+    $("stTreino").onclick = function() {
+      $("msheet").style.display = "none";
+      emitir("treinar-estados");
+    };
     $("stAll").onclick = function() {
       $("msheet").style.display = "none";
       enterStates(null);
-    };
-    fillCountrySelect($("cmpA"), "Brasil");
-    fillCountrySelect($("cmpB"), "Argentina");
-    $("cmpGo").onclick = function() {
-      var a = D[+$("cmpA").value], b = D[+$("cmpB").value], box = $("cmpres");
-      box.innerHTML = "";
-      if (a === b) {
-        box.textContent = "Escolha dois países diferentes.";
-        return;
-      }
-      var h = document.createElement("div");
-      h.className = "cmphead";
-      var ha = document.createElement("div");
-      ha.textContent = dflag(a) + " " + short(a);
-      var hc = document.createElement("div");
-      hc.textContent = "";
-      var hb = document.createElement("div");
-      hb.textContent = dflag(b) + " " + short(b);
-      h.appendChild(ha);
-      h.appendChild(hc);
-      h.appendChild(hb);
-      box.appendChild(h);
-      var ia = a.info, ib = b.info;
-      cmpRow(box, "População", ia ? fmtPop(ia.pop) : "—", ib ? fmtPop(ib.pop) : "—");
-      cmpRow(box, "Área", ia ? fmtArea(ia.area) : "—", ib ? fmtArea(ib.area) : "—");
-      cmpRow(box, "Densidade", cmpDens(ia), cmpDens(ib));
-      cmpRow(box, "Idioma(s) oficial(is)", ia ? ia.lang : "—", ib ? ib.lang : "—");
-      cmpRow(box, "Moeda", ia ? ia.cur : "—", ib ? ib.cur : "—");
-      cmpRow(box, "Fuso horário", ia ? ia.tz : "—", ib ? ib.tz : "—");
-      cmpRow(box, "Religião predominante", cmpRelTop(a), cmpRelTop(b));
-      var n = document.createElement("div");
-      n.className = "inote";
-      n.style.marginTop = "8px";
-      n.textContent = "Valores aproximados. Confira em fonte oficial antes de citar.";
-      box.appendChild(n);
     };
     document.addEventListener("visibilitychange", function() {
       if (document.hidden) tourStop();
@@ -10672,12 +10958,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
   }
-  function filaDoDia(num) {
+  function filaDoDia(num2) {
     var base = [];
     D.forEach(function(d, i) {
       if (!d.dep && !d.uni && !d.dis) base.push(i);
     });
-    var r = sorteador(num * 7919 + 17), fila = [];
+    var r = sorteador(num2 * 7919 + 17), fila = [];
     while (fila.length < 10 && base.length) {
       fila.push(base.splice(Math.floor(r() * base.length), 1)[0]);
     }
@@ -10727,16 +11013,18 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (!quiz.open) quizOpen();
     if (estadoTreino.quizDomain !== "world" || estadoTreino.quizScope.t !== "world") applyScopeChange({ t: "world" });
     if (quiz.mode !== "cap") quizSetMode("cap");
-    var num = numeroDoDia();
-    estadoTreino.desafio = { dia: hojeStr(), num, fila: filaDoDia(num), antes: { len: quiz.sessionLen, surv: quiz.survivalMode, timer: quiz.timerLen } };
+    var num2 = numeroDoDia();
+    estadoTreino.desafio = { dia: hojeStr(), num: num2, fila: filaDoDia(num2), antes: { len: quiz.sessionLen, surv: quiz.survivalMode, timer: quiz.timerLen } };
     quiz.sessionLen = 10;
     quiz.survivalMode = false;
     quiz.timerLen = 0;
     stopTimerTick();
     resetSession();
     quiz.last = -1;
-    nextQ();
     renderScore();
+    mostrarIntro("🗓️ Desafio do dia #" + num2, ["🌍 10 países, os mesmos para todo mundo hoje.", "🏛️ Diga a capital de cada um. Só dá para jogar uma vez por dia.", "📋 No fim, copie o resultado (🟩🟥) e compare com os amigos, sem entregar as respostas."], "▶ Começar", function() {
+      nextQ();
+    });
   }
   function aoTerminarRodada(o) {
     var box = o.caixa, ds = estadoTreino.desafio;
@@ -10897,6 +11185,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   });
   var LINHAS = [
     [
+      "Nível",
+      "Muda as alternativas. Fácil: lugares bem diferentes. Difícil: nomes parecidos e vizinhos (+2 XP por acerto).",
+      [["facil", "😊 Fácil"], ["normal", "🙂 Normal"], ["dificil", "😈 Difícil"]],
+      function() {
+        return quiz.nivel || "normal";
+      },
+      definirNivel
+    ],
+    [
       "Responder",
       "Vizinhos e Achar no mapa são sempre de tocar.",
       [["choice", "👆 Escolher"], ["type", "⌨️ Digitar"]],
@@ -10990,6 +11287,41 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       }
       box.appendChild(row);
     });
+    montarRecomecar(box);
+  }
+  function montarRecomecar(box) {
+    var n = poolIdx().length, r = curRun(), feitos = n ? n - runPool().length : 0;
+    if (!n || estadoTreino.desafio || quiz.jogoRapido || r.fin || !feitos && !r.e) return;
+    var row = document.createElement("div");
+    row.className = "ajrow";
+    var t = document.createElement("b");
+    t.textContent = "Partida de " + scopeLabel();
+    row.appendChild(t);
+    var b = document.createElement("button");
+    b.className = "ajzerar";
+    function rotulo() {
+      b.classList.remove("armado");
+      b.textContent = "↺ Recomeçar do zero (" + feitos + " de " + n + " feitos)";
+    }
+    rotulo();
+    b.onclick = function() {
+      if (!b.classList.contains("armado")) {
+        b.classList.add("armado");
+        b.textContent = "Toque de novo para recomeçar";
+        clearTimeout(b._t);
+        b._t = setTimeout(rotulo, 4e3);
+        return;
+      }
+      clearTimeout(b._t);
+      fecharAjustes();
+      runRestart();
+      setStatus("Partida recomeçada do zero. Medalhas e conquistas continuam.", 3e3);
+    };
+    row.appendChild(b);
+    var d = document.createElement("small");
+    d.textContent = "Medalhas, nível e conquistas continuam.";
+    row.appendChild(d);
+    box.appendChild(row);
   }
   function abrirAjustes() {
     montarAjustes();
@@ -11032,26 +11364,26 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   iniciar19();
   iniciar25();
   iniciar26();
-  iniciar14();
   iniciar27();
+  iniciar14();
   iniciar28();
-  iniciar31();
-  iniciar33();
-  iniciar44();
   iniciar29();
+  iniciar32();
   iniciar34();
+  iniciar44();
+  iniciar30();
   iniciar35();
   iniciar36();
+  iniciar37();
   iniciar10();
   iniciar11();
-  iniciar32();
+  iniciar33();
   iniciar38();
   iniciar39();
-  iniciar37();
   iniciar40();
   iniciar41();
   iniciar15();
-  iniciar30();
+  iniciar31();
   iniciar42();
   iniciar43();
   iniciar45();
@@ -11061,7 +11393,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   iniciar49();
   iniciar48();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

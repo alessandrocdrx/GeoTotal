@@ -36,6 +36,18 @@ function buildStudy(){
   if(!n)box.textContent='Nenhum país ligado nos filtros.';
 }
 
+/* Imprimir: no app Android abre a impressão do sistema (dá para salvar em PDF). Dentro de uma página
+   embutida (iframe, como no claude.ai) o navegador bloqueia a impressão sem avisar; aí a folha vira um
+   arquivo .html para baixar, que abre a impressão sozinho. */
+function imprimirFolha(){
+  var embutido=false;try{embutido=window.self!==window.top;}catch(e){embutido=true;}
+  if(window.AndroidBridge||!embutido){try{window.print();return;}catch(e){}}
+  var css='body{font-family:system-ui,sans-serif;margin:24px;color:#000}h1{font-size:20px}h3{margin:16px 0 4px;font-size:15px}table{width:100%;border-collapse:collapse}td{padding:5px 4px;border-bottom:1px solid #ccc;font-size:13px}td.fl{width:30px;font-size:18px}';
+  var html='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Folha de estudo · geoTotal</title><style>'+css+'</style></head><body><h1>Folha de estudo · geoTotal</h1>'+$('studybody').innerHTML+'<script>window.onload=function(){window.print();};<'+'/script></body></html>';
+  offerFile('folha-de-estudo.html',html);
+  setStatus('Abra o arquivo baixado: ele abre a impressão (dá para salvar em PDF).',6000);
+}
+
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   setTimeout(function(){try{if(window.claude&&claude.use)claude.use('downloads').then(function(n){dlNS=n;},function(){});}catch(e){}},900);
@@ -48,7 +60,7 @@ function iniciar() {
   $('txtclose').onclick=function(){$('txtd').style.display='none';};
   $('expStudy').onclick=function(){$('msheet').style.display='none';buildStudy();$('study').style.display='block';};
   $('studyclose').onclick=function(){$('study').style.display='none';};
-  $('studyprint').onclick=function(){try{window.print();}catch(e){setStatus('Impressão indisponível aqui. Tire uma captura de tela da folha.',5000);}};
+  $('studyprint').onclick=imprimirFolha;
 }
 
 export { iniciar, offerFile };

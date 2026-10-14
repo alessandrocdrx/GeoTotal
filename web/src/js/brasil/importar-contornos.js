@@ -4,10 +4,11 @@
  * Carregar/importar contornos dos estados (amCharts/GeoJSON).
  */
 
+import { CONTORNOS_ESTADOS } from '../dados/contornos-estados.js';
 import { BRBY, BRS } from '../dados/estados-brasil.js';
 import { norm } from '../dados/paises.js';
 import { setStatus } from '../nucleo/utilitarios.js';
-import { fixWind, idbGet, idbSet } from '../visualizacao/carregamento.js';
+import { fixWind } from '../visualizacao/carregamento.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { estadoRender } from '../visualizacao/projecao.js';
 
@@ -52,59 +53,14 @@ function ingestStates(json){
   if(m<25)throw new Error('só reconheci '+m+' dos 27 estados');
   return out;
 }
-function saveStates(list){
-  var slim=list.map(function(x){var k=stFeatIndex(x);return {type:'Feature',id:'S'+k,properties:{SIGLA:k>=0?BRS[k].sigla:''},geometry:x.geometry};});
-  idbSet('br-states',JSON.stringify({type:'FeatureCollection',features:slim}));
-}
-/* carrega os contornos dos estados sozinho (tentativa via jsDelivr); se não der, o usuário importa um arquivo */
-let stAuto = 0;
-function loadAmcharts(){
-  return new Promise(function(ok,no){
-    if(window.am5geodata_brazilLow)return ok(window.am5geodata_brazilLow);
-    var oe=window.exports,om=window.module;
-    window.exports={};window.module={exports:window.exports};
-    function restore(){if(oe===undefined)delete window.exports;else window.exports=oe;if(om===undefined)delete window.module;else window.module=om;}
-    var urls=['https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5.1.4/brazilLow.js','https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5/brazilLow.js'];
-    (function next(i){
-      if(i>=urls.length){restore();return no(new Error('indisponível'));}
-      var sc=document.createElement('script');sc.src=urls[i];
-      sc.onload=function(){
-        var g=window.am5geodata_brazilLow||(window.module&&window.module.exports&&(window.module.exports.default||window.module.exports))||(window.exports&&(window.exports.default||window.exports));
-        if(g&&g.features&&g.features.length){restore();ok(g);}else next(i+1);
-      };
-      sc.onerror=function(){next(i+1);};
-      document.head.appendChild(sc);
-    })(0);
-  });
-}
+/* os contornos vêm embutidos no jogo (js/dados/contornos-estados.js); antes eram baixados do jsDelivr,
+   que deixou de entregar o pacote e fazia os estados aparecerem sem divisas fora do app Android */
+let espera = 0;
 function ensureStateShapes(){
-  if(estadoBrasil.STFEAT.some(function(f){return f;})||stAuto===1)return;
-  if(!estadoRender.feats||!window.d3){setStatus('Os limites dos estados aparecem depois que o mapa carregar.',6000);return;}
-  stAuto=1;
-  setStatus('Carregando os limites dos estados…');
-  loadAmcharts().then(function(g){
-    var list=ingestStates(g),m=setupStates(list);
-    saveStates(list);stAuto=2;
-    setStatus('Limites dos estados carregados ('+m+' de 27). Dados: amCharts geodata / Natural Earth.',6000);
-  }).catch(function(){
-    stAuto=0;
-    setStatus('Não consegui carregar os limites dos estados sozinho. Tente de novo mais tarde.',9000);
-  });
+  if(estadoBrasil.STFEAT.some(function(f){return f;}))return;
+  /* precisa do d3 e do mapa-múndi prontos; até lá, tenta de novo sozinho */
+  if(!estadoRender.feats||!window.d3){if(!espera)espera=setTimeout(function(){espera=0;ensureStateShapes();},500);return;}
+  try{setupStates(ingestStates(CONTORNOS_ESTADOS));}
+  catch(e){setStatus('Não consegui montar os limites dos estados.',6000);}
 }
-function loadSavedStates(){
-  idbGet('br-states').then(function(str){
-    if(!str)return;
-    var tries=0;
-    (function wait(){
-      if(window.d3&&estadoRender.feats){try{setupStates(JSON.parse(str).features);}catch(e){}return;}
-      if(++tries<80)setTimeout(wait,500);
-    })();
-  });
-}
-
-/** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
-function iniciar() {
-  loadSavedStates();
-}
-
-export { ensureStateShapes, iniciar };
+export { ensureStateShapes };

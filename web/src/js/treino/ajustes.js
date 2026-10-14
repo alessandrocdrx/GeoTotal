@@ -5,14 +5,18 @@
  * e vale na hora, sem sair do jogo. Também abre pela meta do dia ("0/10 hoje").
  */
 
-import { $ } from '../nucleo/utilitarios.js';
+import { $, setStatus } from '../nucleo/utilitarios.js';
+import { poolIdx } from './dominio.js';
 import { definirFoco } from './escopo.js';
-import { estadoTreino, quiz } from './estado.js';
-import { definirOrdem, definirResposta, definirRodada, definirSobrevivencia, definirTempo } from './perguntas.js';
+import { estadoTreino, quiz, scopeLabel } from './estado.js';
+import { curRun, runPool } from './partida.js';
+import { definirNivel, definirOrdem, definirResposta, definirRodada, definirSobrevivencia, definirTempo, runRestart } from './perguntas.js';
 import { definirMeta, metaDoDia } from './progressao.js';
 
 /* [título, explicação, alternativas [valor, rótulo], valor atual, definir(valor)] */
 const LINHAS = [
+  ['Nível','Muda as alternativas. Fácil: lugares bem diferentes. Difícil: nomes parecidos e vizinhos (+2 XP por acerto).',[['facil','😊 Fácil'],['normal','🙂 Normal'],['dificil','😈 Difícil']],
+    function(){return quiz.nivel||'normal';},definirNivel],
   ['Responder','Vizinhos e Achar no mapa são sempre de tocar.',[['choice','👆 Escolher'],['type','⌨️ Digitar']],
     function(){return quiz.type;},definirResposta],
   ['Perguntas','',[['mix','Todas'],['new','Só novas'],['wrong','Que errei']],
@@ -47,6 +51,25 @@ function montarAjustes(){
     if(l[1]){var d=document.createElement('small');d.textContent=l[1];row.appendChild(d);}
     box.appendChild(row);
   });
+  montarRecomecar(box);
+}
+/* recomeçar a partida da região atual (medalhas, nível e conquistas ficam); pede dois toques */
+function montarRecomecar(box){
+  var n=poolIdx().length,r=curRun(),feitos=n?n-runPool().length:0;
+  if(!n||estadoTreino.desafio||quiz.jogoRapido||r.fin||(!feitos&&!r.e))return;
+  var row=document.createElement('div');row.className='ajrow';
+  var t=document.createElement('b');t.textContent='Partida de '+scopeLabel();row.appendChild(t);
+  var b=document.createElement('button');b.className='ajzerar';
+  function rotulo(){b.classList.remove('armado');b.textContent='↺ Recomeçar do zero ('+feitos+' de '+n+' feitos)';}
+  rotulo();
+  b.onclick=function(){
+    if(!b.classList.contains('armado')){b.classList.add('armado');b.textContent='Toque de novo para recomeçar';clearTimeout(b._t);b._t=setTimeout(rotulo,4000);return;}
+    clearTimeout(b._t);fecharAjustes();runRestart();
+    setStatus('Partida recomeçada do zero. Medalhas e conquistas continuam.',3000);
+  };
+  row.appendChild(b);
+  var d=document.createElement('small');d.textContent='Medalhas, nível e conquistas continuam.';row.appendChild(d);
+  box.appendChild(row);
 }
 function abrirAjustes(){montarAjustes();$('ajsheet').style.display='block';}
 function fecharAjustes(){$('ajsheet').style.display='none';}

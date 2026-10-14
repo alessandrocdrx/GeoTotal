@@ -11,7 +11,7 @@ import { $, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { firePulseForScope } from './destaque-escopo.js';
 import { applyDomainForScope, inScopeActive, poolIdx, QD, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
 import { estadoTreino, quiz, resetSession, scopeLabel } from './estado.js';
-import { curRun, estadoPartida, MEDAL, recordable, renderScore, runPool, scopeKeyFor } from './partida.js';
+import { curRun, estadoPartida, fmtRelogio, MEDAL, recordable, renderScore, runPool, scopeKeyFor } from './partida.js';
 import { buildModeButtons, nextQ, quizOpen, runRestart, sairJogoRapido } from './perguntas.js';
 import { avail, availCount } from '../visualizacao/tela.js';
 
@@ -51,7 +51,7 @@ function buildScopeTiles(){
     var rc=recordable(sc)?estadoPartida.RECS[scopeKeyFor(sc,quiz.mode)]:null;
     var i=document.createElement('span');i.className='stico';i.textContent=icone;
     var n=document.createElement('b');n.textContent=nome;
-    var c=document.createElement('small');c.textContent=count+' '+(unid||(count===1?'país':'países'))+(rc&&rc.medal?' · '+MEDAL[rc.medal].i:'');
+    var c=document.createElement('small');c.textContent=count+' '+(unid||(count===1?'país':'países'))+(rc&&rc.medal?' · '+MEDAL[rc.medal].i:'')+(rc&&rc.bestT?' · ⏱️ '+fmtRelogio(rc.bestT):'');
     b.appendChild(i);b.appendChild(n);b.appendChild(c);
     b.onclick=function(){applyScopeChange(sc);};
     box.appendChild(b);
@@ -118,6 +118,7 @@ function mostrarRecomecar(){
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ouvir('treinar-regiao',function(o){if(!quiz.open)quizOpen();applyScopeChange({t:'reg',r:o.r});});
+  ouvir('treinar-estados',function(){if(!quiz.open)quizOpen();applyScopeChange({t:'br'});});
   ouvir('categorias-mudaram',function(o){if(quiz.open){updateScopeBtn();if(o.placar)renderScore();if(quiz.cur>=0&&!inScopeActive(QD()[quiz.cur]))nextQ();}});
   $('qscopeback').onclick=function(){if(estadoTreino.quizScopePrev){applyScopeChange(estadoTreino.quizScopePrev);$('scopesheet').style.display='none';}};
   $('qscopeb').onclick=function(){$('scopeq').value='';$('scopeadv').open=false;buildScopeList();mostrarRecomecar();$('scopesheet').style.display='block';};

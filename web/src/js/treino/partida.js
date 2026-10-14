@@ -45,6 +45,11 @@ function recFinish(r){
   return res;
 }
 function fmtTime(ms){var s2=Math.max(1,Math.round(ms/1000)),m=Math.floor(s2/60);return m?(m+' min '+(s2%60)+' s'):(s2+' s');}
+/** Tempo no formato de relógio: 4:07 ou 1:02:30. */
+function fmtRelogio(ms){
+  var t=Math.floor(Math.max(0,ms)/1000),h=Math.floor(t/3600),m=Math.floor(t/60)%60,s2=t%60;
+  return (h?h+':'+(m<10?'0':''):'')+m+':'+(s2<10?'0':'')+s2;
+}
 function saveRuns(){lsSet('globo.runs.v1',estadoPartida.RUNS);}
 function runPool(){var arr=QD(),r=curRun();return poolIdx().filter(function(i){return !r.d[qcc(arr[i])];});}
 function runRecord(i,ok){
@@ -184,6 +189,27 @@ function makeNeighborOptions(qIdx,ansIdx){
   for(var q2=out.length-1;q2>0;q2--){var z=Math.floor(Math.random()*(q2+1)),t=out[q2];out[q2]=out[z];out[z]=t;}
   return out;
 }
+/* parecença entre dois nomes (0 a 1): pares de letras em comum, com bônus para o mesmo começo */
+function bigramas(t){t=t.toLowerCase().normalize('NFD').replace(/[^a-z]/g,'');var o=[];for(var k=0;k<t.length-1;k++)o.push(t.substr(k,2));return o;}
+function parecido(a,b){
+  var x=bigramas(a),y=bigramas(b),n=0,usados={};
+  x.forEach(function(g){for(var k=0;k<y.length;k++)if(!usados[k]&&y[k]===g){usados[k]=1;n++;break;}});
+  var d=x.length+y.length?2*n/(x.length+y.length):0;
+  if(a.charAt(0).toLowerCase()===b.charAt(0).toLowerCase())d+=0.25;
+  return d;
+}
+/* Difícil: das alternativas da mesma região (ou vizinhas), as de nome mais parecido com a resposta */
+function opcoesDificeis(i,cands,qtd){
+  var arr=QD(),alvo=optLabel(i),viz=estadoTreino.quizDomain==='br'?(arr[i].nb||[]):(NB[i]||[]);
+  var perto=cands.filter(function(x){return arr[x].r===arr[i].r||viz.indexOf(x)>=0;});
+  if(perto.length<qtd+2)perto=cands;
+  /* conta também o nome do país (Guiné, Guiné-Bissau, Guiné Equatorial): é a pegadinha mais comum */
+  var nome=short(arr[i]);
+  var nota=perto.map(function(x){return {x:x,n:parecido(alvo,optLabel(x))+0.8*parecido(nome,short(arr[x]))+(viz.indexOf(x)>=0?0.3:0)+Math.random()*0.15};});
+  nota.sort(function(a,b){return b.n-a.n;});
+  return nota.slice(0,Math.max(qtd+2,6)).map(function(o){return o.x;});
+}
+function nivelAtual(){return quiz.nivel||'normal';}
 function makeOptions(i){
   var arr=QD(),label=optLabel(i),labels={},out=[i];labels[label]=1;
   var sc=poolIdx().filter(function(k){return k!==i;}),wd=[],k,guard;
@@ -191,10 +217,15 @@ function makeOptions(i){
   /* alternativas plausíveis: quase sempre da mesma região, e sem lugares disputados (Tskhinvali,
      Sukhumi...) a não ser que a resposta certa também seja um deles */
   if(!arr[i].dis){sc=sc.filter(function(x){return !arr[x].dis;});wd=wd.filter(function(x){return !arr[x].dis;});}
-  var same=sc.filter(function(x){return arr[x].r===arr[i].r;});
+  var nv=nivelAtual(),same;
+  /* Fácil: alternativas de outras regiões (bem diferentes); Difícil: nomes parecidos e vizinhos */
+  var conhecidos=wd.filter(function(x){return !arr[x].dep||arr[i].dep;});
+  if(nv==='facil'){var longe=conhecidos.filter(function(x){return arr[x].r!==arr[i].r;});same=longe.length>=3?longe:sc;}
+  else if(nv==='dificil')same=opcoesDificeis(i,conhecidos,3);
+  else same=sc.filter(function(x){return arr[x].r===arr[i].r;});
   guard=0;
   while(out.length<4&&guard++<400&&sc.length){
-    var src=(Math.random()<.85&&same.length)?same:sc;
+    var src=((nv!=='normal'||Math.random()<.85)&&same.length)?same:sc;
     var c=src[Math.floor(Math.random()*src.length)],l=optLabel(c);
     if(labels[l])continue;labels[l]=1;out.push(c);
   }
@@ -298,6 +329,8 @@ function finishQ(ok,extra){
   recordProgress(ok,quiz.hinted);
   if(rapido)addXP(3);
   if(ok&&quiz.streak>=2)addXP(Math.min(quiz.streak-1,5));
+  /* no Difícil cada acerto vale um pouco mais */
+  if(ok&&!quiz.hinted&&nivelAtual()==='dificil'&&quiz.type==='choice'&&quiz.mode!=='map'&&quiz.mode!=='neighbor')addXP(2);
   if(estadoTreino.QS.q&&!lsGet('globo.dicaLivre',false)&&(quiz.total||0)>=4){lsSet('globo.dicaLivre',true);setTimeout(function(){celebrate('👆 Dica: toque em Livre, lá em cima, para explorar o globo à vontade.');},1300);}
   showTarget(quiz.cur);
   if(estadoTreino.quizDomain==='world'){estadoTreino.qFlash={i:quiz.cur,kind:ok?'ok':'reveal',t:performance.now()};}
@@ -393,4 +426,4 @@ function migrarAmericas(){
   if(mudou){saveRuns();saveRecs();}
 }
 
-export { curiosidade, curRun, drawBadge, estadoPartida, fbText, finishQ, fmtTime, iniciar, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget };
+export { nivelAtual, curiosidade, curRun, drawBadge, estadoPartida, fbText, finishQ, fmtRelogio, fmtTime, iniciar, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget };

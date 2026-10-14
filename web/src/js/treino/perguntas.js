@@ -21,7 +21,7 @@ import { flyTo } from '../visualizacao/animacao.js';
 import { applyDomainForScope, emptyMsg, inScopeActive, poolIdx, qcapD, qcc, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
 import { accList, estadoTreino, freshQS, matches, measureQ, quiz, resetSession, scopeLabel, stopTimerTick } from './estado.js';
 import { fillQStat, modeName } from './estatisticas.js';
-import { curRun, estadoPartida, finishQ, fmtTime, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget } from './partida.js';
+import { curRun, estadoPartida, finishQ, fmtRelogio, fmtTime, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget } from './partida.js';
 import { addXP, zerarProgresso } from './progressao.js';
 import { estadoBrasil, stateAt } from '../visualizacao/estados.js';
 import { estadoRender } from '../visualizacao/projecao.js';
@@ -38,9 +38,25 @@ function iniciarJogoRapido(tipo){
   quiz.sessionLen=tipo==='relampago'?0:10;
   quiz.timerLen=tipo==='relampago'?60:0;
   $('scopesheet').style.display='none';
-  resetSession();quiz.last=-1;
-  if(quiz.timerLen)startTimerTick();else{stopTimerTick();updateTimerDisplay();}
-  nextQ();buildModeButtons();rotuloJogoRapido();renderScore();updateScopeBtn();
+  resetSession();quiz.last=-1;stopTimerTick();
+  buildModeButtons();rotuloJogoRapido();renderScore();updateScopeBtn();
+  if(tipo==='relampago'){
+    var rc=recordeRelampago();
+    $('qtimer').textContent='⏱️ 60s';
+    mostrarIntro('⚡ Relâmpago',['⏱️ Você tem 60 segundos.','🔀 As perguntas vêm misturadas: capital, país, bandeira e vizinho.','👆 Responda rápido. Errou? Passa sozinho para a próxima.',rc?('🏆 Seu recorde: '+rc+' certas. Dá para bater?'):'🏆 Vale quantas você acertar: faça o seu primeiro recorde.'],'▶ Começar (60 s)',function(){startTimerTick();nextQ();});
+    return;
+  }
+  updateTimerDisplay();nextQ();
+}
+/** Tela curta que explica um jogo antes de começar (Relâmpago, Desafio do dia). */
+function mostrarIntro(titulo,linhas,botao,comecar){
+  var body=$('qbody'),fb=$('qfb');body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';$('qpool').textContent='';
+  quiz.cur=-1;quiz.answered=true;estadoTreino.qBadge=null;estadoTreino.qFlash=null;estadoTreino.qPino=null;
+  var box=document.createElement('div');box.className='jogointro';
+  box.appendChild(Object.assign(document.createElement('div'),{className:'rftit',textContent:titulo}));
+  linhas.forEach(function(t){box.appendChild(Object.assign(document.createElement('p'),{textContent:t}));});
+  var b=document.createElement('button');b.className='rfjogar';b.textContent=botao;b.onclick=comecar;box.appendChild(b);
+  body.appendChild(box);measureQ();
 }
 /** Volta ao treino normal (tipo de pergunta, rodada e cronômetro de antes). */
 function sairJogoRapido(){
@@ -58,8 +74,19 @@ function sessionDone(){return quiz.sessionLen>0&&quiz.sessionAsked>=quiz.session
 function timerRemaining(){if(!quiz.timerLen)return null;return Math.max(0,quiz.timerLen*1000-(Date.now()-quiz.timerStart));}
 function updateTimerDisplay(){
   var el=$('qtimer'),r=timerRemaining();
-  el.textContent=(r==null)?'':('⏱️ '+Math.ceil(r/1000)+'s');
+  el.classList.toggle('contagem',r!=null);
+  el.textContent=(r==null)?tempoDaPartida():('⏱️ '+Math.ceil(r/1000)+'s');
 }
+/* sem cronômetro, mostra o tempo de jogo da partida da região (o mesmo que vale para o recorde de tempo) */
+function tempoDaPartida(){
+  if(quiz.jogoRapido||estadoTreino.desafio||!poolIdx().length)return '';
+  var rr=estadoPartida.RUNS[runKey()];if(!rr)return '⏱️ 0:00';
+  var t=rr.at||0;
+  if(!rr.fin&&quiz.cur>=0&&!quiz.answered&&$('qbody').querySelector('.qq')&&!$('qbody').querySelector('.retomar'))t+=Math.min(60000,Math.max(0,Date.now()-(rr.la||Date.now())));
+  return '⏱️ '+fmtRelogio(t);
+}
+let relogioInt = 0;
+function ligarRelogio(){clearInterval(relogioInt);relogioInt=setInterval(function(){if(!quiz.open){clearInterval(relogioInt);return;}if(!quiz.timerLen)updateTimerDisplay();},1000);}
 function startTimerTick(){
   stopTimerTick();
   if(!quiz.timerLen){updateTimerDisplay();return;}
@@ -173,6 +200,10 @@ function definirRodada(v){
   if(v){quiz.survivalMode=false;lsSet('globo.quiz.survival',false);}
   resetSession();
 }
+function definirNivel(v){
+  quiz.nivel=v;lsSet('globo.quiz.nivel',v);
+  if(quiz.cur>=0&&!quiz.answered)nextQ();
+}
 function definirResposta(v){
   quiz.type=v;buildModeButtons();resetSession();nextQ();
 }
@@ -185,8 +216,10 @@ function nextQ(){
      depois (ex.: Guiana Francesa na América do Sul); a medalha e os recordes ficam guardados em globo.recs.v1 */
   var rk=runKey(),rr=estadoPartida.RUNS[rk];
   if(rr&&rr.fin&&estadoPartida.ultimoFim!==rk){delete estadoPartida.RUNS[rk];saveRuns();}
+  var body=$('qbody'),fb=$('qfb');
+  if(perguntarRetomar(rk,body,fb))return;
   var arr=QD(),i=pickQ();
-  var body=$('qbody'),fb=$('qfb');body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
+  body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
   var isMap=quiz.mode==='map',isNeighbor=quiz.mode==='neighbor';
   measureQ();
   if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){showRunDone();return;}semPerguntas(body);$('qpool').textContent='';return;}
@@ -294,6 +327,34 @@ function nextQ(){
   }
   rotuloJogoRapido();
 }
+/* partida parada há algumas horas (ex.: voltou no outro dia): pergunta se continua ou começa do zero */
+const PAUSA_LONGA = 3*3600e3;
+const jaPerguntou = {};
+function haQuanto(ms){
+  var min=Math.round(ms/6e4),h=Math.round(ms/36e5),d=Math.round(ms/864e5);
+  return min<60?('há '+min+' min'):h<24?('há '+h+(h===1?' hora':' horas')):d===1?'ontem':('há '+d+' dias');
+}
+function perguntarRetomar(rk,body,fb){
+  if(quiz.jogoRapido||estadoTreino.desafio)return false;
+  var r=estadoPartida.RUNS[rk],n=poolIdx().length;
+  /* uma vez por pausa: depois de responder ou de escolher, só pergunta de novo na próxima pausa longa */
+  if(!r||r.fin||!n||(jaPerguntou[rk]||0)>(r.la||0))return false;
+  var feitos=n-runPool().length,parado=Date.now()-(r.la||Date.now());
+  if((!feitos&&!r.e)||parado<PAUSA_LONGA)return false;
+  jaPerguntou[rk]=Date.now();
+  body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
+  var box=document.createElement('div');box.className='retomar';
+  var h=document.createElement('div');h.className='qq';h.textContent='Você parou '+haQuanto(parado)+' em '+scopeLabel();
+  var sub=document.createElement('div');sub.className='qhint';
+  sub.textContent=feitos+' de '+n+' feitos · '+r.e+' '+(r.e===1?'erro':'erros')+' · ⏱️ '+fmtRelogio(r.at||0);
+  var row=document.createElement('div');row.className='qrow';
+  var cont=document.createElement('button');cont.className='rfjogar';cont.textContent='▶ Continuar';cont.onclick=function(){nextQ();};
+  var zero=document.createElement('button');zero.textContent='↺ Começar do zero';zero.onclick=function(){runRestart();setStatus('Partida recomeçada do zero. Medalhas e conquistas continuam.',3000);};
+  row.appendChild(cont);row.appendChild(zero);
+  box.appendChild(h);box.appendChild(sub);box.appendChild(row);body.appendChild(box);
+  $('qpool').textContent='';measureQ();
+  return true;
+}
 function quizMapAnswer(cn){
   if(!estadoTreino.qMap||quiz.answered)return;
   var i=quiz.cur,d=D[i],ok=!!cn&&cn.i===i;
@@ -352,7 +413,7 @@ function buildModeButtons(){
   /* jogos rápidos: misturam tipos de pergunta; o desafio do dia é o mesmo para todo mundo */
   var jr=document.createElement('div');jr.className='qjr';
   var rc=recordeRelampago();
-  [['relampago','⚡ Relâmpago','60 segundos'+(rc?' · recorde '+rc:'')],['misto','🎲 Misto','10 perguntas variadas'],['desafio','🗓️ Desafio','Do dia, igual para todos']].forEach(function(j){
+  [['relampago','⚡ Relâmpago','Quantas você acerta em 60 s?'+(rc?' Recorde: '+rc:'')],['misto','🎲 Misto','10 perguntas de tipos variados'],['desafio','🗓️ Desafio do dia','10 capitais, iguais para todos, 1 vez por dia']].forEach(function(j){
     var b=document.createElement('button');b.className='mcard';b.id='jr-'+j[0];
     b.setAttribute('aria-pressed',quiz.jogoRapido===j[0]||(j[0]==='desafio'&&estadoTreino.desafio)?'true':'false');
     var t=document.createElement('b');t.textContent=j[1];var ex=document.createElement('small');ex.textContent=j[2];
@@ -377,19 +438,22 @@ function quizSetMode(m){
 function quizOpen(){
   if(estadoBrasil.statesMode)exitStates(false);
   tourStop();closeCard();hidePick();
+  /* a linha da Distância entre capitais é do modo Livre: some ao entrar no treino */
+  estadoDistancia.arc=null;
   quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncModeSw();
   document.body.classList.add('quizing');$('quiz').classList.add('map');pausarMusica(true);
   $('quiz').style.display='block';
   applyDomainForScope();
   updateScopeBackBtn();
   if(quiz.timerLen)startTimerTick();else updateTimerDisplay();
+  ligarRelogio();
   setTimeout(function(){resize();measureQ();},60);
   renderScore();quizSetMode(quiz.mode);
 }
 function quizClose(){
   quiz.open=false;estadoTreino.qMap=false;estadoTreino.qPanelH=0;estadoTreino.qFlash=null;estadoTreino.qBadge=null;syncModeSw();
   if(estadoDistancia.arc&&estadoDistancia.arc.quiz)estadoDistancia.arc=null;
-  stopTimerTick();
+  stopTimerTick();clearInterval(relogioInt);
   if(estadoTreino.quizDomain==='br'){estadoBrasil.statesMode=false;estadoBrasil.selSt=null;}
   document.body.classList.remove('quizing');$('quiz').style.display='none';setTimeout(resize,60);pausarMusica(false);
 }
@@ -493,4 +557,4 @@ function iniciar() {
   confirmTap($('qreset'),'Toque de novo para zerar tudo',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();zerarProgresso();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Tudo zerado: treino, medalhas, nível e conquistas.',3000);});
 }
 
-export { buildModeButtons, definirOrdem, definirResposta, definirRodada, definirSobrevivencia, definirTempo, iniciar, iniciarJogoRapido, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, recordeRelampago, runRestart, sairJogoRapido };
+export { buildModeButtons, definirNivel, definirOrdem, mostrarIntro, definirResposta, definirRodada, definirSobrevivencia, definirTempo, iniciar, iniciarJogoRapido, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, recordeRelampago, runRestart, sairJogoRapido };

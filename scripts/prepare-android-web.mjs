@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Gera android/app/src/main/assets/www/index.html a partir de web/geototal.html
 // (que por sua vez é gerado de web/src/ por scripts/build-web.mjs; use `npm run build`):
-// - carrega d3, topojson, datamaps e os estados do Brasil de assets/www/lib (funciona offline),
+// - carrega d3, topojson e datamaps de assets/www/lib (funciona offline; os estados do Brasil já
+//   vêm embutidos em js/dados/contornos-estados.js),
 //   mantendo os CDNs como reserva;
 // - injeta scripts/android-shim.js (salvar CSV, imprimir e botão voltar no Android);
 // - trava o conteúdo com uma Content-Security-Policy: só roda código do próprio app (nada de
@@ -24,7 +25,6 @@ const local = [
   ['https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js', 'lib/d3.min.js'],
   ['https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js', 'lib/topojson.min.js'],
   ['https://cdn.jsdelivr.net/npm/datamaps@0.5.9/dist/datamaps.world.min.js', 'lib/datamaps.world.min.js'],
-  ['https://cdn.jsdelivr.net/npm/@amcharts/amcharts5-geodata@5.1.4/brazilLow.js', 'lib/brazilLow.js'],
 ];
 for (const [url, file] of local) {
   const lista = new RegExp('\\[(["\'])' + url.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '\\1', 'g');

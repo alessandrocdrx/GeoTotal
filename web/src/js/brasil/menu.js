@@ -6,49 +6,17 @@
 
 import { enterStates } from './cartao-estado.js';
 import { BRS } from '../dados/estados-brasil.js';
-import { D, dflag } from '../dados/paises.js';
-import { short } from '../dados/vizinhos.js';
-import { fmtArea, fmtPop, tourStop } from '../interface/cartao-detalhes.js';
-import { fillCountrySelect } from '../interface/distancia.js';
+import { tourStop } from '../interface/cartao-detalhes.js';
+import { emitir } from '../nucleo/eventos.js';
 import { $ } from '../nucleo/utilitarios.js';
-
-function cmpRow(box,label,va,vb){
-  var r=document.createElement('div');r.className='cmprow';
-  var l=document.createElement('div');l.className='cmpv';l.textContent=va;
-  var m=document.createElement('div');m.className='cmpl';m.textContent=label;
-  var rr=document.createElement('div');rr.className='cmpv';rr.textContent=vb;
-  r.appendChild(l);r.appendChild(m);r.appendChild(rr);box.appendChild(r);
-}
-function cmpDens(x){return (x&&x.pop&&x.area)?Math.round(x.pop*1000/x.area).toLocaleString('pt-BR')+' hab./km²':'—';}
-function cmpRelTop(d){return (d.rel&&d.rel.items[0])?(d.rel.items[0].n+(d.rel.items[0].p!=null?' '+d.rel.items[0].p+'%':'')):'—';}
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   /* ---------- menu Mais: Brasil ---------- */
   BRS.forEach(function(s){var o=document.createElement('option');o.value=s.i;o.textContent=s.sigla+' — '+s.name+' ('+s.cap+')';$('stSel').appendChild(o);});
   $('stGo').onclick=function(){$('msheet').style.display='none';enterStates(BRS[+$('stSel').value]);};
+  $('stTreino').onclick=function(){$('msheet').style.display='none';emitir('treinar-estados');};
   $('stAll').onclick=function(){$('msheet').style.display='none';enterStates(null);};
-  fillCountrySelect($('cmpA'),'Brasil');fillCountrySelect($('cmpB'),'Argentina');
-  $('cmpGo').onclick=function(){
-    var a=D[+$('cmpA').value],b=D[+$('cmpB').value],box=$('cmpres');box.innerHTML='';
-    if(a===b){box.textContent='Escolha dois países diferentes.';return;}
-    var h=document.createElement('div');h.className='cmphead';
-    var ha=document.createElement('div');ha.textContent=dflag(a)+' '+short(a);
-    var hc=document.createElement('div');hc.textContent='';
-    var hb=document.createElement('div');hb.textContent=dflag(b)+' '+short(b);
-    h.appendChild(ha);h.appendChild(hc);h.appendChild(hb);box.appendChild(h);
-    var ia=a.info,ib=b.info;
-    cmpRow(box,'População',ia?fmtPop(ia.pop):'—',ib?fmtPop(ib.pop):'—');
-    cmpRow(box,'Área',ia?fmtArea(ia.area):'—',ib?fmtArea(ib.area):'—');
-    cmpRow(box,'Densidade',cmpDens(ia),cmpDens(ib));
-    cmpRow(box,'Idioma(s) oficial(is)',ia?ia.lang:'—',ib?ib.lang:'—');
-    cmpRow(box,'Moeda',ia?ia.cur:'—',ib?ib.cur:'—');
-    cmpRow(box,'Fuso horário',ia?ia.tz:'—',ib?ib.tz:'—');
-    cmpRow(box,'Religião predominante',cmpRelTop(a),cmpRelTop(b));
-    var n=document.createElement('div');n.className='inote';n.style.marginTop='8px';
-    n.textContent='Valores aproximados. Confira em fonte oficial antes de citar.';
-    box.appendChild(n);
-  };
 
   document.addEventListener('visibilitychange',function(){if(document.hidden)tourStop();});
 }

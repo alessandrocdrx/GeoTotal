@@ -434,3 +434,37 @@ h1.marca{flex:none}
 .qjr .mcard{padding:8px 8px!important}
 .qjr .mcard b{font-size:12.5px;white-space:nowrap}
 .qjr .mcard small{font-size:11px}
+#stbar .stbtns{display:flex;gap:6px}
+/* recomeçar a partida nos ajustes ⚙️ e pergunta ao voltar depois de uma pausa longa */
+.ajzerar{display:block;width:100%;margin-top:6px;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--chip);color:var(--fg);font-size:14px;font-weight:700;font-family:inherit;text-align:left;cursor:pointer}
+.ajzerar.armado{background:#e5484d;border-color:#e5484d;color:#fff}
+.retomar{text-align:center;padding:4px 0 8px}
+.retomar .qrow button{min-height:52px}
+.retomar .qrow .rfjogar{flex:1.4;font-size:17px;background:linear-gradient(90deg,#1fa85a,#2ecc71);color:#fff;border:0}
+/* tempo de jogo da partida (sem cronômetro) discreto; a contagem regressiva continua em destaque */
+#qtimer{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+#qtimer.contagem{color:#e8a400}
+/* comparar países como duelo (js/interface/comparar.js) */
+.duelhead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:10px 0 6px;text-align:center}
+.duelpais{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.duelpais b{font-size:15px;overflow-wrap:anywhere}
+.duelbig{font-size:46px;line-height:1.1;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif;animation:qpop .45s ease-out both}
+.duelpais.b .duelbig{animation-delay:.12s}
+.duelvs{font-weight:900;font-size:18px;color:#fff;background:linear-gradient(135deg,#f72585,#fb8500);border-radius:999px;padding:6px 10px;box-shadow:0 4px 12px rgba(247,37,133,.35)}
+.duelrow{padding:9px 0;border-top:1px solid var(--border)}
+.dueltit{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+.duellado{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:8px;margin:3px 0;font-size:13px}
+.duellado b{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.duelflag{font-size:18px;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
+.duelbar{height:12px;border-radius:6px;background:var(--border);overflow:hidden}
+.duelbar i{display:block;height:100%;width:0;border-radius:6px;background:#8a93a6;transition:width .7s cubic-bezier(.2,.9,.3,1) var(--atraso,0s)}
+.duellado.a .duelbar i{background:#4da3ff}.duellado.b .duelbar i{background:#ff8a3d}
+.duellado.vence b::after{content:' 🏆'}
+.duelplacar{margin:12px 0 8px;padding:12px;border-radius:14px;text-align:center;font-weight:900;font-size:17px;background:linear-gradient(90deg,rgba(77,163,255,.18),rgba(255,138,61,.18));border:1px solid var(--border)}
+.duelcurio p{margin:6px 0;font-size:14px;line-height:1.4}
+.duelinfo{margin-top:12px}
+@media (prefers-reduced-motion: reduce){.duelbig{animation:none}.duelbar i{transition:none}}
+/* explicação antes do Relâmpago e do Desafio do dia */
+.jogointro{text-align:center;padding:4px 0 8px}
+.jogointro p{margin:8px 0;font-size:15px;line-height:1.4;text-align:left}
+.jogointro .rfjogar{margin-top:10px}

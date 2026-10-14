@@ -10,7 +10,7 @@ import { lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { applyScopeChange } from './escopo.js';
 import { estadoTreino, quiz, resetSession, stopTimerTick } from './estado.js';
 import { renderScore } from './partida.js';
-import { nextQ, quizOpen, quizSetMode, sairJogoRapido } from './perguntas.js';
+import { mostrarIntro, nextQ, quizOpen, quizSetMode, sairJogoRapido } from './perguntas.js';
 import { celebrate } from './progressao.js';
 
 /*
@@ -59,7 +59,8 @@ function iniciarDesafio(){
   estadoTreino.desafio={dia:hojeStr(),num:num,fila:filaDoDia(num),antes:{len:quiz.sessionLen,surv:quiz.survivalMode,timer:quiz.timerLen}};
   /* o desafio é sempre igual: 10 perguntas, sem cronômetro nem sobrevivência (sem gravar a preferência) */
   quiz.sessionLen=10;quiz.survivalMode=false;quiz.timerLen=0;stopTimerTick();
-  resetSession();quiz.last=-1;nextQ();renderScore();
+  resetSession();quiz.last=-1;renderScore();
+  mostrarIntro('🗓️ Desafio do dia #'+num,['🌍 10 países, os mesmos para todo mundo hoje.','🏛️ Diga a capital de cada um. Só dá para jogar uma vez por dia.','📋 No fim, copie o resultado (🟩🟥) e compare com os amigos, sem entregar as respostas.'],'▶ Começar',function(){nextQ();});
 }
 
 function aoTerminarRodada(o){

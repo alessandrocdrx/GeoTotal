@@ -12,7 +12,7 @@
 
     <div class="mgrp">🧭 Explorar</div>
     <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
-    <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Dois países lado a lado</small></span><span class="mc">›</span></button>
+    <button data-p="mp-cmp"><span class="mi">⚖️</span><span class="mt"><b>Comparar países</b><small>Duelo: quem é maior, mais populoso…</small></span><span class="mc">›</span></button>
     <button data-p="mp-dist"><span class="mi">📏</span><span class="mt"><b>Distância entre capitais</b><small>Calcula e mostra no globo</small></span><span class="mc">›</span></button>
     <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
 
@@ -55,7 +55,7 @@
   <div class="mpage" id="mp-cmp" data-t="Comparar países" hidden>
     <select id="cmpA" aria-label="Primeiro país"></select>
     <select id="cmpB" aria-label="Segundo país"></select>
-    <div class="row2"><button id="cmpGo">Comparar</button></div>
+    <div class="row2"><button id="cmpTroca">⇄ Trocar</button><button id="cmpSort">🎲 Sortear dois</button></div>
     <div id="cmpres"></div>
   </div>
   <div class="mpage" id="mp-dist" data-t="Distância entre capitais" hidden>
@@ -65,7 +65,11 @@
     <div id="dres" class="inote"></div>
   </div>
   <div class="mpage" id="mp-br" data-t="Estados do Brasil" hidden>
+    <div class="mlab">🎯 Jogar</div>
+    <button id="stTreino" class="cstreinar">🎯 Treinar os 27 estados</button>
+    <p class="mdesc">Capitais, siglas, vizinhos e achar no mapa. Também dá para escolher uma região (Sul, Nordeste…) em 🗺️ Região, no Treino.</p>
+    <div class="mlab">🔎 Explorar</div>
     <select id="stSel" aria-label="Estado"></select>
-    <div class="row2"><button id="stGo">Ir para o estado</button><button id="stAll">Ver todos os estados</button></div>
+    <div class="row2"><button id="stGo">Ir para o estado</button><button id="stAll">Ver todos no mapa</button></div>
   </div>
 </div></div>

@@ -11,6 +11,7 @@ import { select } from '../interface/cartao-pais.js';
 import { afterFilter, buildChips } from '../interface/filtros.js';
 import { ganchosInterface } from '../interface/ganchos.js';
 import { hidePick } from '../interface/lista-proximos.js';
+import { emitir } from '../nucleo/eventos.js';
 import { $ } from '../nucleo/utilitarios.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { estadoMapa } from '../visualizacao/tela.js';
@@ -28,6 +29,7 @@ function exitStates(goBrazil){
 function iniciar() {
   ganchosInterface.atualizarBotaoEstados = updateStBtn;
   $('stexit').onclick=function(){exitStates(true);};
+  $('sttreino').onclick=function(){emitir('treinar-estados');};
 }
 
 export { exitStates, iniciar, updateStBtn };
