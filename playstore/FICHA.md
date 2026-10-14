@@ -47,7 +47,7 @@ Tour rápido de 30 segundos e começo pela América do Sul. Funciona em celular 
 📴 SEM INTERNET, SEM ANÚNCIOS
 Tudo vai dentro do app. Sem cadastro, sem anúncios, sem compras e sem coleta de dados. O progresso volta sozinho ao trocar de celular (backup do Android) ou por arquivo.
 
-204 países e territórios, mais 45 territórios dependentes opcionais (como Porto Rico, Groenlândia e Hong Kong), com selo de ultramarino, e 15 ilhas remotas e bases da Antártida.
+204 países e territórios, mais 45 territórios dependentes opcionais (como Porto Rico, Groenlândia e Hong Kong), com selo de ultramarino, 15 ilhas remotas e bases da Antártida, e 5 micronações.
 
 Código aberto (Apache 2.0), criado por alessandrocdrx: github.com/alessandrocdrx/GeoTotal
 ```
