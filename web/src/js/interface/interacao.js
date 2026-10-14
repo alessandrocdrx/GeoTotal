@@ -6,7 +6,7 @@
 
 import { D } from '../dados/paises.js';
 import { closeCard } from './cartao-detalhes.js';
-import { abrirArea } from './cartao-natural.js';
+import { abrirArea, abrirOceano, fecharArea } from './cartao-natural.js';
 import { select } from './cartao-pais.js';
 import { ganchosInterface } from './ganchos.js';
 import { hidePick } from './lista-proximos.js';
@@ -14,6 +14,7 @@ import { tocar } from '../nucleo/som.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { inv2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
+import { oceanoEm } from '../visualizacao/aguas.js';
 import { areaEm } from '../visualizacao/natureza.js';
 import { countryAt, estadoRender, inFeat, lngLatEm, terraEm } from '../visualizacao/projecao.js';
 import { cv, estadoCamera, estadoMapa, H, PI, R0, rot, W } from '../visualizacao/tela.js';
@@ -48,6 +49,13 @@ function tocarArea(ll){
   tocar('toque');abrirArea(a,function(d){select(d,true);});
   return true;
 }
+/* oceano: só tocando no nome escrito (não tem contorno, e assim um toque no mar não abre por engano) */
+function tocarOceano(x,y){
+  if(!estadoRender.camadas.oceanos||estadoBrasil.statesMode)return false;
+  var o=oceanoEm(x,y);if(!o)return false;
+  if(estadoMapa.selected)closeCard();
+  fecharArea();tocar('toque');return abrirOceano(o);
+}
 function tap(px,py){
   /* na tela da Distância, tocar no mapa não abre países (só arrasta e dá zoom); nas siglas, diz o aeroporto */
   if(estadoDistancia.ativo){var rr=cv.getBoundingClientRect();toqueNaRota(px-rr.left,py-rr.top);return;}
@@ -55,6 +63,7 @@ function tap(px,py){
   var r=cv.getBoundingClientRect(),x=px-r.left,y=py-r.top,R=R0*estadoCamera.zoom,cand=[];
   if(ganchosInterface.toqueAntes(x,y))return;
   if(ganchosInterface.toqueEstados(x,y))return;
+  if(tocarOceano(x,y))return;
   if(!ganchos.ocultarMarcadores()){
     for(var i=0;i<D.length;i++){
       if(!estadoMapa.on[i])continue;
@@ -81,6 +90,7 @@ function tap(px,py){
 function tap2D(px,py){
   var r=cv.getBoundingClientRect(),x=px-r.left,y=py-r.top,R2=R2now(),cx=W/2,cy=H*estadoCamera.cyFrac,i;
   if(ganchosInterface.toqueNoMapa2D(x,y))return;
+  if(tocarOceano(x,y))return;
   hidePick();
   var cand2=[];
   for(i=0;i<D.length;i++){

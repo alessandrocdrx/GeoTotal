@@ -3103,6 +3103,14 @@ Brunei:Malásia
   }
 
   // web/src/js/visualizacao/aguas.js
+  var nomesOceanos = [];
+  function oceanoEm(x, y) {
+    for (var k = 0; k < nomesOceanos.length; k++) {
+      var r = nomesOceanos[k];
+      if (x >= r.x - 6 && x <= r.x + r.w + 6 && y >= r.y - 6 && y <= r.y + r.h + 6) return r.nome;
+    }
+    return null;
+  }
   function cabe(r, usados) {
     for (var u = 0; u < usados.length; u++) {
       var U = usados[u];
@@ -3113,6 +3121,7 @@ Brunei:Malásia
   function desenharAguas(projetar, escala, zoom, usados) {
     var cam = estadoRender.camadas, atlas = estadoRender.atlas && !!estadoRender.feats;
     usados = usados || [];
+    nomesOceanos = [];
     if (!cam.oceanos && !cam.mares) return usados;
     var cor = atlas ? "30,78,128" : "168,214,255", k, p;
     ctx.textAlign = "center";
@@ -3128,6 +3137,7 @@ Brunei:Malásia
         var w = Math.max(ctx.measureText(oc.l1).width, ctx.measureText(oc.l2).width), ro = { x: p.x - w / 2, y: p.y - fs * 1.3, w, h: fs * 2.6 };
         if (!cabe(ro, usados)) continue;
         usados.push(ro);
+        if (p.a > 0.5) nomesOceanos.push({ x: ro.x, y: ro.y, w: ro.w, h: ro.h, nome: oc.l2 });
         ctx.fillStyle = "rgba(" + cor + "," + p.a * 0.9 + ")";
         ctx.fillText(oc.l1, p.x, p.y - fs * 0.62);
         ctx.fillText(oc.l2, p.x, p.y + fs * 0.72);
@@ -4973,7 +4983,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       ctx.restore();
     });
     var sel2 = estadoRender.areaSel;
-    if (sel2) {
+    if (sel2 && sel2.geometry) {
       ctx.save();
       ctx.beginPath();
       tracar(sel2);
@@ -5780,6 +5790,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var cartao_natural_exports = {};
   __export(cartao_natural_exports, {
     abrirArea: () => abrirArea,
+    abrirOceano: () => abrirOceano,
     fecharArea: () => fecharArea,
     iniciar: () => iniciar17
   });
@@ -5882,14 +5893,51 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     "Planalto do Decão": "Ocupa quase todo o sul da Índia; formado por camadas de lava de vulcões antigos.",
     "Drakensberg": "A maior cordilheira da África do Sul, com paredões de rocha e pinturas rupestres antigas."
   };
+  var OCEANOS = {
+    "PACÍFICO": {
+      nome: "Oceano Pacífico",
+      area: 165e6,
+      fundo: "~10.900 m, na Fossa das Marianas",
+      banha: "Ásia, Oceania, Américas e Antártida",
+      texto: 'O maior e mais fundo oceano: cabem nele todas as terras do planeta juntas, e ainda sobra espaço. Fernão de Magalhães o chamou de "pacífico" em 1520, porque o achou calmo depois de passar pelo estreito no sul da América.'
+    },
+    "ATLÂNTICO": {
+      nome: "Oceano Atlântico",
+      area: 106e6,
+      fundo: "~8.400 m, na Fossa de Porto Rico",
+      banha: "Américas, Europa, África e Antártida",
+      texto: "No meio dele corre uma cadeia de montanhas submarinas, a Dorsal Mesoatlântica. Ali o fundo do mar se abre aos poucos, e o Atlântico fica uns 2 a 4 cm mais largo por ano."
+    },
+    "ÍNDICO": {
+      nome: "Oceano Índico",
+      area: 705e5,
+      fundo: "~7.200 m, na Fossa de Java",
+      banha: "África, Ásia, Oceania e Antártida",
+      texto: "O oceano mais quente do mundo. Os ventos das monções sopram do mar para a terra no verão e trazem as chuvas de que a Índia e o Sudeste Asiático dependem."
+    },
+    "ÁRTICO": {
+      nome: "Oceano Glacial Ártico",
+      area: 14e6,
+      fundo: "~5.500 m, na Bacia Eurasiática",
+      banha: "Europa, Ásia e América do Norte",
+      texto: "O menor e mais raso dos oceanos, quase todo coberto de gelo. No Polo Norte não há terra, só gelo boiando. O gelo do fim do verão encolheu muito nas últimas décadas."
+    },
+    "AUSTRAL": {
+      nome: "Oceano Austral (Antártico)",
+      area: 21e6,
+      fundo: "~7.400 m, na Fossa das Sandwich do Sul",
+      banha: "Antártida",
+      texto: "Dá a volta na Antártida. Nele corre a Corrente Circumpolar Antártica, a corrente marinha mais forte do mundo. A National Geographic só passou a contar ele como o quinto oceano em 2021."
+    }
+  };
 
   // web/src/js/interface/cartao-natural.js
   var AREA_BRASIL = 8515767;
   var folhaN = null;
   var porCodigo = null;
-  function tamanho(km2) {
-    var t = "~" + (km2 >= 1e6 ? (km2 / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " milhões de km²" : Math.round(km2 / 1e3) * 1e3 > 0 ? (Math.round(km2 / 1e3) * 1e3).toLocaleString("pt-BR") + " km²" : km2.toLocaleString("pt-BR") + " km²");
-    var r = km2 / AREA_BRASIL;
+  function tamanho(km22) {
+    var t = "~" + (km22 >= 1e6 ? (km22 / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " milhões de km²" : Math.round(km22 / 1e3) * 1e3 > 0 ? (Math.round(km22 / 1e3) * 1e3).toLocaleString("pt-BR") + " km²" : km22.toLocaleString("pt-BR") + " km²");
+    var r = km22 / AREA_BRASIL;
     var comp = r >= 1.05 ? r.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " vezes o Brasil" : r >= 0.95 ? "quase o tamanho do Brasil" : r >= 0.01 ? Math.round(r * 100) + "% do Brasil" : "";
     return [t, comp];
   }
@@ -5959,6 +6007,29 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("ncard").scrollTop = 0;
     estadoCartao.cardH = $("ncard").offsetHeight + 10;
     flyTo(r.lat, r.lng, Math.max(estadoCamera.zoom, 1.4));
+  }
+  function abrirOceano(chave) {
+    var o = OCEANOS[chave];
+    if (!o) return false;
+    estadoRender.areaSel = { oceano: true, nome: o.nome };
+    $("ncico").textContent = "🌊";
+    $("nctipo").textContent = "Oceano";
+    $("ncnome").textContent = o.nome;
+    var fx = $("ncfatos");
+    fx.innerHTML = "";
+    var tm = tamanho(o.area);
+    fx.appendChild(fato("📐 Tamanho", tm[0]));
+    fx.appendChild(fato("🇧🇷 Comparando", tm[1]));
+    fx.appendChild(fato("⬇️ Mais fundo", o.fundo));
+    fx.appendChild(fato("🌍 Banha", o.banha));
+    $("nctexto").textContent = o.texto;
+    $("nctexto").hidden = false;
+    $("ncpaises").innerHTML = "";
+    $("ncnota").textContent = "Números aproximados; o tamanho dos oceanos muda conforme o que se conta como mar.";
+    $("ncard").hidden = false;
+    $("ncard").scrollTop = 0;
+    estadoCartao.cardH = $("ncard").offsetHeight + 10;
+    return true;
   }
   function iniciar17() {
     $("ncfechar").onclick = fecharArea;
@@ -7511,6 +7582,54 @@ NAN|Nadi|-17.76|177.44`;
     CC: "CCK"
   };
 
+  // web/src/js/dados/voos.js
+  var AEROPORTOS_RAW = "ABJ|Abidjan|Cote d'Ivoire|5.26|-3.93|2c1b9r3wbq806c308m5f02\nABV|Abuja|Nigeria|9.01|7.26|83861z276k3z022j6h6paq055p\nACC|Accra|Ghana|5.61|-0.17|c66h8m9r3w5l2j01002z3s5f106m715n1z0g2f6k806p053z3d\nADA|Adana|Turkey|36.98|35.28|3l5j\nADB|Izmir|Turkey|38.29|27.16|3i3l0n2739\nADD|Addis Ababa|Ethiopia|8.98|38.8|4w6o746v7l5oaq83869u0t673s10012j6h8mbg774z5j8s3z5m9w342w686k5n535t3g3u6c30026p1b1z621a2027805f3d1i2t\nADE|Aden|Yemen|12.83|45.03|7d9u0l0q1i\nADL|Adelaide|Australia|-34.94|138.53|23ac3d65\nAEP|Buenos Aires|Argentina|-34.56|-58.42|9n\nAER|Sochi|Russia|43.45|39.96|613nb43e5f5w\nAGA|Agadir|Morocco|30.33|-9.41|6w733m\nAGP|Malaga|Spain|36.67|-4.5|1sc5992fci\nAKL|Auckland|New Zealand|-37.01|174.79|c8c0b68a0i1f7x2h9k98a28b6aa8571a8tac65794zb19h20\nALA|Alma-ata|Kazakhstan|43.35|77.04|4z413e571a2w65b50q8sbo5r4nb4\nALG|Algier|Algeria|36.69|3.22|bc868m8j6ibq81by3s7i6k1p8xax4m100f8s6m712fci1z3z3d7n7w5f271b2z1g290v34\nAMM|Amman|Jordan|31.72|35.99|9u0t5r140q672w1a3110bgci9w065j62270g5l713s5f6k3z3d1z6pbq0vbc0e6d0n7ubrcoby8l3h77345gab1i328i4m\nAMS|Amsterdam|Netherlands|52.31|4.76|535tbkbs6l3q4t7a5n68803z1p1z3d5f276m71022fbq81br3s7i0nby396k6wco1n5s2k0j8k4vbf9p1lax7qc5991t6ncm7u3b6d0s0x8lal5rb50fbga00q3467592w1i8s575x1a65ac208b4zci6iaw735k472o6a8r1j2q9db05l55950p4j0o3o9ecj\nANU|Antigua|Antigua and Barbuda|17.14|-61.79|35126iaj3z9c7g5vaf9eb0a4agbv3o5lcl840ra1\nAPW|Faleolo|Samoa|-13.83|-172.01|520c7x\nARN|Stockholm|Sweden|59.65|17.92|7fbf7q148s9p596m8j0g5l27716k3v3o6i738i5s5f3z053d1p2f81bx7i4v3s0na039br6wcoby2k8kc1axc5991tad0x6dbg346g1a6a8e13bj\nASB|Ashkhabad|Turkmenistan|37.99|58.36|2w5f6k7q3z3d314n16bu\nASM|Asmara|Eritrea|15.29|38.91|1z805j5o069w62\nASU|Asuncion|Paraguay|-25.24|-57.52|4j7g6lc3a23q7v9d08\nATH|Athens|Greece|37.94|23.94|1z6d108jbb0xal0q5w5rb53nbg270gcl713s6i6k4m3z3d7n1p5f0v7i610439br2uco7uby2k0j8k4v9pc5ax991t8l0f34a0318v3bci73\nATL|Atlanta|United States|33.64|-84.43|8b521j57395n1p6p3d73clae7cba9x4k1x487abs1h7g5vat8w8p0w1q7za40p25b0a56la23qaf6a2x\nAUA|Oranjestad|Aruba|12.5|-70.02|5i558r2q1j9d251h7g3o5l0g6t1kcl0o\nAUH|Abu Dhabi|United Arab Emirates|24.43|54.65|7j2s772w2e6365bo5e2f1z3s0nbr7u7q5f6d0x100f9u340t6714597k4z79b128aca61a398s578b4j06629w4m0g5l276k3z73cl555n806p5j311p3h8u0d2o3b709h\nAXA|The Valley|Anguilla|18.2|-63.06|b0afat0h\nAYT|Antalya|Turkey|36.9|30.8|3i148j0gco6i7u3z1p6wbyax993b73\nBAH|Bahrain|Bahrain|26.27|50.63|14595e27670f345f6k3z059w1a3d0q5j1z626d109u77ab7e2w2e5u3c7k70\nBBO|Berbera|Somalia|10.39|44.94|3d06ab7d\nBCN|Barcelona|Spain|41.3|2.08|1n173sa0al5fbq81317ibyc1ax7qc515cm5e7n1z7g1h3q0nbr6wco2k4v9p991t8l1d5r0fbg7uac5l2z4j6m712f0e\nBDA|Bermuda|Bermuda|32.36|-64.68|7gcl8v1k5l6i3o0o\nBEG|Belgrade|Serbia|44.82|20.31|adaxb927co6n6d3lahalbq8lbg3d3s0nc51t0j2k8k4m0g3z7u6k5f0q1p7wa0brby993b\nBEL|Belem|Brazil|-1.38|-48.48|218r1q4j4c3y\nBEN|Benghazi|Libya|32.1|20.27|7i1z\nBEY|Beirut|Lebanon|33.82|35.49|ax3n7q6d5914670t050f9u9w5j2f6p021z8l274m3s0n7w6k3z3d0q1p5fbq0e4ua0az3h77343cab\nBGF|Bangui|Central African Republic|4.4|18.52|2f8c30\nBGI|Bridgetown|Barbados|13.07|-59.49|35ajav3t4j735vb03z6i967g0h4ecl5l\nBGO|Bergen|Norway|60.29|5.22|3rc15l8j6q819p3s5s0j8k99bj\nBGW|Baghdad|Iraq|33.26|44.23|0q0t3l0jb55f0s343d1z0f10ab\nBGY|Bergamo|Italy|45.67|9.7|1s710v8ybbah\nBHX|Birmingham|United Kingdom|52.45|-1.75|476d0k4b5b2w391s5kbr3o5e\nBJL|Banjul|Gambia|13.34|-16.65|3w9j8o6q2f2z0v\nBJM|Bujumbura|Burundi|-3.32|29.32|803g5t\nBKI|Kota Kinabalu|Malaysia|5.94|116.05|1wbk8t\nBKK|Bangkok|Thailand|13.68|100.75|8d90c21w7bbt4s207k31770t6759b45e7j2e2s45635751bkac281f4z0cb1bi658t5n800f5r272k0g3z713sax6k8b051p5f1zcoby4v0j8k0dbg1i0q342w708s3d\nBKO|Bamako|Mali|12.53|-7.95|872z2c8j058m0ebq806h6p2j6m272f00\nBLL|Billund|Denmark|55.74|9.15|3r5f5s7u1p7ico1t\nBLQ|Bologna|Italy|44.54|11.29|cmal5wbr2kbq8j6m2f717i0v\nBLR|Bangalore|India|13.2|77.71|26\nBNE|Brisbane|Australia|-27.38|153.12|5a884y378t23c8c08a0i6a524z20bk942hb13d1a5765ac0c3679\nBOD|Bordeaux|France|44.83|-0.72|390e\nBOG|Bogota|Colombia|4.7|-74.15|6rbs4j2q7g256la23q9dae9x4k4ta4af7a553o3z27714c5l0v9ecl0o562x0p\nBOM|Mumbai|India|19.09|72.87|2e2w2s6357bg65ac4z7o5n0g3o06057u9w800f\nBON|Kralendijk|Netherlands Antilles|12.13|-68.27|0o2q0g3o560p\nBOS|Boston|United States|42.36|-71.01|9j5s39cf710w7zb055cgafat8w6a5l7g9d3v762pa4ai0p6k6m3s0gco7u8b\nBRE|Bremen|Germany|53.05|8.79|bfc1270g\nBRI|Bari|Italy|41.14|16.76|bb7i1t8l\nBRN|Bern|Switzerland|46.91|7.5|0v6f0g297uby8f8xbr4r\nBRS|Bristol|United Kingdom|51.38|-2.72|475s5k6m716q\nBRU|Brussels|Belgium|50.9|4.48|183u8c2j8m3wc16n5t6i55395s730g276kci31br2k8kbf0j4v9paxc58s7i0nby991tcm0x8lal5rbg2w1a1c100e5l716m0o3o3zco687n1z5f302f2zbq813saz7u0s0q348i\nBSB|Brasilia|Brazil|-15.87|-47.92|0y7g4j3q2r9d4c6m273y0o\nBSL|Mulhouse|France|47.59|7.53|5s3s\nBTS|Bratislava|Slovakia|48.17|17.21|9939158x0b4ibl3j8k2m6u2a166sar\nBUD|Budapest|Hungary|47.43|19.26|8l4nbrcm7q1z7i0x6d6m8j0g27713s3z6i6k7w1p5fbp0v7yby610n39coaz2k0j8k4vc59pax991mbga03c34bz9t7u3b1c73as\nBVA|Beauvais|France|49.45|2.11|5w9l\nBVC|Boa Vista|Cape Verde|16.14|-22.89|6i9j\nBWN|Bandar Seri Begawan|Brunei|4.94|114.93|1a9h7k79ac5j653c4z1928\nBZE|Belize City|Belize|17.54|-88.31|7g9x2p9z407h2d0o3o6a56\nBZV|Brazzaville|Congo (Brazzaville)|-4.25|15.25|683u5t6c2j052f275n8030\nCAI|Cairo|Egypt|30.12|31.41|0l5o629w3g2t800ebqbc3s0nby1t6d10ax2k71310fbg142fco270g5l0v6k010z1p7uaz5f8s3z734m9u0q340t6728055n0677b36p023hab201a3d\nCAN|Guangzhou|China|23.39|113.3|7kanbk4s1fc24z8b80051z599u5j270gax6kbu1a3d2w63347j2s5y9065ac28368t\nCAY|Cayenne|French Guiana|4.82|-52.36|0y8r3t8j\nCBB|Cochabamba|Bolivia|-17.42|-66.18|6r\nCBR|Canberra|Australia|-35.31|149.2|b18t07798g1f\nCCK|Cocos Keeling Island|Cocos (Keeling) Islands|-12.19|96.83|cb\nCCS|Caracas|Venezuela|10.6|-66.99|af4j969i1h6la23q9d7g4t2q8z7a9e3z6m27713sb88h5l2x0o560p\nCCU|Kolkata|India|22.65|88.45|8q70\nCDG|Paris|France|49.01|2.55|bi7o5m1p801z053u1y6c8c118386012j8m9r2c879l7i0nbr5s2k4v1l9pc1ax7q6ncmb96d0xalb53n4n100fbg9u770tb45e2w2e8s5751bk1a4s65ac209vaw5k4zca0g6wcoby0j8k1t9j1b6k0qc5995r3z048l6h5n345f68b0399c3t6i1q251h6la23q9d7g4t7a55955lchci9e0e6m7181a56a8b4j5x2f2zbq3sbx3d\nCGK|Jakarta|Indonesia|-6.13|106.66|b18t793d658s8b7k57ac1a2e0q5j1z34509u51bka91w364z20\nCGN|Cologne|Germany|50.87|7.14|1n598k6i6k0e\nCIA|Rome|Italy|41.8|12.59|5w1s\nCKG|Chongqing|China|29.72|106.64|7b4vbu\nCKY|Conakry|Guinea|9.58|-13.61|8o272f2z6h001b87\nCLT|Charlotte|United States|35.21|-80.94|cg553s7z8w1x2q7a0hci\nCMB|Colombo|Sri Lanka|7.18|79.88|2w7j2s8s571a65ac289h8ba6273s1i3d0q6k3z705j9u3431773cab0t675u\nCMN|Casablanca|Morocco|33.37|-7.59|aq3w3m3u1y6c8c2j9r2c8o1787869l2z0ebqbc1z81106h8m1b9j8j5lci6m713s0v4j0q9u0gb86i686kbrco0jax0b1d343d7n277w7u4m3za05f1p5jbp30\nCNF|Belo Horizonte|Brazil|-19.62|-43.97|08\nCNS|Cairns|Australia|-16.89|145.76|4l8t940c37b11f\nCOK|Kochi|India|10.15|76.4|7j2w\nCOO|Cotonou|Benin|6.36|2.38|aq86018m022z1b6h801y6c276p920530\nCPH|Copenhagen|Denmark|55.62|12.66|bf8s1aac8b3rc1c56a9p5s4vbr8l278j0g5l716m3v3o6i6k3z73cl557u3d1z1p5f2f1d3s817i0n396wco4rby0j8kax991t6ncmad9aa00xbg344g6g6ja882\nCRD|Comodoro Rivadavia|Argentina|-45.79|-67.47|9n\nCRL|Charleroi|Belgium|50.46|4.45|ah6nb9391s739l\nCTA|Catania|Italy|37.47|15.07|8l7i\nCTU|Chengdu|China|30.58|103.95|7b4s0q630g3z6k34\nCUN|Cancun|Mexico|21.04|-86.88|1xa23q4t555l1kbzclcf73cj6a\nCUR|Willemstad|Netherlands Antilles|12.19|-68.96|1h1ja4b05v8r0g250p969d7g2d3b\nCWB|Curitiba|Brazil|-25.53|-49.18|7v081q\nDAC|Dhaka|Bangladesh|23.84|90.4|8q4z633d6k2w3s0q5f1i1a702eab5j67349u775u5y659oac20\nDAR|Dar Es Salaam|Tanzania|-6.88|39.2|4p773f5t3d536o3g340g1z055f\nDBV|Dubrovnik|Croatia|42.56|18.27|6wcm0n\nDCA|Washington|United States|38.85|-77.04|cg7z\nDEL|Delhi|India|28.57|77.1|2s632e8s578b65acbk4z200kb479b15q0q3e1a27590g5l3z3s3d3oax8i6k1i807o05ab5j1p5f0fcoby4v169u77340t670d6j2i\nDFW|Dallas-Fort Worth|United States|32.9|-97.04|1f57528ba29d4k7g2p757zaf553v568w0o\nDIL|Dili|East Timor|-8.55|125.53|ac3736\nDKR|Dakar|Senegal|14.74|-17.49|2j8m3w2c8o17871b5n02559j6q5l3db86p5f300ebq6m8j712f1p0v7w27\nDLA|Douala|Cameroon|4.01|9.72|11aq2j6h8c832z1p805f053u1y6p6c\nDME|Moscow|Russia|55.41|37.91|9qbo414s3e6mbr6i3z9e710v566k731a1p1zbq7w813s7i0nc19pco7u4v6g7qb95w5rb54n0f0q340k2e8nc44zac8b3b50b4by6da03n\nDMM|Dammam|Saudi Arabia|26.47|49.8|7k060f\nDNK|Dnepropetrovsk|Ukraine|48.36|35.1|b5ax\nDOH|Doha|Qatar|25.27|51.61|7j9w9u0t675e4n14590q798t2e8s9o8b3g772sac287k705n802t0605624j3l0j8kc52k8la00g5l7156co6k2773ci553d5j1z6p2fbq0e4u3s316d0n1pbr7uby5f1t3h100fab7e2w63571a654z3z2o205x\nDOM|Dominica|Dominica|15.55|-61.3|av129cafb00hat3k\nDPS|Denpasar|Indonesia|-8.75|115.17|2y8t941f8b574z51bk287k20\nDRW|Darwin|Australia|-12.41|130.88|2yb11f2h8t\nDTW|Detroit|United States|42.21|-83.35|8s9h7z\nDUB|Dublin|Ireland|53.42|-6.27|5b1s5w5k6mam0g5l8h0o711k763ocl6i7355273z3d7w1p6k6q1g7n5f819p3s7i0nby6wco6f4d2k0j8k4vc1c5991t2masarbx16046u8l7u0q6ba83p8i\nDUR|Durban|South Africa|-29.61|31.12|7o7l\nDUS|Duesseldorf|Germany|51.29|6.77|9a3l992q8s5k475l738k6w7g6a0g6m3z3dbq81317i0ncoby1t7ub96d0s0x8lbg5f0q59brc5\nDWC|Dubai|United Arab Emirates|24.9|55.16|777j2e7k651t5w8lal100t629u345q\nDXB|Dubai|United Arab Emirates|25.25|55.36|7j2s63281w4w778t2e5q5obk5m5e2w654z3nb40k413eb5140ebc617i0nax6dah0x8l5r4n0f598s517k1f8b0jc5109u340t676ibq7181by2k99a057ac7907b12z5y1a204j0o556m396va67o0u685t3g809w2t5n620g5l4c022f3s73056p5j6k3b1z5f277uco3z\nDYU|Dushanbe|Tajikistan|38.54|68.82|2w61415f593z313dab9t6g64090d7p7ebu\nDZA|Dzaoudzi|Mayotte|-12.8|45.28|bi4p9v2t\nEBB|Entebbe|Uganda|0.04|32.44|6k0g0l1z3d345n1p802t185t7d055o5f\nEBL|Erbil|Iraq|36.24|43.96|590q100f34b5by1z\nECN|Nicosia|Cyprus|35.15|33.5|5f0sa004543l\nEDI|Edinburgh|United Kingdom|55.95|-3.37|991s5s\nEIS|Tortola|British Virgin Islands|18.44|-64.54|afb0at35\nESB|Ankara|Turkey|40.13|33|145fa0by3b3z7u0xbz3403043i594n54as\nEUN|El Aaiún|Western Sahara|27.15|-13.22|2f6q0a\nEVN|Yerevan|Armenia|40.15|44.4|592799c53sby3d10610n7q5r6gax09a37pab8n31bz\nEWR|Newark|United States|40.69|-74.17|52cgas2w1icf161p395s2k0j8kbg8j9h8b1j55br961h6la4b00hafat0p1x7a9x4k8w0w6m8s4z71cj487z\nEXT|Exeter|United Kingdom|50.73|-3.41|4739\nEZE|Buenos Aires|Argentina|-34.82|-58.54|7v1q0g7g251h6lc3a20m9d4o2p9e4j7a6k3z274c3s713y0v5l562x0o9m\nFAE|Vagar|Faroe Islands|62.06|-7.28|aw132k1c\nFCO|Rome|Italy|41.8|12.24|bbah5905b92ea03n109u0q675f2s1z0n1t0x8lal5w5rb54n0fbgb42w1aac4zbc81253q717g4t552f0ebq6m7ibr6wco8fby4v7q996t8j5l6i6f319pc1axc55x8s572k8k340g0v4j4c6k2dci3z7n7w1p5j6p27391r0j7uao3d6a1k134m\nFDF|Fort-de-france|Martinique|14.59|-61|4ta47gaf9caj12ci27218j\nFIH|Kinshasa|Congo (Kinshasa)|-4.39|15.44|1y5f271p5n806c30\nFLL|Fort Lauderdale|United States|26.07|-80.15|1k2k0j8k6aat55a58pae7c9z9x4kb07z2x\nFNA|Freetown|Sierra Leone|8.62|-13.2|172z272f6p6i6k02009r\nFNJ|Pyongyang|North Korea|39.22|125.67|8saac465\nFOR|Fortaleza|Brazil|-3.78|-38.53|9j6m1q3q0y4j\nFRA|Frankfurt|Germany|50.03|8.57|7oa67405bb3ecgc6313lbfc5999a5w5rbob40k2w7j1a4s65ac476759braabk2o9p4nby1t8l77c12e7q801z6801bq6kax6ncm7ub96d0s0xal100fbg9u0q340t513d0n5j251h3qa4af7a550e817i391p6wco5s2k0j8k4v573bcfaw736a0g5l7g4t7527b26m955x024z6p2f714jcj\nFRS|Flores|Guatemala|16.91|-89.87|1x4k\nFRU|Bishkek|Kyrgyzstan|43.06|74.48|bt3e31a0ax6g5f3d61b40dbobu\nFSP|St.-pierre|Saint Pierre and Miquelon|46.76|-56.17|cicfck\nFUK|Fukuoka|Japan|33.59|130.45|4laa\nFUN|Funafuti|Tuvalu|-8.52|179.2|au\nGAU|Guwahati|India|26.11|91.59|8q1a\nGBE|Gaberone|Botswana|-24.56|25.92|5n6v7t5380\nGCI|Guernsey|Guernsey|49.44|-2.6|1oam0g6i5k73163bar3p\nGCM|Georgetown|Cayman Islands|19.29|-81.36|5v554t7g6e7z0o5l568vcl8i3o\nGDT|Cockburn Town|Turks and Caicos Islands|21.44|-71.14|8w\nGEO|Georgetown|Guyana|6.5|-58.25|5v7g8r9i96cl5l\nGIB|Gibraltar|Gibraltar|36.15|-5.35|6i6k16736u\nGIG|Rio De Janeiro|Brazil|-22.81|-43.25|683d3s1q0y6la27v9d1ha43q084j\nGLA|Glasgow|United Kingdom|55.87|-4.43|5s6q7i392p\nGND|Point Salines|Grenada|12|-61.79|av7g5lcl968zbv12\nGOH|Godthaab|Greenland|64.19|-51.68|5s\nGOT|Gothenborg|Sweden|57.66|12.28|592kaw\nGOU|Garoua|Cameroon|9.34|13.37|83\nGRO|Gerona|Spain|41.9|2.76|7ibf1s9b9l\nGRU|Sao Paulo|Brazil|-23.44|-46.47|251hbs6la20m125n6h0q347v1q683y080y3d2f3s5f276m717w0v8h6k0gco3z7u3q229da47a\nGUA|Guatemala City|Guatemala|14.58|-90.53|7a6a9d7g1h9xae7cba40550o5l563v3o2x\nGUM|Agana|Guam|13.48|144.8|bdan528b4z575x7k9g85bk2h9s43\nGVA|Geneva|Switzerland|46.24|6.11|9a6wco0x100q7i0n5k558j0e6m712f6q817n1zbq3s0fbg5j\nGYD|Baku|Azerbaijan|40.47|50.05|5q0kbob48s3459271t5r9p3s5f3z6k99ax3d7wbg31a0b53lby7qa3bu0d\nGYE|Guayaquil|Ecuador|-2.16|-79.88|9x3q\nHAH|Moroni|Comoros|-11.53|43.27|5m80bi742t9v3f\nHAJ|Hannover|Germany|52.46|9.69|5kax7q\nHAM|Hamburg|Germany|53.63|9.99|2k8k1n\nHAN|Hanoi|Vietnam|21.22|105.81|c27b273z31ax8s517k4z8b1a65209o2o57bk90aca95x\nHAV|Havana|Cuba|22.99|-82.41|bs9x7a483t687z7w3z270gcoax6i9dcl251h6l3q2pa48z718jak\nHBE|Alexandria|Egypt|30.92|29.7|1034bc\nHEL|Helsinki|Finland|60.32|24.96|574z2b5x8b5s0j8k7f31ax6g2w8s1aac278j0g5l716i736k5f3z6m1pbg0v7w3s81600n39br2kcobybf9pc17qc5991t6n5r85cc\nHGA|Hargeisa|Somalia|9.52|44.09|055mc77d0u\nHHN|Hahn|Germany|49.95|7.26|9p6m\nHIR|Honiara|Solomon Islands|-9.43|160.05|c07x941f\nHKG|Hong Kong|Hong Kong|22.31|113.92|94908t51bk4l7x7k1fb1bt2s631w365n7o317jbg5lcl6aa88i3o8s4s3sco7u4v5f2wax3z0g05277w0d209u340q3d8n1i571a6kaa5y65ac28cd8b0c\nHKT|Phuket|Thailand|8.11|98.32|8t286g31\nHND|Tokyo|Japan|35.55|139.78|65276k5xa56aa83zcj4z3d571a8s7u855z4sac287k3652\nHNL|Honolulu|United States|21.32|-157.92|720i4l977x98a5550o3o565l6a2x9y8ib1579h8scjai8ba88e7k51bk1f0c\nHRE|Harare|Zimbabwe|-17.93|31.09|466v6o2t5n80c605\nHTY|Hatay|Turkey|36.36|36.28|3i9u5j3l\nIAD|Washington|United States|38.94|-77.46|cg052z1p397gaf0p5l9e1h9dae9x4k2p48752d3vb03o7a3z0g276k5j1kci3s5f8v734mbyco5s2kax7u9u3d0q3467cl8s57a56a8b52at4j\nIAH|Houston|United States|29.98|-95.34|526a8b8s575f3134cja51j7cba1x9x4k7a48aebs6l3q1h9d2596af7z7g2x\nICN|Seoul|South Korea|37.47|126.45|9s7xc27k9065ac4z7b4lan63283652518b0c1fbt569u274v0g5l0o6a2x71cl8i69551i803z1a9h2e3d2w5f6k7u7waxbgb46g99by0d8s0q345yaabk4sb15x\nIEV|Kiev|Ukraine|50.4|30.45|6dc1\nIKA|Tehran|Iran|35.42|51.15|770t5q3e2w653n671a0q343lb4104n8s9h8j0jax7q3s0g3z5f3b296k3da07w3hby4g5g5u20\nINU|Nauru|Nauru|-0.55|166.92|72bn1f\nIOM|Isle Of Man|Isle of Man|54.08|-4.62|396f736i6s1682\nIPC|Easter Island|Chile|-27.16|-109.42|98a2\nIQQ|Iquique|Chile|-20.54|-70.18|a26r\nISB|Islamabad|Pakistan|33.56|72.85|5q8scl2k1a270v343d6k730qab5j775f670t6bbu169u6j5u\nIST|Istanbul|Turkey|41.28|28.75|623l3i9w145q0k3e635m5e5941b54n0fbob40t2s7i0j4vbf9pc17qc5cmadb99abbah0x8lal5w5r6nbr8k992k1c6m816wbyax1t0ebqbc0nco7u3z0g1p4j863s10bg9u77677j8s654z0957ac5x0q2w1a5t8c566i55392t803u305p6p022f5n051z6a343d5l6kbu73270v717nbx\nISU|Sulaymaniyah|Iraq|35.56|45.32|590f\nIUE|Alofi|Niue|-19.08|-169.93|0c\nJBQ|La Isabela|Dominican Republic|18.57|-69.99|8p0p\nJED|Jeddah|Saudi Arabia|21.68|39.16|9w060l0fbc712f0ebq3s10731z6a6i550354b79u77675e2w2e2s6520ac281w7k835n80055l6k3z4m62\nJER|Jersey|Jersey|49.21|-2.2|4727am0g6i393z4m1o733basco6f4qar6s\nJFK|New York|United States|40.64|-73.78|2z555n02273z1p6k1z2f6p1k71813s3b39brcoby5s2k0j8k4v9p13axc57u5f5r0fbg9u5j3d0q34672w8s57bk4z9h8b52ci8j6f0g734a4e5v7z8p0h96afat8w0p0wae4kb0489x7a9d7g2p126aa41h6l25a23q\nJIB|Djibouti|Djibouti|11.55|43.16|4p7d4w5j3d9w275f8005\nJNB|Johannesburg|South Africa|-26.14|28.25|7r7s466v53a66o5t3g8t7lbi7o9v1aac4zc64j0g5l0o68272z6k80053u1y6c6p92021zcobg5f7u3d345j2t0q1ib13z\nJUB|Juba|South Sudan|4.87|31.6|1z625t3g3d8005\nKAN|Kano|Nigeria|12.05|8.52|621z108301\nKBL|Kabul|Afghanistan|34.57|69.21|5e5f594n3d673e3l8u2w\nKBP|Kiev|Ukraine|50.35|30.89|4nb4b5bo7q1a3n0f6dbg5w0nbfc1axc56m990g5l3z27713sbr6i6k5f3d1p810v7y31a0co7uby8k4v9pab9t8n0d\nKEF|Keflavik|Iceland|63.99|-22.61|4f4v0j276k0g5l1k3ocl553zco1paz1o4d731r7u2k8k3j1ccea513\nKGL|Kigali|Rwanda|-1.97|30.14|185o6c6p1p5n2t051y5f803g3d\nKHI|Karachi|Pakistan|24.91|67.16|2s2e63595e0t\nKIN|Kingston|Jamaica|17.94|-76.79|7z48a40hb08w9d4a2q7g129675cl5l6i0o\nKIV|Chisinau|Moldova|46.93|28.93|5r6mbxby393z1d3s5f7w1u310n9p2a8l6d093c6g7uar\nKIX|Osaka|Japan|34.43|135.24|4lan51658a0g8g7ba83s5f274v3z8s34aa574s\nKMG|Kunming|China|25.1|102.93|8d7b8s57bkc29h2s633d4z20\nKMI|Miyazaki|Japan|31.88|131.45|bk\nKRK|Krakow|Poland|50.08|19.78|4vc57i\nKRR|Krasnodar|Russia|45.03|39.17|9q5fbg3da0byax991t6d3nb4413e\nKRT|Khartoum|Sudan|15.59|32.55|830l780f0q5f1z805o053d349u9w0t5jab\nKTM|Kathmandu|Nepal|27.7|85.36|8q203d2w5f0q1iab77345u6x571a2s4z655y2oac\nKUF|Samara|Russia|53.5|50.16|3eb47qax\nKUL|Kuala Lumpur|Malaysia|2.75|101.71|281ac24s90ac1w7k7b07b13x1f8t9u77672s637o5j27590g3z0q3d575x518s6k8b2e1i5fb42w6j3c340d7jbk4z200c\nKWA|Kwajalein|Marshall Islands|8.72|167.73|9172\nKWI|Kuwait|Kuwait|29.23|47.97|0t595q655e2s0g5l55bqa03s3z346k051a3d0q325j5f1z100f9u77ab7e2w2e70\nLAD|Luanda|Angola|-8.86|13.23|c6bh80053u1y537l5n4t6m714c0g4j272f6k8s3d3z\nLAS|Las Vegas|United States|36.08|-115.15|577a6a73\nLAX|Los Angeles|United States|33.94|-118.41|7x989kb10c517k57bk4z8b521f9h5j1x6l7a9dae4k9x7g2p551k560oci3v8i2k0j713s5f0g3z276k5l7ucoceax3bbzbg69\nLBA|Leeds|United Kingdom|53.87|-1.66|5e39\nLBV|Libreville|Gabon|0.46|9.41|aq8c6h30272f6p5n5t051y3u2j005f\nLCA|Larnaca|Cyprus|34.88|33.62|100t0f0q343d270n0g7w6i6k3zco1zbg7i8l610x167ubyaz0j8k7q5r9p58axc51t6ual5way313b73\nLCE|La Ceiba|Honduras|15.74|-86.85|48ba\nLCY|London|United Kingdom|51.51|0.06|1n5b8j395k3s6w\nLED|St. Petersburg|Russia|59.8|30.26|41bobf573e3nb4318s4v9e0j8k2kc59p5wbr\nLFW|Lome|Togo|6.17|1.25|6c012j8m2c1b024c276p05301p\nLGW|London|United Kingdom|51.15|-0.19|4b7o0e317i6w9abb7j5b5k471p3wby8k8law0g275j5f813s0n7uco292kbf9p7q991tcm6d0sal5rbg3d7n390j4v6m2f715v0h960w12bv4t6z9e1v8sci\nLHE|Lahore|Pakistan|31.52|74.4|5e2w658k73\nLHR|London|United Kingdom|51.47|-0.46|1p3g80015s0k5e2s517k4bcg3w0j8kaw736w4n77672e277o3z051z0ebqbc81313s7i0n0gbrco29by2kc5991tcmasbx6d5f0x8lal5r100fbg9u5j0q340t59bob43d1a65ac8j3q5n68024v2wck7z7a7g5l5539cj6a2o8b6m8h714j1k2fax8s57204z\nLIM|Lima|Peru|-12.02|-77.11|0m6ra23q7v4j0g7g251hbs9dae9x4ta49e7a3o4c27715l566a0o\nLIS|Lisbon|Portugal|38.78|-9.14|7lbh2f022z1b0ebq5f7181313s396k0g6wco0vby0j8kc5991t7u4m8l5w5r7n6i1o9j3d1p2k1q8j257gci4v1k274x3zas1d7w3oap3y4j8v686q3b2g\nLJU|Ljubljana|Slovenia|46.22|14.46|b9adbbah27990gco3z1p7u5fby0x2m2k4vc5ax9a6u\nLLW|Lilongwe|Malawi|-13.79|33.78|2t5n806v53\nLOS|Lagos|Nigeria|6.58|3.32|6caq015t2j6h9r3w801b0o5l712z2f021z100f0q5n5f3z343d055p\nLPA|Gran Canaria|Spain|27.93|-15.39|3m396m4d8k131o71br6wcoby99b82z9j17872k\nLPB|La Paz|Bolivia|-16.51|-68.19|c31h6l5d\nLPL|Liverpool|United Kingdom|53.33|-2.85|5b71c1c51s5k\nLRM|La Romana|Dominican Republic|18.45|-68.91|0paf3s7w71cf\nLTN|London|United Kingdom|51.87|-0.37|ahbg4b6d1s39c16n\nLUN|Lusaka|Zambia|-15.33|28.45|0g056o803d685n46c653\nLUX|Luxemburg|Luxembourg|49.62|6.2|br6m4m0g6i27716k3zco7w5f3s0v6q0a817i2u7u39by2k0j3b8x0s6f\nLXA|Lhasa|China|29.3|90.91|8s63\nLYR|Svalbard|Norway|78.25|15.47|8kbj\nLYS|Lyon|France|45.73|5.08|6ibq\nMAA|Madras|India|12.99|80.17|9v7o2s267j349u770q0t67ab2e1aac\nMAD|Madrid|Spain|40.47|-3.56|aq02bc6p1z9l817i0n0v8lal0fbg5j342f0ebq7n1p3d2z6m313sa06kbr6wcoby2k0j4vc599151t1d7u4m5r5f1a6i1o39ax6s8s5768ae4ka4259dbs7v1h6lc3a24t6a8j0g3q7g9e7a6t3o5l1k4j8v7w276q3z\nMAJ|Majuro|Marshall Islands|7.06|171.27|5abn6652\nMAN|Manchester|United Kingdom|53.35|-2.27|5b47bc396k2k0j8k4vbf9paw315e125sbv5kcj0a4b0o9e7i0g3z3d1p1z0n3bcoby991t7u2m6d0salbg5f5j0q346j69762p\nMBA|Mombasa|Kenya|-4.03|39.59|4p3z055f\nMBJ|Montego Bay|Jamaica|18.5|-77.91|48cf553z2x5v9d\nMCO|Orlando|United States|28.43|-81.31|39cf731ka59xae96\nMCT|Muscat|Oman|23.59|58.28|5e7j632e27593d0q6k3z7ucn051a5j5f1z34co3cab100f9u0t678u2w2s657w70\nMED|Madinah|Saudi Arabia|24.55|39.71|3l\nMEL|Melbourne|Australia|-37.67|144.84|1wc823b11f7x0c280q2w8t3d34\nMEX|Mexico City|Mexico|19.44|-99.07|6aa89d4t0g7g251hbs6la23qae4k9x7h55cl4j3z276k5l71562d3o8i7ucicj699y\nMFM|Macau|Macau|22.15|113.59|ca2b2o8s579h7k1a8b655yac4saa5xbk89cd\nMGA|Managua|Nicaragua|12.14|-86.17|9d7gae9x4k0o563v\nMGQ|Mogadishu|Somalia|2.01|45.3|5m803g4w0u\nMHD|Mashhad|Iran|36.24|59.64|3e340t675q\nMHQ|Mariehamn|Finland|60.12|19.9|0j4vbe\nMIA|Miami|United States|25.79|-80.29|4a6r1x7zag0h4e55at488w9c3t0wci7cba4k6a1q1hbs6la23q0m7vae9x8p7a6ma5af2x12axbr1k8i0o6k0gco277w3z0v3s5l713b96255va40p2qb0a8569d\nMID|Merida|Mexico|20.94|-89.66|7a1x\nMLA|Malta|Malta|35.86|14.48|0n6d31by0j9paxbl1t1c278j0g6i710v6k4m5f3z7n1p0zbq0e4ibc3sa039br6wco7u4d2k8k60991d1m2n733b\nMLE|Male|Maldives|4.19|73.53|3dbz6i3z340q1a702e775fax3c2i8s4z65ac9h7w20\nMNL|Manila|Philippines|14.51|121.02|1w9s7b28944l526a51206k578bb1cja8ac3d1a650q5j4z348sbk3c9u320t4sa9369h\nMPM|Maputo|Mozambique|-25.92|32.57|6m5n683a938005\nMPN|Mount Pleasant|Falkland Islands|-51.82|-58.45|9f\nMRS|Marseille|France|43.44|5.22|3fbi9v71ci2f9l0ebq6m3s7i0nbr7uax995f394m\nMRU|Plaisance|Mauritius|-20.43|57.68|8s65a62w8t278j6i3s5n6k3z3abi9v803dbz1i1e9h4z\nMRV|Mineralnye Vody|Russia|44.23|43.08|bg3n3e\nMSQ|Minsk 2|Belarus|53.88|28.03|0kc53n0q6d1059b54n27az0g0v7w0j3z9p6i5fbgby3s81311t5rc14vax99bo644q\nMSU|Maseru|Lesotho|-29.46|27.55|5n\nMTS|Manzini|Swaziland|-26.53|31.31|5n\nMUB|Maun|Botswana|-19.97|23.43|c646\nMUC|Munich|Germany|48.35|11.79|adc13l0x779abb0s9ubr1n2k8k996n1c57514z5scj6a6i6w0f6d5ncm8lalbg0q343d3z7n7w1z5f81317i0ncoaxc55r1i8sacbq4j2f3s6m0g5l719e7a551v1k3bci731p390v9p1t5w\nMVD|Montevideo|Uruguay|-34.84|-56.03|2r4j7g3q6la20m9d4c7108\nMXP|Milano|Italy|45.63|8.73|317q6d7obb100nbg9u0xaxc55w4v4z2z0e4j2f7g4t6m716t77\nNAN|Nandi|Fiji|-17.76|177.44|4yc9aubnb6c0948a0i6a52574z0cb1791f\nNAP|Naples|Italy|40.89|14.29|1t8l5rbq\nNAS|Nassau|Bahamas|25.04|-77.47|6k8w1k7g5v9d4t2d2v5l388icl2x0o3v56483o\nNBO|Nairobi|Kenya|-1.32|36.93|6vbi6o7d180l744w5m629w5o8c301b1z5f1p3d345j0qab2w573f20a65t3g00co1a276k1i053u1y026p0g5368467l7o5n\nNCE|Nice|France|43.66|7.22|bfby5rbrco0j9p996w6m8j0g5l710v2f6i6kci3z3d275f3s1p0ebq31397u2k8k4vc5ax7q4m8lbxbg3b13am\nNCL|Newcastle|United Kingdom|55.04|-1.69|5b2kaw\nNDJ|N'djamena|Chad|12.13|15.03|862705015p308c5f\nNEV|Charlestown|Saint Kitts and Nevis|17.21|-62.59|at0h\nNGO|Nagoya|Japan|34.86|136.8|514v4l\nNIM|Niamey|Niger|13.48|2.18|8m2f0e27052j0183\nNKC|Nouakschott|Mauritania|18.31|-15.97|272f2z1bbq2c6q\nNLK|Norfolk Island|Norfolk Island|-29.04|167.94|0c1fb1\nNNG|Nanning|China|22.61|108.17|908s7b\nNOU|Noumea|New Caledonia|-22.01|166.21|c0c9988b5x7x1f0cb1\nNRT|Tokyo|Japan|35.76|140.39|949san8a0c4l287k36ac98527aa86a560o0g276k2k4v5lcl3o55byc4571k31coaxbt3sb13d2e2w348s0qb420bk4s4z7b\nNSI|Yaounde|Cameroon|3.72|11.55|2f271p6c80304h\nNYT|Naypyidaw|Burma|19.62|96.2|1a5y\nOAK|Oakland|United States|37.72|-122.22|520j\nOLB|Olbia|Italy|40.9|9.52|1n3s\nOOL|Coolangatta|Australia|-28.16|153.51|235x\nOPO|Porto|Portugal|41.25|-8.68|396k7n254j\nORD|Chicago|United States|41.98|-87.9|8s4z570j2w6a527a487g9d7zcg1pbrbyc50f9h39\nORY|Paris|France|48.72|2.38|8p6m3f9vbz6k3s0n2f710e2z1b9lbq81br7ia0am4m6f992k0j8k4vaz1t1dbx0sbg593ob013215l9c3t\nOSL|Oslo|Norway|60.12|11.05|6y9p5ec15r346m8j0g5l276k3v3o6i737u3z5f1p6q293s814v7i0n39br3bco4rby5s2k0jbfaxc5991s1t6d0x6g1a13\nOTP|Bucharest|Romania|44.57|26.09|6d34100f5w81br2k6m1t0g713s273z6i6k5f3d1p0v7ya02n0n397ucobyc5ax990x1malbg3c3b\nOUA|Ouagadougou|Burkina Faso|12.35|-1.51|2z1b5fbq2f0e271p6h02052j8600\nOVB|Novosibirsk|Russia|55.01|82.65|8s4z31995r3n\nOXB|Bissau|Guinea-Bissau|11.89|-15.65|2c179j2f2z\nPAP|Port-au-prince|Haiti|18.58|-72.29|8w9d9ca47gb03vci5l0o5i\nPBH|Thimphu|Bhutan|27.4|89.42|632s4526\nPBM|Zandery|Suriname|5.45|-55.19|4a962q0g0p0y21\nPEK|Beijing|China|40.08|116.58|3x4s287bbt5y1a65ac4zan52517kbkb1578b5x9g56cl3855057o680q34595ebu2w8i6i272k0g5l71cj5n3d2e1p1z5f0eax3s3b8n4n0j6kbrco7uby4v6gc5bzbgbob40d7j6x893o\nPER|Perth|Australia|-31.94|115.97|cb23791fb10c7o345n3d4zac1a5065283619372h20\nPEW|Peshawar|Pakistan|33.99|71.51|5q770q\nPHL|Philadelphia|United States|39.87|-75.24|556m710w8wat480ncg\nPLS|Providenciales|Turks and Caicos Islands|21.77|-72.27|498pa4af5v7z1k7g2d8v5l95clci3o0o2x\nPMI|Palma de Mallorca|Spain|39.55|2.74|1n1s0e6w\nPMO|Palermo|Italy|38.18|13.09|15bq\nPMV|Porlamar|Venezuela|10.91|-63.97|4e96254t\nPNH|Phnom-penh|Cambodia|11.55|104.84|1a4z57a965ac89bkc24s20\nPNI|Pohnpei|Micronesia|6.99|158.21|bd66\nPNR|Pointe-noire|Congo (Brazzaville)|-4.82|11.89|2j5n\nPOL|Pemba|Mozambique|-12.99|40.52|2t\nPOM|Port Moresby|Papua New Guinea|-9.44|147.22|4y7x1f8b4zb1ac7k362h\nPOP|Puerto Plata|Dominican Republic|19.76|-70.57|8w273z\nPOS|Port-of-spain|Trinidad and Tobago|10.6|-61.34|259dav4e7gaj123o5l566i2q8r4a5v8zcl76\nPPG|Pago Pago|American Samoa|-14.33|-170.71|52\nPPT|Papeete|French Polynesia|-17.55|-149.61|9k6a5c8b0c528a\nPRG|Prague|Czech Republic|50.1|14.26|1sbyc56n5r3nb44nc18j71co6m0g3z273b6i6k7u3d7n7w5f1p0b0v6q81bx3s617i0n39br3j2k0j8k4v9pax7q1t0s0x8lalbg9t8n571373\nPRN|Pristina|Serbia|42.57|21.04|4m3b6i3zcoas7u5fbycma0br2k6n\nPSA|Pisa|Italy|43.68|10.39|bb4i\nPTP|Pointe-a-pitre|Guadeloupe|16.27|-61.53|a70ha1353t8ja48pci7gafb0\nPTY|Panama City|Panama|9.07|-79.38|ae7cba9x4k4t5v8pa4967a6aafb00p2q7z550g1k5l1q251hbs6la23q0m7v9z4j4c27719e8i2x56757g\nPUJ|Punta Cana|Dominican Republic|18.57|-68.36|55cf31ax6g6i0ha4co6la23q7125af1h9d0g\nPUQ|Punta Arenas|Chile|-53|-70.85|9na2\nPUS|Busan|South Korea|35.18|128.94|4l8s\nPVG|Shanghai|China|31.14|121.81|1w7b5752an7o5lcl383o8i7j2e7k6abu590q5yaxco7u8s\nPZO|Guayana|Venezuela|8.29|-62.76|254a\nRAI|Praia, Santiago Island|Cape Verde|14.92|-23.49|8o17bh1k2z6q3y6m272f1v\nRAR|Avarua|Cook Islands|-21.2|-159.81|98b16a0c\nRBA|Rabat|Morocco|34.05|-6.75|278j2f717n4i2m1uar\nREL|Trelew|Argentina|-43.21|-65.27|2l\nRGL|Rio Gallegos|Argentina|-51.61|-69.31|7m\nRGN|Yangon|Burma|16.91|96.13|4s342s\nRIX|Riga|Latvia|56.92|23.97|4n7q392k13bf31axb45wb53s7i0nbrby99270g5l3z8k6i735fbz1pbg4x0v81a0co0j4vc1c51t6d5r6g7ube\nRMI|Rimini|Italy|44.02|12.61|3161\nROB|Monrovia|Liberia|6.23|-10.36|2f1p6p02003w\nROR|Babelthuap|Palau|7.37|134.54|8b57bk7k4l\nROV|Rostov|Russia|47.49|39.92|b43eby1t995r\nRUH|Riyadh|Saudi Arabia|24.96|46.7|2e57287k27a05l3s0f346k3z7u55053d0q9w5j2f5f1z625410770t67ab5e2w2s6520ac4z70\nRUN|St.-denis|Reunion|-20.89|55.51|7o4p3f278j5n7nbi70\nSAH|Sanaa|Yemen|15.48|44.22|0t9u670l0q345m053d06801z5j620f10\nSAL|San Salvador|El Salvador|13.44|-89.06|1x4k4tbaa87c9d7g1hbs6l4oae7a550o715l76563v3ocl6a\nSAN|San Diego|United States|32.73|-117.19|527a\nSAP|San Pedro Sula|Honduras|15.45|-87.92|1x3v9daeba\nSAW|Istanbul|Turkey|40.9|29.31|3lb59u3467413i59614n8j712f3s7i0j9pbbah5r10bg3d0v2kad9a8l310gbrby1t0xco0n\nSBH|Gustavia|France|17.9|-62.84|a7afb00hat9c\nSCL|Santiago|Chile|-33.39|-70.79|b10c9f4j7g251hbs6l5d3q0m7v9d2p9e7acl4c2771ap5l2x0o5c\nSCO|Aktau|Kazakhstan|43.86|51.09|3nbob54n\nSDQ|Santo Domingo|Dominican Republic|18.43|-69.67|6lae8wb09c3z0h278jaf2q711h4t4c9d5v7g8v3o4j5l1k0o\nSEA|Seattle|United States|47.45|-122.31|51527g563v2d76550o5s27\nSEZ|Mahe|Seychelles|-4.67|55.52|2e0q5nbz3z3d807o\nSFG|St. Martin|Guadeloupe|18.1|-63.05|9ca1\nSFO|San Francisco|United States|37.62|-122.37|bk515x8b4z7k9h0c529x7a7gci39ceco2kb1\nSGN|Ho Chi Minh City|Vietnam|10.82|106.65|9028b17k4s\nSHE|Shenyang|China|41.64|123.48|3x3zcj57bk4z7b435x\nSHJ|Sharjah|United Arab Emirates|25.33|55.52|3ebo5e2s63770q2e5r14b42w4w5j629u340t6770801z0f3n10\nSIN|Singapore|Singapore|1.35|103.99|2y07281w7k94c2907bb18t1f0c0v272k0g3z3s5n578b8s6k1a652e1i3d5j5f31342wco7u4vb49u0q7j2s6351bk4s704z20\nSJJ|Sarajevo|Bosnia and Herzegovina|43.82|18.33|0x7ubr6ncmas5fbya02k0j\nSJO|San Jose|Costa Rica|9.99|-84.21|7cba9d7g1h6l9x4k9za47a550o5l713v76cl566a\nSJU|San Juan|Puerto Rico|18.44|-66|3kag55at0r8w0h359c3ta1251ha47g9e2x569d3o5l3zb01k6tcl0o\nSKB|Basse Terre|Saint Kitts and Nevis|17.31|-62.72|7gafb07z0h\nSKP|Skopje|Macedonia|41.96|21.62|3scmco5f3d2ma06u6nbyaz0x15\nSLC|Salt Lake City|United States|40.79|-111.98|521k\nSLU|Castries|Saint Lucia|14.02|-60.99|350hav96123t\nSNU|Santa Clara|Cuba|22.49|-79.94|cf\nSOF|Sofia|Bulgaria|42.7|23.41|271d0g710v3sco6i6k3z5fbg7w1p0nbwbr7ubyaz0xc5ax996d8l3c73\nSOU|Southampton|United Kingdom|50.95|-1.36|395k478j81\nSPN|Saipan|Northern Mariana Islands|15.12|145.73|8b5x578s209h854l\nSPU|Split|Croatia|43.54|16.3|cm3s\nSSA|Salvador|Brazil|-12.91|-38.32|6ma2\nSSG|Malabo|Equatorial Guinea|3.76|8.71|71012f2j6c0530\nSTN|London|United Kingdom|51.88|0.23|47b95k391s9lc16n5w\nSTR|Stuttgart|Germany|48.69|9.22|ad9aax5kcm6m393o6k3lby1t\nSTT|St. Thomas|Virgin Islands|18.34|-64.97|3k0r7gafb03v8435553o5l8v0oa1\nSUV|Nausori|Fiji|-18.04|178.56|440c7xb1b6\nSVD|Kingstown|Saint Vincent and the Grenadines|13.16|-61.15|96aj4e12\nSVG|Stavanger|Norway|58.88|5.64|3r5s270g6k6i733zc5az4g82\nSVO|Moscow|Russia|55.97|37.41|btbo414sb42w1a4n8s574z7j59208b27az0g5l9e7g0v714tcl55bg1z3z3d107n1p5fas0e2f7w0x7i81613s0n9p6kbrco7uby4v2k0j8kbfc17qc5991t6ncm6d0s8lal5r333n64bu4q6a\nSVX|Yekaterinburg|Russia|56.74|60.8|bo6d\nSXF|Berlin|Germany|52.38|13.52|ax7q5s1z1t6dahal10bg8j1paw\nSXM|Philipsburg|Netherlands Antilles|18.04|-63.11|0ra1agat3k0h359caj122q9d5v8p553o275l1k8jafa47g0o3v\nSYD|Sydney|Australia|-33.95|151.18|23au88948t28bk1aa965ac797k374zc81fc0527x0ib69k8aa22x6acj5n8s57a82h8b2w0q3d\nTAB|Scarborough|Trinidad and Tobago|11.15|-60.83|96\nTAI|Taiz|Yemen|13.69|44.14|5m\nTAS|Tashkent|Uzbekistan|41.26|69.28|bo5765ac412w1a8b3d27995rax3z3s5fbz6k7wbg614n9p9t6g31640959abbu8s0d\nTBS|Tbilisi|Georgia|41.67|44.95|4n1427a00g3s5f5rbybg3d310nc59p7q33a33h0dbubz\nTBU|Tongatapu|Tonga|-21.24|-175.15|0c7xb1au\nTBZ|Tabriz|Iran|38.13|46.24|4n\nTFN|Tenerife|Spain|28.48|-16.34|2z6q25\nTGD|Podgorica|Montenegro|42.36|19.25|273s6nco3z5f310xarby2m3b\nTGU|Tegucigalpa|Honduras|14.06|-87.22|9d7gae9x4k9z0o566e\nTIA|Tirana|Albania|41.41|19.72|6n0n3sbx3z6i7w7u5f9ba01mby15\nTIP|Tripoli|Libya|32.66|13.16|0f0ebq712f6k3s731z3d5f5j7i4u\nTKK|Chuuk|Micronesia|7.46|151.84|914l\nTKU|Turku|Finland|60.51|22.26|7f9p\nTLL|Tallinn-ulemiste International|Estonia|59.41|24.83|1l2k0g3z0j736i5f1p814i6g9pbm8k4vc1axc55r\nTLV|Tel-aviv|Israel|32.01|34.89|0f61axb56d5r4v9pc17q0xal4nb4574z5n058s1z8j270g5l713s3o6i6k1ibz1p5f0v810na06ubr7ucobyaz2k0jc5991t8l7p1a3z3bci7n734m6a\nTMS|Sao Tome|Sao Tome and Principe|0.38|6.71|9j6m68\nTNR|Antananarivo|Madagascar|-18.8|47.48|4p3f278j5n7n7o801a9v\nTOS|Tromso|Norway|69.68|18.92|6y0j13\nTPE|Taipei|Taiwan|25.08|121.23|9s1f527k4l270g5lcl6ab13z3dcja84z1a20by8sccbu2w5yaa57514s9065ac2819367b8b\nTPS|Trapani|Italy|37.91|12.49|1s7i\nTRD|Trondheim|Norway|63.46|10.92|5s\nTRW|Tarawa|Kiribati|1.38|173.15|725a7x\nTSE|Tselinograd|Kazakhstan|51.02|71.47|31bzax3zby5f6g6k0qabb45r4n7qaya341bu0d8s\nTSF|Treviso|Italy|45.65|12.19|1t2f\nTUN|Tunis|Tunisia|36.85|10.23|67bc2z876m7i0f313scoby0x101z345f3d8j0g710v2f6k4m3z7n1p5j00270e8m1b811dbx7u8y7y3b6z\nTXL|Berlin|Germany|52.56|13.29|319pc1ad5rc58j0g275l7g3z716k3o7u5f7n0q1p1t6w0b0v6q811d3s7i0nco1nby2k0j8k4vax99cm9a8l0xal0fbga034bz8s6g8i163b\nUIO|Quito|Ecuador|-0.13|-78.36|4j4t1h7g6l9d9x7a710o56\nULN|Ulan Bator|Mongolia|47.84|106.77|8bax8s1a41574z\nURC|Urumqi|China|43.91|87.47|5ebk8s2b9h20410kaxbob4b53e5f4n\nUVF|Hewandorra|Saint Lucia|13.73|-60.95|4e0h6i\nVAR|Varna|Bulgaria|43.23|27.83|31\nVCE|Venice|Italy|45.51|12.35|bb5w5f0j99bq8j6k2739co81\nVIE|Vienna|Austria|48.11|16.57|3l5wbob53n9961adbkc17qc56n9p9a1t0g553959b9bbah3d8l4n9t2w1a8b6m5l27710v3z6i6k1z1p5f0ebq816q7i3s0nbr6wco1n2k0j8k4vaxcm6d0s0xal5r0fbga03h348s318i3b73as\nVKO|Moscow|Russia|55.59|37.26|a6bo7jb43l9pc18jbg7o8s6a2pbr1tb53n\nVLI|Port-vila|Vanuatu|-17.7|168.32|4y0c8a7xb11f\nVNO|Vilnius|Lithuania|54.63|25.29|27317q5rbr1l130v7u2k8k3z1p5fbzbgby3s99c5390j4vbf9pax586u6sar\nVTE|Vientiane|Laos|17.99|102.56|4s1a5765ac205y90\nVVI|Santa Cruz|Bolivia|-17.64|-63.14|4j3q0m716r\nVVO|Vladivostok|Russia|43.4|132.15|3x318b\nWAW|Warsaw|Poland|52.17|20.97|3n7qc15rb58lalbg0x1t6n34810n6m71co990g5l3z270v2kbr4d6kcl5f3d1p0b7wby3s60397uaw0j8k4vbf9pax6d6g8s8i6s3b\nWDH|Windhoek|Namibia|-22.48|17.47|68023z5n7t6v53\nWJR|Wajir|Kenya|1.73|40.09|80\nWLG|Wellington|New Zealand|-41.33|174.8|0cb1791f\nWLS|Wallis|Wallis and Futuna|-13.24|-176.2|7x8a\nWUH|Wuhan|China|30.78|114.21|7b27\nXCH|Christmas Island|Christmas Island|-10.45|105.69|248t\nXIY|Xi'an|China|34.45|108.75|bk4v\nXMN|Xiamen|China|24.54|118.13|7b4z\nYEG|Edmonton|Canada|53.31|-113.58|cj6a5s\nYHZ|Halifax|Canada|44.88|-63.51|429e75763o2p1k3z\nYOW|Ottawa|Canada|45.32|-75.67|55ci3ocl3z6k2d2vch1kcj8i8v\nYQB|Quebec|Canada|46.79|-71.39|27cg\nYUL|Montreal|Canada|45.47|-73.74|42cg0ebq0n347n3t8p0g6m2f813s9c6i6a557a1p0fco7g5lcl270b7ucja82d\nYVR|Vancouver|Canada|49.19|-123.18|bk7k8saa51b10c527acg3oci562p6k737u0g3z\nYYT|St. John's|Canada|47.62|-52.75|426k\nYYZ|Toronto|Canada|43.68|-79.63|4tcg050n5e8sbk4z9h4a395s578b0w2kaxc50qa25v124e7a9x48ae0o2p0h9655af8w0p1hci7z\nZAG|Zagreb|Croatia|45.74|16.07|ahad9a271d0g0v3zco6i6k5f1p1tao2uasbr7uby2kax\nZNZ|Zanzibar|Tanzania|-6.22|39.22|5n2t\nZRH|Zurich|Switzerland|47.46|8.55|ah996n9acmb9al345f6d811p6w6m5s57805n1z4m0g5l27717g4j9e4t6i6k553z7w3d3s2fbq0v6q317i0n0x39br7uby2k0j8k4v9paxc51tbx0s8l5r0fbg77a02w8s1aac4z8ba81k3bci1c735k6a";
+  var EM_2014 = { "XPL": "TGU", "SHO": "MTS", "NBJ": "LAD", "DSS": "DKR", "MJI": "TIP", "BER": "TXL", "RMO": "KIV", "NQZ": "TSE", "UBN": "ULN", "KTI": "PNH" };
+  var AEROPORTOS = {};
+  var LISTA = [];
+  AEROPORTOS_RAW.split("\n").forEach(function(l) {
+    var p = l.split("|"), a = { cod: p[0], cidade: p[1], pais: p[2], lat: +p[3], lng: +p[4], sai: [] };
+    for (var k = 0; k < p[5].length; k += 2) a.sai.push(parseInt(p[5].slice(k, k + 2), 36));
+    AEROPORTOS[p[0]] = a;
+    LISTA.push(a);
+  });
+  function km(a, b) {
+    var r = Math.PI / 180, s = Math.pow(Math.sin((b.lat - a.lat) * r / 2), 2) + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.pow(Math.sin((b.lng - a.lng) * r / 2), 2);
+    return 12742 * Math.asin(Math.sqrt(s));
+  }
+  function escalasOpenFlights(de, para) {
+    var a = AEROPORTOS[EM_2014[de] || de], b = AEROPORTOS[EM_2014[para] || para];
+    if (!a || !b || a === b) return null;
+    var n = LISTA.length, voos = [], dist = [], ant = [], feito = [], k;
+    for (k = 0; k < n; k++) {
+      voos[k] = Infinity;
+      dist[k] = Infinity;
+      ant[k] = -1;
+    }
+    var ia = LISTA.indexOf(a), ib = LISTA.indexOf(b);
+    voos[ia] = 0;
+    dist[ia] = 0;
+    for (; ; ) {
+      var u = -1;
+      for (k = 0; k < n; k++) if (!feito[k] && voos[k] < Infinity && (u < 0 || voos[k] < voos[u] || voos[k] === voos[u] && dist[k] < dist[u])) u = k;
+      if (u < 0 || u === ib) break;
+      feito[u] = 1;
+      if (voos[u] >= 4) continue;
+      LISTA[u].sai.forEach(function(v) {
+        var nv = voos[u] + 1, nd = dist[u] + km(LISTA[u], LISTA[v]);
+        if (nv < voos[v] || nv === voos[v] && nd < dist[v]) {
+          voos[v] = nv;
+          dist[v] = nd;
+          ant[v] = u;
+        }
+      });
+    }
+    if (voos[ib] === Infinity) return null;
+    var via = [];
+    for (k = ant[ib]; k !== ia; k = ant[k]) via.unshift(LISTA[k]);
+    return via;
+  }
+
   // web/src/js/nucleo/geo.js
   var geo_exports = {};
   __export(geo_exports, {
@@ -7606,7 +7725,7 @@ NAN|Nadi|-17.76|177.44`;
       ctx.lineWidth = 2;
       ctx.strokeStyle = "#ff9f43";
       ctx.stroke();
-      etiqueta(h.cod, p.x, p.y, { cod: h.cod, txt: "Escala em " + h.cidade });
+      etiqueta(h.cod, p.x, p.y, { cod: h.cod, txt: "Escala em " + h.cidade + (arc.fontes && arc.fontes.indexOf("of") >= 0 ? " (OpenFlights 2014)" : " (estimativa)") });
     });
     var pontos = arc.pontos || [], letras = {};
     pontos.forEach(function(i, n) {
@@ -7688,8 +7807,8 @@ NAN|Nadi|-17.76|177.44`;
     });
     sel2.value = byName[norm(first)];
   }
-  function fmtKm(km2) {
-    return Math.round(km2).toLocaleString("pt-BR") + " km";
+  function fmtKm(km3) {
+    return Math.round(km3).toLocaleString("pt-BR") + " km";
   }
   function letra(n) {
     return String.fromCharCode(65 + n);
@@ -7702,9 +7821,17 @@ NAN|Nadi|-17.76|177.44`;
   var modo = "voo";
   function toqueNaRota(x, y) {
     var b = $("dbaero");
-    for (var k = siglas.length - 1; k >= 0; k--) {
-      var s = siglas[k];
-      if (x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h) {
+    var melhor = null, md = 44 * 44;
+    siglas.forEach(function(g) {
+      var gx = g.x + g.w / 2, gy = g.y + g.h / 2, dd = (gx - x) * (gx - x) + (gy - y) * (gy - y);
+      if (dd < md) {
+        md = dd;
+        melhor = g;
+      }
+    });
+    if (melhor) {
+      var s = melhor;
+      {
         b.innerHTML = "";
         var t = document.createElement("b");
         t.textContent = "✈️ " + s.info.cod;
@@ -7732,25 +7859,25 @@ NAN|Nadi|-17.76|177.44`;
     var c = codAero(d);
     return (c ? c + " " : "") + capShort(d);
   }
-  function km(a, b) {
+  function km2(a, b) {
     return haversine(a, b);
   }
   function maisPerto(c) {
     var m = HUBS[0];
     HUBS.forEach(function(h) {
-      if (km(c, h) < km(c, m)) m = h;
+      if (km2(c, h) < km2(c, m)) m = h;
     });
     return m;
   }
   function hubDaCidade(c) {
-    for (var k = 0; k < HUBS.length; k++) if (km(c, HUBS[k]) < 80) return HUBS[k];
+    for (var k = 0; k < HUBS.length; k++) if (km2(c, HUBS[k]) < 80) return HUBS[k];
     return null;
   }
   function rotaComEscalas(a, b) {
     var ha = hubDaCidade(a), hb = hubDaCidade(b), nos = [a, b].concat(HUBS), n = nos.length;
     var pa = ha || maisPerto(a), pb = hb || maisPerto(b);
     function custo(i2, j) {
-      var u2 = nos[i2], v = nos[j], d = km(u2, v);
+      var u2 = nos[i2], v = nos[j], d = km2(u2, v);
       if (i2 === 0 && v === ha || i2 === 1 && v === hb || j === 0 && u2 === ha || j === 1 && u2 === hb) return 0;
       if (i2 < 2 && j < 2) return d <= ALC_REGIONAL || ha && hb && d <= ALC_LONGO ? d + CUSTO_ESCALA : Infinity;
       if (i2 < 2) return ha || v === (i2 === 0 ? pa : pb) ? ha && d > ALC_LONGO ? Infinity : d + CUSTO_ESCALA : Infinity;
@@ -7787,6 +7914,26 @@ NAN|Nadi|-17.76|177.44`;
       return !(x === ha && x !== a) && !(x === hb && x !== b);
     });
   }
+  var capitalPorAero = null;
+  function cidadeDaEscala(e) {
+    for (var k = 0; k < HUBS.length; k++) if (HUBS[k].cod === e.cod) return HUBS[k].cidade;
+    if (!capitalPorAero) {
+      capitalPorAero = {};
+      D.forEach(function(d2) {
+        var c = codAero(d2);
+        if (c && !capitalPorAero[c]) capitalPorAero[c] = d2;
+      });
+    }
+    var d = capitalPorAero[e.cod];
+    return d ? capShort(d) + " (" + short(d) + ")" : e.cidade + " (" + e.pais + ")";
+  }
+  function rotaVoo(a, b) {
+    var ca = codAero(a), cb = codAero(b), of = ca && cb ? escalasOpenFlights(ca, cb) : null;
+    if (of) return { fonte: "of", nos: [a].concat(of.map(function(e) {
+      return { cod: e.cod, cidade: cidadeDaEscala(e), lat: e.lat, lng: e.lng };
+    }), [b]) };
+    return { fonte: "est", nos: rotaComEscalas(a, b) };
+  }
   function fmtHoras(h) {
     var min = Math.round(h * 60), hh2 = Math.floor(min / 60), m = min % 60;
     return hh2 ? hh2 + " h" + (m ? " " + m + " min" : "") : m + " min";
@@ -7807,9 +7954,9 @@ NAN|Nadi|-17.76|177.44`;
     var pts = [], trechos = [], escalas = [], tot = 0, horas = 0, k, j;
     for (k = 1; k < lista.length; k++) {
       var a = D[lista[k - 1]], b = D[lista[k]];
-      var nos = modo === "voo" ? rotaComEscalas(a, b) : [a, b], kmTrecho = 0;
+      var rv = modo === "voo" ? rotaVoo(a, b) : { fonte: "reta", nos: [a, b] }, nos = rv.nos, kmTrecho = 0;
       for (j = 1; j < nos.length; j++) {
-        var d = km(nos[j - 1], nos[j]) * (modo === "voo" ? DESVIO : 1);
+        var d = km2(nos[j - 1], nos[j]) * (modo === "voo" ? DESVIO : 1);
         kmTrecho += d;
         for (var t = 0; t <= 1.0001; t += 1 / 80) pts.push(slerp(xyz2(nos[j - 1]), xyz2(nos[j]), Math.min(1, t)));
         if (modo === "voo") horas += d / VELOCIDADE + 0.5;
@@ -7819,9 +7966,11 @@ NAN|Nadi|-17.76|177.44`;
         }
       }
       tot += kmTrecho;
-      trechos.push({ a, b, km: kmTrecho, via: nos.slice(1, -1) });
+      trechos.push({ a, b, km: kmTrecho, via: nos.slice(1, -1), fonte: rv.fonte });
     }
-    estadoDistancia.arc = { pts, pontos: lista.slice(), aviao: modo !== "reta", modo, escalas };
+    estadoDistancia.arc = { pts, pontos: lista.slice(), aviao: modo !== "reta", modo, escalas, fontes: trechos.map(function(t2) {
+      return t2.fonte;
+    }) };
     estadoDistancia.ativo = true;
     document.body.classList.add("dist");
     var ida = D[lista[0]], fim = D[lista[lista.length - 1]];
@@ -7830,9 +7979,12 @@ NAN|Nadi|-17.76|177.44`;
     if (modo === "reta") txt += " em linha reta pela superfície";
     else txt += " · ~" + fmtHoras(horas) + (escalas.length ? " com " + escalas.length + (escalas.length === 1 ? " escala" : " escalas") : " sem escala");
     $("dbtot").textContent = txt;
-    var nota2 = modo === "reta" ? "O caminho mais curto pela superfície da Terra, sem pensar em aviões." : escalas.length ? "Escalas típicas, aproximadas: " + escalas.map(function(h) {
+    var nOf = trechos.filter(function(t2) {
+      return t2.fonte === "of";
+    }).length, nEst = trechos.length - nOf;
+    var nota2 = modo === "reta" ? "O caminho mais curto pela superfície da Terra, sem pensar em aviões." : (nOf ? nEst ? 'Trechos marcados "OpenFlights": voos que existiam em 2014, nos dados abertos do OpenFlights. Trechos marcados "estimativa": sem dado, montados pelos grandes aeroportos de conexão. ' : "Rota com voos que existiam em 2014, segundo os dados abertos do OpenFlights. As companhias mudam as rotas o tempo todo: confira antes de viajar. " : "Estimativa: sem dado do OpenFlights para esta rota, ela foi montada pelos grandes aeroportos de conexão. ") + (escalas.length ? "Escalas: " + escalas.map(function(h) {
       return h.cod + " " + h.cidade;
-    }).join(", ") + ". Conta 2 h de espera em cada." : "Voo sem escala: uns 5% a mais que a linha reta, por causa das rotas aéreas e do vento.";
+    }).join(", ") + ". " : "") + "Km e horas são estimados (5% a mais que a linha reta, 30 min para subir e descer e 2 h em cada escala).";
     $("dbnota").hidden = true;
     Array.prototype.forEach.call($("dbmodo").children, function(bt) {
       bt.setAttribute("aria-pressed", bt.dataset.v === modo ? "true" : "false");
@@ -7874,7 +8026,7 @@ NAN|Nadi|-17.76|177.44`;
         li.className = "dleg";
         li.textContent = "↓ " + fmtKm(tr.km) + (modo === "voo" ? " · " + [codAero(tr.a) || capShort(tr.a)].concat(tr.via.map(function(h) {
           return h.cod;
-        }), [codAero(tr.b) || capShort(tr.b)]).join(" → ") : "");
+        }), [codAero(tr.b) || capShort(tr.b)]).join(" → ") + (tr.fonte === "of" ? " · OpenFlights 2014" : " · estimativa") : "");
         lg.appendChild(li);
       }
     });
@@ -7975,6 +8127,15 @@ NAN|Nadi|-17.76|177.44`;
     });
     return true;
   }
+  function tocarOceano(x, y) {
+    if (!estadoRender.camadas.oceanos || estadoBrasil.statesMode) return false;
+    var o = oceanoEm(x, y);
+    if (!o) return false;
+    if (estadoMapa.selected) closeCard();
+    fecharArea();
+    tocar("toque");
+    return abrirOceano(o);
+  }
   function tap(px, py) {
     if (estadoDistancia.ativo) {
       var rr = cv.getBoundingClientRect();
@@ -7988,6 +8149,7 @@ NAN|Nadi|-17.76|177.44`;
     var r = cv.getBoundingClientRect(), x = px - r.left, y = py - r.top, R = R0 * estadoCamera.zoom, cand = [];
     if (ganchosInterface.toqueAntes(x, y)) return;
     if (ganchosInterface.toqueEstados(x, y)) return;
+    if (tocarOceano(x, y)) return;
     if (!ganchos.ocultarMarcadores()) {
       for (var i = 0; i < D.length; i++) {
         if (!estadoMapa.on[i]) continue;
@@ -8018,6 +8180,7 @@ NAN|Nadi|-17.76|177.44`;
   function tap2D(px, py) {
     var r = cv.getBoundingClientRect(), x = px - r.left, y = py - r.top, R2 = R2now(), cx = W / 2, cy = H * estadoCamera.cyFrac, i;
     if (ganchosInterface.toqueNoMapa2D(x, y)) return;
+    if (tocarOceano(x, y)) return;
     hidePick();
     var cand2 = [];
     for (i = 0; i < D.length; i++) {
@@ -8345,8 +8508,8 @@ NAN|Nadi|-17.76|177.44`;
       var mg = ia.pop >= ib.pop ? a : b, mp = mg === a ? b : a;
       if (mg.info.pop / mp.info.pop >= 1.2) out.push("👥 Para cada pessoa em " + dflag(mp) + ", há " + vezes(mg.info.pop, mp.info.pop) + " em " + dflag(mg) + ".");
     }
-    var km2 = Math.round(haversine(a, b));
-    out.push("✈️ De " + capShort(a) + " a " + capShort(b) + ": " + km2.toLocaleString("pt-BR") + " km, umas " + (km2 / 850).toFixed(1).replace(".", ",") + " h de voo direto.");
+    var km3 = Math.round(haversine(a, b));
+    out.push("✈️ De " + capShort(a) + " a " + capShort(b) + ": " + km3.toLocaleString("pt-BR") + " km, umas " + (km3 / 850).toFixed(1).replace(".", ",") + " h de voo direto.");
     if (ia && ib && ia.lang && ib.lang) {
       var la = ia.lang.split(/,| e /)[0].trim(), lb = ib.lang.split(/,| e /)[0].trim();
       if (la === lb) out.push("🗣️ Nos dois se fala " + la.toLowerCase() + ".");
@@ -11503,12 +11666,12 @@ NAN|Nadi|-17.76|177.44`;
       finishQ(ok, ok ? "" : "Você tocou fora de qualquer país.");
       return;
     }
-    var km2 = Math.round(haversine(cn, d)), near = km2 < 800;
+    var km3 = Math.round(haversine(cn, d)), near = km3 < 800;
     var pts = [], A = [cn.x, cn.y, cn.z], B = [d.x, d.y, d.z];
     for (var t = 0; t <= 1.0001; t += 1 / 60) pts.push(slerp(A, B, Math.min(1, t)));
     estadoDistancia.arc = { pontos: [cn.i, i], pts, quiz: true };
     if (near) addXP(3);
-    finishQ(false, "Você tocou em " + dflag(cn) + " " + short(cn) + ", a " + km2.toLocaleString("pt-BR") + " km (entre as capitais)." + (near ? " Quase! +3 XP" : ""));
+    finishQ(false, "Você tocou em " + dflag(cn) + " " + short(cn) + ", a " + km3.toLocaleString("pt-BR") + " km (entre as capitais)." + (near ? " Quase! +3 XP" : ""));
   }
   function quizMapAnswerBR(st) {
     if (!estadoTreino.qMap || quiz.answered) return;
@@ -11517,9 +11680,9 @@ NAN|Nadi|-17.76|177.44`;
       finishQ(ok, ok ? "" : "Você tocou fora de qualquer estado.");
       return;
     }
-    var km2 = Math.round(haversine(st, d)), near = km2 < 300;
+    var km3 = Math.round(haversine(st, d)), near = km3 < 300;
     if (near) addXP(3);
-    finishQ(false, "Você tocou em " + st.sigla + " " + st.name + ", a " + km2.toLocaleString("pt-BR") + " km (entre as capitais)." + (near ? " Quase! +3 XP" : ""));
+    finishQ(false, "Você tocou em " + st.sigla + " " + st.name + ", a " + km3.toLocaleString("pt-BR") + " km (entre as capitais)." + (near ? " Quase! +3 XP" : ""));
   }
   function pickStateNear(x, y) {
     var R = R0 * estadoCamera.zoom, cand = [];

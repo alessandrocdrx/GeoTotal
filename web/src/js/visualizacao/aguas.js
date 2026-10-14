@@ -10,6 +10,13 @@ import { REGIOES } from '../dados/regioes-naturais.js';
 import { estadoRender } from './projecao.js';
 import { ctx, FONT } from './tela.js';
 
+/* onde cada nome de oceano foi escrito neste quadro (para o toque no nome abrir o cartão) */
+let nomesOceanos = [];
+/** Nome de oceano (como "PACÍFICO") escrito no ponto (x, y) da tela, ou null. */
+function oceanoEm(x,y){
+  for(var k=0;k<nomesOceanos.length;k++){var r=nomesOceanos[k];if(x>=r.x-6&&x<=r.x+r.w+6&&y>=r.y-6&&y<=r.y+r.h+6)return r.nome;}
+  return null;
+}
 function cabe(r,usados){
   for(var u=0;u<usados.length;u++){var U=usados[u];if(!(r.x>U.x+U.w||r.x+r.w<U.x||r.y>U.y+U.h||r.y+r.h<U.y))return false;}
   return true;
@@ -21,7 +28,7 @@ function cabe(r,usados){
  */
 function desenharAguas(projetar,escala,zoom,usados){
   var cam=estadoRender.camadas,atlas=estadoRender.atlas&&!!estadoRender.feats;
-  usados=usados||[];
+  usados=usados||[];nomesOceanos=[];
   if(!cam.oceanos&&!cam.mares)return usados;
   /* no atlas o mar é claro: letra azul-escura; no satélite, azul-clara */
   var cor=atlas?'30,78,128':'168,214,255',k,p;
@@ -35,6 +42,7 @@ function desenharAguas(projetar,escala,zoom,usados){
       var w=Math.max(ctx.measureText(oc.l1).width,ctx.measureText(oc.l2).width),ro={x:p.x-w/2,y:p.y-fs*1.3,w:w,h:fs*2.6};
       if(!cabe(ro,usados))continue;
       usados.push(ro);
+      if(p.a>.5)nomesOceanos.push({x:ro.x,y:ro.y,w:ro.w,h:ro.h,nome:oc.l2});
       ctx.fillStyle='rgba('+cor+','+(p.a*.9)+')';
       ctx.fillText(oc.l1,p.x,p.y-fs*.62);ctx.fillText(oc.l2,p.x,p.y+fs*.72);
     }
@@ -57,4 +65,4 @@ function desenharAguas(projetar,escala,zoom,usados){
   return usados;
 }
 
-export { desenharAguas };
+export { desenharAguas, oceanoEm };

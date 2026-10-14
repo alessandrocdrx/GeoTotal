@@ -5,7 +5,7 @@
  * nela com a camada ligada no botão 🏷️: tamanho, países que cobre ou banha e uma curiosidade.
  */
 
-import { TEXTOS } from '../dados/natureza-textos.js';
+import { OCEANOS, TEXTOS } from '../dados/natureza-textos.js';
 import { D, dflag } from '../dados/paises.js';
 import { short } from '../dados/vizinhos.js';
 import { $ } from '../nucleo/utilitarios.js';
@@ -68,6 +68,21 @@ function abrirArea(r,escolherPais){
   flyTo(r.lat,r.lng,Math.max(estadoCamera.zoom,1.4));
 }
 
+/** Abre o cartão de um oceano (chave como "PACÍFICO"); sem contorno no mapa, só o cartão. */
+function abrirOceano(chave){
+  var o=OCEANOS[chave];if(!o)return false;
+  estadoRender.areaSel={oceano:true,nome:o.nome};
+  $('ncico').textContent='🌊';$('nctipo').textContent='Oceano';$('ncnome').textContent=o.nome;
+  var fx=$('ncfatos');fx.innerHTML='';
+  var tm=tamanho(o.area);
+  fx.appendChild(fato('📐 Tamanho',tm[0]));fx.appendChild(fato('🇧🇷 Comparando',tm[1]));
+  fx.appendChild(fato('⬇️ Mais fundo',o.fundo));fx.appendChild(fato('🌍 Banha',o.banha));
+  $('nctexto').textContent=o.texto;$('nctexto').hidden=false;
+  $('ncpaises').innerHTML='';
+  $('ncnota').textContent='Números aproximados; o tamanho dos oceanos muda conforme o que se conta como mar.';
+  $('ncard').hidden=false;$('ncard').scrollTop=0;estadoCartao.cardH=$('ncard').offsetHeight+10;
+  return true;
+}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   $('ncfechar').onclick=fecharArea;
@@ -81,4 +96,4 @@ function iniciar() {
     fechar:fecharArea});
 }
 
-export { abrirArea, fecharArea, iniciar };
+export { abrirArea, abrirOceano, fecharArea, iniciar };

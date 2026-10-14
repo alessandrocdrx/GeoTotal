@@ -7,6 +7,7 @@
  */
 
 import { AEROPORTO_DA_CAPITAL, HUBS } from '../dados/aeroportos.js';
+import { escalasOpenFlights } from '../dados/voos.js';
 import { D, dflag, norm } from '../dados/paises.js';
 import { byName, capShort, short } from '../dados/vizinhos.js';
 import { haversine } from '../nucleo/geo.js';
@@ -78,7 +79,7 @@ function drawArc(R,cx,cy){
   (arc.escalas||[]).forEach(function(h){
     var p=naTela(xyz(h),R,cx,cy);if(!p)return;
     ctx.beginPath();ctx.arc(p.x,p.y,5,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#ff9f43';ctx.stroke();
-    etiqueta(h.cod,p.x,p.y,{cod:h.cod,txt:'Escala em '+h.cidade});
+    etiqueta(h.cod,p.x,p.y,{cod:h.cod,txt:'Escala em '+h.cidade+(arc.fontes&&arc.fontes.indexOf('of')>=0?' (OpenFlights 2014)':' (estimativa)')});
   });
   /* paradas: a mesma capital duas vezes (ida e volta) ganha as duas letras, ex.: A·E */
   var pontos=arc.pontos||[],letras={};
@@ -132,9 +133,11 @@ let modo = 'voo';
 /** Toque na tela da Distância: numa sigla, diz que aeroporto é (balão perto dela). Devolve true se tratou. */
 function toqueNaRota(x,y){
   var b=$('dbaero');
-  for(var k=siglas.length-1;k>=0;k--){
-    var s=siglas[k];
-    if(x>=s.x&&x<=s.x+s.w&&y>=s.y&&y<=s.y+s.h){
+  /* a sigla mais perto do toque, até uns 44 px (dedo não é mouse) */
+  var melhor=null,md=44*44;
+  siglas.forEach(function(g){var gx=g.x+g.w/2,gy=g.y+g.h/2,dd=(gx-x)*(gx-x)+(gy-y)*(gy-y);if(dd<md){md=dd;melhor=g;}});
+  if(melhor){
+    var s=melhor;{
       b.innerHTML='';
       var t=document.createElement('b');t.textContent='✈️ '+s.info.cod;
       var p=document.createElement('span');p.textContent=s.info.txt;
@@ -180,6 +183,21 @@ function rotaComEscalas(a,b){
   /* o aeroporto da própria capital não é escala */
   return cam.filter(function(x){return !(x===ha&&x!==a)&&!(x===hb&&x!==b);});
 }
+/* nome da cidade de uma escala do OpenFlights: em português quando é um dos grandes hubs ou a capital
+   de um país do jogo; senão, como vem do OpenFlights */
+let capitalPorAero = null;
+function cidadeDaEscala(e){
+  for(var k=0;k<HUBS.length;k++)if(HUBS[k].cod===e.cod)return HUBS[k].cidade;
+  if(!capitalPorAero){capitalPorAero={};D.forEach(function(d){var c=codAero(d);if(c&&!capitalPorAero[c])capitalPorAero[c]=d;});}
+  var d=capitalPorAero[e.cod];
+  return d?capShort(d)+' ('+short(d)+')':e.cidade+' ('+e.pais+')';
+}
+/** Voo entre duas capitais: pelas rotas do OpenFlights (2014) quando há dado; senão, a estimativa. */
+function rotaVoo(a,b){
+  var ca=codAero(a),cb=codAero(b),of=ca&&cb?escalasOpenFlights(ca,cb):null;
+  if(of)return {fonte:'of',nos:[a].concat(of.map(function(e){return {cod:e.cod,cidade:cidadeDaEscala(e),lat:e.lat,lng:e.lng};}),[b])};
+  return {fonte:'est',nos:rotaComEscalas(a,b)};
+}
 function fmtHoras(h){var min=Math.round(h*60),hh=Math.floor(min/60),m=min%60;return hh?(hh+' h'+(m?' '+m+' min':'')):(m+' min');}
 
 /* ---------- tela da Distância ---------- */
@@ -196,7 +214,7 @@ function mostrarDistancia(lista){
     var a=D[lista[k-1]],b=D[lista[k]];
     /* voo: sem escala quando dá; senão, pelos grandes aeroportos de conexão. Cada voo faz uns 5% a mais
        que a linha reta (rotas aéreas e vento) e leva ~30 min a mais para subir e descer */
-    var nos=modo==='voo'?rotaComEscalas(a,b):[a,b],kmTrecho=0;
+    var rv=modo==='voo'?rotaVoo(a,b):{fonte:'reta',nos:[a,b]},nos=rv.nos,kmTrecho=0;
     for(j=1;j<nos.length;j++){
       var d=km(nos[j-1],nos[j])*(modo==='voo'?DESVIO:1);kmTrecho+=d;
       for(var t=0;t<=1.0001;t+=1/80)pts.push(slerp(xyz(nos[j-1]),xyz(nos[j]),Math.min(1,t)));
@@ -204,9 +222,9 @@ function mostrarDistancia(lista){
       if(j<nos.length-1){escalas.push(nos[j]);horas+=2;}
     }
     tot+=kmTrecho;
-    trechos.push({a:a,b:b,km:kmTrecho,via:nos.slice(1,-1)});
+    trechos.push({a:a,b:b,km:kmTrecho,via:nos.slice(1,-1),fonte:rv.fonte});
   }
-  estadoDistancia.arc={pts:pts,pontos:lista.slice(),aviao:modo!=='reta',modo:modo,escalas:escalas};
+  estadoDistancia.arc={pts:pts,pontos:lista.slice(),aviao:modo!=='reta',modo:modo,escalas:escalas,fontes:trechos.map(function(t){return t.fonte;})};
   estadoDistancia.ativo=true;document.body.classList.add('dist');
   var ida=D[lista[0]],fim=D[lista[lista.length-1]];
   $('dbtit').textContent=ida.flag+' '+rotulo(ida)+' → '+(lista.length>2?'… → ':'')+fim.flag+' '+rotulo(fim);
@@ -214,8 +232,11 @@ function mostrarDistancia(lista){
   if(modo==='reta')txt+=' em linha reta pela superfície';
   else txt+=' · ~'+fmtHoras(horas)+(escalas.length?' com '+escalas.length+(escalas.length===1?' escala':' escalas'):' sem escala');
   $('dbtot').textContent=txt;
+  var nOf=trechos.filter(function(t){return t.fonte==='of';}).length,nEst=trechos.length-nOf;
   var nota=modo==='reta'?'O caminho mais curto pela superfície da Terra, sem pensar em aviões.':
-    (escalas.length?'Escalas típicas, aproximadas: '+escalas.map(function(h){return h.cod+' '+h.cidade;}).join(', ')+'. Conta 2 h de espera em cada.':'Voo sem escala: uns 5% a mais que a linha reta, por causa das rotas aéreas e do vento.');
+    ((nOf?(nEst?'Trechos marcados "OpenFlights": voos que existiam em 2014, nos dados abertos do OpenFlights. Trechos marcados "estimativa": sem dado, montados pelos grandes aeroportos de conexão. ':'Rota com voos que existiam em 2014, segundo os dados abertos do OpenFlights. As companhias mudam as rotas o tempo todo: confira antes de viajar. '):'Estimativa: sem dado do OpenFlights para esta rota, ela foi montada pelos grandes aeroportos de conexão. ')+
+    (escalas.length?'Escalas: '+escalas.map(function(h){return h.cod+' '+h.cidade;}).join(', ')+'. ':'')+
+    'Km e horas são estimados (5% a mais que a linha reta, 30 min para subir e descer e 2 h em cada escala).');
   $('dbnota').hidden=true;
   Array.prototype.forEach.call($('dbmodo').children,function(bt){bt.setAttribute('aria-pressed',bt.dataset.v===modo?'true':'false');});
   var lg=$('dblegs');lg.innerHTML='';
@@ -233,7 +254,7 @@ function mostrarDistancia(lista){
     }
     lg.appendChild(row);
     var tr=trechos[n];
-    if(tr){var li=document.createElement('div');li.className='dleg';li.textContent='↓ '+fmtKm(tr.km)+(modo==='voo'?' · '+[codAero(tr.a)||capShort(tr.a)].concat(tr.via.map(function(h){return h.cod;}),[codAero(tr.b)||capShort(tr.b)]).join(' → '):'');lg.appendChild(li);}
+    if(tr){var li=document.createElement('div');li.className='dleg';li.textContent='↓ '+fmtKm(tr.km)+(modo==='voo'?' · '+[codAero(tr.a)||capShort(tr.a)].concat(tr.via.map(function(h){return h.cod;}),[codAero(tr.b)||capShort(tr.b)]).join(' → ')+(tr.fonte==='of'?' · OpenFlights 2014':' · estimativa'):'');lg.appendChild(li);}
   });
   $('dbmais').textContent='✏️ Paradas '+(lg.hidden?'▾':'▴');
   $('dbadd').hidden=lista.length>=MAX_PARADAS;

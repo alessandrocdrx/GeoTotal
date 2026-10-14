@@ -106,4 +106,18 @@ const TEXTOS = {
   'Drakensberg': 'A maior cordilheira da África do Sul, com paredões de rocha e pinturas rupestres antigas.',
 };
 
-export { TEXTOS };
+/* oceanos (sem contorno no mapa: o cartão abre ao tocar no nome). Chave = segunda linha do rótulo. */
+const OCEANOS = {
+  'PACÍFICO':{nome:'Oceano Pacífico',area:165000000,fundo:'~10.900 m, na Fossa das Marianas',banha:'Ásia, Oceania, Américas e Antártida',
+    texto:'O maior e mais fundo oceano: cabem nele todas as terras do planeta juntas, e ainda sobra espaço. Fernão de Magalhães o chamou de "pacífico" em 1520, porque o achou calmo depois de passar pelo estreito no sul da América.'},
+  'ATLÂNTICO':{nome:'Oceano Atlântico',area:106000000,fundo:'~8.400 m, na Fossa de Porto Rico',banha:'Américas, Europa, África e Antártida',
+    texto:'No meio dele corre uma cadeia de montanhas submarinas, a Dorsal Mesoatlântica. Ali o fundo do mar se abre aos poucos, e o Atlântico fica uns 2 a 4 cm mais largo por ano.'},
+  'ÍNDICO':{nome:'Oceano Índico',area:70500000,fundo:'~7.200 m, na Fossa de Java',banha:'África, Ásia, Oceania e Antártida',
+    texto:'O oceano mais quente do mundo. Os ventos das monções sopram do mar para a terra no verão e trazem as chuvas de que a Índia e o Sudeste Asiático dependem.'},
+  'ÁRTICO':{nome:'Oceano Glacial Ártico',area:14000000,fundo:'~5.500 m, na Bacia Eurasiática',banha:'Europa, Ásia e América do Norte',
+    texto:'O menor e mais raso dos oceanos, quase todo coberto de gelo. No Polo Norte não há terra, só gelo boiando. O gelo do fim do verão encolheu muito nas últimas décadas.'},
+  'AUSTRAL':{nome:'Oceano Austral (Antártico)',area:21000000,fundo:'~7.400 m, na Fossa das Sandwich do Sul',banha:'Antártida',
+    texto:'Dá a volta na Antártida. Nele corre a Corrente Circumpolar Antártica, a corrente marinha mais forte do mundo. A National Geographic só passou a contar ele como o quinto oceano em 2021.'},
+};
+
+export { OCEANOS, TEXTOS };

@@ -141,7 +141,7 @@ function desenharAreas(tracar,terra){
   });
   /* a área tocada fica em destaque */
   var sel=estadoRender.areaSel;
-  if(sel){
+  if(sel&&sel.geometry){
     ctx.save();ctx.beginPath();tracar(sel);
     ctx.fillStyle='rgba(255,224,102,.22)';ctx.fill();
     ctx.lineJoin='round';ctx.lineWidth=2.4;ctx.strokeStyle='#ffd23f';ctx.stroke();ctx.restore();
