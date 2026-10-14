@@ -20,6 +20,8 @@ const estadoRender = {
   /** Estilo atlas escolar (cores por país, oceano claro) em vez da textura de satélite. */
   atlas: false,
   /** Nomes no mapa que o usuário liga e desliga no botão 🏷️. */
+  /** Mês mostrado no mapa (neve): null = o mês de hoje; 0 a 11 = escolhido no botão 🏷️. */
+  mesMapa: null,
   /** Área natural tocada (deserto, mar…), com o contorno em destaque. */
   areaSel: null,
   camadas: { oceanos: true, mares: true, zonas: false, desertos: false, florestas: false, montanhas: false },

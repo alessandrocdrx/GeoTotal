@@ -25,8 +25,8 @@ function dl(a,b){var d=a-b;while(d>180)d-=360;while(d<-180)d+=360;return d;}
    No norte, o inverno cobre Escandinávia, Rússia e Canadá; no sul, só a Patagônia e os Andes. */
 const NEVE_NORTE = [47,47,51,58,65,72,74,74,70,62,54,49];
 const NEVE_SUL = [70,70,66,58,52,48,46,47,52,60,66,70];
-function buildTexture(done,progress){
-  var mes=new Date().getMonth(),lnN=NEVE_NORTE[mes],lnS=NEVE_SUL[mes];
+function buildTexture(done,progress,mesEscolhido){
+  var mes=mesEscolhido==null?new Date().getMonth():mesEscolhido,lnN=NEVE_NORTE[mes],lnS=NEVE_SUL[mes];
   var TW=2048,TH=1024,FW=1024,FH=512;
   var fc=document.createElement('canvas');fc.width=FW;fc.height=FH;
   var fx=fc.getContext('2d'),fd=fx.createImageData(FW,FH),fp=fd.data;

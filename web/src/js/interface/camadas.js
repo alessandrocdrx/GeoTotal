@@ -7,13 +7,17 @@
  */
 
 import { ouvir } from '../nucleo/eventos.js';
-import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
+import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
+import { trocarMes } from '../visualizacao/carregamento.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { estadoRender } from '../visualizacao/projecao.js';
 import { estadoMapa } from '../visualizacao/tela.js';
 import { ligarLugar, setIncludeDep, setIncludeDisputed, setIncludeUni } from './filtros.js';
 
 /* chave na tela → camada (o valor inicial de cada uma está em estadoRender.camadas) */
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+/* estação no hemisfério sul (Brasil) */
+const ESTACAO = ['verão','verão','outono','outono','outono','inverno','inverno','inverno','primavera','primavera','primavera','verão'];
 const CHAVES = [['cOce','oceanos'],['cMar','mares'],['cZon','zonas'],['cDes','desertos'],['cFlo','florestas'],['cMon','montanhas']];
 
 function mostrar(){
@@ -37,6 +41,17 @@ function iniciar() {
   });
   ligarLugar($('cDis'),setIncludeDisputed);ligarLugar($('cDep'),setIncludeDep);ligarLugar($('cUni'),setIncludeUni);
   ouvir('categorias-mudaram',mostrar);
+  /* época do ano: a neve do globo muda com o mês (no Brasil, as estações ao contrário do norte) */
+  var sel=$('cMes'),hoje=new Date().getMonth(),agora=document.createElement('option');
+  agora.value='';agora.textContent='Agora ('+MESES[hoje]+')';sel.appendChild(agora);
+  MESES.forEach(function(m,k){var o=document.createElement('option');o.value=k;o.textContent=m+' · '+ESTACAO[k];sel.appendChild(o);});
+  var salvo=lsGet('globo.mes',null);estadoRender.mesMapa=(salvo===null||salvo==='')?null:+salvo;
+  sel.value=estadoRender.mesMapa==null?'':String(estadoRender.mesMapa);
+  sel.onchange=function(){
+    estadoRender.mesMapa=sel.value===''?null:+sel.value;lsSet('globo.mes',sel.value===''?null:+sel.value);
+    if(estadoRender.atlas)setStatus('A neve aparece no mapa de satélite (🛰️).',3000);
+    trocarMes();
+  };
   $('camb').onclick=function(){abrir($('camadas').hidden);};
   $('camfechar').onclick=function(){abrir(false);};
   /* toque fora do painel fecha */

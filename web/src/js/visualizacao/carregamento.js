@@ -19,8 +19,10 @@ function idbDel(k){return idb().then(function(db){return new Promise(function(ok
 function blobToImg(b){return new Promise(function(ok,no){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){ok(im);};im.onerror=no;im.src=fr.result;};fr.onerror=no;fr.readAsDataURL(b);});}
 function blobToTexCanvas(b){return blobToImg(b).then(function(im){var c=document.createElement('canvas');c.width=2048;c.height=1024;c.getContext('2d').drawImage(im,0,0,2048,1024);return c;});}
 let texCanvas = null;
-/* a textura muda com a neve de cada mês: uma chave por mês (as dos outros meses são apagadas) */
-function chaveTex(){return 'tex-proc-m'+new Date().getMonth();}
+/* a textura muda com a neve de cada mês: uma chave por mês. O mês é o de hoje, ou o escolhido no
+   botão 🏷️ (estadoRender.mesMapa); as texturas de outros meses são apagadas ao abrir o app */
+function mesDoMapa(){return estadoRender.mesMapa==null?new Date().getMonth():estadoRender.mesMapa;}
+function chaveTex(){return 'tex-proc-m'+mesDoMapa();}
 function setTextureFrom(c){
   if(uploadTexture(c)){estadoRender.useTex=true;texCanvas=c;updateOpts();return true;}
   return false;
@@ -28,12 +30,21 @@ function setTextureFrom(c){
 function genTexture(){
   if(!estadoRender.gl||!estadoRender.feats)return;
   setStatus('Gerando a textura do globo… 0%');
+  var chave=chaveTex();
   buildTexture(function(tc){
     if(setTextureFrom(tc)){
       setStatus('Pronto: textura gerada e salva neste aparelho.',3500);
-      tc.toBlob(function(b){if(b)idbSet(chaveTex(),b);},'image/jpeg',.9);
+      tc.toBlob(function(b){if(b)idbSet(chave,b);},'image/jpeg',.9);
     }else setStatus('A textura não pôde ser usada neste aparelho.',7000);
-  },function(p){setStatus('Gerando a textura do globo… '+p+'%');});
+  },function(p){setStatus('Gerando a textura do globo… '+p+'%');},mesDoMapa());
+}
+/** Troca a textura para o mês do mapa (do aparelho, se já foi feita; senão gera). */
+function trocarMes(){
+  if(!estadoRender.gl||!estadoRender.feats)return;
+  idbGet(chaveTex()).then(function(b){
+    if(!b){genTexture();return;}
+    blobToTexCanvas(b).then(function(c){setTextureFrom(c);}).catch(genTexture);
+  });
 }
 function loadD3Topo(){
   return tryLoad(['https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js','https://cdn.jsdelivr.net/npm/d3@3.5.17/d3.min.js'],function(){return window.d3&&d3.geo&&d3.geo.orthographic;})
@@ -52,7 +63,7 @@ function startMap(){
     });
   /* textura e fronteiras importadas por versões antigas (a importação saiu do menu): apaga as sobras */
   idbDel('tex-custom');idbDel('borders');idbDel('tex-proc');
-  for(var m=0;m<12;m++)if('tex-proc-m'+m!==chaveTex())idbDel('tex-proc-m'+m);
+  for(var m=0;m<12;m++)if(m!==mesDoMapa()&&m!==new Date().getMonth())idbDel('tex-proc-m'+m);
   pTex.then(function(okTex){
     if(okTex)setStatus('Textura carregada do aparelho. Carregando fronteiras…');
     return loadD3Topo().then(function(){
@@ -79,4 +90,4 @@ function fixWind(f){
   return f;
 }
 
-export { fixWind, idbGet, idbSet, startMap, texCanvas };
+export { fixWind, idbGet, idbSet, startMap, texCanvas, trocarMes };

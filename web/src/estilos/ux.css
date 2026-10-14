@@ -574,3 +574,6 @@ body.dist .ncard{display:none}
 .alca:hover i,.alca:focus-visible i{opacity:.9}
 /* com o cartão grande, tudo aparece de uma vez (sem "Ver mais detalhes") */
 #card #moreb{display:none}
+.camadas .msegrow{display:flex;align-items:center;gap:10px;padding:7px 2px}
+.camadas .msegrow .mt{flex:1}
+.camadas .cmes{max-width:150px;padding:6px 8px;border-radius:10px;border:1px solid var(--border);background:var(--chip);color:var(--fg);font-family:inherit;font-size:13px}
