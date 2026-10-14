@@ -143,24 +143,43 @@ let sheet;
 
 function setIncludeDisputed(v){
   estadoMapa.includeDisputed=v;lsSet('globo.includeDisputed',v);
-  $('oDisputed').checked=v;$('oDisputedQ').checked=v;
+  $('oDisputed').checked=v;
   if(v)D.forEach(function(d){if(d.dis)estadoMapa.on[d.i]=1;});
   afterFilter();
   emitir('categorias-mudaram',{placar:false});
 }
 function setIncludeDep(v){
   estadoMapa.includeDep=v;lsSet('globo.includeDep',v);
-  $('oDep').checked=v;$('oDepQ').checked=v;
+  $('oDep').checked=v;
   if(v)D.forEach(function(d){if(d.dep)estadoMapa.on[d.i]=1;});
   afterFilter();
   emitir('categorias-mudaram',{placar:true});
 }
 function setIncludeUni(v){
   estadoMapa.includeUni=v;lsSet('globo.includeUni',v);
-  $('oUni').checked=v;$('oUniQ').checked=v;
+  $('oUni').checked=v;
   if(v)D.forEach(function(d){if(d.uni)estadoMapa.on[d.i]=1;});
   buildTree();afterFilter();
   emitir('categorias-mudaram',{placar:true});
+}
+/** Lista dos lugares especiais, com bandeira e o que cada um é (ultramarino de quem, etc.). */
+function buildCatList(){
+  var box=$('catbody');if(!box||box.dataset.ok)return;box.dataset.ok='1';
+  function grupo(titulo,lista){
+    var h=document.createElement('div');h.className='cath';h.textContent=titulo+' ('+lista.length+')';box.appendChild(h);
+    lista.forEach(function(d){
+      var r=document.createElement('div');r.className='catrow';
+      var f=document.createElement('span');f.className='catflag';f.textContent=d.dis?'🏳️':d.flag;
+      var t=document.createElement('div');var n=document.createElement('b');n.textContent=d.name;
+      var o=document.createElement('small');o.textContent=(d.obs||'').split(/[;—]/)[0].trim();
+      var ultra=/ultramarin/i.test(d.obs||'');
+      if(ultra){var u=document.createElement('em');u.className='catultra';u.textContent='ultramarino';n.appendChild(u);}
+      t.appendChild(n);t.appendChild(o);r.appendChild(f);r.appendChild(t);box.appendChild(r);
+    });
+  }
+  grupo('⚠️ Não reconhecidos pela ONU',D.filter(function(d){return d.dis;}));
+  grupo('◇ Territórios dependentes',D.filter(function(d){return d.dep;}));
+  grupo('❄️ Desabitados e Antártida',D.filter(function(d){return d.uni;}));
 }
 const hist = [];
 function updateUndo(){var b=$('ubtn');b.disabled=!hist.length;b.style.opacity=hist.length?1:.4;}
@@ -182,8 +201,10 @@ function iniciar() {
   document.getElementById('alloff').onclick=function(){snap();estadoFiltros.nbSaved=null;estadoMapa.on=D.map(function(){return 0;});afterFilter();};
   document.getElementById('nbsolo').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,false);};
   document.getElementById('nbadd').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,true);};
-  /* categorias de territórios (menu ⋯ → Mapa) */
+  /* lugares especiais (menu ⋯ → Lugares no jogo e no mapa): valem para o Livre e para o treino */
+  $('catlista').addEventListener('toggle',buildCatList);
   $('nDis').textContent='('+D.filter(function(d){return d.dis;}).length+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
+  $('oDisputed').checked=estadoMapa.includeDisputed;
   $('oDisputed').onclick=function(){setIncludeDisputed(this.checked);};
   $('oUni').checked=estadoMapa.includeUni;
   $('oUni').onclick=function(){setIncludeUni(this.checked);};

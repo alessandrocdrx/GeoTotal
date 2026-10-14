@@ -18,7 +18,7 @@ import { pausarMusica, tocar } from '../nucleo/som.js';
 import { $, confirmTap, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { addHintBtn } from './dica.js';
 import { flyTo } from '../visualizacao/animacao.js';
-import { applyDomainForScope, emptyMsg, inScopeActive, poolIdx, qcapD, qcc, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn, updateTrainRow } from './dominio.js';
+import { applyDomainForScope, emptyMsg, inScopeActive, poolIdx, qcapD, qcc, QD, qflag, scopeView, unitWord, updateScopeBackBtn, updateScopeBtn } from './dominio.js';
 import { accList, estadoTreino, freshQS, matches, measureQ, quiz, resetSession, scopeLabel, stopTimerTick } from './estado.js';
 import { fillQStat, modeName } from './estatisticas.js';
 import { curRun, estadoPartida, finishQ, fmtTime, makeNeighborOptions, makeOptions, MEDAL, medalFor, optLabel, pickQ, recordable, renderScore, runKey, runPool, saveRecs, saveRuns, scopeKeyFor, shareRun, showTarget } from './partida.js';
@@ -121,9 +121,9 @@ function showRoundSummary(reason){
   var free=document.createElement('button');free.textContent='Jogar sem parar';
   free.onclick=function(){
     sairJogoRapido();
-    quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);updateSessionBtn();
-    quiz.timerLen=0;lsSet('globo.quiz.timerlen',0);updateTimerBtn();stopTimerTick();updateTimerDisplay();
-    quiz.survivalMode=false;lsSet('globo.quiz.survival',false);updateSurvBtn();
+    quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);
+    quiz.timerLen=0;lsSet('globo.quiz.timerlen',0);stopTimerTick();updateTimerDisplay();
+    quiz.survivalMode=false;lsSet('globo.quiz.survival',false);
     resetSession();nextQ();
   };
   row.appendChild(free);box.appendChild(row);
@@ -143,17 +143,38 @@ function celebrarTela(n){
     host.appendChild(p);setTimeout(function(el){return function(){el.remove();};}(p),2200);
   }
 }
-function updateSessionBtn(){updateTrainRow();
-  $('qsessionb').textContent='🧮 Sessão: '+(quiz.sessionLen?quiz.sessionLen+' perguntas':'livre');
+/* ---------- ajustes da partida (tela ⚙️): cada um troca o valor e recomeça a rodada ---------- */
+function definirTempo(v){
+  sairJogoRapido();
+  quiz.timerLen=v;lsSet('globo.quiz.timerlen',v);
+  /* cronômetro, rodada fechada e sobrevivência não combinam: um desliga os outros */
+  if(v){
+    quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);
+    quiz.survivalMode=false;lsSet('globo.quiz.survival',false);
+  }
+  resetSession();if(v)startTimerTick();else{stopTimerTick();updateTimerDisplay();}nextQ();
 }
-function updateTimerBtn(){
-  $('qtimerb').textContent='⏱️ Cronômetro: '+(quiz.timerLen?quiz.timerLen+'s':'desligado');
+function definirSobrevivencia(v){
+  sairJogoRapido();
+  quiz.survivalMode=v;lsSet('globo.quiz.survival',v);
+  if(v){
+    quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);
+    quiz.timerLen=0;lsSet('globo.quiz.timerlen',0);stopTimerTick();updateTimerDisplay();
+  }
+  resetSession();nextQ();
 }
-function updateSurvBtn(){
-  $('qsurvb').textContent='💀 Sobrevivência: '+(quiz.survivalMode?'ligada':'desligada');
+function definirOrdem(v){
+  quiz.order=v;lsSet('globo.quiz.order2',v);
+  quiz.last=-1;resetSession();nextQ();
 }
-function updateOrderBtn(){
-  $('qorderb').textContent=quiz.order==='seq'?'➡️ Ordem: sequencial':'🔀 Ordem: aleatória';
+function definirRodada(v){
+  sairJogoRapido();
+  quiz.sessionLen=v;lsSet('globo.quiz.sesslen',v);
+  if(v){quiz.survivalMode=false;lsSet('globo.quiz.survival',false);}
+  resetSession();
+}
+function definirResposta(v){
+  quiz.type=v;buildModeButtons();resetSession();nextQ();
 }
 function nextQ(){
   if(quiz.jogoRapido){var lm=MODOS_MISTO[estadoTreino.quizDomain]||MODOS_MISTO.world;quiz.mode=lm[Math.floor(Math.random()*lm.length)];estadoTreino.qMap=false;}
@@ -167,7 +188,7 @@ function nextQ(){
   var arr=QD(),i=pickQ();
   var body=$('qbody'),fb=$('qfb');body.innerHTML='';fb.textContent='';fb.className='';$('qnext').style.display='none';
   var isMap=quiz.mode==='map',isNeighbor=quiz.mode==='neighbor';
-  $('qtypes').style.display=(isMap||isNeighbor)?'none':'flex';measureQ();
+  measureQ();
   if(i<0){updateScopeBtn();if(poolIdx().length&&!runPool().length){showRunDone();return;}semPerguntas(body);$('qpool').textContent='';return;}
   estadoPartida.ultimoFim='';
   quiz.cur=i;quiz.last=i;quiz.answered=false;quiz.sessionAsked++;estadoTreino.QS.q[quiz.mode]=(estadoTreino.QS.q[quiz.mode]||0)+1;lsSet('globo.quiz.v1',estadoTreino.QS);
@@ -319,37 +340,36 @@ function semPerguntas(body){
 }
 function buildModeButtons(){
   var box=$('qmodes');box.innerHTML='';$('qmodev').textContent=modeName(quiz.mode);
-  $('qmodel').textContent='❓ Pergunta';
+  $('qmodel').textContent='🎮 Jogo';
   var defs=estadoTreino.quizDomain==='br'?[['cap','🏛️','Estado → Capital','Qual é a capital da Bahia?'],['pais','🏙️','Capital → Estado','Salvador é capital de qual estado?'],['neighbor','🤝','Vizinhos','Quem faz divisa com a Bahia?'],['code','🔤','Siglas','Qual é a sigla da Bahia?'],['map','📍','Achar no mapa','Toque onde fica a Bahia']]
-    :[['cap','🏛️','País → Capital','Qual é a capital do Peru?'],['pais','🏙️','Capital → País','Lima é capital de qual país?'],['flag','🚩','Bandeiras','De quem é esta bandeira?'],['neighbor','🤝','Vizinhos','Quem faz fronteira com o Peru?'],['map','📍','Achar no mapa','Toque onde fica o Peru']];
+    :[['cap','🏛️','País → Capital','Qual é a capital do Japão?'],['pais','🏙️','Capital → País','Londres é capital de qual país?'],['flag','🚩','Bandeiras','De quem é esta bandeira?'],['neighbor','🤝','Vizinhos','Quem faz fronteira com a China?'],['map','📍','Achar no mapa','Toque onde fica o Egito']];
   defs.forEach(function(m){
-    var b=document.createElement('button');b.className='mcard';b.setAttribute('aria-pressed',quiz.mode===m[0]?'true':'false');
+    var b=document.createElement('button');b.className='mcard';b.setAttribute('aria-pressed',!quiz.jogoRapido&&!estadoTreino.desafio&&quiz.mode===m[0]?'true':'false');
     var t=document.createElement('b');t.textContent=m[1]+' '+m[2];var ex=document.createElement('small');ex.textContent=m[3];
     b.appendChild(t);b.appendChild(ex);
     b.onclick=function(){quizSetMode(m[0]);};box.appendChild(b);
   });
-  /* jeito de responder: escolher entre 4 ou digitar (vizinhos e mapa são sempre de tocar) */
-  var resp=document.createElement('div');resp.className='qresp';
-  var rl=document.createElement('span');rl.textContent='Responder:';resp.appendChild(rl);
-  [['choice','👆 Escolher'],['type','⌨️ Digitar']].forEach(function(t2){
-    var b=document.createElement('button');b.textContent=t2[1];b.setAttribute('aria-pressed',quiz.type===t2[0]?'true':'false');
-    b.onclick=function(){quiz.type=t2[0];$('qmodes').hidden=true;$('qmodeb').setAttribute('aria-expanded','false');buildModeButtons();resetSession();nextQ();};
-    resp.appendChild(b);
+  /* jogos rápidos: misturam tipos de pergunta; o desafio do dia é o mesmo para todo mundo */
+  var jr=document.createElement('div');jr.className='qjr';
+  var rc=recordeRelampago();
+  [['relampago','⚡ Relâmpago','60 segundos'+(rc?' · recorde '+rc:'')],['misto','🎲 Misto','10 perguntas variadas'],['desafio','🗓️ Desafio','Do dia, igual para todos']].forEach(function(j){
+    var b=document.createElement('button');b.className='mcard';b.id='jr-'+j[0];
+    b.setAttribute('aria-pressed',quiz.jogoRapido===j[0]||(j[0]==='desafio'&&estadoTreino.desafio)?'true':'false');
+    var t=document.createElement('b');t.textContent=j[1];var ex=document.createElement('small');ex.textContent=j[2];
+    b.appendChild(t);b.appendChild(ex);
+    b.onclick=function(){
+      fecharJogos();
+      if(j[0]==='desafio')emitir('abrir-desafio');else iniciarJogoRapido(j[0]);
+    };
+    jr.appendChild(b);
   });
-  box.appendChild(resp);
-  /* as outras opções do treino ficam no menu; este atalho mostra que elas existem */
-  var mais=document.createElement('button');mais.className='qmodesmais';mais.textContent='⚙️ Mais ajustes (cronômetro, tamanho da rodada…)';
-  mais.onclick=function(){$('qmodes').hidden=true;$('qmodeb').setAttribute('aria-expanded','false');$('mbtn').click();setTimeout(function(){var t=document.querySelector('[data-p="mp-train"]');if(t)t.click();},60);};
-  box.appendChild(mais);
-  var t=$('qtypes');t.innerHTML='';
-  [['choice','Múltipla escolha'],['type','Digitar']].forEach(function(m){
-    var b=document.createElement('button');b.textContent=m[1];b.setAttribute('aria-pressed',quiz.type===m[0]?'true':'false');
-    b.onclick=function(){quiz.type=m[0];buildModeButtons();resetSession();nextQ();};t.appendChild(b);
-  });
+  var jt=document.createElement('div');jt.className='qjrtit';jt.textContent='Jogos rápidos';
+  box.appendChild(jt);box.appendChild(jr);
 }
+function fecharJogos(){$('jogosheet').style.display='none';$('qmodeb').setAttribute('aria-expanded','false');}
 function quizSetMode(m){
   sairJogoRapido();
-  $('qmodes').hidden=true;$('qmodeb').setAttribute('aria-expanded','false');
+  fecharJogos();
   quiz.mode=m;estadoTreino.qMap=(m==='map'&&quiz.open);
   if(m==='neighbor')quiz.type='choice';
   buildModeButtons();resetSession();nextQ();measureQ();renderScore();
@@ -361,7 +381,7 @@ function quizOpen(){
   document.body.classList.add('quizing');$('quiz').classList.add('map');pausarMusica(true);
   $('quiz').style.display='block';
   applyDomainForScope();
-  updateSessionBtn();updateOrderBtn();updateTimerBtn();updateSurvBtn();updateScopeBackBtn();
+  updateScopeBackBtn();
   if(quiz.timerLen)startTimerTick();else updateTimerDisplay();
   setTimeout(function(){resize();measureQ();},60);
   renderScore();quizSetMode(quiz.mode);
@@ -465,39 +485,12 @@ function iniciarContagem(ri,box){
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ouvir('modo-estados-abriu',function(){if(quiz.open)quizClose();});
-  $('qtimerb').onclick=function(){
-    var opts=[0,30,60],idx=opts.indexOf(quiz.timerLen);
-    quiz.timerLen=opts[(idx+1)%opts.length];lsSet('globo.quiz.timerlen',quiz.timerLen);
-    if(quiz.timerLen){
-      quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);updateSessionBtn();
-      quiz.survivalMode=false;lsSet('globo.quiz.survival',false);updateSurvBtn();
-    }
-    updateTimerBtn();resetSession();startTimerTick();nextQ();
-  };
-  $('qsurvb').onclick=function(){
-    quiz.survivalMode=!quiz.survivalMode;lsSet('globo.quiz.survival',quiz.survivalMode);
-    if(quiz.survivalMode){
-      quiz.sessionLen=0;lsSet('globo.quiz.sesslen',0);updateSessionBtn();
-      quiz.timerLen=0;lsSet('globo.quiz.timerlen',0);updateTimerBtn();stopTimerTick();updateTimerDisplay();
-    }
-    updateSurvBtn();resetSession();nextQ();
-  };
-  $('qorderb').onclick=function(){
-    quiz.order=quiz.order==='seq'?'random':'seq';
-    lsSet('globo.quiz.order2',quiz.order);
-    updateOrderBtn();quiz.last=-1;resetSession();nextQ();
-  };
-  $('qsessionb').onclick=function(){
-    var opts=[0,10,20],i2=opts.indexOf(quiz.sessionLen);
-    quiz.sessionLen=opts[(i2+1)%opts.length];
-    lsSet('globo.quiz.sesslen',quiz.sessionLen);
-    updateSessionBtn();resetSession();
-  };
-  $('qmodeb').onclick=function(){var o=$('qmodes').hidden;$('qmodes').hidden=!o;this.setAttribute('aria-expanded',o?'true':'false');};
+  $('qmodeb').onclick=function(){$('jogosheet').style.display='block';this.setAttribute('aria-expanded','true');};
+  $('jogoclose').onclick=fecharJogos;
+  $('jogosheet').addEventListener('pointerdown',function(e){if(e.target===$('jogosheet'))fecharJogos();});
   $('qbtn').onclick=function(){if(!quiz.open)quizOpen();};$('qclose').onclick=function(){if(quiz.open)quizClose();};
-  confirmTap($('qrunreset'),'Toque de novo para recomeçar',runRestart);
   $('qnext').onclick=function(){if(roundDone())showRoundSummary(quiz.survivalMode?'survival':'count');else nextQ();};
-  confirmTap($('qreset'),'Toque de novo para zerar',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();zerarProgresso();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Tudo zerado: treino, medalhas, nível e conquistas.',3000);});
+  confirmTap($('qreset'),'Toque de novo para zerar tudo',function(){estadoTreino.QS=freshQS();lsSet('globo.quiz.v1',estadoTreino.QS);estadoPartida.RUNS={};saveRuns();estadoPartida.RECS={};saveRecs();zerarProgresso();quiz.ok=0;quiz.total=0;quiz.streak=0;renderScore();setStatus('Tudo zerado: treino, medalhas, nível e conquistas.',3000);});
 }
 
-export { buildModeButtons, iniciar, iniciarJogoRapido, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, recordeRelampago, runRestart, sairJogoRapido };
+export { buildModeButtons, definirOrdem, definirResposta, definirRodada, definirSobrevivencia, definirTempo, iniciar, iniciarJogoRapido, nextQ, pickStateNear, quizMapAnswer, quizMapAnswerBR, quizOpen, quizSetMode, recordeRelampago, runRestart, sairJogoRapido };

@@ -5,13 +5,12 @@
  */
 
 import { enterStates } from './cartao-estado.js';
-import { BRREG, BRS } from '../dados/estados-brasil.js';
+import { BRS } from '../dados/estados-brasil.js';
 import { D, dflag } from '../dados/paises.js';
 import { short } from '../dados/vizinhos.js';
 import { fmtArea, fmtPop, tourStop } from '../interface/cartao-detalhes.js';
 import { fillCountrySelect } from '../interface/distancia.js';
 import { $ } from '../nucleo/utilitarios.js';
-import { csvCell, offerFile } from '../recursos/exportar.js';
 
 function cmpRow(box,label,va,vb){
   var r=document.createElement('div');r.className='cmprow';
@@ -49,12 +48,6 @@ function iniciar() {
     var n=document.createElement('div');n.className='inote';n.style.marginTop='8px';
     n.textContent='Valores aproximados. Confira em fonte oficial antes de citar.';
     box.appendChild(n);
-  };
-  $('expBR').onclick=function(){
-    $('msheet').style.display='none';
-    var rows=[['Estado','Sigla','Capital','Região','Área (km²)','População (Censo 2022)','Código IBGE','Estados vizinhos']];
-    BRS.forEach(function(s){rows.push([s.name,s.sigla,s.cap,BRREG[s.reg].n,s.area,s.pop,s.ibge,s.nb.map(function(k){return BRS[k].sigla;}).join(' / ')]);});
-    offerFile('estados-e-capitais-do-brasil.csv','\uFEFF'+rows.map(function(r){return r.map(csvCell).join(',');}).join('\n'));
   };
 
   document.addEventListener('visibilitychange',function(){if(document.hidden)tourStop();});

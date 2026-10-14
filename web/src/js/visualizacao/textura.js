@@ -108,20 +108,18 @@ function iniciar() {
   oBor = document.getElementById('oBor');
   oFill = document.getElementById('oFill');
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
-  /* botão do cabeçalho: alterna entre dia e noite reais e sempre de dia (o globo é sempre o realista) */
-  var VIS=[['🌗','🌗 Globo com dia e noite de verdade'],['☀️','☀️ Globo sempre de dia']];
-  function visAtual(){return $('oNight').checked?0:1;}
-  function visMostra(){var v=visAtual();$('mvisual').textContent=VIS[v][0];}
+  oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
+  oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
+  /* botão do topo, junto do som: alterna entre dia e noite reais e sempre de dia (a mesma chave do menu ⋯) */
+  function visMostra(){var n=$('oNight').checked;$('mvisual').textContent=n?'🌗':'☀️';$('mvisual').setAttribute('aria-pressed',n?'true':'false');}
   $('mvisual').onclick=function(){
-    var v=(visAtual()+1)%2,noite=$('oNight');
+    var noite=$('oNight'),v=!noite.checked;
     estadoRender.optTex=true;oTex.checked=estadoRender.useTex;
-    if(noite.checked!==(v===0)){noite.checked=(v===0);noite.dispatchEvent(new Event('change'));}
-    visMostra();setStatus(VIS[v][1],2200);
+    noite.checked=v;noite.dispatchEvent(new Event('change'));
+    visMostra();setStatus(v?'🌗 Globo com dia e noite de verdade':'☀️ Globo sempre de dia',2200);
   };
   $('oNight').addEventListener('change',visMostra);oTex.addEventListener('change',visMostra);
   setTimeout(visMostra,0);
-  oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
-  oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
 }
 
 export { buildTexture, iniciar, updateOpts };
