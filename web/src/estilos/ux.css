@@ -613,3 +613,4 @@ body.dist .ncard{display:none}
 .dleg .dfonte{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:800}
 .dleg .dfonte.of{background:rgba(46,160,70,.18);color:#2e9a4a}
 .dleg .dfonte.est{background:rgba(240,150,40,.18);color:#d08000}
+.qlocal{margin-top:6px;font-size:.88em;font-weight:700;opacity:.85}

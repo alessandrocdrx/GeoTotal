@@ -4,7 +4,7 @@
  * Cartão do país selecionado: abrir, preencher, navegar (anterior/próximo, deslizar).
  */
 
-import { D, dflag, REG } from '../dados/paises.js';
+import { D, dflag, localidade, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
 import { card, closeCard, fillInfo, fmtArea, fmtPop, measureCard, tourStop } from './cartao-detalhes.js';
 import { afterFilter, toggleNb, updateNbBtn } from './filtros.js';
@@ -56,7 +56,7 @@ function select(d,fly,group){
   estadoMapa.selected=d;
   document.getElementById('hint').style.display='none';
   document.getElementById('cdot').style.background=REG[d.r].c;
-  document.getElementById('creg').textContent=(d.sub===REG[d.r].n)?REG[d.r].n:REG[d.r].n+' · '+d.sub;
+  document.getElementById('creg').textContent=localidade(d);
   var cfl=document.getElementById('cflag');
   if(d.dis){cfl.className='flag sig';cfl.textContent=d.cc;}else{cfl.className='flag';cfl.textContent=d.flag;}
   document.getElementById('cname').textContent=d.name;

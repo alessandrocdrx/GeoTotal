@@ -5,7 +5,7 @@
  */
 
 import { BRS } from '../dados/estados-brasil.js';
-import { D, REG } from '../dados/paises.js';
+import { D, localidade, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
 import { emitir } from '../nucleo/eventos.js';
 import { tocar } from '../nucleo/som.js';
@@ -343,6 +343,8 @@ function finishQ(ok,extra){
   if(rapido){var rp=document.createElement('span');rp.className='qcombo qrapido';rp.textContent='⚡ Rápido!';fb.insertBefore(rp,fb.firstChild);}
   if(ok&&(quiz.streak===5||quiz.streak%10===0)){celebrate('🔥 '+quiz.streak+' acertos seguidos!');tocar('nivel');}
   mostrarCombo();
+  /* onde fica: só depois de responder, para não virar dica */
+  if(estadoTreino.quizDomain==='world'){var lc=document.createElement('div');lc.className='qlocal';lc.textContent='📍 '+localidade(QD()[quiz.cur]);fb.appendChild(lc);}
   if(cur){var cu=document.createElement('div');cu.className='qcurio';cu.textContent='💡 '+cur;fb.appendChild(cu);}
   /* quanto ganhou nesta resposta, subindo do botão certo */
   var ganho=xpAtual()-xp0;

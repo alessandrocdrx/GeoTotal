@@ -301,6 +301,15 @@ let N_UNI;
 let N_MIC;
 
 function dflag(d){return d.dis?('['+d.cc+']'):d.flag;}
+/** Onde fica, para mostrar junto do nome: "América Central · Caribe", "América do Norte", "Oceania · Australásia". */
+const LOCAL_SUB = {'Caribe':'América Central · Caribe','Istmo (América Central)':'América Central · Istmo','América do Norte':'América do Norte','Austrália e Nova Zelândia':'Oceania · Australásia'};
+function localidade(d){
+  if(!d)return '';
+  if(LOCAL_SUB[d.sub])return LOCAL_SUB[d.sub];
+  var rn=REG[d.r]?REG[d.r].n:'';
+  /* "África Ocidental" já diz o continente: não repete */
+  return (!d.sub||d.sub.indexOf(rn)>=0)?(d.sub||rn):rn+' · '+d.sub;
+}
 function qcapDisp(d){return d.cc==='NR'?'Yaren':d.cap.split(' (')[0];}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
@@ -326,4 +335,4 @@ function iniciar() {
   document.getElementById('count').textContent=N_BASE;
 }
 
-export { D, dflag, iniciar, N_BASE, N_DEP, N_MIC, N_UNI, norm, qcapDisp, REG };
+export { D, dflag, iniciar, localidade, N_BASE, N_DEP, N_MIC, N_UNI, norm, qcapDisp, REG };
