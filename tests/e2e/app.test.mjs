@@ -66,13 +66,13 @@ test('⚙️ abre os ajustes da partida com as alternativas à vista e vale na h
   await pagina.click('#qbtn');
   await pagina.click('#qajustb');
   const linhas = await pagina.evaluate(() => [...document.querySelectorAll('#ajbody .ajrow > b')].map((b) => b.textContent));
-  assert.deepEqual(linhas, ['Responder', 'Perguntas', 'Ordem', 'Tamanho da rodada', 'Cronômetro', 'Sobrevivência', 'Meta do dia']);
-  const cron = '#ajbody .ajrow:nth-child(5) .aseg button';
+  assert.deepEqual(linhas, ['Nível', 'Responder', 'Perguntas', 'Ordem', 'Tamanho da rodada', 'Cronômetro', 'Sobrevivência', 'Meta do dia']);
+  const cron = '#ajbody .ajrow:nth-child(6) .aseg button';
   await pagina.locator(cron).nth(2).click();
   const r = await pagina.evaluate((sel) => ({
     tempo: window.__geoTotal.quiz.timerLen,
     marcado: document.querySelectorAll(sel)[2].getAttribute('aria-pressed'),
-    rodada: document.querySelector('#ajbody .ajrow:nth-child(4) .aseg button[aria-pressed="true"]').textContent,
+    rodada: document.querySelector('#ajbody .ajrow:nth-child(5) .aseg button[aria-pressed="true"]').textContent,
     aberto: document.getElementById('ajsheet').style.display,
   }), cron);
   assert.deepEqual(r, { tempo: 60, marcado: 'true', rodada: 'Sem fim', aberto: 'block' }, 'cronômetro liga, desliga a rodada fechada e a tela continua aberta');
@@ -249,6 +249,8 @@ test('desafio do dia: 10 países iguais para todos, uma vez por dia, com resulta
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.click('#qmodeb');
   await pagina.click('#jr-desafio');
+  assert.match(await pagina.textContent('.jogointro'), /mesmos para todo mundo/, 'explica o desafio antes de começar');
+  await pagina.click('.jogointro .rfjogar');
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     const fila = g.estadoTreino.desafio.fila.slice();
@@ -639,7 +641,9 @@ test('jogos rápidos: Relâmpago de 60 s com recorde e Misto com tipos variados'
     const rotuloMisto = document.getElementById('qmodev').textContent;
     document.getElementById('qmodeb').click();
     document.getElementById('jr-relampago').click();
-    const timer = g.quiz.timerLen, rotulo = document.getElementById('qmodev').textContent;
+    const intro = !!document.querySelector('.jogointro');
+    document.querySelector('.jogointro .rfjogar').click();
+    const timer = intro && g.quiz.timerLen, rotulo = document.getElementById('qmodev').textContent;
     for (let k = 0; k < 3; k++) { g.quiz.answered = false; g.finishQ(true); g.nextQ(); }
     const placar = document.getElementById('qruntxt').textContent;
     g.quiz.timerStart = Date.now() - 61000;

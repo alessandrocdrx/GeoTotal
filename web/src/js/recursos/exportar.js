@@ -42,8 +42,11 @@ function buildStudy(){
 function imprimirFolha(){
   var embutido=false;try{embutido=window.self!==window.top;}catch(e){embutido=true;}
   if(window.AndroidBridge||!embutido){try{window.print();return;}catch(e){}}
-  var css='body{font-family:system-ui,sans-serif;margin:24px;color:#000}h1{font-size:20px}h3{margin:16px 0 4px;font-size:15px}table{width:100%;border-collapse:collapse}td{padding:5px 4px;border-bottom:1px solid #ccc;font-size:13px}td.fl{width:30px;font-size:18px}';
-  var html='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Folha de estudo · geoTotal</title><style>'+css+'</style></head><body><h1>Folha de estudo · geoTotal</h1>'+$('studybody').innerHTML+'<script>window.onload=function(){window.print();};<'+'/script></body></html>';
+  /* colunas com a mesma largura em todas as tabelas; bandeiras pela fonte Noto Color Emoji (o Windows
+     não desenha bandeira em emoji); a impressão abre depois que a fonte carregar */
+  var css='body{font-family:system-ui,sans-serif;margin:24px;color:#000}h1{font-size:20px}h3{margin:16px 0 4px;font-size:15px;break-after:avoid}table{width:100%;border-collapse:collapse;table-layout:fixed}tr{break-inside:avoid}td{padding:5px 6px;border-bottom:1px solid #ccc;font-size:13px;overflow-wrap:anywhere}td.fl{width:40px;font-size:20px;font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif}td:nth-child(2){width:45%}';
+  var abrir='window.onload=function(){var p=function(){window.print();};if(document.fonts&&document.fonts.load){document.fonts.load(\'20px "Noto Color Emoji"\',\'\\uD83C\\uDDE7\\uD83C\\uDDF7\').then(p,p);}else p();};';
+  var html='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Folha de estudo · geoTotal</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap"><style>'+css+'</style></head><body><h1>Folha de estudo · geoTotal</h1>'+$('studybody').innerHTML+'<script>'+abrir+'<'+'/script></body></html>';
   offerFile('folha-de-estudo.html',html);
   setStatus('Abra o arquivo baixado: ele abre a impressão (dá para salvar em PDF).',6000);
 }

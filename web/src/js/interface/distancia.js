@@ -54,6 +54,9 @@ function iniciar() {
     if(a===b){$('dres').textContent='Escolha dois países diferentes.';return;}
     var km=haversine(D[a],D[b]),pts=[],A=[D[a].x,D[a].y,D[a].z],B=[D[b].x,D[b].y,D[b].z];
     for(var t=0;t<=1.0001;t+=1/80)pts.push(slerp(A,B,Math.min(1,t)));
+    /* a distância é do modo Livre: calculada com o treino aberto, passa para o Livre (senão a linha
+       ficaria por cima das perguntas) */
+    if($('quiz').style.display==='block')$('qclose').click();
     estadoDistancia.arc={a:a,b:b,pts:pts};
     var txt=D[a].flag+' '+capShort(D[a])+' → '+D[b].flag+' '+capShort(D[b])+': '+Math.round(km).toLocaleString('pt-BR')+' km em linha reta pela superfície ('+Math.round(km*.621371).toLocaleString('pt-BR')+' mi) · voo direto de ~'+(km/850).toFixed(1).replace('.',',')+' h a 850 km/h.';
     $('dres').textContent=txt;

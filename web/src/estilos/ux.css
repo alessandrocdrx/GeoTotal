@@ -468,3 +468,7 @@ h1.marca{flex:none}
 .jogointro{text-align:center;padding:4px 0 8px}
 .jogointro p{margin:8px 0;font-size:15px;line-height:1.4;text-align:left}
 .jogointro .rfjogar{margin-top:10px}
+/* folha de estudo: mesmas colunas em todas as regiões */
+#study table{table-layout:fixed}
+#study td:nth-child(2){width:45%}
+#study td{overflow-wrap:anywhere}

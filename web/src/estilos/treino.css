@@ -40,7 +40,7 @@
   body>*:not(#study){display:none!important}
   #study{position:static!important;display:block!important;background:#fff!important;color:#000!important}
   #study .box{position:static!important;max-height:none!important;background:#fff!important;color:#000!important;padding:0!important;border:0!important}
-  #study .shead button{display:none}
+  #study .shead button,#studyprint{display:none!important}
   #study td{border-bottom:1px solid #ccc!important;color:#000}
 }
 
