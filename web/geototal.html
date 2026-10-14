@@ -921,6 +921,7 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
 <div class="mlist">
     <label class="mswrow"><span class="mi">🔔</span><span class="mt"><b>Efeitos sonoros</b></span><input type="checkbox" id="msfx" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🎵</span><span class="mt"><b>Música</b><small>Toca no modo Livre</small></span><input type="checkbox" id="mmusic" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <div class="msegrow"><span class="mi">🗺️</span><span class="mt"><b>Estilo do mapa</b><small>Atlas: uma cor por país</small></span><div class="aseg" id="mestilo"><button data-v="sat">Satélite</button><button data-v="atlas">Atlas</button></div></div>
     <div class="msegrow"><span class="mi">🌓</span><span class="mt"><b>Tema</b></span><div class="aseg" id="mtema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div>
     <label class="mswrow"><span class="mi">🌗</span><span class="mt"><b>Dia e noite de verdade</b><small>Sombra da noite no globo, agora</small></span><input type="checkbox" id="oNight" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">〰️</span><span class="mt"><b>Fronteiras dos países</b></span><input type="checkbox" id="oBor" role="switch" checked disabled><i class="msw" aria-hidden="true"></i></label>
@@ -3092,6 +3093,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     optTex: true,
     optBor: true,
     optFill: true,
+    /** Estilo atlas escolar (cores por país, oceano claro) em vez da textura de satélite. */
+    atlas: false,
     feats: null,
     FEAT: void 0,
     EXTRA: [],
@@ -3541,6 +3544,41 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     setupGeo: () => setupGeo,
     tryLoad: () => tryLoad
   });
+
+  // web/src/js/visualizacao/atlas.js
+  var PALETA = ["#f6d58e", "#b9dea0", "#f3b29f", "#c5b6e8", "#e6c39a", "#f2c1d8", "#dfe59a"];
+  var OCEANO = ["#cfe8f8", "#a9d2ef", "#8cbfe4"];
+  var BORDA = "rgba(70,72,90,.75)";
+  var SEM_PAIS = "#ece6d6";
+  var cores = null;
+  function colorir() {
+    cores = new Array(D.length);
+    var ordem = D.map(function(d) {
+      return d.i;
+    }).sort(function(a, b) {
+      return (NB[b] || []).length - (NB[a] || []).length;
+    });
+    ordem.forEach(function(i) {
+      var usadas = {};
+      (NB[i] || []).forEach(function(j) {
+        if (cores[j] != null) usadas[cores[j]] = 1;
+      });
+      for (var k = 0; k < PALETA.length; k++) {
+        var c = (k + D[i].r * 2 + i) % PALETA.length;
+        if (!usadas[c]) {
+          cores[i] = c;
+          return;
+        }
+      }
+      cores[i] = i % PALETA.length;
+    });
+  }
+  function corAtlas(i) {
+    if (!cores) colorir();
+    return cores[i];
+  }
+
+  // web/src/js/visualizacao/fronteiras.js
   var A3 = {
     TF: "ATF",
     HM: "HMD",
@@ -3835,10 +3873,21 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       drawGeoStates(R, cx, cy);
       return;
     }
-    if (!estadoRender.feats || !estadoRender.optBor && !estadoRender.optFill && allOn() && !estadoMapa.selected && !ganchos.destaquePais()) return;
+    if (!estadoRender.feats || !estadoRender.atlas && !estadoRender.optBor && !estadoRender.optFill && allOn() && !estadoMapa.selected && !ganchos.destaquePais()) return;
     projCfg(R, cx, cy);
     var allon = allOn(), i, r;
-    if (estadoRender.optFill) {
+    if (estadoRender.atlas) {
+      ctx.beginPath();
+      for (i = 0; i < estadoRender.EXTRA.length; i++) estadoRender.gpath(estadoRender.EXTRA[i]);
+      ctx.fillStyle = SEM_PAIS;
+      ctx.fill();
+      for (var c = 0; c < PALETA.length; c++) {
+        ctx.beginPath();
+        for (i = 0; i < D.length; i++) if (estadoRender.FEAT[i] && corAtlas(i) === c) estadoRender.gpath(estadoRender.FEAT[i]);
+        ctx.fillStyle = PALETA[c];
+        ctx.fill();
+      }
+    } else if (estadoRender.optFill) {
       for (r = 0; r < REG.length; r++) {
         ctx.beginPath();
         for (i = 0; i < D.length; i++) if (estadoMapa.on[i] && D[i].r === r && estadoRender.FEAT[i]) estadoRender.gpath(estadoRender.FEAT[i]);
@@ -3890,13 +3939,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       ctx.stroke();
       if (pulso > 0) ctx.restore();
     }
-    if (estadoRender.optBor) {
+    if (estadoRender.optBor || estadoRender.atlas) {
       ctx.beginPath();
       for (i = 0; i < D.length; i++) if (estadoRender.FEAT[i] && (estadoMapa.on[i] || allon && !avail(D[i]))) estadoRender.gpath(estadoRender.FEAT[i]);
       if (allon) for (i = 0; i < estadoRender.EXTRA.length; i++) estadoRender.gpath(estadoRender.EXTRA[i]);
       ctx.lineJoin = "round";
       ctx.lineWidth = Math.max(0.7, Math.min(1.6, 0.6 + 0.25 * estadoCamera.zoom));
-      ctx.strokeStyle = estadoRender.useTex && estadoRender.optTex ? "rgba(255,255,255,.78)" : "rgba(255,255,255,.6)";
+      ctx.strokeStyle = estadoRender.atlas ? BORDA : estadoRender.useTex && estadoRender.optTex ? "rgba(255,255,255,.78)" : "rgba(255,255,255,.6)";
       ctx.stroke();
     }
     if (estadoMapa.selected && estadoRender.FEAT[estadoMapa.selected.i]) {
@@ -4190,6 +4239,20 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     };
     $("oNight").addEventListener("change", visMostra);
     oTex.addEventListener("change", visMostra);
+    estadoRender.atlas = lsGet("globo.atlas", false) === true;
+    function estiloMostra() {
+      Array.prototype.forEach.call($("mestilo").querySelectorAll("button"), function(b) {
+        b.setAttribute("aria-pressed", b.dataset.v === "atlas" === estadoRender.atlas ? "true" : "false");
+      });
+    }
+    Array.prototype.forEach.call($("mestilo").querySelectorAll("button"), function(b) {
+      b.onclick = function() {
+        estadoRender.atlas = b.dataset.v === "atlas";
+        lsSet("globo.atlas", estadoRender.atlas);
+        estiloMostra();
+      };
+    });
+    estiloMostra();
     setTimeout(visMostra, 0);
   }
 
@@ -4582,9 +4645,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var R2 = R2now(), cx = W / 2, cy = H * estadoCamera.cyFrac, i, d, k, lo, la;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#0b2e52";
+    var atlas = estadoRender.atlas && !!estadoRender.feats;
+    ctx.fillStyle = atlas ? OCEANO[1] : "#0b2e52";
     ctx.fillRect(0, 0, W, H);
-    var tex2 = estadoRender.useTex && estadoRender.optTex && texCanvas;
+    var tex2 = estadoRender.useTex && estadoRender.optTex && texCanvas && !atlas;
     if (tex2) {
       var tw = 2 * PI * R2, th = PI * R2, x0 = cx + (-PI - estadoCamera.lam) * R2, y0 = cy - (PI / 2 - estadoCamera.phi) * R2;
       x0 = (x0 % tw + tw) % tw - tw;
@@ -4612,19 +4676,31 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var ds = tex2 ? 0 : Math.max(1, Math.min(2.4, R2 * 0.011));
     ctx.fillStyle = "rgba(196,220,245,.55)";
     ctx.beginPath();
-    for (k = 0; !tex2 && k < LLAT.length; k++) {
+    for (k = 0; !tex2 && !atlas && k < LLAT.length; k++) {
       var pp = proj2D(LLNG[k], LLAT[k], R2, cx, cy);
       if (pp.x < -8 || pp.x > W + 8 || pp.y < -8 || pp.y > H + 8) continue;
       ctx.moveTo(pp.x + ds, pp.y);
       ctx.arc(pp.x, pp.y, ds, 0, 6.2832);
     }
     ctx.fill();
+    if (atlas) {
+      ctx.beginPath();
+      for (i = 0; i < estadoRender.EXTRA.length; i++) walkFeat2D(estadoRender.EXTRA[i], R2, cx, cy);
+      ctx.fillStyle = SEM_PAIS;
+      ctx.fill();
+      for (var c = 0; c < PALETA.length; c++) {
+        ctx.beginPath();
+        for (i = 0; i < D.length; i++) if (estadoRender.FEAT[i] && corAtlas(i) === c) walkFeat2D(estadoRender.FEAT[i], R2, cx, cy);
+        ctx.fillStyle = PALETA[c];
+        ctx.fill();
+      }
+    }
     if (estadoRender.feats) {
       ctx.beginPath();
       for (i = 0; i < D.length; i++) if (estadoRender.FEAT[i] && (estadoMapa.on[i] || !avail(D[i]))) walkFeat2D(estadoRender.FEAT[i], R2, cx, cy);
       ctx.lineJoin = "round";
       ctx.lineWidth = Math.max(0.6, Math.min(1.6, 0.5 + 0.15 * estadoCamera.zoom));
-      ctx.strokeStyle = "rgba(255,255,255,.72)";
+      ctx.strokeStyle = atlas ? BORDA : "rgba(255,255,255,.72)";
       ctx.stroke();
       if (estadoMapa.selected && estadoRender.FEAT[estadoMapa.selected.i]) {
         ctx.beginPath();
@@ -4772,7 +4848,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     girar();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    var tex = estadoRender.useTex && estadoRender.optTex;
+    var atlas = estadoRender.atlas && !!estadoRender.feats, tex = estadoRender.useTex && estadoRender.optTex && !atlas;
     glDraw(tex, R, cx, cy);
     var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.12);
     g.addColorStop(0, "rgba(90,160,255,0)");
@@ -4785,9 +4861,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ctx.fill();
     if (!tex) {
       var o = ctx.createRadialGradient(cx - R * 0.35, cy - R * 0.4, R * 0.1, cx, cy, R);
-      o.addColorStop(0, "#1f5a9c");
-      o.addColorStop(0.55, "#0d3160");
-      o.addColorStop(1, "#061a38");
+      if (atlas) {
+        o.addColorStop(0, OCEANO[0]);
+        o.addColorStop(0.6, OCEANO[1]);
+        o.addColorStop(1, OCEANO[2]);
+      } else {
+        o.addColorStop(0, "#1f5a9c");
+        o.addColorStop(0.55, "#0d3160");
+        o.addColorStop(1, "#061a38");
+      }
       ctx.fillStyle = o;
       ctx.beginPath();
       ctx.arc(cx, cy, R, 0, 7);
@@ -4835,7 +4917,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var ds = Math.max(1.3, Math.min(3.2, R * 72e-4));
     ctx.fillStyle = "rgba(196,220,245,.62)";
     ctx.beginPath();
-    for (k = 0; !tex && k < LX.length; k++) {
+    for (k = 0; !tex && !atlas && k < LX.length; k++) {
       var q2 = rot(LX[k], LY[k], LZ[k]);
       if (q2[2] > 0.02) {
         var s = ds * (0.45 + 0.55 * q2[2]);
@@ -9521,14 +9603,14 @@ NAN|Nadi|-17.76|177.44`;
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     var b = document.querySelector("#qbody .okb");
     if (!b) return;
-    var cores = ["#ffd166", "#06d6a0", "#4cc9f0", "#f72585", "#fb8500"], n = quiz.streak >= 3 ? 16 : 9;
+    var cores2 = ["#ffd166", "#06d6a0", "#4cc9f0", "#f72585", "#fb8500"], n = quiz.streak >= 3 ? 16 : 9;
     for (var k = 0; k < n; k++) {
       var p = document.createElement("i");
       p.className = "confete";
       var a = Math.random() * Math.PI * 2, dist = 40 + Math.random() * 50;
       p.style.setProperty("--dx", Math.round(Math.cos(a) * dist) + "px");
       p.style.setProperty("--dy", Math.round(Math.sin(a) * dist - 30) + "px");
-      p.style.background = cores[k % cores.length];
+      p.style.background = cores2[k % cores2.length];
       b.appendChild(p);
       setTimeout(/* @__PURE__ */ (function(el2) {
         return function() {
@@ -10089,12 +10171,12 @@ NAN|Nadi|-17.76|177.44`;
   }
   function celebrarTela(n) {
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    var host = $("quiz").querySelector(".qpanel"), cores = ["#ffd166", "#06d6a0", "#4cc9f0", "#f72585", "#fb8500"];
+    var host = $("quiz").querySelector(".qpanel"), cores2 = ["#ffd166", "#06d6a0", "#4cc9f0", "#f72585", "#fb8500"];
     for (var k = 0; k < n; k++) {
       var p = document.createElement("i");
       p.className = "confete chuva";
       p.style.left = 5 + Math.random() * 90 + "%";
-      p.style.background = cores[k % cores.length];
+      p.style.background = cores2[k % cores2.length];
       p.style.animationDelay = Math.random() * 0.5 + "s";
       host.appendChild(p);
       setTimeout(/* @__PURE__ */ (function(el2) {

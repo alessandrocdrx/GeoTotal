@@ -8,6 +8,7 @@ import { LLAT, LLNG } from '../dados/massas-terra.js';
 import { D, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
+import { BORDA, corAtlas, OCEANO, PALETA, SEM_PAIS } from './atlas.js';
 import { texCanvas } from './carregamento.js';
 import { ganchos } from './ganchos.js';
 import { shapePath, SHAPES } from './marcadores.js';
@@ -50,9 +51,10 @@ function draw2D(){
   var R2=R2now(),cx=W/2,cy=H*estadoCamera.cyFrac,i,d,k,lo,la;
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#0b2e52';ctx.fillRect(0,0,W,H);
+  var atlas=estadoRender.atlas&&!!estadoRender.feats;
+  ctx.fillStyle=atlas?OCEANO[1]:'#0b2e52';ctx.fillRect(0,0,W,H);
   /* textura de satélite: a mesma imagem equirretangular do globo, repetida na horizontal */
-  var tex2=estadoRender.useTex&&estadoRender.optTex&&texCanvas;
+  var tex2=estadoRender.useTex&&estadoRender.optTex&&texCanvas&&!atlas;
   if(tex2){
     var tw=2*PI*R2,th=PI*R2,x0=cx+(-PI-estadoCamera.lam)*R2,y0=cy-(PI/2-estadoCamera.phi)*R2;
     x0=((x0%tw)+tw)%tw-tw;
@@ -78,7 +80,7 @@ function draw2D(){
   var ds=tex2?0:Math.max(1,Math.min(2.4,R2*0.011));
   ctx.fillStyle='rgba(196,220,245,.55)';
   ctx.beginPath();
-  for(k=0;!tex2&&k<LLAT.length;k++){
+  for(k=0;!tex2&&!atlas&&k<LLAT.length;k++){
     var pp=proj2D(LLNG[k],LLAT[k],R2,cx,cy);
     if(pp.x<-8||pp.x>W+8||pp.y<-8||pp.y>H+8)continue;
     ctx.moveTo(pp.x+ds,pp.y);ctx.arc(pp.x,pp.y,ds,0,6.2832);
@@ -86,10 +88,18 @@ function draw2D(){
   ctx.fill();
 
   /* fronteiras dos países ligados (quando carregadas) */
+  if(atlas){
+    ctx.beginPath();for(i=0;i<estadoRender.EXTRA.length;i++)walkFeat2D(estadoRender.EXTRA[i],R2,cx,cy);ctx.fillStyle=SEM_PAIS;ctx.fill();
+    for(var c=0;c<PALETA.length;c++){
+      ctx.beginPath();
+      for(i=0;i<D.length;i++)if(estadoRender.FEAT[i]&&corAtlas(i)===c)walkFeat2D(estadoRender.FEAT[i],R2,cx,cy);
+      ctx.fillStyle=PALETA[c];ctx.fill();
+    }
+  }
   if(estadoRender.feats){
     ctx.beginPath();
     for(i=0;i<D.length;i++)if(estadoRender.FEAT[i]&&(estadoMapa.on[i]||!avail(D[i])))walkFeat2D(estadoRender.FEAT[i],R2,cx,cy);
-    ctx.lineJoin='round';ctx.lineWidth=Math.max(.6,Math.min(1.6,.5+.15*estadoCamera.zoom));ctx.strokeStyle='rgba(255,255,255,.72)';ctx.stroke();
+    ctx.lineJoin='round';ctx.lineWidth=Math.max(.6,Math.min(1.6,.5+.15*estadoCamera.zoom));ctx.strokeStyle=atlas?BORDA:'rgba(255,255,255,.72)';ctx.stroke();
     if(estadoMapa.selected&&estadoRender.FEAT[estadoMapa.selected.i]){
       ctx.beginPath();walkFeat2D(estadoRender.FEAT[estadoMapa.selected.i],R2,cx,cy);
       ctx.fillStyle='rgba(255,224,102,.28)';ctx.fill();

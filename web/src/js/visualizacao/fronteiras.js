@@ -5,6 +5,7 @@
  */
 
 import { D, REG } from '../dados/paises.js';
+import { BORDA, corAtlas, PALETA, SEM_PAIS } from './atlas.js';
 import { drawGeoStates, estadoBrasil } from './estados.js';
 import { ganchos } from './ganchos.js';
 import { estadoRender, hexA, projCfg } from './projecao.js';
@@ -47,10 +48,19 @@ function setupGeo(){
 
 function drawGeo(R,cx,cy){
   if(estadoBrasil.statesMode){drawGeoStates(R,cx,cy);return;}
-  if(!estadoRender.feats||(!estadoRender.optBor&&!estadoRender.optFill&&allOn()&&!estadoMapa.selected&&!ganchos.destaquePais()))return;
+  if(!estadoRender.feats||(!estadoRender.atlas&&!estadoRender.optBor&&!estadoRender.optFill&&allOn()&&!estadoMapa.selected&&!ganchos.destaquePais()))return;
   projCfg(R,cx,cy);
   var allon=allOn(),i,r;
-  if(estadoRender.optFill){
+  if(estadoRender.atlas){
+    /* atlas: cada país com a sua cor; terras sem país do jogo em bege */
+    ctx.beginPath();for(i=0;i<estadoRender.EXTRA.length;i++)estadoRender.gpath(estadoRender.EXTRA[i]);ctx.fillStyle=SEM_PAIS;ctx.fill();
+    for(var c=0;c<PALETA.length;c++){
+      ctx.beginPath();
+      for(i=0;i<D.length;i++)if(estadoRender.FEAT[i]&&corAtlas(i)===c)estadoRender.gpath(estadoRender.FEAT[i]);
+      ctx.fillStyle=PALETA[c];ctx.fill();
+    }
+  }
+  else if(estadoRender.optFill){
     for(r=0;r<REG.length;r++){
       ctx.beginPath();
       for(i=0;i<D.length;i++)if(estadoMapa.on[i]&&D[i].r===r&&estadoRender.FEAT[i])estadoRender.gpath(estadoRender.FEAT[i]);
@@ -80,13 +90,13 @@ function drawGeo(R,cx,cy){
     ctx.lineWidth=2.6+5*pulso;ctx.strokeStyle=fcol[1];ctx.stroke();
     if(pulso>0)ctx.restore();
   }
-  if(estadoRender.optBor){
+  if(estadoRender.optBor||estadoRender.atlas){
     ctx.beginPath();
     for(i=0;i<D.length;i++)if(estadoRender.FEAT[i]&&(estadoMapa.on[i]||(allon&&!avail(D[i]))))estadoRender.gpath(estadoRender.FEAT[i]);
     if(allon)for(i=0;i<estadoRender.EXTRA.length;i++)estadoRender.gpath(estadoRender.EXTRA[i]);
     ctx.lineJoin='round';
     ctx.lineWidth=Math.max(.7,Math.min(1.6,.6+.25*estadoCamera.zoom));
-    ctx.strokeStyle=estadoRender.useTex&&estadoRender.optTex?'rgba(255,255,255,.78)':'rgba(255,255,255,.6)';
+    ctx.strokeStyle=estadoRender.atlas?BORDA:(estadoRender.useTex&&estadoRender.optTex?'rgba(255,255,255,.78)':'rgba(255,255,255,.6)');
     ctx.stroke();
   }
   if(estadoMapa.selected&&estadoRender.FEAT[estadoMapa.selected.i]){

@@ -4,7 +4,7 @@
  * Textura procedural com aparência de satélite (não é foto real).
  */
 
-import { $, setStatus } from '../nucleo/utilitarios.js';
+import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { estadoRender } from './projecao.js';
 import { PI } from './tela.js';
 
@@ -119,6 +119,13 @@ function iniciar() {
     visMostra();setStatus(v?'🌗 Globo com dia e noite de verdade':'☀️ Globo sempre de dia',2200);
   };
   $('oNight').addEventListener('change',visMostra);oTex.addEventListener('change',visMostra);
+  /* estilo do mapa: satélite (textura com relevo, dia e noite) ou atlas escolar (uma cor por país) */
+  estadoRender.atlas=lsGet('globo.atlas',false)===true;
+  function estiloMostra(){Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',(b.dataset.v==='atlas')===estadoRender.atlas?'true':'false');});}
+  Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){
+    b.onclick=function(){estadoRender.atlas=b.dataset.v==='atlas';lsSet('globo.atlas',estadoRender.atlas);estiloMostra();};
+  });
+  estiloMostra();
   setTimeout(visMostra,0);
 }
 

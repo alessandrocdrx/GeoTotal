@@ -14,6 +14,7 @@ import { drawGeo } from './fronteiras.js';
 import { ganchos } from './ganchos.js';
 import { draw2D } from './mapa-2d.js';
 import { shapePath, SHAPES } from './marcadores.js';
+import { OCEANO } from './atlas.js';
 import { estadoRender } from './projecao.js';
 import { paintSelBadge, selBadgeMetrics } from './selo.js';
 import { ctx, dpr, estadoCamera, estadoMapa, FONT, girar, H, PI, R0, rot, W } from './tela.js';
@@ -49,7 +50,7 @@ function draw(){
   girar();
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,W,H);
-  var tex=estadoRender.useTex&&estadoRender.optTex;
+  var atlas=estadoRender.atlas&&!!estadoRender.feats,tex=estadoRender.useTex&&estadoRender.optTex&&!atlas;
   glDraw(tex,R,cx,cy);
 
   var g=ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.12);
@@ -57,7 +58,8 @@ function draw(){
   ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R*1.12,0,7);ctx.fill();
   if(!tex){
     var o=ctx.createRadialGradient(cx-R*.35,cy-R*.4,R*.1,cx,cy,R);
-    o.addColorStop(0,'#1f5a9c');o.addColorStop(.55,'#0d3160');o.addColorStop(1,'#061a38');
+    if(atlas){o.addColorStop(0,OCEANO[0]);o.addColorStop(.6,OCEANO[1]);o.addColorStop(1,OCEANO[2]);}
+    else{o.addColorStop(0,'#1f5a9c');o.addColorStop(.55,'#0d3160');o.addColorStop(1,'#061a38');}
     ctx.fillStyle=o;ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fill();
   }
 
@@ -88,7 +90,7 @@ function draw(){
   var ds=Math.max(1.3,Math.min(3.2,R*0.0072));
   ctx.fillStyle='rgba(196,220,245,.62)';
   ctx.beginPath();
-  for(k=0;!tex&&k<LX.length;k++){
+  for(k=0;!tex&&!atlas&&k<LX.length;k++){
     var q=rot(LX[k],LY[k],LZ[k]);
     if(q[2]>0.02){
       var s=ds*(0.45+0.55*q[2]);

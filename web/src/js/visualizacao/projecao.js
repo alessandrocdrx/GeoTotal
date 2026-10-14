@@ -17,6 +17,8 @@ const estadoRender = {
   optTex: true,
   optBor: true,
   optFill: true,
+  /** Estilo atlas escolar (cores por país, oceano claro) em vez da textura de satélite. */
+  atlas: false,
   feats: null,
   FEAT: undefined,
   EXTRA: [],
