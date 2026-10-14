@@ -11,6 +11,10 @@ import android.print.PrintManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
+
 import io.github.alessandrocdrx.geototal.R;
 import io.github.alessandrocdrx.geototal.files.FileSaver;
 import io.github.alessandrocdrx.geototal.files.ImageSharer;
@@ -60,6 +64,22 @@ public final class WebBridge {
             pm.print(activity.getString(R.string.app_name),
                     web.createPrintDocumentAdapter("Folha de estudo"),
                     new PrintAttributes.Builder().build());
+        });
+    }
+
+    /**
+     * Pede a avaliação pelo cartão oficial do Google Play, sem sair do app. O Google decide se mostra
+     * (há uma cota por pessoa), então a página nunca sabe se apareceu, e não deve insistir.
+     */
+    @JavascriptInterface
+    public void requestReview() {
+        activity.runOnUiThread(() -> {
+            ReviewManager manager = ReviewManagerFactory.create(activity);
+            manager.requestReviewFlow().addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) return;
+                ReviewInfo info = task.getResult();
+                manager.launchReviewFlow(activity, info);
+            });
         });
     }
 }

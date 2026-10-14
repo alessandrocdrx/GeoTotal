@@ -955,6 +955,7 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
     <button id="qreset" class="mdanger"><span class="mi">🧹</span><span class="mt"><b>Zerar todo o progresso</b><small>Treino, medalhas, nível e conquistas · toque duas vezes</small></span></button>
 
     <div class="mgrp">❓ Ajuda</div>
+    <button id="mavaliar"><span class="mi">⭐</span><span class="mt"><b>Avaliar o geoTotal</b><small>Na Play Store · ajuda muito o jogo a crescer</small></span><span class="mc">›</span></button>
     <button id="mtour"><span class="mi">👀</span><span class="mt"><b>Como jogar</b><small>Tour rápido pelos botões</small></span><span class="mc">›</span></button>
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
@@ -7594,10 +7595,59 @@ NAN|Nadi|-17.76|177.44`;
     });
   }
 
+  // web/src/js/recursos/avaliacao.js
+  var avaliacao_exports = {};
+  __export(avaliacao_exports, {
+    iniciar: () => iniciar28
+  });
+  var LOJA = "https://play.google.com/store/apps/details?id=io.github.alessandrocdrx.geototal";
+  var DIAS_MINIMOS = 3;
+  var INTERVALO = 30 * 864e5;
+  function hoje() {
+    var d = /* @__PURE__ */ new Date();
+    return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+  }
+  function podePedir() {
+    var B = window.AndroidBridge;
+    if (!B || !B.requestReview) return false;
+    return lsGet("globo.dias.uso", []).length >= DIAS_MINIMOS && Date.now() - lsGet("globo.avaliacao.pedida", 0) > INTERVALO;
+  }
+  function pedir() {
+    try {
+      window.AndroidBridge.requestReview();
+      lsSet("globo.avaliacao.pedida", Date.now());
+    } catch (e) {
+    }
+  }
+  function momentoBom() {
+    if (podePedir()) setTimeout(pedir, 2500);
+  }
+  function iniciar28() {
+    var dias = lsGet("globo.dias.uso", []);
+    if (dias.indexOf(hoje()) < 0) {
+      dias.push(hoje());
+      lsSet("globo.dias.uso", dias.slice(-30));
+    }
+    ouvir("partida-zerada", momentoBom);
+    ouvir("rodada-terminou", function(o) {
+      var log = o.log || [], ok = log.filter(function(x) {
+        return x.ok;
+      }).length;
+      if (log.length >= 8 && ok / log.length >= 0.7) momentoBom();
+    });
+    $("mavaliar").onclick = function() {
+      if (window.AndroidBridge && window.AndroidBridge.requestReview) {
+        window.AndroidBridge.requestReview();
+        return;
+      }
+      window.open(LOJA, "_blank", "noopener");
+    };
+  }
+
   // web/src/js/recursos/exportar.js
   var exportar_exports = {};
   __export(exportar_exports, {
-    iniciar: () => iniciar28,
+    iniciar: () => iniciar29,
     offerFile: () => offerFile
   });
   var dlNS = null;
@@ -7685,7 +7735,7 @@ NAN|Nadi|-17.76|177.44`;
       setStatus("Não consegui gerar o PDF.", 4e3);
     });
   }
-  function iniciar28() {
+  function iniciar29() {
     setTimeout(function() {
       try {
         if (window.claude && claude.use) claude.use("downloads").then(function(n) {
@@ -7734,7 +7784,7 @@ NAN|Nadi|-17.76|177.44`;
     estadoTreino: () => estadoTreino,
     freshQS: () => freshQS,
     inScope: () => inScope,
-    iniciar: () => iniciar29,
+    iniciar: () => iniciar30,
     matches: () => matches,
     measureQ: () => measureQ,
     qHide: () => qHide,
@@ -7850,7 +7900,7 @@ NAN|Nadi|-17.76|177.44`;
       quiz.timerInt = null;
     }
   }
-  function iniciar29() {
+  function iniciar30() {
     ganchos.treinoAberto = function() {
       return quiz.open;
     };
@@ -8184,7 +8234,7 @@ NAN|Nadi|-17.76|177.44`;
     finishQ: () => finishQ,
     fmtRelogio: () => fmtRelogio,
     fmtTime: () => fmtTime,
-    iniciar: () => iniciar32,
+    iniciar: () => iniciar33,
     makeNeighborOptions: () => makeNeighborOptions,
     makeOptions: () => makeOptions,
     medalFor: () => medalFor,
@@ -8206,7 +8256,7 @@ NAN|Nadi|-17.76|177.44`;
   var estatisticas_exports = {};
   __export(estatisticas_exports, {
     fillQStat: () => fillQStat,
-    iniciar: () => iniciar30,
+    iniciar: () => iniciar31,
     modeName: () => modeName,
     openHistory: () => openHistory
   });
@@ -8504,7 +8554,7 @@ NAN|Nadi|-17.76|177.44`;
     el2.hidden = !(r + w);
     el2.textContent = r + w ? "📊 Neste país: " + r + (r === 1 ? " acerto" : " acertos") + " · " + w + (w === 1 ? " erro" : " erros") : "";
   }
-  function iniciar30() {
+  function iniciar31() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
     $("htabC").onclick = function() {
       histTab = "c";
@@ -8550,7 +8600,7 @@ NAN|Nadi|-17.76|177.44`;
     addXP: () => addXP,
     celebrate: () => celebrate,
     definirMeta: () => definirMeta,
-    iniciar: () => iniciar31,
+    iniciar: () => iniciar32,
     metaDoDia: () => metaDoDia,
     recordProgress: () => recordProgress,
     updateProgUI: () => updateProgUI,
@@ -8912,7 +8962,7 @@ NAN|Nadi|-17.76|177.44`;
     $("badgeshead").textContent = "Conquistas (" + n + "/" + tot + ")";
     $("badgesheet").style.display = "block";
   }
-  function iniciar31() {
+  function iniciar32() {
     PROG = lsGet("globo.prog.v1", progNovo());
     $("streakpill").onclick = function() {
       var n = displayStreak(), f = PROG.freezes || 0;
@@ -9022,6 +9072,7 @@ NAN|Nadi|-17.76|177.44`;
       r.fin = now;
       estadoPartida.ultimoFim = runKey();
       r.res = recFinish(r);
+      emitir("partida-zerada", { medalha: r.res.medal });
       celebrate("🏁 Você zerou " + scopeLabel() + "!");
       tocar("conquista");
       addXP(50);
@@ -9648,7 +9699,7 @@ NAN|Nadi|-17.76|177.44`;
     ctx.fillStyle = "#fff";
     ctx.fillText(name, bx + 44, by + bh / 2 + 1);
   }
-  function iniciar32() {
+  function iniciar33() {
     ganchos.desenharSeloResposta = drawBadge;
     estadoPartida.RUNS = lsGet("globo.runs.v1", {});
     estadoPartida.RECS = lsGet("globo.recs.v1", {});
@@ -9733,7 +9784,7 @@ NAN|Nadi|-17.76|177.44`;
     definirRodada: () => definirRodada,
     definirSobrevivencia: () => definirSobrevivencia,
     definirTempo: () => definirTempo,
-    iniciar: () => iniciar34,
+    iniciar: () => iniciar35,
     iniciarJogoRapido: () => iniciarJogoRapido,
     mostrarIntro: () => mostrarIntro,
     nextQ: () => nextQ,
@@ -9751,7 +9802,7 @@ NAN|Nadi|-17.76|177.44`;
   var modo_estados_exports = {};
   __export(modo_estados_exports, {
     exitStates: () => exitStates,
-    iniciar: () => iniciar33,
+    iniciar: () => iniciar34,
     updateStBtn: () => updateStBtn
   });
   function updateStBtn() {
@@ -9770,7 +9821,7 @@ NAN|Nadi|-17.76|177.44`;
     afterFilter();
     if (goBrazil !== false) select(D[byName[norm("Brasil")]], true);
   }
-  function iniciar33() {
+  function iniciar34() {
     ganchosInterface.atualizarBotaoEstados = updateStBtn;
     $("stexit").onclick = function() {
       exitStates(true);
@@ -10751,7 +10802,7 @@ NAN|Nadi|-17.76|177.44`;
       }
     }, 1e3);
   }
-  function iniciar34() {
+  function iniciar35() {
     ouvir("modo-estados-abriu", function() {
       if (quiz.open) quizClose();
     });
@@ -10794,7 +10845,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(destaque_escopo_exports, {
     drawScopePulse: () => drawScopePulse,
     firePulseForScope: () => firePulseForScope,
-    iniciar: () => iniciar35
+    iniciar: () => iniciar36
   });
   var scopePulse = null;
   function firePulse(pts) {
@@ -10828,7 +10879,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     ctx.restore();
   }
-  function iniciar35() {
+  function iniciar36() {
     ganchos.desenharPulsoEscopo = drawScopePulse;
   }
 
@@ -10837,7 +10888,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(escopo_exports, {
     applyScopeChange: () => applyScopeChange,
     definirFoco: () => definirFoco,
-    iniciar: () => iniciar36
+    iniciar: () => iniciar37
   });
   function applyScopeChange(newScope) {
     sairJogoRapido();
@@ -10982,7 +11033,7 @@ NAN|Nadi|-17.76|177.44`;
     b.hidden = !(n && !estadoTreino.desafio && (feitos > 0 || r.e > 0) && !r.fin);
     b.textContent = "↺ Recomeçar " + scopeLabel() + " do zero (" + feitos + " de " + n + " feitos)";
   }
-  function iniciar36() {
+  function iniciar37() {
     ouvir("treinar-regiao", function(o) {
       if (!quiz.open) quizOpen();
       applyScopeChange({ t: "reg", r: o.r });
@@ -11039,7 +11090,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
-    iniciar: () => iniciar37,
+    iniciar: () => iniciar38,
     ligarSeg: () => ligarSeg
   });
   var themeMode;
@@ -11074,7 +11125,7 @@ NAN|Nadi|-17.76|177.44`;
     marca(atual);
     return marca;
   }
-  function iniciar37() {
+  function iniciar38() {
     themeMode = lsGet("globo.theme", "auto");
     applyTheme();
     ligarSeg($("mtema"), themeMode, function(v) {
@@ -11139,7 +11190,7 @@ NAN|Nadi|-17.76|177.44`;
   var cartao_estado_exports = {};
   __export(cartao_estado_exports, {
     enterStates: () => enterStates,
-    iniciar: () => iniciar38
+    iniciar: () => iniciar39
   });
   function fillInfoSt(st) {
     var box = $("cinfo");
@@ -11314,7 +11365,7 @@ NAN|Nadi|-17.76|177.44`;
     selectSt(st || BRS[0], true);
     ensureStateShapes();
   }
-  function iniciar38() {
+  function iniciar39() {
     ganchosInterface.passoEstado = stepSt;
     ganchosInterface.alternarVizinhosEstado = toggleNbSt;
     ganchosInterface.selecionarEstado = selectSt;
@@ -11332,7 +11383,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/brasil/filtros.js
   var filtros_exports2 = {};
   __export(filtros_exports2, {
-    iniciar: () => iniciar39
+    iniciar: () => iniciar40
   });
   function mkChipSt(label, color, val, count) {
     var b = document.createElement("button");
@@ -11381,16 +11432,16 @@ NAN|Nadi|-17.76|177.44`;
       }).length));
     });
   }
-  function iniciar39() {
+  function iniciar40() {
     ganchosInterface.montarChipsEstados = buildChipsSt;
   }
 
   // web/src/js/brasil/menu.js
   var menu_exports2 = {};
   __export(menu_exports2, {
-    iniciar: () => iniciar40
+    iniciar: () => iniciar41
   });
-  function iniciar40() {
+  function iniciar41() {
     BRS.forEach(function(s) {
       var o = document.createElement("option");
       o.value = s.i;
@@ -11417,7 +11468,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/app/ultima-visao.js
   var ultima_visao_exports = {};
   __export(ultima_visao_exports, {
-    iniciar: () => iniciar41
+    iniciar: () => iniciar42
   });
   function saveLastView() {
     if (quiz.open || estadoBrasil.statesMode) return;
@@ -11447,7 +11498,7 @@ NAN|Nadi|-17.76|177.44`;
       if (i >= 0 && estadoMapa.on[i]) select(D[i], false);
     }
   }
-  function iniciar41() {
+  function iniciar42() {
     ouvir("visao-mudou", saveLastView);
     restoreLastView();
   }
@@ -11457,7 +11508,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(passaporte_exports, {
     abrirPassaporte: () => abrirPassaporte,
     contarCarimbos: () => contarCarimbos,
-    iniciar: () => iniciar42
+    iniciar: () => iniciar43
   });
   function carimbado(d) {
     var e = (estadoTreino.QS.m.cap || {})[d.cc];
@@ -11517,7 +11568,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     $("passsheet").style.display = "block";
   }
-  function iniciar42() {
+  function iniciar43() {
     $("mpassaporte").onclick = abrirPassaporte;
     $("passclose").onclick = function() {
       $("passsheet").style.display = "none";
@@ -11527,16 +11578,16 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/app/inicio.js
   var inicio_exports = {};
   __export(inicio_exports, {
-    iniciar: () => iniciar43
+    iniciar: () => iniciar44
   });
-  function iniciar43() {
+  function iniciar44() {
     quizOpen();
   }
 
   // web/src/js/treino/toques.js
   var toques_exports = {};
   __export(toques_exports, {
-    iniciar: () => iniciar44
+    iniciar: () => iniciar45
   });
   function paisNoPonto(x, y) {
     if (!estadoCamera.plano2D) return countryAt(x, y);
@@ -11619,7 +11670,7 @@ NAN|Nadi|-17.76|177.44`;
     quizMapAnswer(cand.length ? cand[0].d : poly);
     return true;
   }
-  function iniciar44() {
+  function iniciar45() {
     ganchosInterface.toqueAntes = toqueAntes;
     ganchosInterface.toqueNoGlobo = toqueNoGlobo;
     ganchosInterface.toqueNoMapa2D = toqueNoMapa2D;
@@ -11628,13 +11679,13 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/boas-vindas.js
   var boas_vindas_exports = {};
   __export(boas_vindas_exports, {
-    iniciar: () => iniciar46
+    iniciar: () => iniciar47
   });
 
   // web/src/js/treino/tour.js
   var tour_exports = {};
   __export(tour_exports, {
-    iniciar: () => iniciar45,
+    iniciar: () => iniciar46,
     iniciarTour: () => iniciarTour
   });
   var PASSOS = [
@@ -11685,7 +11736,7 @@ NAN|Nadi|-17.76|177.44`;
     passo = 0;
     setTimeout(mostrarPasso, 450);
   }
-  function iniciar45() {
+  function iniciar46() {
     $("guiaprox").onclick = function() {
       passo++;
       mostrarPasso();
@@ -11706,7 +11757,7 @@ NAN|Nadi|-17.76|177.44`;
   }
 
   // web/src/js/treino/boas-vindas.js
-  function iniciar46() {
+  function iniciar47() {
     if (lsGet("globo.bv.v1", false)) return;
     lsSet("globo.bv.v1", true);
     var m = estadoTreino.QS.m || {}, jaJogou = Object.keys(m).some(function(k) {
@@ -11743,7 +11794,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/desafio.js
   var desafio_exports = {};
   __export(desafio_exports, {
-    iniciar: () => iniciar47
+    iniciar: () => iniciar48
   });
   var INICIO = Date.UTC(2026, 9, 1);
   function hojeStr() {
@@ -11873,7 +11924,7 @@ NAN|Nadi|-17.76|177.44`;
       if (mais) mais.insertBefore(b, mais.firstChild);
     }
   }
-  function iniciar47() {
+  function iniciar48() {
     ouvir("rodada-terminou", aoTerminarRodada);
     ouvir("abrir-desafio", iniciarDesafio);
   }
@@ -11881,7 +11932,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/legenda.js
   var legenda_exports = {};
   __export(legenda_exports, {
-    iniciar: () => iniciar48
+    iniciar: () => iniciar49
   });
   var SIMBOLO = { c: "●", d: "◆", s: "■", t: "▲" };
   function mostrarLegenda() {
@@ -11902,7 +11953,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     $("legenda").hidden = false;
   }
-  function iniciar48() {
+  function iniciar49() {
     $("legok").onclick = function() {
       lsSet("globo.legenda.vista", true);
       $("legenda").hidden = true;
@@ -11924,7 +11975,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/progresso.js
   var progresso_exports = {};
   __export(progresso_exports, {
-    iniciar: () => iniciar49,
+    iniciar: () => iniciar50,
     restaurarDeTexto: () => restaurarDeTexto
   });
   var MARCA = "geoTotal-progresso";
@@ -11960,7 +12011,7 @@ NAN|Nadi|-17.76|177.44`;
     }
     return "";
   }
-  function iniciar49() {
+  function iniciar50() {
     $("msave").onclick = salvarProgresso;
     $("mload").onchange = function() {
       var f = this.files && this.files[0];
@@ -11986,7 +12037,7 @@ NAN|Nadi|-17.76|177.44`;
   var ajustes_exports = {};
   __export(ajustes_exports, {
     abrirAjustes: () => abrirAjustes,
-    iniciar: () => iniciar50
+    iniciar: () => iniciar51
   });
   var LINHAS = [
     [
@@ -12135,7 +12186,7 @@ NAN|Nadi|-17.76|177.44`;
   function fecharAjustes() {
     $("ajsheet").style.display = "none";
   }
-  function iniciar50() {
+  function iniciar51() {
     $("qajustb").onclick = abrirAjustes;
     $("goalgo").onclick = abrirAjustes;
     $("goalgo").title = "Toque para mudar a meta do dia e outros ajustes";
@@ -12170,35 +12221,36 @@ NAN|Nadi|-17.76|177.44`;
   iniciar26();
   iniciar21();
   iniciar27();
-  iniciar14();
   iniciar28();
+  iniciar14();
   iniciar29();
-  iniciar32();
-  iniciar34();
-  iniciar44();
   iniciar30();
+  iniciar33();
   iniciar35();
+  iniciar45();
+  iniciar31();
   iniciar36();
   iniciar37();
+  iniciar38();
   iniciar10();
   iniciar11();
-  iniciar33();
-  iniciar38();
+  iniciar34();
   iniciar39();
   iniciar40();
   iniciar41();
-  iniciar15();
-  iniciar31();
   iniciar42();
+  iniciar15();
+  iniciar32();
   iniciar43();
-  iniciar45();
-  iniciar50();
+  iniciar44();
   iniciar46();
+  iniciar51();
   iniciar47();
-  iniciar49();
   iniciar48();
+  iniciar50();
+  iniciar49();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, pdf_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, pdf_exports, avaliacao_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

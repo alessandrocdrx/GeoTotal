@@ -833,3 +833,26 @@ test('dica na múltipla escolha tira 2 erradas sem dar a letra; a meta do dia ab
   assert.deepEqual(erros, []);
   await fechar();
 });
+
+test('avaliação: pede depois de um momento bom, só para quem já jogou 3 dias, e uma vez por mês', async () => {
+  const { pagina, erros, fechar } = await abrirApp();
+  const r = await pagina.evaluate(async () => {
+    let n = 0;
+    window.AndroidBridge.requestReview = () => { n++; };
+    localStorage.setItem('globo.dias.uso', JSON.stringify(['2026-10-1']));
+    const g = window.__geoTotal;
+    g.emitir('partida-zerada', { medalha: 1 });
+    await new Promise((ok) => setTimeout(ok, 2800));
+    const poucosDias = n;
+    localStorage.setItem('globo.dias.uso', JSON.stringify(['2026-10-1', '2026-10-2', '2026-10-3']));
+    g.emitir('partida-zerada', { medalha: 1 });
+    await new Promise((ok) => setTimeout(ok, 2800));
+    const pediu = n;
+    g.emitir('partida-zerada', { medalha: 1 });
+    await new Promise((ok) => setTimeout(ok, 2800));
+    return { poucosDias, pediu, repetiu: n };
+  });
+  assert.deepEqual(r, { poucosDias: 0, pediu: 1, repetiu: 1 });
+  assert.deepEqual(erros, []);
+  await fechar();
+});

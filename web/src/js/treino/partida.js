@@ -7,6 +7,7 @@
 import { BRS } from '../dados/estados-brasil.js';
 import { D, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
+import { emitir } from '../nucleo/eventos.js';
 import { tocar } from '../nucleo/som.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { gapOf, mstats, poolIdx, qcapD, qcc, QD, qflag, TIER_P, tierOf, unitWord } from './dominio.js';
@@ -62,7 +63,7 @@ function runRecord(i,ok){
     if(!ok){var lo=Math.min(3,r.deck.length);r.deck.splice(lo+rndInt(r.deck.length-lo+1),0,cc);}}
   if(ok&&!r.fin&&poolIdx().length&&!runPool().length){
     r.fin=now;estadoPartida.ultimoFim=runKey();
-    r.res=recFinish(r);
+    r.res=recFinish(r);emitir('partida-zerada',{medalha:r.res.medal});
     celebrate('🏁 Você zerou '+scopeLabel()+'!');tocar('conquista');addXP(50);
     if(recordable(estadoTreino.quizScope)&&r.res.newMedal)celebrate(MEDAL[r.res.medal].i+' Medalha de '+MEDAL[r.res.medal].n+'!');
   }

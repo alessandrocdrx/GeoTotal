@@ -50,3 +50,9 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 }
+
+dependencies {
+    // Pedido de avaliação oficial do Google Play, dentro do app (In-App Review). Fala com o app da
+    // Play Store pelo próprio aparelho: não precisa de permissão de internet.
+    implementation 'com.google.android.play:review:2.0.2'
+}
