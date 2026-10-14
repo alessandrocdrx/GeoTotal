@@ -6,10 +6,11 @@
  * a busca e os toques nos países ficam de fora (não misturam com o modo Livre nem com o Treino).
  */
 
+import { HUBS } from '../dados/aeroportos.js';
 import { D, norm } from '../dados/paises.js';
 import { byName, capShort, short } from '../dados/vizinhos.js';
 import { haversine } from '../nucleo/geo.js';
-import { $ } from '../nucleo/utilitarios.js';
+import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { fitTo } from '../visualizacao/animacao.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { proj2D, R2now } from '../visualizacao/mapa-2d.js';
@@ -44,9 +45,11 @@ function naTela(p,R,cx,cy){
 }
 /* no 2D, um salto de meia tela é a rota cruzando a borda do mapa */
 function salto(a,b){return estadoCamera.plano2D&&Math.abs(a.x-b.x)>R2now()*2;}
+const COR = {reta:'#ffffff',direto:'#ffe066',escalas:'#ff9f43'};
 function drawArc(R,cx,cy){
   var arc=estadoDistancia.arc;if(!arc)return;
-  ctx.save();ctx.setLineDash([7,5]);ctx.lineWidth=2.4;ctx.strokeStyle='#ffe066';ctx.lineJoin='round';
+  var cor=COR[arc.modo]||'#ffe066';
+  ctx.save();ctx.setLineDash(arc.modo==='reta'?[]:[7,5]);ctx.lineWidth=arc.modo==='reta'?2:2.4;ctx.strokeStyle=cor;ctx.lineJoin='round';
   ctx.beginPath();
   var prev=null,k,s;
   for(k=0;k<arc.pts.length;k++){
@@ -55,16 +58,29 @@ function drawArc(R,cx,cy){
     prev=s;
   }
   ctx.stroke();ctx.restore();
-  var pontos=arc.pontos||[];
-  pontos.forEach(function(i,n){
+  ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+  /* escalas: bolinha branca com o código do aeroporto */
+  (arc.escalas||[]).forEach(function(h){
+    var p=naTela(xyz(h),R,cx,cy);if(!p)return;
+    ctx.beginPath();ctx.arc(p.x,p.y,5,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=cor;ctx.stroke();
+    ctx.font='800 11px system-ui,sans-serif';var w=ctx.measureText(h.cod).width+10;
+    ctx.fillStyle='rgba(10,16,30,.85)';ctx.fillRect(p.x-w/2,p.y+8,w,16);ctx.fillStyle='#fff';ctx.fillText(h.cod,p.x,p.y+16.5);
+  });
+  /* paradas: a mesma capital duas vezes (ida e volta) ganha as duas letras, ex.: A·E */
+  var pontos=arc.pontos||[],letras={};
+  pontos.forEach(function(i,n){(letras[i]=letras[i]||[]).push(letra(n));});
+  Object.keys(letras).forEach(function(i){
     var p=naTela(xyz(D[i]),R,cx,cy);if(!p)return;
-    ctx.beginPath();ctx.arc(p.x,p.y,8,0,7);ctx.lineWidth=2.4;ctx.strokeStyle='#ffe066';ctx.stroke();
+    ctx.beginPath();ctx.arc(p.x,p.y,8,0,7);ctx.lineWidth=2.4;ctx.strokeStyle=cor;ctx.stroke();
     if(pontos.length>2){
-      ctx.fillStyle='#ffe066';ctx.beginPath();ctx.arc(p.x,p.y-18,9,0,7);ctx.fill();
-      ctx.font='800 12px system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillStyle='#1a1400';ctx.fillText(String.fromCharCode(65+n),p.x,p.y-17.5);
+      var t=letras[i].join('·');ctx.font='800 12px system-ui,sans-serif';
+      var w=Math.max(18,ctx.measureText(t).width+10);
+      ctx.fillStyle=cor;ctx.beginPath();
+      if(ctx.roundRect)ctx.roundRect(p.x-w/2,p.y-27,w,18,9);else ctx.rect(p.x-w/2,p.y-27,w,18);
+      ctx.fill();ctx.fillStyle='#1a1400';ctx.fillText(t,p.x,p.y-17.5);
     }
   });
+  ctx.restore();
   if(arc.aviao)desenharAviao(R,cx,cy);
 }
 /* aviãozinho percorrendo a rota em loop (8 s por trecho, no máximo 20 s a volta toda) */
@@ -90,11 +106,6 @@ function fillCountrySelect(sel,first){
   sel.value=byName[norm(first)];
 }
 function fmtKm(km){return Math.round(km).toLocaleString('pt-BR')+' km';}
-/* tempo de voo: cruzeiro a 850 km/h mais ~30 min de subida e descida por trecho */
-function fmtVoo(km,trechos){
-  var min=Math.round(km/VELOCIDADE*60+30*trechos),h=Math.floor(min/60),m=min%60;
-  return h?(h+' h'+(m?' '+m+' min':'')):(m+' min');
-}
 function letra(n){return String.fromCharCode(65+n);}
 
 /* ---------- página do menu: lista de paradas ---------- */
@@ -115,32 +126,93 @@ function montarParadas(){
   $('dadd').hidden=paradas.length>=MAX_PARADAS;
 }
 
+/* ---------- rotas: linha reta, voo direto e voo com escalas ---------- */
+const MODOS = [['reta','📏 Reta'],['direto','✈️ Direto'],['escalas','🛫 Escalas']];
+const VOO_MAIS_LONGO = 15300;  /* km, perto do voo comercial sem escala mais longo de hoje */
+const DESVIO = 1.05;           /* voos reais fazem ~5% a mais que a linha reta (rotas aéreas, vento) */
+const ALC_REGIONAL = 3500, ALC_LONGO = 13000, CUSTO_ESCALA = 1500;
+let modo = 'direto';
+function km(a,b){return haversine(a,b);}
+/* hub da própria cidade (capital a menos de 80 km do aeroporto), ou null */
+function maisPerto(c){var m=HUBS[0];HUBS.forEach(function(h){if(km(c,h)<km(c,m))m=h;});return m;}
+function hubDaCidade(c){for(var k=0;k<HUBS.length;k++)if(km(c,HUBS[k])<80)return HUBS[k];return null;}
+/** Escalas típicas entre duas capitais: caminho mais barato pelos grandes aeroportos de conexão,
+    onde cada voo a mais "custa" 1.500 km (as companhias evitam escalas, mas não voltas enormes). */
+function rotaComEscalas(a,b){
+  var ha=hubDaCidade(a),hb=hubDaCidade(b),nos=[a,b].concat(HUBS),n=nos.length;
+  /* capital sem hub próprio: o primeiro voo vai para o hub mais perto (de Brasília, São Paulo) */
+  var pa=ha||maisPerto(a),pb=hb||maisPerto(b);
+  function custo(i,j){
+    var u=nos[i],v=nos[j],d=km(u,v);
+    if((i===0&&v===ha)||(i===1&&v===hb)||(j===0&&u===ha)||(j===1&&u===hb))return 0;
+    if(i<2&&j<2)return (d<=ALC_REGIONAL||(ha&&hb&&d<=ALC_LONGO))?d+CUSTO_ESCALA:Infinity;
+    if(i<2)return (ha||v===(i===0?pa:pb))?(ha&&d>ALC_LONGO?Infinity:d+CUSTO_ESCALA):Infinity;
+    if(j<2)return (hb||u===(j===0?pa:pb))?(hb&&d>ALC_LONGO?Infinity:d+CUSTO_ESCALA):Infinity;
+    return d<=ALC_LONGO?d+CUSTO_ESCALA:Infinity;
+  }
+  var dist=[],ant=[],feito=[],k,i;
+  for(k=0;k<n;k++){dist[k]=Infinity;ant[k]=-1;}
+  dist[0]=0;
+  for(;;){
+    var u=-1;for(k=0;k<n;k++)if(!feito[k]&&dist[k]<Infinity&&(u<0||dist[k]<dist[u]))u=k;
+    if(u<0||u===1)break;feito[u]=1;
+    for(i=0;i<n;i++){if(feito[i]||i===u)continue;var c=custo(u,i);if(dist[u]+c<dist[i]){dist[i]=dist[u]+c;ant[i]=u;}}
+  }
+  if(dist[1]===Infinity)return [a,b];
+  var cam=[];for(k=1;k>=0;k=ant[k]){cam.unshift(nos[k]);if(k===0)break;}
+  /* o aeroporto da própria capital não é escala */
+  return cam.filter(function(x){return !(x===ha&&x!==a)&&!(x===hb&&x!==b);});
+}
+function fmtHoras(h){var min=Math.round(h*60),hh=Math.floor(min/60),m=min%60;return hh?(hh+' h'+(m?' '+m+' min':'')):(m+' min');}
+
 /* ---------- tela da Distância ---------- */
-/** Abre a tela da Distância com a rota pelas paradas (índices em D). */
+/** Abre (ou refaz) a tela da Distância com a rota pelas paradas (índices em D). */
 function mostrarDistancia(lista){
-  lista=lista.filter(function(i,n){return n===0||i!==lista[n-1];});
+  lista=(lista||paradas).filter(function(i,n,l){return n===0||i!==l[n-1];});
   if(lista.length<2){$('dres').textContent='Escolha pelo menos dois países diferentes.';return;}
+  paradas=lista.slice();montarParadas();
   /* tela própria: sai do Treino, fecha o menu, o cartão e a lista de países */
   if($('quiz').style.display==='block')$('qclose').click();
   closeCard();hidePick();$('msheet').style.display='none';$('dres').textContent='';
-  var pts=[],tot=0,trechos=[],k;
+  var pts=[],trechos=[],escalas=[],tot=0,horas=0,longe=false,k,j;
   for(k=1;k<lista.length;k++){
-    var a=D[lista[k-1]],b=D[lista[k]],km=haversine(a,b);tot+=km;
-    trechos.push({a:a,b:b,km:km});
-    for(var t=0;t<=1.0001;t+=1/80)pts.push(slerp(xyz(a),xyz(b),Math.min(1,t)));
+    var a=D[lista[k-1]],b=D[lista[k]];
+    var nos=modo==='escalas'?rotaComEscalas(a,b):[a,b],kmTrecho=0;
+    for(j=1;j<nos.length;j++){
+      var d=km(nos[j-1],nos[j]);kmTrecho+=d;
+      for(var t=0;t<=1.0001;t+=1/80)pts.push(slerp(xyz(nos[j-1]),xyz(nos[j]),Math.min(1,t)));
+      if(modo!=='reta')horas+=d*(modo==='direto'?DESVIO:1)/VELOCIDADE+0.5;
+      if(j<nos.length-1){escalas.push(nos[j]);horas+=2;}
+    }
+    if(modo==='direto'){kmTrecho*=DESVIO;if(kmTrecho>VOO_MAIS_LONGO)longe=true;}
+    tot+=kmTrecho;
+    trechos.push({a:a,b:b,km:kmTrecho,via:nos.slice(1,-1)});
   }
-  estadoDistancia.arc={pts:pts,pontos:lista.slice(),aviao:true};
+  estadoDistancia.arc={pts:pts,pontos:lista.slice(),aviao:modo!=='reta',modo:modo,escalas:escalas};
   estadoDistancia.ativo=true;document.body.classList.add('dist');
   var ida=D[lista[0]],fim=D[lista[lista.length-1]];
-  $('dbtit').textContent='📏 '+ida.flag+' '+capShort(ida)+' → '+(lista.length>2?'… → ':'')+fim.flag+' '+capShort(fim);
-  $('dbtot').textContent=fmtKm(tot)+' · ✈️ ~'+fmtVoo(tot,trechos.length)+' de voo';
+  $('dbtit').textContent=ida.flag+' '+capShort(ida)+' → '+(lista.length>2?'… → ':'')+fim.flag+' '+capShort(fim);
+  var txt=fmtKm(tot);
+  if(modo==='reta')txt+=' em linha reta pela superfície';
+  else txt+=' · ~'+fmtHoras(horas)+(modo==='escalas'?(escalas.length?' com '+escalas.length+(escalas.length===1?' escala':' escalas'):' sem escala'):' de voo');
+  $('dbtot').textContent=txt;
+  var nota='';
+  if(modo==='direto')nota=longe?'⚠️ Nenhum avião de linha faz um trecho assim sem parar: o voo sem escala mais longo de hoje tem uns 15.300 km.':'Voo sem parar: uns 5% a mais que a linha reta, por causa das rotas aéreas e do vento.';
+  else if(modo==='escalas')nota=escalas.length?'Escalas típicas, aproximadas: '+escalas.map(function(h){return h.cidade+' ('+h.cod+')';}).join(', ')+'. Conta 2 h de espera em cada.':'Dá para ir sem escala.';
+  else nota='O caminho mais curto pela superfície da Terra, sem pensar em aviões.';
+  $('dbnota').textContent=nota;
+  /* o aviso de "longe demais" fica sempre à vista; o resto da explicação vai em Detalhes */
+  $('dbnota').hidden=!(modo==='direto'&&longe);
+  Array.prototype.forEach.call($('dbmodo').children,function(bt){bt.setAttribute('aria-pressed',bt.dataset.v===modo?'true':'false');});
   var lg=$('dblegs');lg.innerHTML='';
+  if(!(modo==='direto'&&longe)){var ex=document.createElement('p');ex.textContent=nota;lg.appendChild(ex);}
   trechos.forEach(function(tr,n){
     var li=document.createElement('div');
-    li.textContent=letra(n)+' → '+letra(n+1)+': '+tr.a.flag+' '+capShort(tr.a)+' → '+tr.b.flag+' '+capShort(tr.b)+' · '+fmtKm(tr.km);
+    li.textContent=letra(n)+' → '+letra(n+1)+': '+tr.a.flag+' '+capShort(tr.a)+(tr.via.length?' → '+tr.via.map(function(h){return h.cod;}).join(' → '):'')+' → '+tr.b.flag+' '+capShort(tr.b)+' · '+fmtKm(tr.km);
     lg.appendChild(li);
   });
-  $('dbmais').hidden=trechos.length<2;lg.hidden=true;$('dbmais').textContent=trechos.length+' trechos ▾';
+  $('dbmais').textContent='Detalhes '+(lg.hidden?'▾':'▴');
+  $('dbmenos').hidden=lista.length<=2;$('dbadd').hidden=lista.length>=MAX_PARADAS;
   fitTo(lista);
 }
 /** Fecha a tela da Distância e apaga a rota. */
@@ -159,7 +231,18 @@ function iniciar() {
   $('dadd').onclick=function(){if(paradas.length<MAX_PARADAS){paradas.push(paradas[paradas.length-1]);montarParadas();}};
   $('dgo').onclick=function(){mostrarDistancia(paradas);};
   $('dexit').onclick=sairDistancia;
-  $('dbmais').onclick=function(){var l=$('dblegs'),n=l.children.length;l.hidden=!l.hidden;this.textContent=n+' trechos '+(l.hidden?'▾':'▴');};
+  modo=lsGet('globo.dist.modo','direto');if(!MODOS.some(function(m){return m[0]===modo;}))modo='direto';
+  MODOS.forEach(function(m){
+    var bt=document.createElement('button');bt.dataset.v=m[0];bt.textContent=m[1];
+    bt.onclick=function(){modo=m[0];lsSet('globo.dist.modo',modo);mostrarDistancia();};
+    $('dbmodo').appendChild(bt);
+  });
+  /* mais uma parada direto da barra, sem voltar ao menu */
+  var add=$('dbadd');fillCountrySelect(add,'Brasil');
+  var o=document.createElement('option');o.value='';o.textContent='＋ Parada';add.insertBefore(o,add.firstChild);add.value='';
+  add.onchange=function(){if(add.value!==''){paradas.push(+add.value);add.value='';mostrarDistancia();}};
+  $('dbmenos').onclick=function(){if(paradas.length>2){paradas.pop();mostrarDistancia();}};
+  $('dbmais').onclick=function(){var l=$('dblegs');l.hidden=!l.hidden;this.textContent=this.textContent.replace(/[▾▴]$/,l.hidden?'▾':'▴');};
 }
 
 export { drawArc, estadoDistancia, fillCountrySelect, iniciar, mostrarDistancia, sairDistancia, slerp };

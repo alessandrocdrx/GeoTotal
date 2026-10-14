@@ -808,21 +808,30 @@ h1.marca{flex:none}
 #study td:nth-child(2){width:45%}
 #study td{overflow-wrap:anywhere}
 /* tela da Distância (js/interface/distancia.js): barra em cima e nada do modo Livre por cima do globo */
-#dbar{display:none;position:absolute;left:12px;right:66px;top:8px;z-index:7;align-items:flex-start;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:8px 8px 8px 12px;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+#dbar{display:none;position:absolute;left:12px;right:66px;top:8px;z-index:7;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:8px 8px 8px 12px;box-shadow:0 6px 18px rgba(0,0,0,.3);max-height:calc(100% - 20px);overflow:auto}
 body.dist #dbar{display:flex}
 body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist #status,body.dist .seg,body.dist .seg2{display:none!important}
+#dbar .dbtop{display:flex;align-items:flex-start;gap:8px}
 #dbar .dbtxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 #dbar .dbtxt b{font-size:14px;overflow-wrap:anywhere}
-#dbar .dbtxt span{font-size:13px;font-weight:700;color:var(--muted)}
-#dbar .dbmais{align-self:flex-start;border:0;background:none;color:#4da3ff;font-weight:800;font-size:12.5px;padding:2px 0;cursor:pointer;font-family:inherit}
-#dblegs{font-size:12.5px;line-height:1.5;max-height:30vh;overflow:auto}
+#dbar .dbtxt span{font-size:13px;font-weight:700;color:var(--fg)}
 #dbar .closeb{flex:none;padding:7px 12px!important;font-size:13px!important}
+#dbar .dbmodo{margin:0}
+#dbar .dbmodo button{font-size:12px;padding:6px 4px}
+.dbnota{font-size:12px;color:var(--muted);line-height:1.35}
+.dbacoes{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dbadd,.dbmenos{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:6px 8px;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer;max-width:130px}
+.dbadd[hidden],.dbmenos[hidden]{display:none}
+#dbar .dbmais{margin-left:auto;border:0;background:none;color:#4da3ff;font-weight:800;font-size:12.5px;padding:2px 0;cursor:pointer;font-family:inherit}
+#dblegs{font-size:12.5px;line-height:1.5;max-height:30vh;overflow:auto}
 .dstop{display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:8px;margin:6px 0}
 .dstop b{width:26px;height:26px;border-radius:50%;background:#ffe066;color:#1a1400;display:flex;align-items:center;justify-content:center;font-size:13px}
 .dstop select{margin:0!important}
 .dstop button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;width:40px;height:40px;cursor:pointer;font-family:inherit}
 .dadd{width:100%;margin:4px 0 2px;padding:10px;border:1px dashed var(--border);border-radius:12px;background:none;color:var(--fg);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
 .dadd[hidden]{display:none}
+#dblegs p{margin:0 0 4px;color:var(--muted)}
+.dbnota[hidden]{display:none}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -846,7 +855,13 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
     <canvas id="g" aria-label="Globo terrestre interativo"></canvas>
     <div id="status"></div>
     <div id="pick"></div>
-    <div id="dbar"><div class="dbtxt"><b id="dbtit"></b><span id="dbtot"></span><button id="dbmais" class="dbmais" hidden></button><div id="dblegs" hidden></div></div><button id="dexit" class="closeb">✕ Sair</button></div>
+    <div id="dbar">
+      <div class="dbtop"><div class="dbtxt"><b id="dbtit"></b><span id="dbtot"></span></div><button id="dexit" class="closeb">✕ Sair</button></div>
+      <div id="dbmodo" class="aseg dbmodo"></div>
+      <div id="dbnota" class="dbnota"></div>
+      <div class="dbacoes"><select id="dbadd" class="dbadd" aria-label="Adicionar parada"></select><button id="dbmenos" class="dbmenos">− Última</button><button id="dbmais" class="dbmais"></button></div>
+      <div id="dblegs" hidden></div>
+    </div>
     <div id="stbar"><span>🇧🇷 Estados</span><span class="stbtns"><button id="sttreino">🎯 Treinar</button><button id="stexit">← Países</button></span></div>
     <div class="seg" role="group" aria-label="Rótulos" hidden>
       <button id="lp" aria-pressed="true">País</button>
@@ -6276,6 +6291,62 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     slerp: () => slerp
   });
 
+  // web/src/js/dados/aeroportos.js
+  var HUBS_RAW = `
+GRU|São Paulo|-23.43|-46.47
+EZE|Buenos Aires|-34.82|-58.54
+SCL|Santiago|-33.39|-70.79
+LIM|Lima|-12.02|-77.11
+BOG|Bogotá|4.70|-74.15
+PTY|Cidade do Panamá|9.07|-79.38
+MEX|Cidade do México|19.44|-99.07
+MIA|Miami|25.80|-80.29
+ATL|Atlanta|33.64|-84.43
+JFK|Nova York|40.64|-73.78
+DFW|Dallas|32.90|-97.04
+LAX|Los Angeles|33.94|-118.41
+YYZ|Toronto|43.68|-79.63
+LHR|Londres|51.47|-0.45
+CDG|Paris|49.01|2.55
+AMS|Amsterdã|52.31|4.76
+FRA|Frankfurt|50.04|8.56
+MAD|Madri|40.47|-3.56
+LIS|Lisboa|38.77|-9.13
+IST|Istambul|41.26|28.74
+CMN|Casablanca|33.37|-7.59
+CAI|Cairo|30.12|31.41
+ADD|Adis Abeba|8.98|38.80
+NBO|Nairóbi|-1.32|36.93
+LOS|Lagos|6.58|3.32
+JNB|Joanesburgo|-26.14|28.24
+DXB|Dubai|25.25|55.36
+DOH|Doha|25.27|51.61
+DEL|Nova Délhi|28.56|77.10
+BOM|Mumbai|19.09|72.87
+BKK|Bangkok|13.69|100.75
+SIN|Singapura|1.36|103.99
+HKG|Hong Kong|22.31|113.92
+PEK|Pequim|40.08|116.58
+PVG|Xangai|31.14|121.81
+ICN|Seul|37.46|126.44
+NRT|Tóquio|35.77|140.39
+SYD|Sydney|-33.94|151.18
+AKL|Auckland|-37.01|174.79
+HNL|Honolulu|21.32|-157.92
+NAN|Nadi|-17.76|177.44`;
+  var HUBS = HUBS_RAW.trim().split("\n").map(function(l) {
+    var p = l.split("|"), lat = +p[2], lng = +p[3], r = Math.PI / 180;
+    return {
+      cod: p[0],
+      cidade: p[1],
+      lat,
+      lng,
+      x: Math.cos(lat * r) * Math.sin(lng * r),
+      y: Math.sin(lat * r),
+      z: Math.cos(lat * r) * Math.cos(lng * r)
+    };
+  });
+
   // web/src/js/nucleo/geo.js
   var geo_exports = {};
   __export(geo_exports, {
@@ -6320,13 +6391,15 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function salto(a, b) {
     return estadoCamera.plano2D && Math.abs(a.x - b.x) > R2now() * 2;
   }
+  var COR = { reta: "#ffffff", direto: "#ffe066", escalas: "#ff9f43" };
   function drawArc(R, cx, cy) {
     var arc = estadoDistancia.arc;
     if (!arc) return;
+    var cor = COR[arc.modo] || "#ffe066";
     ctx.save();
-    ctx.setLineDash([7, 5]);
-    ctx.lineWidth = 2.4;
-    ctx.strokeStyle = "#ffe066";
+    ctx.setLineDash(arc.modo === "reta" ? [] : [7, 5]);
+    ctx.lineWidth = arc.modo === "reta" ? 2 : 2.4;
+    ctx.strokeStyle = cor;
     ctx.lineJoin = "round";
     ctx.beginPath();
     var prev = null, k, s;
@@ -6338,27 +6411,52 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     ctx.stroke();
     ctx.restore();
-    var pontos = arc.pontos || [];
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    (arc.escalas || []).forEach(function(h) {
+      var p = naTela(xyz(h), R, cx, cy);
+      if (!p) return;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 5, 0, 7);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = cor;
+      ctx.stroke();
+      ctx.font = "800 11px system-ui,sans-serif";
+      var w = ctx.measureText(h.cod).width + 10;
+      ctx.fillStyle = "rgba(10,16,30,.85)";
+      ctx.fillRect(p.x - w / 2, p.y + 8, w, 16);
+      ctx.fillStyle = "#fff";
+      ctx.fillText(h.cod, p.x, p.y + 16.5);
+    });
+    var pontos = arc.pontos || [], letras = {};
     pontos.forEach(function(i, n) {
+      (letras[i] = letras[i] || []).push(letra(n));
+    });
+    Object.keys(letras).forEach(function(i) {
       var p = naTela(xyz(D[i]), R, cx, cy);
       if (!p) return;
       ctx.beginPath();
       ctx.arc(p.x, p.y, 8, 0, 7);
       ctx.lineWidth = 2.4;
-      ctx.strokeStyle = "#ffe066";
+      ctx.strokeStyle = cor;
       ctx.stroke();
       if (pontos.length > 2) {
-        ctx.fillStyle = "#ffe066";
-        ctx.beginPath();
-        ctx.arc(p.x, p.y - 18, 9, 0, 7);
-        ctx.fill();
+        var t = letras[i].join("·");
         ctx.font = "800 12px system-ui,sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        var w = Math.max(18, ctx.measureText(t).width + 10);
+        ctx.fillStyle = cor;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(p.x - w / 2, p.y - 27, w, 18, 9);
+        else ctx.rect(p.x - w / 2, p.y - 27, w, 18);
+        ctx.fill();
         ctx.fillStyle = "#1a1400";
-        ctx.fillText(String.fromCharCode(65 + n), p.x, p.y - 17.5);
+        ctx.fillText(t, p.x, p.y - 17.5);
       }
     });
+    ctx.restore();
     if (arc.aviao) desenharAviao(R, cx, cy);
   }
   function desenharAviao(R, cx, cy) {
@@ -6411,12 +6509,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     sel2.value = byName[norm(first)];
   }
-  function fmtKm(km) {
-    return Math.round(km).toLocaleString("pt-BR") + " km";
-  }
-  function fmtVoo(km, trechos) {
-    var min = Math.round(km / VELOCIDADE * 60 + 30 * trechos), h = Math.floor(min / 60), m = min % 60;
-    return h ? h + " h" + (m ? " " + m + " min" : "") : m + " min";
+  function fmtKm(km2) {
+    return Math.round(km2).toLocaleString("pt-BR") + " km";
   }
   function letra(n) {
     return String.fromCharCode(65 + n);
@@ -6452,42 +6546,145 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     $("dadd").hidden = paradas.length >= MAX_PARADAS;
   }
+  var MODOS = [["reta", "📏 Reta"], ["direto", "✈️ Direto"], ["escalas", "🛫 Escalas"]];
+  var VOO_MAIS_LONGO = 15300;
+  var DESVIO = 1.05;
+  var ALC_REGIONAL = 3500;
+  var ALC_LONGO = 13e3;
+  var CUSTO_ESCALA = 1500;
+  var modo = "direto";
+  function km(a, b) {
+    return haversine(a, b);
+  }
+  function maisPerto(c) {
+    var m = HUBS[0];
+    HUBS.forEach(function(h) {
+      if (km(c, h) < km(c, m)) m = h;
+    });
+    return m;
+  }
+  function hubDaCidade(c) {
+    for (var k = 0; k < HUBS.length; k++) if (km(c, HUBS[k]) < 80) return HUBS[k];
+    return null;
+  }
+  function rotaComEscalas(a, b) {
+    var ha = hubDaCidade(a), hb = hubDaCidade(b), nos = [a, b].concat(HUBS), n = nos.length;
+    var pa = ha || maisPerto(a), pb = hb || maisPerto(b);
+    function custo(i2, j) {
+      var u2 = nos[i2], v = nos[j], d = km(u2, v);
+      if (i2 === 0 && v === ha || i2 === 1 && v === hb || j === 0 && u2 === ha || j === 1 && u2 === hb) return 0;
+      if (i2 < 2 && j < 2) return d <= ALC_REGIONAL || ha && hb && d <= ALC_LONGO ? d + CUSTO_ESCALA : Infinity;
+      if (i2 < 2) return ha || v === (i2 === 0 ? pa : pb) ? ha && d > ALC_LONGO ? Infinity : d + CUSTO_ESCALA : Infinity;
+      if (j < 2) return hb || u2 === (j === 0 ? pa : pb) ? hb && d > ALC_LONGO ? Infinity : d + CUSTO_ESCALA : Infinity;
+      return d <= ALC_LONGO ? d + CUSTO_ESCALA : Infinity;
+    }
+    var dist = [], ant = [], feito = [], k, i;
+    for (k = 0; k < n; k++) {
+      dist[k] = Infinity;
+      ant[k] = -1;
+    }
+    dist[0] = 0;
+    for (; ; ) {
+      var u = -1;
+      for (k = 0; k < n; k++) if (!feito[k] && dist[k] < Infinity && (u < 0 || dist[k] < dist[u])) u = k;
+      if (u < 0 || u === 1) break;
+      feito[u] = 1;
+      for (i = 0; i < n; i++) {
+        if (feito[i] || i === u) continue;
+        var c = custo(u, i);
+        if (dist[u] + c < dist[i]) {
+          dist[i] = dist[u] + c;
+          ant[i] = u;
+        }
+      }
+    }
+    if (dist[1] === Infinity) return [a, b];
+    var cam = [];
+    for (k = 1; k >= 0; k = ant[k]) {
+      cam.unshift(nos[k]);
+      if (k === 0) break;
+    }
+    return cam.filter(function(x) {
+      return !(x === ha && x !== a) && !(x === hb && x !== b);
+    });
+  }
+  function fmtHoras(h) {
+    var min = Math.round(h * 60), hh2 = Math.floor(min / 60), m = min % 60;
+    return hh2 ? hh2 + " h" + (m ? " " + m + " min" : "") : m + " min";
+  }
   function mostrarDistancia(lista) {
-    lista = lista.filter(function(i, n) {
-      return n === 0 || i !== lista[n - 1];
+    lista = (lista || paradas).filter(function(i, n, l) {
+      return n === 0 || i !== l[n - 1];
     });
     if (lista.length < 2) {
       $("dres").textContent = "Escolha pelo menos dois países diferentes.";
       return;
     }
+    paradas = lista.slice();
+    montarParadas();
     if ($("quiz").style.display === "block") $("qclose").click();
     closeCard();
     hidePick();
     $("msheet").style.display = "none";
     $("dres").textContent = "";
-    var pts = [], tot = 0, trechos = [], k;
+    var pts = [], trechos = [], escalas = [], tot = 0, horas = 0, longe = false, k, j;
     for (k = 1; k < lista.length; k++) {
-      var a = D[lista[k - 1]], b = D[lista[k]], km = haversine(a, b);
-      tot += km;
-      trechos.push({ a, b, km });
-      for (var t = 0; t <= 1.0001; t += 1 / 80) pts.push(slerp(xyz(a), xyz(b), Math.min(1, t)));
+      var a = D[lista[k - 1]], b = D[lista[k]];
+      var nos = modo === "escalas" ? rotaComEscalas(a, b) : [a, b], kmTrecho = 0;
+      for (j = 1; j < nos.length; j++) {
+        var d = km(nos[j - 1], nos[j]);
+        kmTrecho += d;
+        for (var t = 0; t <= 1.0001; t += 1 / 80) pts.push(slerp(xyz(nos[j - 1]), xyz(nos[j]), Math.min(1, t)));
+        if (modo !== "reta") horas += d * (modo === "direto" ? DESVIO : 1) / VELOCIDADE + 0.5;
+        if (j < nos.length - 1) {
+          escalas.push(nos[j]);
+          horas += 2;
+        }
+      }
+      if (modo === "direto") {
+        kmTrecho *= DESVIO;
+        if (kmTrecho > VOO_MAIS_LONGO) longe = true;
+      }
+      tot += kmTrecho;
+      trechos.push({ a, b, km: kmTrecho, via: nos.slice(1, -1) });
     }
-    estadoDistancia.arc = { pts, pontos: lista.slice(), aviao: true };
+    estadoDistancia.arc = { pts, pontos: lista.slice(), aviao: modo !== "reta", modo, escalas };
     estadoDistancia.ativo = true;
     document.body.classList.add("dist");
     var ida = D[lista[0]], fim = D[lista[lista.length - 1]];
-    $("dbtit").textContent = "📏 " + ida.flag + " " + capShort(ida) + " → " + (lista.length > 2 ? "… → " : "") + fim.flag + " " + capShort(fim);
-    $("dbtot").textContent = fmtKm(tot) + " · ✈️ ~" + fmtVoo(tot, trechos.length) + " de voo";
+    $("dbtit").textContent = ida.flag + " " + capShort(ida) + " → " + (lista.length > 2 ? "… → " : "") + fim.flag + " " + capShort(fim);
+    var txt = fmtKm(tot);
+    if (modo === "reta") txt += " em linha reta pela superfície";
+    else txt += " · ~" + fmtHoras(horas) + (modo === "escalas" ? escalas.length ? " com " + escalas.length + (escalas.length === 1 ? " escala" : " escalas") : " sem escala" : " de voo");
+    $("dbtot").textContent = txt;
+    var nota2 = "";
+    if (modo === "direto") nota2 = longe ? "⚠️ Nenhum avião de linha faz um trecho assim sem parar: o voo sem escala mais longo de hoje tem uns 15.300 km." : "Voo sem parar: uns 5% a mais que a linha reta, por causa das rotas aéreas e do vento.";
+    else if (modo === "escalas") nota2 = escalas.length ? "Escalas típicas, aproximadas: " + escalas.map(function(h) {
+      return h.cidade + " (" + h.cod + ")";
+    }).join(", ") + ". Conta 2 h de espera em cada." : "Dá para ir sem escala.";
+    else nota2 = "O caminho mais curto pela superfície da Terra, sem pensar em aviões.";
+    $("dbnota").textContent = nota2;
+    $("dbnota").hidden = !(modo === "direto" && longe);
+    Array.prototype.forEach.call($("dbmodo").children, function(bt) {
+      bt.setAttribute("aria-pressed", bt.dataset.v === modo ? "true" : "false");
+    });
     var lg = $("dblegs");
     lg.innerHTML = "";
+    if (!(modo === "direto" && longe)) {
+      var ex = document.createElement("p");
+      ex.textContent = nota2;
+      lg.appendChild(ex);
+    }
     trechos.forEach(function(tr, n) {
       var li = document.createElement("div");
-      li.textContent = letra(n) + " → " + letra(n + 1) + ": " + tr.a.flag + " " + capShort(tr.a) + " → " + tr.b.flag + " " + capShort(tr.b) + " · " + fmtKm(tr.km);
+      li.textContent = letra(n) + " → " + letra(n + 1) + ": " + tr.a.flag + " " + capShort(tr.a) + (tr.via.length ? " → " + tr.via.map(function(h) {
+        return h.cod;
+      }).join(" → ") : "") + " → " + tr.b.flag + " " + capShort(tr.b) + " · " + fmtKm(tr.km);
       lg.appendChild(li);
     });
-    $("dbmais").hidden = trechos.length < 2;
-    lg.hidden = true;
-    $("dbmais").textContent = trechos.length + " trechos ▾";
+    $("dbmais").textContent = "Detalhes " + (lg.hidden ? "▾" : "▴");
+    $("dbmenos").hidden = lista.length <= 2;
+    $("dbadd").hidden = lista.length >= MAX_PARADAS;
     fitTo(lista);
   }
   function sairDistancia() {
@@ -6513,10 +6710,45 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       mostrarDistancia(paradas);
     };
     $("dexit").onclick = sairDistancia;
+    modo = lsGet("globo.dist.modo", "direto");
+    if (!MODOS.some(function(m) {
+      return m[0] === modo;
+    })) modo = "direto";
+    MODOS.forEach(function(m) {
+      var bt = document.createElement("button");
+      bt.dataset.v = m[0];
+      bt.textContent = m[1];
+      bt.onclick = function() {
+        modo = m[0];
+        lsSet("globo.dist.modo", modo);
+        mostrarDistancia();
+      };
+      $("dbmodo").appendChild(bt);
+    });
+    var add = $("dbadd");
+    fillCountrySelect(add, "Brasil");
+    var o = document.createElement("option");
+    o.value = "";
+    o.textContent = "＋ Parada";
+    add.insertBefore(o, add.firstChild);
+    add.value = "";
+    add.onchange = function() {
+      if (add.value !== "") {
+        paradas.push(+add.value);
+        add.value = "";
+        mostrarDistancia();
+      }
+    };
+    $("dbmenos").onclick = function() {
+      if (paradas.length > 2) {
+        paradas.pop();
+        mostrarDistancia();
+      }
+    };
     $("dbmais").onclick = function() {
-      var l = $("dblegs"), n = l.children.length;
+      var l = $("dblegs");
       l.hidden = !l.hidden;
-      this.textContent = n + " trechos " + (l.hidden ? "▾" : "▴");
+      this.textContent = this.textContent.replace(/[▾▴]$/, l.hidden ? "▾" : "▴");
     };
   }
 
@@ -6904,8 +7136,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       var mg = ia.pop >= ib.pop ? a : b, mp = mg === a ? b : a;
       if (mg.info.pop / mp.info.pop >= 1.2) out.push("👥 Para cada pessoa em " + dflag(mp) + ", há " + vezes(mg.info.pop, mp.info.pop) + " em " + dflag(mg) + ".");
     }
-    var km = Math.round(haversine(a, b));
-    out.push("✈️ De " + capShort(a) + " a " + capShort(b) + ": " + km.toLocaleString("pt-BR") + " km, umas " + (km / 850).toFixed(1).replace(".", ",") + " h de voo direto.");
+    var km2 = Math.round(haversine(a, b));
+    out.push("✈️ De " + capShort(a) + " a " + capShort(b) + ": " + km2.toLocaleString("pt-BR") + " km, umas " + (km2 / 850).toFixed(1).replace(".", ",") + " h de voo direto.");
     if (ia && ib && ia.lang && ib.lang) {
       var la = ia.lang.split(/,| e /)[0].trim(), lb = ib.lang.split(/,| e /)[0].trim();
       if (la === lb) out.push("🗣️ Nos dois se fala " + la.toLowerCase() + ".");
@@ -9934,12 +10166,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       finishQ(ok, ok ? "" : "Você tocou fora de qualquer país.");
       return;
     }
-    var km = Math.round(haversine(cn, d)), near = km < 800;
+    var km2 = Math.round(haversine(cn, d)), near = km2 < 800;
     var pts = [], A = [cn.x, cn.y, cn.z], B = [d.x, d.y, d.z];
     for (var t = 0; t <= 1.0001; t += 1 / 60) pts.push(slerp(A, B, Math.min(1, t)));
     estadoDistancia.arc = { pontos: [cn.i, i], pts, quiz: true };
     if (near) addXP(3);
-    finishQ(false, "Você tocou em " + dflag(cn) + " " + short(cn) + ", a " + km.toLocaleString("pt-BR") + " km (entre as capitais)." + (near ? " Quase! +3 XP" : ""));
+    finishQ(false, "Você tocou em " + dflag(cn) + " " + short(cn) + ", a " + km2.toLocaleString("pt-BR") + " km (entre as capitais)." + (near ? " Quase! +3 XP" : ""));
   }
   function quizMapAnswerBR(st) {
     if (!estadoTreino.qMap || quiz.answered) return;
@@ -9948,9 +10180,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       finishQ(ok, ok ? "" : "Você tocou fora de qualquer estado.");
       return;
     }
-    var km = Math.round(haversine(st, d)), near = km < 300;
+    var km2 = Math.round(haversine(st, d)), near = km2 < 300;
     if (near) addXP(3);
-    finishQ(false, "Você tocou em " + st.sigla + " " + st.name + ", a " + km.toLocaleString("pt-BR") + " km (entre as capitais)." + (near ? " Quase! +3 XP" : ""));
+    finishQ(false, "Você tocou em " + st.sigla + " " + st.name + ", a " + km2.toLocaleString("pt-BR") + " km (entre as capitais)." + (near ? " Quase! +3 XP" : ""));
   }
   function pickStateNear(x, y) {
     var R = R0 * estadoCamera.zoom, cand = [];
