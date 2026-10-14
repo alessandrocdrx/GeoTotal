@@ -549,3 +549,28 @@ body.dist .chips,body.dist .searchrow,body.dist #card,body.dist #pick,body.dist 
 .dbaero{position:absolute;z-index:12;width:220px;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:12px;padding:8px 10px;box-shadow:0 8px 22px rgba(0,0,0,.35);font-size:13px;line-height:1.35;animation:qpop .18s ease-out}
 .dbaero[hidden]{display:none}
 .dbaero b{display:block;font-size:15px;margin-bottom:2px}
+
+/* cartão da área natural (mar, deserto, floresta, relevo) */
+.ncard{position:absolute;left:10px;right:10px;bottom:10px;z-index:10;max-height:50%;overflow:auto;background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:18px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:qpop .2s ease-out}
+.ncard[hidden]{display:none}
+.ncard .nchead{display:flex;align-items:center;gap:10px}
+.ncard .ncico{font-size:34px;line-height:1}
+.ncard .nctit{flex:1;min-width:0}
+.ncard .nctit small{display:block;color:var(--muted);font-weight:700;font-size:12px}
+.ncard h2{margin:0;font-size:20px;line-height:1.2}
+.ncard .ncfatos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.ncard .ncfatos .fact{background:var(--chip);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;font-size:12px}
+.ncard .ncfatos .fact b{font-size:14px}
+.ncard .nctexto{margin:0 0 10px;line-height:1.45;font-size:14.5px}
+.ncard .chipsx{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ncard .chipsx button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:999px;padding:6px 10px;font-size:13px;font-family:inherit;cursor:pointer}
+.ncard .st{font-weight:800;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.ncard .inote{margin-top:10px}
+body.dist .ncard{display:none}
+
+/* alça para arrastar os cartões (maior ↑, menor ↓) */
+.alca{display:flex;justify-content:center;align-items:center;height:22px;margin:-8px -14px 2px;cursor:ns-resize;touch-action:none;position:sticky;top:-12px;z-index:3;background:var(--card)}
+.alca i{display:block;width:44px;height:5px;border-radius:3px;background:var(--muted);opacity:.55}
+.alca:hover i,.alca:focus-visible i{opacity:.9}
+/* com o cartão grande, tudo aparece de uma vez (sem "Ver mais detalhes") */
+#card #moreb{display:none}

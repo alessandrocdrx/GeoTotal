@@ -9,6 +9,7 @@ import { BRS } from '../dados/estados-brasil.js';
 import { D, dflag, norm, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
 import { closeCard, tourStop } from '../interface/cartao-detalhes.js';
+import { fecharArea } from '../interface/cartao-natural.js';
 import { estadoDistancia, sairDistancia, slerp } from '../interface/distancia.js';
 import { setIncludeUni } from '../interface/filtros.js';
 import { hidePick } from '../interface/lista-proximos.js';
@@ -441,7 +442,7 @@ function quizOpen(){
   if(estadoBrasil.statesMode)exitStates(false);
   tourStop();closeCard();hidePick();
   /* a linha da Distância entre capitais (e o aviso com os km) é do modo Livre: some ao entrar no treino */
-  sairDistancia();estadoDistancia.arc=null;setStatus('');
+  sairDistancia();fecharArea();estadoDistancia.arc=null;setStatus('');
   quiz.open=true;quiz.ok=0;quiz.total=0;quiz.streak=0;quiz.last=-1;syncModeSw();
   document.body.classList.add('quizing');$('quiz').classList.add('map');pausarMusica(true);
   $('quiz').style.display='block';

@@ -7,7 +7,7 @@
 
 import { REGIOES } from '../dados/regioes-naturais.js';
 import { FAIXAS_ZONAS, LINHAS_ZONAS } from '../dados/zonas-climaticas.js';
-import { estadoRender } from './projecao.js';
+import { estadoRender, inFeat } from './projecao.js';
 import { ctx, FONT, H, W } from './tela.js';
 
 function hexA(h,a){var n=parseInt(h.slice(1),16);return 'rgba('+(n>>16)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
@@ -88,6 +88,7 @@ const TIPOS = {
   f:['florestas','🌳','#1f6a33','#bdf2c4'],
   m:['montanhas','⛰️','#5a4a44','#f1ece6'],
   p:['montanhas','🏔️','#6b5a45','#e8dcc8'],
+  w:['mares','🌊','#1e4e80','#a8d6ff'],
 };
 /* aparência de cada tipo: [preenchimento, contorno, tracejado, desenho da textura] — no satélite o
    fundo já mostra o relevo, então só um véu claro e o contorno; no atlas, cores de atlas escolar */
@@ -97,12 +98,14 @@ const ESTILO = {
     f:['rgba(110,215,130,.13)','rgba(140,230,150,.75)',[],null],
     m:['rgba(255,255,255,.07)','rgba(255,255,255,.6)',[],function(g){g.strokeStyle='rgba(255,255,255,.28)';g.lineWidth=1;g.beginPath();g.moveTo(0,8);g.lineTo(4,3);g.lineTo(8,8);g.stroke();}],
     p:[null,'rgba(236,220,190,.6)',[5,4],null],
+    w:[null,'rgba(168,214,255,.4)',[3,4],null],
   },
   atlas:{
     d:['rgba(244,214,150,.45)','rgba(196,150,70,.8)',[],function(g){g.fillStyle='rgba(180,130,50,.45)';g.fillRect(1,2,1.2,1.2);g.fillRect(5,6,1.2,1.2);}],
     f:['rgba(80,165,95,.22)','rgba(55,130,70,.75)',[],null],
     m:['rgba(150,130,120,.14)','rgba(110,90,80,.7)',[],function(g){g.strokeStyle='rgba(110,90,80,.5)';g.lineWidth=1;g.beginPath();g.moveTo(0,8);g.lineTo(4,3);g.lineTo(8,8);g.stroke();}],
     p:[null,'rgba(150,125,90,.75)',[5,4],null],
+    w:[null,'rgba(40,95,150,.4)',[3,4],null],
   },
 };
 const PADROES = {};
@@ -123,9 +126,8 @@ function padrao(modo,t){
  */
 function desenharAreas(tracar,terra){
   var cam=estadoRender.camadas;
-  if(!cam.desertos&&!cam.florestas&&!cam.montanhas)return;
   var modo=estadoRender.atlas&&estadoRender.feats?'atlas':'sat';
-  ['p','m','d','f'].forEach(function(t){
+  ['w','p','m','d','f'].forEach(function(t){
     var T=TIPOS[t],E=ESTILO[modo][t];if(!cam[T[0]])return;
     ctx.save();
     if(t==='f'){ctx.beginPath();terra();ctx.clip();}
@@ -137,16 +139,43 @@ function desenharAreas(tracar,terra){
     ctx.stroke();
     ctx.restore();
   });
+  /* a área tocada fica em destaque */
+  var sel=estadoRender.areaSel;
+  if(sel){
+    ctx.save();ctx.beginPath();tracar(sel);
+    ctx.fillStyle='rgba(255,224,102,.22)';ctx.fill();
+    ctx.lineJoin='round';ctx.lineWidth=2.4;ctx.strokeStyle='#ffd23f';ctx.stroke();ctx.restore();
+  }
+}
+/**
+ * Qual área (das camadas ligadas) está neste ponto. Terra primeiro (a menor ganha: o Ténéré dentro do
+ * Saara); mar só se o ponto não está num país (sobreTerra = falso). Devolve o item ou null.
+ */
+function areaEm(lng,lat,sobreTerra){
+  var cam=estadoRender.camadas,achou=null;
+  for(var k=0;k<REGIOES.length;k++){
+    var r=REGIOES[k],t=TIPOS[r.tipo];
+    if(!cam[t[0]]||(r.tipo==='w')===!!sobreTerra)continue;
+    var c=r.caixa;
+    if(c[2]-c[0]<300&&(lng<c[0]||lng>c[2]||lat<c[1]||lat>c[3]))continue;
+    if(inFeat(r,lng,lat)&&(!achou||r.area<achou.area))achou=r;
+  }
+  return achou;
+}
+/** Tipo da área em palavras (para o cartão). */
+function tipoDaArea(r){
+  return {d:'Deserto',f:'Floresta',m:'Cordilheira',p:'Planalto'}[r.tipo]||(r.especie?r.especie[0].toUpperCase()+r.especie.slice(1):'Mar');
 }
 /** Nomes das áreas ligadas. projetar(item) devolve {x, y, a} ou null. */
 function desenharNatureza(projetar,zoom,usados){
   var cam=estadoRender.camadas;
   if(!cam.desertos&&!cam.florestas&&!cam.montanhas)return;
   var atlas=estadoRender.atlas&&!!estadoRender.feats,nivel=zoom>=2.2?2:1;
+  /* os nomes dos mares saem em aguas.js, no estilo dos oceanos */
   ctx.textAlign='center';ctx.textBaseline='middle';
   for(var k=0;k<REGIOES.length;k++){
     var n=REGIOES[k],t=TIPOS[n.tipo];
-    if(!cam[t[0]]||n.nivel>nivel)continue;
+    if(n.tipo==='w'||!cam[t[0]]||n.nivel>nivel)continue;
     var p=projetar(n);if(!p||p.x<4||p.x>W-50||p.y<4||p.y>H-4)continue;  /* fora da tela: sem nome (não puxa para a borda) */
     ctx.globalAlpha=p.a;
     rotulo(t[1]+' '+n.nome,p.x,p.y,11,atlas?t[2]:t[3],atlas?'rgba(255,255,255,.85)':'rgba(4,16,36,.85)',usados);
@@ -155,4 +184,4 @@ function desenharNatureza(projetar,zoom,usados){
   ctx.textAlign='left';
 }
 
-export { desenharAreas, desenharNatureza, desenharZonas, rotulosZonas };
+export { areaEm, desenharAreas, desenharNatureza, desenharZonas, rotulosZonas, TIPOS, tipoDaArea };

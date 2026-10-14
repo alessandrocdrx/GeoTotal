@@ -6,6 +6,7 @@
 
 import { appendLang, appendRel } from '../dados/linguas.js';
 import { $, setStatus } from '../nucleo/utilitarios.js';
+import { folhaArrastavel } from './folha-arrastavel.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { estadoMapa } from '../visualizacao/tela.js';
@@ -49,24 +50,31 @@ function fillInfo(d){
 /* o cartão abre pequeno (bandeira, nome e capital) para sobrar mapa; o resto fica no botão grande */
 function aplicarCompacto(){
   card.classList.toggle('compacto',!estadoCartao.expandido);
+  $('cinfo').hidden=!estadoCartao.expandido;
   var b=$('cexpandir');b.textContent=estadoCartao.expandido?'▴ Menos informações':'ℹ️ Mais informações';
   b.setAttribute('aria-expanded',estadoCartao.expandido?'true':'false');
 }
 function measureCard(){estadoCartao.cardH=card.style.display==='block'?card.offsetHeight+10:0;}
 
 let card;
+let folha;
 function closeCard(){
   /* durante o passeio, fechar o cartão só esconde o cartão: o passeio continua pelo mapa */
   if(estadoCartao.passeio&&estadoMapa.selected){card.style.display='none';estadoCartao.cardH=0;estadoCartao.semCartao=true;setStatus('🎬 O passeio continua sem o cartão. Toque em ⏹ para parar.',3000);return;}
-  estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;estadoCartao.expandido=false;aplicarCompacto();tourStop();}
+  estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;estadoCartao.expandido=false;aplicarCompacto();if(folha)folha.soltar();tourStop();}
 function tourStop(){if(!estadoCartao.passeio)return;clearInterval(estadoCartao.passeio);estadoCartao.passeio=null;estadoCartao.semCartao=false;$('tour').textContent='🎬';$('tour').setAttribute('aria-label','Passeio pelos países');}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   card = document.getElementById('card');
   ganchos.alturaCartao = function(){return estadoCartao.cardH;};
-  $('cexpandir').onclick=function(){estadoCartao.expandido=!estadoCartao.expandido;aplicarCompacto();card.scrollTop=0;setTimeout(measureCard,40);};
+  /* alça para arrastar o cartão; "Mais informações" faz o mesmo que puxar para cima */
+  folha=folhaArrastavel(card,{chave:'globo.cartao.altura',
+    grande:function(){estadoCartao.expandido=true;aplicarCompacto();},
+    pequeno:function(){estadoCartao.expandido=false;aplicarCompacto();card.scrollTop=0;},
+    ehGrande:function(){return estadoCartao.expandido;},
+    mudou:function(){setTimeout(measureCard,40);}});
+  $('cexpandir').onclick=function(){if(estadoCartao.expandido)folha.pequeno();else folha.grande();};
   aplicarCompacto();
-  $('moreb').onclick=function(){var b=$('cinfo');b.hidden=!b.hidden;$('moreb').textContent=b.hidden?'Ver mais detalhes ▾':'Ver menos ▴';setTimeout(measureCard,40);};
   window.addEventListener('resize',function(){setTimeout(measureCard,60);});
 }
 

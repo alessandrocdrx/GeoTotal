@@ -20,6 +20,8 @@ const estadoRender = {
   /** Estilo atlas escolar (cores por país, oceano claro) em vez da textura de satélite. */
   atlas: false,
   /** Nomes no mapa que o usuário liga e desliga no botão 🏷️. */
+  /** Área natural tocada (deserto, mar…), com o contorno em destaque. */
+  areaSel: null,
   camadas: { oceanos: true, mares: true, zonas: false, desertos: false, florestas: false, montanhas: false },
   feats: null,
   FEAT: undefined,
@@ -44,6 +46,19 @@ function inFeat(f,x,y){
   return false;
 }
 
+/** Longitude e latitude do ponto (x, y) da tela do globo, ou null fora dele. */
+function lngLatEm(x,y){
+  if(!estadoRender.proj)return null;
+  projCfg(R0*estadoCamera.zoom,W/2,H*estadoCamera.cyFrac);
+  var ll=estadoRender.proj.invert([x,y]);
+  return (!ll||isNaN(ll[0])||isNaN(ll[1]))?null:ll;
+}
+/** O ponto cai em terra (qualquer país ou território, ligado ou não)? */
+function terraEm(lng,lat){
+  if(!estadoRender.feats)return false;
+  for(var i=0;i<estadoRender.feats.length;i++)if(inFeat(estadoRender.feats[i],lng,lat))return true;
+  return false;
+}
 function countryAt(x,y){
   if(!estadoRender.feats)return null;
   projCfg(R0*estadoCamera.zoom,W/2,H*estadoCamera.cyFrac);
@@ -53,4 +68,4 @@ function countryAt(x,y){
   return null;
 }
 
-export { countryAt, estadoRender, hexA, inFeat, projCfg };
+export { countryAt, estadoRender, hexA, inFeat, lngLatEm, projCfg, terraEm };

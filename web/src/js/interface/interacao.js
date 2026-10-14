@@ -6,6 +6,7 @@
 
 import { D } from '../dados/paises.js';
 import { closeCard } from './cartao-detalhes.js';
+import { abrirArea } from './cartao-natural.js';
 import { select } from './cartao-pais.js';
 import { ganchosInterface } from './ganchos.js';
 import { hidePick } from './lista-proximos.js';
@@ -13,7 +14,8 @@ import { tocar } from '../nucleo/som.js';
 import { estadoBrasil } from '../visualizacao/estados.js';
 import { ganchos } from '../visualizacao/ganchos.js';
 import { inv2D, proj2D, R2now } from '../visualizacao/mapa-2d.js';
-import { countryAt, estadoRender, inFeat } from '../visualizacao/projecao.js';
+import { areaEm } from '../visualizacao/natureza.js';
+import { countryAt, estadoRender, inFeat, lngLatEm, terraEm } from '../visualizacao/projecao.js';
 import { cv, estadoCamera, estadoMapa, H, PI, R0, rot, W } from '../visualizacao/tela.js';
 import { estadoDistancia, toqueNaRota } from './distancia.js';
 
@@ -36,6 +38,16 @@ function endPtr(e){
   if(n===1){var id=Object.keys(ptrs)[0];lastX=ptrs[id].x;lastY=ptrs[id].y;estadoCamera.dragging=true;}
 }
 
+/* com uma camada ligada (🏷️), tocar numa área natural abre o cartão dela; um toque bem em cima do
+   marcador de um país continua abrindo o país */
+function tocarArea(ll){
+  if(!ll||Math.abs(ll[1])>90)return false;
+  var a=areaEm(ll[0],ll[1],terraEm(ll[0],ll[1]));
+  if(!a)return false;
+  if(estadoMapa.selected)closeCard();
+  tocar('toque');abrirArea(a,function(d){select(d,true);});
+  return true;
+}
 function tap(px,py){
   /* na tela da Distância, tocar no mapa não abre países (só arrasta e dá zoom); nas siglas, diz o aeroporto */
   if(estadoDistancia.ativo){var rr=cv.getBoundingClientRect();toqueNaRota(px-rr.left,py-rr.top);return;}
@@ -56,6 +68,7 @@ function tap(px,py){
   hidePick();
   /* toque preciso no ponto vence; senão vale o país sob o dedo; senão, o ponto mais próximo */
   var precise=cand.length&&cand[0].dd<14*14;
+  if(!precise&&tocarArea(lngLatEm(x,y)))return;
   var poly=precise?null:countryAt(x,y);
   var chosen=precise?cand[0].d:(poly||(cand.length?cand[0].d:null));
   if(chosen){
@@ -77,6 +90,7 @@ function tap2D(px,py){
   }
   cand2.sort(function(a,b){return a.dd-b.dd;});
   var precise=cand2.length&&cand2[0].dd<14*14;
+  if(!precise){var llA=inv2D(x,y,R2,cx,cy);llA[0]=((llA[0]+540)%360)-180;if(tocarArea(llA))return;}
   var poly2=null;
   if(!precise&&estadoRender.feats){
     var ll2=inv2D(x,y,R2,cx,cy);

@@ -188,7 +188,7 @@ function frame(){
   }else if(estadoCamera.auto&&!estadoCamera.dragging&&!estadoMapa.selected&&!ganchos.treinoAberto()&&!estadoBrasil.statesMode&&!estadoBrasil.selSt&&!ganchos.distanciaAberta()&&(performance.now()-estadoCamera.lastInteract>2500)){
     estadoCamera.lam+=0.0022;
   }
-  var wantCy=((estadoMapa.selected||estadoBrasil.selSt)&&!ganchos.treinoAberto())?Math.max(.26,Math.min(.5,(H-ganchos.alturaCartao())/(2*H))):(ganchos.treinoAberto()?Math.max(.24,Math.min(.5,(H-ganchos.alturaTreino())/(2*H))):.5);if(ganchos.distanciaAberta())wantCy=Math.max(.5,Math.min(.72,(ganchos.alturaDistancia()+H)/(2*H)));
+  var wantCy=((estadoMapa.selected||estadoBrasil.selSt||estadoRender.areaSel)&&!ganchos.treinoAberto())?Math.max(.26,Math.min(.5,(H-ganchos.alturaCartao())/(2*H))):(ganchos.treinoAberto()?Math.max(.24,Math.min(.5,(H-ganchos.alturaTreino())/(2*H))):.5);if(ganchos.distanciaAberta())wantCy=Math.max(.5,Math.min(.72,(ganchos.alturaDistancia()+H)/(2*H)));
   estadoCamera.cyFrac+=(wantCy-estadoCamera.cyFrac)*.15;
   if(estadoCamera.lam>PI)estadoCamera.lam-=2*PI;if(estadoCamera.lam<-PI)estadoCamera.lam+=2*PI;
   draw();requestAnimationFrame(frame);

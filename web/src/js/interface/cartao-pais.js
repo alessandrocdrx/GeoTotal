@@ -8,6 +8,7 @@ import { D, dflag, REG } from '../dados/paises.js';
 import { NB, short } from '../dados/vizinhos.js';
 import { card, closeCard, fillInfo, fmtArea, fmtPop, measureCard, tourStop } from './cartao-detalhes.js';
 import { afterFilter, toggleNb, updateNbBtn } from './filtros.js';
+import { fecharArea } from './cartao-natural.js';
 import { ganchosInterface } from './ganchos.js';
 import { emitir } from '../nucleo/eventos.js';
 import { horaAgora } from '../nucleo/hora.js';
@@ -48,6 +49,7 @@ function renderChips(title,items,empty){
 }
 function select(d,fly,group){
   if(ganchos.treinoAberto())return;
+  fecharArea();
   if(!estadoMapa.on[d.i]){estadoMapa.on[d.i]=1;afterFilter();}
   estadoMapa.selected=d;
   document.getElementById('hint').style.display='none';

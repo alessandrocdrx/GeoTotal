@@ -5,7 +5,8 @@
  * mais perto, e um nome nunca é escrito por cima de outro (usados = áreas já ocupadas). As camadas ligam e desligam no botão 🏷️.
  */
 
-import { MARES, OC } from '../dados/oceanos-polos.js';
+import { OC } from '../dados/oceanos-polos.js';
+import { REGIOES } from '../dados/regioes-naturais.js';
 import { estadoRender } from './projecao.js';
 import { ctx, FONT } from './tela.js';
 
@@ -42,8 +43,8 @@ function desenharAguas(projetar,escala,zoom,usados){
   if(cam.mares){
     var fm=Math.max(9,Math.min(14,fs*.62)),nivel=zoom>=2.2?2:1;
     ctx.font='italic 600 '+fm+'px '+FONT;
-    for(k=0;k<MARES.length;k++){
-      var m=MARES[k];if(m.nivel>nivel)continue;
+    for(k=0;k<REGIOES.length;k++){
+      var m=REGIOES[k];if(m.tipo!=='w'||m.nivel>nivel)continue;
       p=projetar(m);if(!p)continue;
       var tw=ctx.measureText(m.nome).width,r={x:p.x-tw/2-3,y:p.y-fm*.75,w:tw+6,h:fm*1.5};
       if(!cabe(r,usados))continue;
