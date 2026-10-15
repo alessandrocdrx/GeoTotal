@@ -224,7 +224,7 @@ canvas:active{cursor:grabbing}
   html,body{height:auto!important;overflow:visible!important;background:#fff!important}
   body>*:not(#study){display:none!important}
   #study{position:static!important;display:block!important;background:#fff!important;color:#000!important}
-  #study .box{position:static!important;max-height:none!important;background:#fff!important;color:#000!important;padding:0!important;border:0!important}
+  #study .box{position:static!important;max-height:none!important;min-height:0!important;background:#fff!important;color:#000!important;padding:0!important;border:0!important}
   #study .shead button,#studyprint{display:none!important}
   #study td{border-bottom:1px solid #ccc!important;color:#000}
 }
@@ -992,7 +992,41 @@ details.ajuda>summary{min-height:32px}
 .row2 button{white-space:nowrap;flex:1 1 auto}
 #card .nav button{white-space:nowrap}
 @media (max-width:340px){#card .nav button{font-size:14px;padding:0 6px}}
-.row2 #ubtn{min-height:38px}
+.row2 #ubtn{min-height:38px;font-size:13.5px}
+
+/* telas abertas pelo menu ⋯ (folha, histórico, conquistas, passaporte): sempre por cima do painel
+   do treino e com a mesma altura, mesmo com pouco conteúdo — sem o menu aparecendo pela metade atrás */
+#study{z-index:85}
+#study .box,#statsheet .box,#badgesheet .box,#passsheet .box{min-height:88%}
+/* "Mais ajustes" com cara de botão que abre: seta à direita que vira ao abrir */
+.ajmais summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--fg)}
+.ajmais summary::-webkit-details-marker{display:none}
+.ajmais summary::after{content:'⌄';font-size:18px;line-height:1;color:var(--muted);transition:transform .2s}
+.ajmais[open] summary::after{transform:rotate(180deg)}
+
+/* ícones de traço (js/nucleo/icones.js): mesmo desenho em qualquer celular, cor do botão */
+.ico{width:20px;height:20px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#mbtn .ico{width:22px;height:22px}
+.tools button .ico{width:21px;height:21px}
+.tools button{display:inline-flex;align-items:center;justify-content:center}
+/* cor diz o estado: som (azul), sol/dia e noite (amarelo), giro e 2D ligados (azul) */
+#msom{color:#8cc4ff}
+#msom.mudo{color:var(--muted)}
+#mvisual{color:#ffc93c}
+#mestilotop[data-ico=atlas]{color:#ff9f6b}
+#mestilotop[data-ico=satelite]{color:#7fe0a8}
+#camb{color:#c9a7ff}
+#camb[aria-expanded=true]{background:#c9a7ff;color:#1a1033;border-color:#c9a7ff}
+#spin[aria-pressed=true],#flat2d[aria-pressed=true],#tour[data-ico=parar]{color:#4da3ff}
+#tour[data-ico=parar]{border-color:#4da3ff}
+@media (prefers-color-scheme:light){:root:not([data-theme=dark]) #msom{color:#1f6fd1}:root:not([data-theme=dark]) #mvisual{color:#b67d00}:root:not([data-theme=dark]) #mestilotop[data-ico=satelite]{color:#15834a}:root:not([data-theme=dark]) #mestilotop[data-ico=atlas]{color:#c2521a}:root:not([data-theme=dark]) #camb{color:#7a4fd0}}
+:root[data-theme=light] #msom{color:#1f6fd1}:root[data-theme=light] #mvisual{color:#b67d00}:root[data-theme=light] #mestilotop[data-ico=satelite]{color:#15834a}:root[data-theme=light] #mestilotop[data-ico=atlas]{color:#c2521a}:root[data-theme=light] #camb{color:#7a4fd0}
+/* estado vazio com convite (histórico sem respostas) */
+.vazio{text-align:center;padding:28px 12px 8px}
+.vazioico{font-size:46px;line-height:1;margin-bottom:10px;animation:qpop 1.6s ease-in-out infinite}
+.vazio p{margin:0 auto 14px;max-width:320px;color:var(--muted);font-size:14.5px;line-height:1.45}
+.vaziobtn{border:0;border-radius:14px;padding:12px 22px;min-height:44px;font:700 15px inherit;font-family:inherit;background:#1fa85a;color:#fff;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.vazioico{animation:none}}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -1001,7 +1035,7 @@ details.ajuda>summary{min-height:32px}
   <header>
     <div class="htop">
       <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
-      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite">☀️</button><button id="mestilotop" class="hsom" aria-label="Estilo do mapa: satélite" title="Satélite ou atlas">🛰️</button><button id="camb" class="hsom" aria-label="O que aparece no mapa" title="O que aparece no mapa" aria-expanded="false">🏷️</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som" data-ico="som"></button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite" data-ico="sol"></button><button id="mestilotop" class="hsom" aria-label="Estilo do mapa: satélite" title="Satélite ou atlas" data-ico="satelite"></button><button id="camb" class="hsom" aria-label="O que aparece no mapa" title="O que aparece no mapa" aria-expanded="false" data-ico="camadas"></button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções" data-ico="mais"></button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -1036,11 +1070,11 @@ details.ajuda>summary{min-height:32px}
       <button id="lc" aria-pressed="false">Capital</button>
     </div>
     <div class="tools">
-      <button id="zin" aria-label="Aproximar">+</button>
-      <button id="zout" aria-label="Afastar">−</button>
-      <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true">🔄</button>
-      <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países">🎬</button>
-      <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
+      <button id="zin" aria-label="Aproximar" data-ico="aproximar"></button>
+      <button id="zout" aria-label="Afastar" data-ico="afastar"></button>
+      <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true" data-ico="giro"></button>
+      <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países" data-ico="passeio"></button>
+      <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false" data-ico="mapa"></button>
     </div>
     <div id="camadas" class="camadas" hidden>
       <div class="camtit"><b>O que aparece no mapa</b><button id="camfechar" class="closeb" aria-label="Fechar">✕</button></div>
@@ -1313,6 +1347,38 @@ details.ajuda>summary{min-height:32px}
     })();
   }
 
+  // web/src/js/nucleo/icones.js
+  var DESENHOS = {
+    som: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6"/><path d="M18.5 6.2a8.3 8.3 0 0 1 0 11.6"/>',
+    mudo: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',
+    sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+    "dia-noite": '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/>',
+    satelite: '<rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 16l5-4.5 4 3.5 3-2.5 6 5"/><circle cx="16" cy="9" r="1.6"/>',
+    atlas: '<path d="M12 3.5a8.5 8.5 0 1 0 0 17c1 0 1.5-.7 1.5-1.5 0-1.1-1-1.5-1-2.5s.8-1.7 1.8-1.7h2.2a4 4 0 0 0 4-4c0-4.1-3.8-7.3-8.5-7.3z"/><circle cx="7.6" cy="11.2" r="1.1" fill="currentColor"/><circle cx="10" cy="7.4" r="1.1" fill="currentColor"/><circle cx="14.6" cy="7.6" r="1.1" fill="currentColor"/>',
+    camadas: '<path d="M12 3.5l9 4.8-9 4.8-9-4.8z"/><path d="M3 12.6l9 4.8 9-4.8"/><path d="M3 16.4l9 4.8 9-4.8" opacity=".55"/>',
+    mais: '<circle cx="5.5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="18.5" cy="12" r="1.5" fill="currentColor"/>',
+    aproximar: '<path d="M12 5v14M5 12h14"/>',
+    afastar: '<path d="M5 12h14"/>',
+    giro: '<path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5v4.2h-4.2"/>',
+    passeio: '<path d="M8.5 5.5l10 6.5-10 6.5z"/>',
+    parar: '<rect x="6.5" y="6.5" width="11" height="11" rx="2"/>',
+    mapa: '<path d="M3.5 6.5l5.5-2 6 2 5.5-2v13l-5.5 2-6-2-5.5 2z"/><path d="M9 4.5v13M15 6.5v13"/>',
+    globo: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.4 3.8 5.3 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.3-3.8-8.5s1.2-6.1 3.8-8.5z"/>'
+  };
+  function icone(nome) {
+    return '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + (DESENHOS[nome] || "") + "</svg>";
+  }
+  function pintarIcone(el2, nome) {
+    if (!el2 || el2.dataset.ico === nome && el2.querySelector("svg.ico")) return;
+    el2.dataset.ico = nome;
+    el2.innerHTML = icone(nome);
+  }
+  function iniciar2() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-ico]"), function(el2) {
+      pintarIcone(el2, el2.dataset.ico);
+    });
+  }
+
   // web/src/js/dados/paises.js
   var paises_exports = {};
   __export(paises_exports, {
@@ -1323,7 +1389,7 @@ details.ajuda>summary{min-height:32px}
     N_UNI: () => N_UNI,
     REG: () => REG,
     dflag: () => dflag,
-    iniciar: () => iniciar2,
+    iniciar: () => iniciar3,
     localidade: () => localidade,
     norm: () => norm,
     qcapDisp: () => qcapDisp
@@ -1708,7 +1774,7 @@ Ilha Pedro I|Sem capital (desabitada)|-68.78|-90.58|7|Antártida|Reivindicação
   var N_UNI;
   var N_MIC;
   function dflag(d) {
-    return d.dis ? "[" + d.cc + "]" : d.flag;
+    return d.dis ? "🏳️" : d.flag;
   }
   var LOCAL_SUB = { "Caribe": "América Central · Caribe", "Istmo (América Central)": "América Central · Istmo", "América do Norte": "América do Norte", "Austrália e Nova Zelândia": "Oceania · Australásia" };
   function localidade(d) {
@@ -1720,7 +1786,7 @@ Ilha Pedro I|Sem capital (desabitada)|-68.78|-90.58|7|Antártida|Reivindicação
   function qcapDisp(d) {
     return d.cc === "NR" ? "Yaren" : d.cap.split(" (")[0];
   }
-  function iniciar2() {
+  function iniciar3() {
     D = (function() {
       var base = RAW.trim().split("\n"), dep = {}, used = {}, out = [];
       (RAW_DEP.trim() + "\n" + RAW_UNI.trim()).split("\n").forEach(function(l) {
@@ -1785,7 +1851,7 @@ Ilha Pedro I|Sem capital (desabitada)|-68.78|-90.58|7|Antártida|Reivindicação
   // web/src/js/dados/info-paises.js
   var info_paises_exports = {};
   __export(info_paises_exports, {
-    iniciar: () => iniciar3
+    iniciar: () => iniciar4
   });
   var INFO_RAW = `
 BR|212000|8515767|Português|Real (BRL)|UTC−3 (de −2 a −5)|+55
@@ -2054,7 +2120,7 @@ XA|245|8660|Abecázio e russo|Rublo russo (RUB)|UTC+3|+7 840 / 940
 XO|56|3900|Osseto, russo e georgiano|Rublo russo (RUB)|UTC+4|+995 34
 `;
   var INFO = {};
-  function iniciar3() {
+  function iniciar4() {
     INFO_RAW.trim().split("\n").forEach(function(l) {
       var p = l.split("|");
       INFO[p[0]] = {
@@ -2075,7 +2141,7 @@ XO|56|3900|Osseto, russo e georgiano|Rublo russo (RUB)|UTC+4|+995 34
   // web/src/js/dados/religioes.js
   var religioes_exports = {};
   __export(religioes_exports, {
-    iniciar: () => iniciar4
+    iniciar: () => iniciar5
   });
   var REL_RAW = `
 BR|Cristãos:86[Católicos:57,Evangélicos:27,Outros cristãos:2];Sem religião:9;Espíritas:2;Religiões afro-brasileiras:1;Outras:2
@@ -2278,7 +2344,7 @@ WS|Cristãos:98[Congregacionais:32,Católicos:19,Mórmons:17,Metodistas:14,Assem
 TO|Cristãos:97[Metodistas:45,Mórmons:18,Católicos:14,Outros:20];Outras:3
 `;
   var REL = {};
-  function iniciar4() {
+  function iniciar5() {
     REL_RAW.trim().split("\n").forEach(function(l) {
       var p = l.split("|"), items = [];
       p[1].split(";").forEach(function(it) {
@@ -2303,7 +2369,7 @@ TO|Cristãos:97[Metodistas:45,Mórmons:18,Católicos:14,Outros:20];Outras:3
   __export(linguas_exports, {
     appendLang: () => appendLang,
     appendRel: () => appendRel,
-    iniciar: () => iniciar5,
+    iniciar: () => iniciar6,
     langText: () => langText,
     relText: () => relText
   });
@@ -2642,7 +2708,7 @@ TO|Tonganês:96;Inglês e outras:4
     });
     box.appendChild(nota("Subgrupos: % da população total. Estimativas aproximadas de censos e pesquisas (por volta de 2010–2023); mudam conforme a fonte e o critério (filiação × prática)." + (d.rel.note ? " " + d.rel.note + "." : "")));
   }
-  function iniciar5() {
+  function iniciar6() {
     LANG_RAW.trim().split("\n").forEach(function(l) {
       var p = l.split("|"), items = [];
       p[1].split(";").forEach(function(it) {
@@ -2670,7 +2736,7 @@ TO|Tonganês:96;Inglês e outras:4
     LX: () => LX,
     LY: () => LY,
     LZ: () => LZ,
-    iniciar: () => iniciar6
+    iniciar: () => iniciar7
   });
   var LAND = [
     /* América do Norte */
@@ -2783,7 +2849,7 @@ TO|Tonganês:96;Inglês e outras:4
   var LZ = [];
   var LLAT = [];
   var LLNG = [];
-  function iniciar6() {
+  function iniciar7() {
     (function() {
       var step2 = 1.8;
       for (var lat = -88; lat <= 88; lat += step2) {
@@ -2809,7 +2875,7 @@ TO|Tonganês:96;Inglês e outras:4
     NB: () => NB,
     byName: () => byName,
     capShort: () => capShort,
-    iniciar: () => iniciar7,
+    iniciar: () => iniciar8,
     short: () => short
   });
   var NB_RAW = `
@@ -2968,7 +3034,7 @@ Brunei:Malásia
   function capShort(d) {
     return d.cap.split(" (")[0].split(" · ")[0].split(" / ")[0];
   }
-  function iniciar7() {
+  function iniciar8() {
     NB = D.map(function() {
       return [];
     });
@@ -2999,14 +3065,14 @@ Brunei:Malásia
   var oceanos_polos_exports = {};
   __export(oceanos_polos_exports, {
     OC: () => OC,
-    iniciar: () => iniciar8
+    iniciar: () => iniciar9
   });
   var OC;
   function xyz(lat, lng) {
     var a = lat * Math.PI / 180, b = lng * Math.PI / 180;
     return { lat, lng, x: Math.cos(a) * Math.sin(b), y: Math.sin(a), z: Math.cos(a) * Math.cos(b) };
   }
-  function iniciar8() {
+  function iniciar9() {
     OC = [
       ["OCEANO", "ATLÂNTICO", 24, -38],
       ["OCEANO", "ATLÂNTICO", -22, -10],
@@ -3105,7 +3171,7 @@ Brunei:Malásia
     firstOn: () => firstOn,
     girar: () => girar,
     glc: () => glc,
-    iniciar: () => iniciar9,
+    iniciar: () => iniciar10,
     resize: () => resize,
     rot: () => rot,
     visIdx: () => visIdx
@@ -3271,7 +3337,7 @@ Brunei:Malásia
     return v;
   }
   var glc;
-  function iniciar9() {
+  function iniciar10() {
     cv = document.getElementById("g");
     ctx = cv.getContext("2d");
     glc = document.getElementById("gl");
@@ -3467,7 +3533,7 @@ Brunei:Malásia
     drawStates: () => drawStates,
     estadoBrasil: () => estadoBrasil,
     fitStates: () => fitStates,
-    iniciar: () => iniciar11,
+    iniciar: () => iniciar12,
     stBadgeMetrics: () => stBadgeMetrics,
     stateAt: () => stateAt,
     stateView: () => stateView
@@ -3480,7 +3546,7 @@ Brunei:Malásia
     BRREG: () => BRREG,
     BRS: () => BRS,
     STSHAPES: () => STSHAPES,
-    iniciar: () => iniciar10
+    iniciar: () => iniciar11
   });
   var BRREG = [{ n: "Sul", c: "#b57cff" }, { n: "Sudeste", c: "#4da3ff" }, { n: "Centro-Oeste", c: "#f6c800" }, { n: "Nordeste", c: "#ff8a3d" }, { n: "Norte", c: "#2fd67f" }];
   var STSHAPES = ["c", "d", "s", "t", "c"];
@@ -3515,7 +3581,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
 `;
   var BRS;
   var BRBY = {};
-  function iniciar10() {
+  function iniciar11() {
     BRS = BR_RAW.trim().split("\n").map(function(l, i) {
       var p = l.split("|"), la = +p[3] * Math.PI / 180, lo = +p[4] * Math.PI / 180;
       return {
@@ -3991,7 +4057,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     });
     flyTo(Math.asin(sy) * 180 / PI, Math.atan2(sx, sz) * 180 / PI, zoomFor(th + 0.05, 5));
   }
-  function iniciar11() {
+  function iniciar12() {
     estadoBrasil.onS = BRS.map(function() {
       return 1;
     });
@@ -4005,7 +4071,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(fronteiras_exports, {
     A3: () => A3,
     drawGeo: () => drawGeo,
-    iniciar: () => iniciar12,
+    iniciar: () => iniciar13,
     setupGeo: () => setupGeo,
     tryLoad: () => tryLoad
   });
@@ -4421,7 +4487,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       ctx.stroke();
     }
   }
-  function iniciar12() {
+  function iniciar13() {
     estadoRender.FEAT = D.map(function() {
       return null;
     });
@@ -4432,7 +4498,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(mapa_2d_exports, {
     R2now: () => R2now,
     draw2D: () => draw2D,
-    iniciar: () => iniciar15,
+    iniciar: () => iniciar16,
     inv2D: () => inv2D,
     proj2D: () => proj2D,
     setFlat2D: () => setFlat2D
@@ -4469,7 +4535,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var textura_exports = {};
   __export(textura_exports, {
     buildTexture: () => buildTexture,
-    iniciar: () => iniciar13,
+    iniciar: () => iniciar14,
     updateOpts: () => updateOpts
   });
   function hh(x, y) {
@@ -4682,7 +4748,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     oBor.disabled = !estadoRender.feats;
     oFill.disabled = !estadoRender.feats;
   }
-  function iniciar13() {
+  function iniciar14() {
     oTex = document.getElementById("oTex");
     oBor = document.getElementById("oBor");
     oFill = document.getElementById("oFill");
@@ -4697,7 +4763,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     };
     function visMostra() {
       var n = $("oNight").checked;
-      $("mvisual").textContent = n ? "🌗" : "☀️";
+      pintarIcone($("mvisual"), n ? "dia-noite" : "sol");
       $("mvisual").setAttribute("aria-pressed", n ? "true" : "false");
     }
     $("mvisual").onclick = function() {
@@ -4718,7 +4784,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
         b.setAttribute("aria-pressed", b.dataset.v === "atlas" === estadoRender.atlas ? "true" : "false");
       });
       var t = $("mestilotop");
-      t.textContent = estadoRender.atlas ? "🎨" : "🛰️";
+      pintarIcone(t, estadoRender.atlas ? "atlas" : "satelite");
       t.setAttribute("aria-label", "Estilo do mapa: " + (estadoRender.atlas ? "atlas" : "satélite"));
       t.setAttribute("aria-pressed", estadoRender.atlas ? "true" : "false");
     }
@@ -4751,7 +4817,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/visualizacao/dia-noite.js
   var dia_noite_exports = {};
   __export(dia_noite_exports, {
-    iniciar: () => iniciar14,
+    iniciar: () => iniciar15,
     optNight: () => optNight,
     sunVec: () => sunVec
   });
@@ -4764,7 +4830,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     var lg = -(hrs + eot / 60 - 12) * 15 * PI / 180;
     return [Math.cos(decl) * Math.sin(lg), Math.sin(decl), Math.cos(decl) * Math.cos(lg)];
   }
-  function iniciar14() {
+  function iniciar15() {
     optNight = lsGet("globo.noite", false);
     $("oNight").checked = optNight;
     $("oNight").onchange = function() {
@@ -5550,10 +5616,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoCamera.plano2D = v;
     lsSet("globo.flat2d", v);
     $("flat2d").setAttribute("aria-pressed", v ? "true" : "false");
-    $("flat2d").textContent = v ? "🌐" : "🗺️";
+    pintarIcone($("flat2d"), v ? "globo" : "mapa");
     $("flat2d").setAttribute("aria-label", v ? "Ver como globo" : "Ver como mapa 2D");
   }
-  function iniciar15() {
+  function iniciar16() {
     estadoCamera.plano2D = lsGet("globo.flat2d", false);
     $("flat2d").onclick = function() {
       setFlat2D(!estadoCamera.plano2D);
@@ -5820,7 +5886,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/interacao.js
   var interacao_exports = {};
   __export(interacao_exports, {
-    iniciar: () => iniciar23,
+    iniciar: () => iniciar24,
     tap: () => tap,
     tap2D: () => tap2D
   });
@@ -5835,7 +5901,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     fillInfo: () => fillInfo,
     fmtArea: () => fmtArea,
     fmtPop: () => fmtPop,
-    iniciar: () => iniciar16,
+    iniciar: () => iniciar17,
     measureCard: () => measureCard,
     tourStop: () => tourStop
   });
@@ -6035,7 +6101,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       card.style.display = "none";
       estadoCartao.cardH = 0;
       estadoCartao.semCartao = true;
-      setStatus("🎬 O passeio continua sem o cartão. Toque em ⏹ para parar.", 3e3);
+      setStatus("🎬 O passeio continua sem o cartão. Toque no quadrado ■ para parar.", 3e3);
       return;
     }
     estadoMapa.selected = null;
@@ -6052,10 +6118,10 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     clearInterval(estadoCartao.passeio);
     estadoCartao.passeio = null;
     estadoCartao.semCartao = false;
-    $("tour").textContent = "🎬";
+    pintarIcone($("tour"), "passeio");
     $("tour").setAttribute("aria-label", "Passeio pelos países");
   }
-  function iniciar16() {
+  function iniciar17() {
     card = document.getElementById("card");
     ganchos.alturaCartao = function() {
       return estadoCartao.cardH;
@@ -6094,7 +6160,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     abrirArea: () => abrirArea,
     abrirOceano: () => abrirOceano,
     fecharArea: () => fecharArea,
-    iniciar: () => iniciar17
+    iniciar: () => iniciar18
   });
 
   // web/src/js/dados/natureza-textos.js
@@ -6333,7 +6399,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     estadoCartao.cardH = $("ncard").offsetHeight + 10;
     return true;
   }
-  function iniciar17() {
+  function iniciar18() {
     $("ncfechar").onclick = fecharArea;
     var grande = false;
     folhaN = folhaArrastavel($("ncard"), {
@@ -6359,7 +6425,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   // web/src/js/interface/cartao-pais.js
   var cartao_pais_exports = {};
   __export(cartao_pais_exports, {
-    iniciar: () => iniciar19,
+    iniciar: () => iniciar20,
     renderChips: () => renderChips,
     renderFacts: () => renderFacts,
     renderNear: () => renderNear,
@@ -6376,7 +6442,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     chips: () => chips,
     estadoFiltros: () => estadoFiltros,
     hist: () => hist,
-    iniciar: () => iniciar18,
+    iniciar: () => iniciar19,
     ligarLugar: () => ligarLugar,
     setIncludeDep: () => setIncludeDep,
     setIncludeDisputed: () => setIncludeDisputed,
@@ -6890,7 +6956,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (hist.length > 30) hist.shift();
     updateUndo();
   }
-  function iniciar18() {
+  function iniciar19() {
     ouvir("fronteiras-carregadas", afterFilter);
     chips = document.getElementById("chips");
     sel = document.getElementById("nbsel");
@@ -7524,7 +7590,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
   }
   var sw = null;
-  function iniciar19() {
+  function iniciar20() {
     document.getElementById("close").onclick = closeCard;
     document.getElementById("prev").onclick = function() {
       step(-1);
@@ -7552,13 +7618,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   var lista_proximos_exports = {};
   __export(lista_proximos_exports, {
     hidePick: () => hidePick,
-    iniciar: () => iniciar20
+    iniciar: () => iniciar21
   });
   var pick;
   function hidePick() {
     pick.style.display = "none";
   }
-  function iniciar20() {
+  function iniciar21() {
     pick = $("pick");
     cv.addEventListener("pointerdown", function() {
       hidePick();
@@ -7573,7 +7639,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     alternarMudo: () => alternarMudo,
     alternarMusica: () => alternarMusica,
     estadoSom: () => estadoSom,
-    iniciar: () => iniciar21,
+    iniciar: () => iniciar22,
     pausarMusica: () => pausarMusica,
     tocar: () => tocar
   });
@@ -7771,7 +7837,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     } else pararMusica();
     return estadoSom.musica;
   }
-  function iniciar21() {
+  function iniciar22() {
     estadoSom.efeitos = lsGet("globo.som.efeitos", true);
     estadoSom.musica = lsGet("globo.som.musica", true);
     estadoSom.mudo = lsGet("globo.som.mudo", false);
@@ -7802,7 +7868,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     drawArc: () => drawArc,
     estadoDistancia: () => estadoDistancia,
     fillCountrySelect: () => fillCountrySelect,
-    iniciar: () => iniciar22,
+    iniciar: () => iniciar23,
     mostrarDistancia: () => mostrarDistancia,
     sairDistancia: () => sairDistancia,
     slerp: () => slerp,
@@ -8603,7 +8669,7 @@ NAN|Nadi|-17.76|177.44`;
     document.body.classList.remove("dist");
     $("dbaero").hidden = true;
   }
-  function iniciar22() {
+  function iniciar23() {
     ganchos.desenharArco = drawArc;
     ganchos.distanciaAberta = function() {
       return estadoDistancia.ativo;
@@ -8779,7 +8845,7 @@ NAN|Nadi|-17.76|177.44`;
       return c.d;
     }), areaSob(llA));
   }
-  function iniciar23() {
+  function iniciar24() {
     cv.addEventListener("pointerdown", function(e) {
       cv.setPointerCapture(e.pointerId);
       ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
@@ -8831,11 +8897,11 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/busca.js
   var busca_exports = {};
   __export(busca_exports, {
-    iniciar: () => iniciar24
+    iniciar: () => iniciar25
   });
   var q;
   var res;
-  function iniciar24() {
+  function iniciar25() {
     q = document.getElementById("q");
     res = document.getElementById("results");
     q.addEventListener("input", function() {
@@ -8895,13 +8961,13 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/botoes.js
   var botoes_exports = {};
   __export(botoes_exports, {
-    iniciar: () => iniciar25,
+    iniciar: () => iniciar26,
     spinB: () => spinB
   });
   var spinB;
   var lp;
   var lc;
-  function iniciar25() {
+  function iniciar26() {
     document.getElementById("zin").onclick = function() {
       estadoCamera.target = null;
       estadoCamera.zoom = Math.min(7, estadoCamera.zoom * 1.35);
@@ -8938,7 +9004,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/filtros-desfazer.js
   var filtros_desfazer_exports = {};
   __export(filtros_desfazer_exports, {
-    iniciar: () => iniciar26
+    iniciar: () => iniciar27
   });
   function undo() {
     if (!hist.length) return;
@@ -8951,7 +9017,7 @@ NAN|Nadi|-17.76|177.44`;
     else if (v.length) fitTo(v);
     setStatus("Filtro desfeito.", 1800);
   }
-  function iniciar26() {
+  function iniciar27() {
     $("ubtn").onclick = undo;
     updateUndo();
   }
@@ -8959,7 +9025,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/passeio.js
   var passeio_exports = {};
   __export(passeio_exports, {
-    iniciar: () => iniciar27
+    iniciar: () => iniciar28
   });
   function tourStart() {
     if (estadoCartao.passeio) return;
@@ -8978,11 +9044,11 @@ NAN|Nadi|-17.76|177.44`;
         estadoCartao.cardH = 0;
       }
     }, 4200);
-    $("tour").textContent = "⏹";
+    pintarIcone($("tour"), "parar");
     $("tour").setAttribute("aria-label", "Parar passeio");
-    setStatus("🎬 Passeio: mostro um país a cada 4 segundos. Toque em ⏹ para parar.", 3500);
+    setStatus("🎬 Passeio: mostro um país a cada 4 segundos. Toque no quadrado ■ para parar.", 3500);
   }
-  function iniciar27() {
+  function iniciar28() {
     $("tour").onclick = function() {
       if (estadoCartao.passeio) tourStop();
       else tourStart();
@@ -8993,7 +9059,7 @@ NAN|Nadi|-17.76|177.44`;
   var comparar_exports = {};
   __export(comparar_exports, {
     comparar: () => comparar,
-    iniciar: () => iniciar28
+    iniciar: () => iniciar29
   });
   function el(tag, cls, txt) {
     var e = document.createElement(tag);
@@ -9143,7 +9209,7 @@ NAN|Nadi|-17.76|177.44`;
     $("cmpB").value = b.i;
     comparar();
   }
-  function iniciar28() {
+  function iniciar29() {
     fillCountrySelect($("cmpA"), "Brasil");
     fillCountrySelect($("cmpB"), "Argentina");
     document.querySelector('#mlist [data-p="mp-cmp"]').addEventListener("click", comparar);
@@ -9162,7 +9228,7 @@ NAN|Nadi|-17.76|177.44`;
   var camadas_exports = {};
   __export(camadas_exports, {
     abrir: () => abrir2,
-    iniciar: () => iniciar29
+    iniciar: () => iniciar30
   });
   var MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
   var ESTACAO = ["verão", "verão", "outono", "outono", "outono", "inverno", "inverno", "inverno", "primavera", "primavera", "primavera", "verão"];
@@ -9185,7 +9251,7 @@ NAN|Nadi|-17.76|177.44`;
     var st = $("stage").getBoundingClientRect(), livre = ganchos.treinoAberto() ? ganchos.alturaTreino() : 0;
     cx.style.maxHeight = Math.max(160, st.height - livre - 16) + "px";
   }
-  function iniciar29() {
+  function iniciar30() {
     CHAVES.forEach(function(c) {
       estadoRender.camadas[c[1]] = lsGet("globo.cam." + c[1], estadoRender.camadas[c[1]]) === true;
     });
@@ -9216,7 +9282,7 @@ NAN|Nadi|-17.76|177.44`;
     sel2.onchange = function() {
       estadoRender.mesMapa = sel2.value === "" ? null : +sel2.value;
       lsSet("globo.mes", sel2.value === "" ? null : +sel2.value);
-      if (estadoRender.atlas) setStatus("A neve aparece no mapa de satélite (🛰️).", 3e3);
+      if (estadoRender.atlas) setStatus("A neve aparece no mapa de satélite (botão verde no topo).", 3e3);
       trocarMes();
     };
     $("camb").onclick = function() {
@@ -9369,7 +9435,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/avaliacao.js
   var avaliacao_exports = {};
   __export(avaliacao_exports, {
-    iniciar: () => iniciar30
+    iniciar: () => iniciar31
   });
   var LOJA = "https://play.google.com/store/apps/details?id=io.github.alessandrocdrx.geototal";
   var DIAS_MINIMOS = 3;
@@ -9393,7 +9459,7 @@ NAN|Nadi|-17.76|177.44`;
   function momentoBom() {
     if (podePedir()) setTimeout(pedir, 2500);
   }
-  function iniciar30() {
+  function iniciar31() {
     var dias = lsGet("globo.dias.uso", []);
     if (dias.indexOf(hoje()) < 0) {
       dias.push(hoje());
@@ -9418,7 +9484,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/exportar.js
   var exportar_exports = {};
   __export(exportar_exports, {
-    iniciar: () => iniciar31,
+    iniciar: () => iniciar32,
     offerFile: () => offerFile
   });
   var dlNS = null;
@@ -9506,7 +9572,7 @@ NAN|Nadi|-17.76|177.44`;
       setStatus("Não consegui gerar o PDF.", 4e3);
     });
   }
-  function iniciar31() {
+  function iniciar32() {
     setTimeout(function() {
       try {
         if (window.claude && claude.use) claude.use("downloads").then(function(n) {
@@ -9555,7 +9621,7 @@ NAN|Nadi|-17.76|177.44`;
     estadoTreino: () => estadoTreino,
     freshQS: () => freshQS,
     inScope: () => inScope,
-    iniciar: () => iniciar32,
+    iniciar: () => iniciar33,
     matches: () => matches,
     measureQ: () => measureQ,
     qHide: () => qHide,
@@ -9673,7 +9739,7 @@ NAN|Nadi|-17.76|177.44`;
       quiz.timerInt = null;
     }
   }
-  function iniciar32() {
+  function iniciar33() {
     ganchos.treinoAberto = function() {
       return quiz.open;
     };
@@ -10009,7 +10075,7 @@ NAN|Nadi|-17.76|177.44`;
     finishQ: () => finishQ,
     fmtRelogio: () => fmtRelogio,
     fmtTime: () => fmtTime,
-    iniciar: () => iniciar35,
+    iniciar: () => iniciar36,
     makeNeighborOptions: () => makeNeighborOptions,
     makeOptions: () => makeOptions,
     medalFor: () => medalFor,
@@ -10031,7 +10097,7 @@ NAN|Nadi|-17.76|177.44`;
   var estatisticas_exports = {};
   __export(estatisticas_exports, {
     fillQStat: () => fillQStat,
-    iniciar: () => iniciar33,
+    iniciar: () => iniciar34,
     modeName: () => modeName,
     openHistory: () => openHistory
   });
@@ -10074,6 +10140,27 @@ NAN|Nadi|-17.76|177.44`;
     if (histTab === "c") openHistCountries();
     else openRegionStats();
   }
+  function vazioConvite(texto) {
+    var v = document.createElement("div");
+    v.className = "vazio";
+    var i = document.createElement("div");
+    i.className = "vazioico";
+    i.textContent = "🌍";
+    var t = document.createElement("p");
+    t.textContent = texto;
+    var b = document.createElement("button");
+    b.className = "vaziobtn";
+    b.textContent = "🎯 Jogar agora";
+    b.onclick = function() {
+      $("statsheet").style.display = "none";
+      $("msheet").style.display = "none";
+      if ($("qbtn").getAttribute("aria-pressed") !== "true") $("qbtn").click();
+    };
+    v.appendChild(i);
+    v.appendChild(t);
+    v.appendChild(b);
+    return v;
+  }
   function openRegionStats() {
     var box = $("statsbody");
     box.innerHTML = "";
@@ -10084,10 +10171,7 @@ NAN|Nadi|-17.76|177.44`;
     box.appendChild(t);
     var list = computeRegionStats();
     if (!list.length) {
-      var e = document.createElement("div");
-      e.className = "inote";
-      e.textContent = "Ainda não há respostas registradas neste tipo de treino.";
-      box.appendChild(e);
+      box.appendChild(vazioConvite("Responda algumas perguntas deste jogo e o seu desempenho por região aparece aqui."));
     } else list.forEach(function(g) {
       var row = document.createElement("div");
       row.className = "statrow";
@@ -10222,10 +10306,12 @@ NAN|Nadi|-17.76|177.44`;
     var list = $("histlist");
     list.innerHTML = "";
     if (!rows.length) {
-      var e = document.createElement("div");
-      e.className = "inote";
-      e.textContent = tr + tw ? "Nada encontrado." : "Ainda não há respostas registradas aqui.";
-      list.appendChild(e);
+      if (tr + tw) {
+        var e = document.createElement("div");
+        e.className = "inote";
+        e.textContent = "Nada encontrado.";
+        list.appendChild(e);
+      } else list.appendChild(vazioConvite("Cada país que você responder aparece aqui, com acertos e erros, para você saber o que revisar."));
       return;
     }
     rows.forEach(function(x) {
@@ -10329,7 +10415,7 @@ NAN|Nadi|-17.76|177.44`;
     el2.hidden = !(r + w);
     el2.textContent = r + w ? "📊 Neste país: " + r + (r === 1 ? " acerto" : " acertos") + " · " + w + (w === 1 ? " erro" : " erros") : "";
   }
-  function iniciar33() {
+  function iniciar34() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
     $("htabC").onclick = function() {
       histTab = "c";
@@ -10376,7 +10462,7 @@ NAN|Nadi|-17.76|177.44`;
     celebrate: () => celebrate,
     definirMeta: () => definirMeta,
     displayStreak: () => displayStreak,
-    iniciar: () => iniciar34,
+    iniciar: () => iniciar35,
     levelOf: () => levelOf,
     metaDoDia: () => metaDoDia,
     recordProgress: () => recordProgress,
@@ -10739,7 +10825,7 @@ NAN|Nadi|-17.76|177.44`;
     $("badgeshead").textContent = "Conquistas (" + n + "/" + tot + ")";
     $("badgesheet").style.display = "block";
   }
-  function iniciar34() {
+  function iniciar35() {
     PROG = lsGet("globo.prog.v1", progNovo());
     $("streakpill").onclick = function() {
       var n = displayStreak(), f = PROG.freezes || 0;
@@ -11482,7 +11568,7 @@ NAN|Nadi|-17.76|177.44`;
     ctx.fillStyle = "#fff";
     ctx.fillText(name, bx + 44, by + bh / 2 + 1);
   }
-  function iniciar35() {
+  function iniciar36() {
     ganchos.desenharSeloResposta = drawBadge;
     estadoPartida.RUNS = lsGet("globo.runs.v1", {});
     estadoPartida.RECS = lsGet("globo.recs.v1", {});
@@ -11567,7 +11653,7 @@ NAN|Nadi|-17.76|177.44`;
     definirRodada: () => definirRodada,
     definirSobrevivencia: () => definirSobrevivencia,
     definirTempo: () => definirTempo,
-    iniciar: () => iniciar37,
+    iniciar: () => iniciar38,
     iniciarJogoRapido: () => iniciarJogoRapido,
     mostrarIntro: () => mostrarIntro,
     nextQ: () => nextQ,
@@ -11586,7 +11672,7 @@ NAN|Nadi|-17.76|177.44`;
   var modo_estados_exports = {};
   __export(modo_estados_exports, {
     exitStates: () => exitStates,
-    iniciar: () => iniciar36,
+    iniciar: () => iniciar37,
     updateStBtn: () => updateStBtn
   });
   function updateStBtn() {
@@ -11605,7 +11691,7 @@ NAN|Nadi|-17.76|177.44`;
     afterFilter();
     if (goBrazil !== false) select(D[byName[norm("Brasil")]], true);
   }
-  function iniciar36() {
+  function iniciar37() {
     ganchosInterface.atualizarBotaoEstados = updateStBtn;
     $("stexit").onclick = function() {
       exitStates(true);
@@ -12591,7 +12677,7 @@ NAN|Nadi|-17.76|177.44`;
       }
     }, 1e3);
   }
-  function iniciar37() {
+  function iniciar38() {
     ouvir("modo-estados-abriu", function() {
       if (quiz.open) quizClose();
     });
@@ -12634,7 +12720,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(destaque_escopo_exports, {
     drawScopePulse: () => drawScopePulse,
     firePulseForScope: () => firePulseForScope,
-    iniciar: () => iniciar38
+    iniciar: () => iniciar39
   });
   var scopePulse = null;
   function firePulse(pts) {
@@ -12668,7 +12754,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     ctx.restore();
   }
-  function iniciar38() {
+  function iniciar39() {
     ganchos.desenharPulsoEscopo = drawScopePulse;
   }
 
@@ -12677,7 +12763,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(escopo_exports, {
     applyScopeChange: () => applyScopeChange,
     definirFoco: () => definirFoco,
-    iniciar: () => iniciar39
+    iniciar: () => iniciar40
   });
   function applyScopeChange(newScope) {
     sairJogoRapido();
@@ -12712,7 +12798,7 @@ NAN|Nadi|-17.76|177.44`;
   function buildScopeTiles() {
     var box = $("scopetiles");
     box.innerHTML = "";
-    function tile(icone, nome, count, sc, cor, unid) {
+    function tile(icone2, nome, count, sc, cor, unid) {
       var b = document.createElement("button");
       b.className = "stile";
       if (cor) b.style.setProperty("--cor", cor);
@@ -12721,7 +12807,7 @@ NAN|Nadi|-17.76|177.44`;
       var rc = recordable(sc) ? estadoPartida.RECS[scopeKeyFor(sc, quiz.mode)] : null;
       var i = document.createElement("span");
       i.className = "stico";
-      i.textContent = icone;
+      i.textContent = icone2;
       var n = document.createElement("b");
       n.textContent = nome;
       var c = document.createElement("small");
@@ -12877,7 +12963,7 @@ NAN|Nadi|-17.76|177.44`;
     ov2.appendChild(bx);
     document.body.appendChild(ov2);
   }
-  function iniciar39() {
+  function iniciar40() {
     ganchosInterface.antesDeMudarLugares = antesDeMudarLugares;
     ouvir("treinar-regiao", function(o) {
       if (!quiz.open) quizOpen();
@@ -12935,7 +13021,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
-    iniciar: () => iniciar40,
+    iniciar: () => iniciar41,
     ligarSeg: () => ligarSeg
   });
   var themeMode;
@@ -12970,7 +13056,7 @@ NAN|Nadi|-17.76|177.44`;
     marca(atual);
     return marca;
   }
-  function iniciar40() {
+  function iniciar41() {
     themeMode = lsGet("globo.theme", "auto");
     applyTheme();
     ligarSeg($("mtema"), themeMode, function(v) {
@@ -13001,7 +13087,7 @@ NAN|Nadi|-17.76|177.44`;
     somV();
     function somH() {
       var b = $("msom");
-      b.textContent = estadoSom.mudo ? "🔇" : "🔊";
+      pintarIcone(b, estadoSom.mudo ? "mudo" : "som");
       b.setAttribute("aria-label", estadoSom.mudo ? "Som desligado" : "Som ligado");
       b.classList.toggle("mudo", estadoSom.mudo);
     }
@@ -13067,7 +13153,7 @@ NAN|Nadi|-17.76|177.44`;
   var cartao_estado_exports = {};
   __export(cartao_estado_exports, {
     enterStates: () => enterStates,
-    iniciar: () => iniciar41
+    iniciar: () => iniciar42
   });
   function fillInfoSt(st) {
     var box = $("cinfo");
@@ -13239,7 +13325,7 @@ NAN|Nadi|-17.76|177.44`;
     selectSt(st || BRS[0], true);
     ensureStateShapes();
   }
-  function iniciar41() {
+  function iniciar42() {
     ganchosInterface.passoEstado = stepSt;
     ganchosInterface.alternarVizinhosEstado = toggleNbSt;
     ganchosInterface.selecionarEstado = selectSt;
@@ -13257,7 +13343,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/brasil/filtros.js
   var filtros_exports2 = {};
   __export(filtros_exports2, {
-    iniciar: () => iniciar42
+    iniciar: () => iniciar43
   });
   function mkChipSt(label, color, val, count) {
     var b = document.createElement("button");
@@ -13306,16 +13392,16 @@ NAN|Nadi|-17.76|177.44`;
       }).length));
     });
   }
-  function iniciar42() {
+  function iniciar43() {
     ganchosInterface.montarChipsEstados = buildChipsSt;
   }
 
   // web/src/js/brasil/menu.js
   var menu_exports2 = {};
   __export(menu_exports2, {
-    iniciar: () => iniciar43
+    iniciar: () => iniciar44
   });
-  function iniciar43() {
+  function iniciar44() {
     BRS.forEach(function(s) {
       var o = document.createElement("option");
       o.value = s.i;
@@ -13342,7 +13428,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/app/ultima-visao.js
   var ultima_visao_exports = {};
   __export(ultima_visao_exports, {
-    iniciar: () => iniciar44
+    iniciar: () => iniciar45
   });
   function saveLastView() {
     if (quiz.open || estadoBrasil.statesMode) return;
@@ -13372,7 +13458,7 @@ NAN|Nadi|-17.76|177.44`;
       if (i >= 0 && estadoMapa.on[i]) select(D[i], false);
     }
   }
-  function iniciar44() {
+  function iniciar45() {
     ouvir("visao-mudou", saveLastView);
     restoreLastView();
   }
@@ -13382,7 +13468,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(passaporte_exports, {
     abrirPassaporte: () => abrirPassaporte,
     contarCarimbos: () => contarCarimbos,
-    iniciar: () => iniciar45
+    iniciar: () => iniciar46
   });
   function carimbado(d) {
     var e = (estadoTreino.QS.m.cap || {})[d.cc];
@@ -13479,7 +13565,7 @@ NAN|Nadi|-17.76|177.44`;
     box.appendChild(ga);
     $("passsheet").style.display = "block";
   }
-  function iniciar45() {
+  function iniciar46() {
     $("mpassaporte").onclick = abrirPassaporte;
     $("passclose").onclick = function() {
       $("passsheet").style.display = "none";
@@ -13489,7 +13575,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/app/inicio.js
   var inicio_exports = {};
   __export(inicio_exports, {
-    iniciar: () => iniciar46,
+    iniciar: () => iniciar47,
     mostrarInicio: () => mostrarInicio
   });
   var AUSENCIA = 30 * 6e4;
@@ -13523,7 +13609,7 @@ NAN|Nadi|-17.76|177.44`;
     z.textContent = "↺ Começar " + scopeLabel() + " do zero";
     $("inicio").hidden = false;
   }
-  function iniciar46() {
+  function iniciar47() {
     quizOpen();
     var ultima = lsGet("globo.ultima.visita", 0), saiu = 0;
     lsSet("globo.ultima.visita", Date.now());
@@ -13572,7 +13658,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/toques.js
   var toques_exports = {};
   __export(toques_exports, {
-    iniciar: () => iniciar47
+    iniciar: () => iniciar48
   });
   function paisNoPonto(x, y) {
     if (!estadoCamera.plano2D) return countryAt(x, y);
@@ -13655,7 +13741,7 @@ NAN|Nadi|-17.76|177.44`;
     quizMapAnswer(cand.length ? cand[0].d : poly);
     return true;
   }
-  function iniciar47() {
+  function iniciar48() {
     ganchosInterface.toqueAntes = toqueAntes;
     ganchosInterface.toqueNoGlobo = toqueNoGlobo;
     ganchosInterface.toqueNoMapa2D = toqueNoMapa2D;
@@ -13664,13 +13750,13 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/boas-vindas.js
   var boas_vindas_exports = {};
   __export(boas_vindas_exports, {
-    iniciar: () => iniciar49
+    iniciar: () => iniciar50
   });
 
   // web/src/js/treino/tour.js
   var tour_exports = {};
   __export(tour_exports, {
-    iniciar: () => iniciar48,
+    iniciar: () => iniciar49,
     iniciarTour: () => iniciarTour
   });
   var PASSOS = [
@@ -13680,11 +13766,11 @@ NAN|Nadi|-17.76|177.44`;
     { alvo: "#qajustb", texto: "⚙️ Ajustes da partida: digitar ou escolher, cronômetro, tamanho da rodada, meta do dia…" },
     { alvo: "#qscore", texto: "⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥." },
     { alvo: "#qbody", texto: "👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final." },
-    { alvo: ".tools", texto: "🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países." },
-    { alvo: "#msom", texto: "🔊 Som: liga e desliga tudo. ☀️ Ao lado, a sombra da noite de verdade no globo." },
-    { alvo: "#mestilotop", texto: "🛰️ Estilo do mapa: satélite (foto) ou atlas (uma cor por país)." },
-    { alvo: "#camb", texto: "🏷️ O que aparece no mapa: oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais. No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo." },
-    { alvo: "#mbtn", texto: "⋯ No menu: passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, som e visual, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados." }
+    { alvo: ".tools", texto: "🌍 Controles do globo: + aproxima, − afasta e o mapa dobrado mostra o mundo plano (o globo volta no mesmo botão). No modo Livre aparecem também a seta circular (giro automático) e o ▶ (passeio pelos países)." },
+    { alvo: "#msom", texto: "🔊 O alto-falante liga e desliga todo o som. Ao lado, o sol amarelo liga a sombra da noite de verdade no globo." },
+    { alvo: "#mestilotop", texto: "🛰️ Estilo do mapa: a foto (verde) é o satélite; a paleta (laranja) é o atlas, com uma cor por país." },
+    { alvo: "#camb", texto: "🏷️ As camadas (roxo) escolhem o que aparece no mapa: oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais. No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo." },
+    { alvo: "#mbtn", texto: "••• No menu dos três pontinhos: passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, som e visual, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados." }
   ];
   var passo = -1;
   function fecharTour() {
@@ -13724,7 +13810,7 @@ NAN|Nadi|-17.76|177.44`;
     passo = 0;
     setTimeout(mostrarPasso, 450);
   }
-  function iniciar48() {
+  function iniciar49() {
     $("guiaprox").onclick = function() {
       passo++;
       mostrarPasso();
@@ -13745,7 +13831,7 @@ NAN|Nadi|-17.76|177.44`;
   }
 
   // web/src/js/treino/boas-vindas.js
-  function iniciar49() {
+  function iniciar50() {
     if (lsGet("globo.bv.v1", false)) return;
     lsSet("globo.bv.v1", true);
     var m = estadoTreino.QS.m || {}, jaJogou = Object.keys(m).some(function(k) {
@@ -13782,7 +13868,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/desafio.js
   var desafio_exports = {};
   __export(desafio_exports, {
-    iniciar: () => iniciar50
+    iniciar: () => iniciar51
   });
   var INICIO = Date.UTC(2026, 9, 1);
   function hojeStr2() {
@@ -13912,7 +13998,7 @@ NAN|Nadi|-17.76|177.44`;
       if (mais) mais.insertBefore(b, mais.firstChild);
     }
   }
-  function iniciar50() {
+  function iniciar51() {
     ouvir("rodada-terminou", aoTerminarRodada);
     ouvir("abrir-desafio", iniciarDesafio);
   }
@@ -13920,7 +14006,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/legenda.js
   var legenda_exports = {};
   __export(legenda_exports, {
-    iniciar: () => iniciar51
+    iniciar: () => iniciar52
   });
   var SIMBOLO = { c: "●", d: "◆", s: "■", t: "▲" };
   function mostrarLegenda() {
@@ -13941,7 +14027,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     $("legenda").hidden = false;
   }
-  function iniciar51() {
+  function iniciar52() {
     $("legok").onclick = function() {
       lsSet("globo.legenda.vista", true);
       $("legenda").hidden = true;
@@ -13963,7 +14049,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/progresso.js
   var progresso_exports = {};
   __export(progresso_exports, {
-    iniciar: () => iniciar52,
+    iniciar: () => iniciar53,
     restaurarDeTexto: () => restaurarDeTexto
   });
   var MARCA = "geoTotal-progresso";
@@ -13999,7 +14085,7 @@ NAN|Nadi|-17.76|177.44`;
     }
     return "";
   }
-  function iniciar52() {
+  function iniciar53() {
     $("msave").onclick = salvarProgresso;
     $("mload").onchange = function() {
       var f = this.files && this.files[0];
@@ -14025,7 +14111,7 @@ NAN|Nadi|-17.76|177.44`;
   var ajustes_exports = {};
   __export(ajustes_exports, {
     abrirAjustes: () => abrirAjustes,
-    iniciar: () => iniciar53
+    iniciar: () => iniciar54
   });
   var LINHAS = [
     [
@@ -14190,7 +14276,7 @@ NAN|Nadi|-17.76|177.44`;
   function fecharAjustes() {
     $("ajsheet").style.display = "none";
   }
-  function iniciar53() {
+  function iniciar54() {
     $("qajustb").onclick = abrirAjustes;
     $("goalgo").onclick = abrirAjustes;
     $("goalgo").title = "Toque para mudar a meta do dia e outros ajustes";
@@ -14210,51 +14296,52 @@ NAN|Nadi|-17.76|177.44`;
   iniciar6();
   iniciar7();
   iniciar8();
-  iniciar21();
   iniciar9();
-  iniciar23();
-  iniciar16();
-  iniciar19();
-  iniciar18();
-  iniciar24();
-  iniciar25();
-  iniciar12();
-  iniciar13();
-  iniciar26();
-  iniciar20();
-  iniciar27();
   iniciar22();
-  iniciar28();
-  iniciar29();
+  iniciar10();
+  iniciar24();
   iniciar17();
-  iniciar30();
+  iniciar20();
+  iniciar19();
+  iniciar25();
+  iniciar26();
+  iniciar13();
   iniciar14();
+  iniciar27();
+  iniciar21();
+  iniciar28();
+  iniciar23();
+  iniciar29();
+  iniciar30();
+  iniciar18();
   iniciar31();
+  iniciar15();
   iniciar32();
-  iniciar35();
-  iniciar37();
-  iniciar47();
   iniciar33();
+  iniciar36();
   iniciar38();
+  iniciar48();
+  iniciar34();
   iniciar39();
   iniciar40();
-  iniciar10();
-  iniciar11();
-  iniciar36();
   iniciar41();
+  iniciar11();
+  iniciar12();
+  iniciar37();
   iniciar42();
   iniciar43();
   iniciar44();
-  iniciar15();
-  iniciar34();
   iniciar45();
+  iniciar16();
+  iniciar35();
   iniciar46();
-  iniciar48();
-  iniciar53();
+  iniciar47();
   iniciar49();
+  iniciar54();
   iniciar50();
-  iniciar52();
   iniciar51();
+  iniciar53();
+  iniciar52();
   window.setStatus = void 0;
   var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, regioes_naturais_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, camadas_exports, cartao_natural_exports, pdf_exports, avaliacao_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
   var api = {};

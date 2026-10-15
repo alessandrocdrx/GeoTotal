@@ -49,7 +49,7 @@ function iniciar() {
   sel.value=estadoRender.mesMapa==null?'':String(estadoRender.mesMapa);
   sel.onchange=function(){
     estadoRender.mesMapa=sel.value===''?null:+sel.value;lsSet('globo.mes',sel.value===''?null:+sel.value);
-    if(estadoRender.atlas)setStatus('A neve aparece no mapa de satélite (🛰️).',3000);
+    if(estadoRender.atlas)setStatus('A neve aparece no mapa de satélite (botão verde no topo).',3000);
     trocarMes();
   };
   $('camb').onclick=function(){abrir($('camadas').hidden);};

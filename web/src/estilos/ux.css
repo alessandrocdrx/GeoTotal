@@ -657,4 +657,38 @@ details.ajuda>summary{min-height:32px}
 .row2 button{white-space:nowrap;flex:1 1 auto}
 #card .nav button{white-space:nowrap}
 @media (max-width:340px){#card .nav button{font-size:14px;padding:0 6px}}
-.row2 #ubtn{min-height:38px}
+.row2 #ubtn{min-height:38px;font-size:13.5px}
+
+/* telas abertas pelo menu ⋯ (folha, histórico, conquistas, passaporte): sempre por cima do painel
+   do treino e com a mesma altura, mesmo com pouco conteúdo — sem o menu aparecendo pela metade atrás */
+#study{z-index:85}
+#study .box,#statsheet .box,#badgesheet .box,#passsheet .box{min-height:88%}
+/* "Mais ajustes" com cara de botão que abre: seta à direita que vira ao abrir */
+.ajmais summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--fg)}
+.ajmais summary::-webkit-details-marker{display:none}
+.ajmais summary::after{content:'⌄';font-size:18px;line-height:1;color:var(--muted);transition:transform .2s}
+.ajmais[open] summary::after{transform:rotate(180deg)}
+
+/* ícones de traço (js/nucleo/icones.js): mesmo desenho em qualquer celular, cor do botão */
+.ico{width:20px;height:20px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#mbtn .ico{width:22px;height:22px}
+.tools button .ico{width:21px;height:21px}
+.tools button{display:inline-flex;align-items:center;justify-content:center}
+/* cor diz o estado: som (azul), sol/dia e noite (amarelo), giro e 2D ligados (azul) */
+#msom{color:#8cc4ff}
+#msom.mudo{color:var(--muted)}
+#mvisual{color:#ffc93c}
+#mestilotop[data-ico=atlas]{color:#ff9f6b}
+#mestilotop[data-ico=satelite]{color:#7fe0a8}
+#camb{color:#c9a7ff}
+#camb[aria-expanded=true]{background:#c9a7ff;color:#1a1033;border-color:#c9a7ff}
+#spin[aria-pressed=true],#flat2d[aria-pressed=true],#tour[data-ico=parar]{color:#4da3ff}
+#tour[data-ico=parar]{border-color:#4da3ff}
+@media (prefers-color-scheme:light){:root:not([data-theme=dark]) #msom{color:#1f6fd1}:root:not([data-theme=dark]) #mvisual{color:#b67d00}:root:not([data-theme=dark]) #mestilotop[data-ico=satelite]{color:#15834a}:root:not([data-theme=dark]) #mestilotop[data-ico=atlas]{color:#c2521a}:root:not([data-theme=dark]) #camb{color:#7a4fd0}}
+:root[data-theme=light] #msom{color:#1f6fd1}:root[data-theme=light] #mvisual{color:#b67d00}:root[data-theme=light] #mestilotop[data-ico=satelite]{color:#15834a}:root[data-theme=light] #mestilotop[data-ico=atlas]{color:#c2521a}:root[data-theme=light] #camb{color:#7a4fd0}
+/* estado vazio com convite (histórico sem respostas) */
+.vazio{text-align:center;padding:28px 12px 8px}
+.vazioico{font-size:46px;line-height:1;margin-bottom:10px;animation:qpop 1.6s ease-in-out infinite}
+.vazio p{margin:0 auto 14px;max-width:320px;color:var(--muted);font-size:14.5px;line-height:1.45}
+.vaziobtn{border:0;border-radius:14px;padding:12px 22px;min-height:44px;font:700 15px inherit;font-family:inherit;background:#1fa85a;color:#fff;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.vazioico{animation:none}}

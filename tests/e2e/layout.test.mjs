@@ -31,6 +31,10 @@ export const TELAS_APP = [
   ['Distância', C('mbtn') + C('mdist')],
   ['Folha de estudo', C('mbtn') + C('expStudy')],
   ['Estados do Brasil', C('mbtn') + "document.querySelector('[data-p=mp-br]').click();" + C('stGo')],
+  ['Resposta do treino', "document.querySelector('.qopts button').click();"],
+  ['Busca de lugar sem bandeira', C('qclose') + "var q=document.getElementById('q');q.value='ossetia';q.dispatchEvent(new Event('input'));"],
+  ['Como jogar', C('mbtn') + C('mtour')],
+  ['Boas-vindas', "sessionStorage.setItem('bvteste','1');localStorage.removeItem('globo.bv.v1');setTimeout(function(){location.reload();},0);"],
 ];
 
 /**
@@ -39,6 +43,8 @@ export const TELAS_APP = [
  */
 const PERMITIDOS = [
   { tipo: 'coberto', alvo: /^#(zin|zout|spin|tour|flat2d) /, detalhe: /#card|alca|#close|#next|#prev|chead/ },
+  // a lista de resultados da busca abre por cima dos botões do mapa só enquanto se digita
+  { tipo: 'coberto', alvo: /^#(zin|zout|spin|tour|flat2d) /, detalhe: / em #results$/ },
 ];
 const permitido = (p) => PERMITIDOS.some((x) => x.tipo === p.tipo && x.alvo.test(p.alvo) && x.detalhe.test(p.detalhe));
 
@@ -54,12 +60,14 @@ for (const tela of TELAS) {
       const pagina = await ctx.newPage();
       const erros = [];
       pagina.on('pageerror', (e) => erros.push(e.message));
-      await pagina.addInitScript(() => { try { localStorage.setItem('globo.bv.v1', 'true'); localStorage.setItem('globo.legenda.vista', 'true'); } catch {} });
+      await pagina.addInitScript(() => { try { if (!sessionStorage.getItem('bvteste')) localStorage.setItem('globo.bv.v1', 'true'); localStorage.setItem('globo.legenda.vista', 'true'); } catch {} });
       await pagina.goto(ambiente.url);
       await pagina.waitForFunction(() => window.__geoTotal && window.__geoTotal.estadoRender.feats, null, { timeout: 15000 });
       await pagina.waitForTimeout(400);
       try { await pagina.evaluate(abrir); } catch (e) { problemas.push(`${nome}: não abriu (${e.message})`); }
       await pagina.waitForTimeout(600);
+      await pagina.waitForFunction(() => window.__geoTotal && window.__geoTotal.estadoRender.feats, null, { timeout: 15000 });
+      await pagina.waitForTimeout(400);
       for (const p of await pagina.evaluate(auditarTela, { alvoMin: ALVO_MIN })) {
         if (!permitido(p)) problemas.push(`${nome}: ${p.tipo} — ${p.alvo} (${p.detalhe})`);
       }

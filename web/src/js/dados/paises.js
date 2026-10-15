@@ -300,7 +300,8 @@ let N_DEP;
 let N_UNI;
 let N_MIC;
 
-function dflag(d){return d.dis?('['+d.cc+']'):d.flag;}
+/* lugar sem bandeira em emoji (não reconhecido, micronação): bandeira branca, nunca o código cru "[XO]" */
+function dflag(d){return d.dis?'🏳️':d.flag;}
 /** Onde fica, para mostrar junto do nome: "América Central · Caribe", "América do Norte", "Oceania · Australásia". */
 const LOCAL_SUB = {'Caribe':'América Central · Caribe','Istmo (América Central)':'América Central · Istmo','América do Norte':'América do Norte','Austrália e Nova Zelândia':'Oceania · Australásia'};
 function localidade(d){

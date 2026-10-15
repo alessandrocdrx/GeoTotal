@@ -5,6 +5,7 @@
  * integrações com o Android e com os testes.
  */
 import * as AppCompatEmoji from './app/compat-emoji.js';
+import * as NucleoIcones from './nucleo/icones.js';
 import * as DadosPaises from './dados/paises.js';
 import * as DadosInfoPaises from './dados/info-paises.js';
 import * as DadosReligioes from './dados/religioes.js';
@@ -79,6 +80,7 @@ import * as NucleoHora from './nucleo/hora.js';
 
 /* Módulos só definem funções e estado ao carregar; a execução começa aqui, nesta ordem. */
 AppCompatEmoji.iniciar();
+NucleoIcones.iniciar();
 DadosPaises.iniciar();
 DadosInfoPaises.iniciar();
 DadosReligioes.iniciar();

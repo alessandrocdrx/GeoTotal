@@ -4,6 +4,7 @@
  * Textura procedural com aparência de satélite (não é foto real), com a neve da estação do ano.
  */
 
+import { pintarIcone } from '../nucleo/icones.js';
 import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { estadoRender } from './projecao.js';
 import { PI } from './tela.js';
@@ -121,7 +122,7 @@ function iniciar() {
   oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
   oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
   /* botão do topo, junto do som: alterna entre dia e noite reais e sempre de dia (a mesma chave do menu ⋯) */
-  function visMostra(){var n=$('oNight').checked;$('mvisual').textContent=n?'🌗':'☀️';$('mvisual').setAttribute('aria-pressed',n?'true':'false');}
+  function visMostra(){var n=$('oNight').checked;pintarIcone($('mvisual'),n?'dia-noite':'sol');$('mvisual').setAttribute('aria-pressed',n?'true':'false');}
   $('mvisual').onclick=function(){
     var noite=$('oNight'),v=!noite.checked;
     /* dia e noite só existe no satélite: no atlas, o botão volta para o satélite */
@@ -135,7 +136,7 @@ function iniciar() {
   estadoRender.atlas=lsGet('globo.atlas',false)===true;
   function estiloMostra(){
     Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',(b.dataset.v==='atlas')===estadoRender.atlas?'true':'false');});
-    var t=$('mestilotop');t.textContent=estadoRender.atlas?'🎨':'🛰️';
+    var t=$('mestilotop');pintarIcone(t,estadoRender.atlas?'atlas':'satelite');
     t.setAttribute('aria-label','Estilo do mapa: '+(estadoRender.atlas?'atlas':'satélite'));t.setAttribute('aria-pressed',estadoRender.atlas?'true':'false');
   }
   function definirAtlas(v){estadoRender.atlas=v;lsSet('globo.atlas',v);estiloMostra();}

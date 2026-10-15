@@ -4,6 +4,7 @@
  * Menu "⋯": uma página só com as escolhas à vista; só "Explorar" abre páginas internas.
  */
 
+import { pintarIcone } from '../nucleo/icones.js';
 import { alternarEfeitos, alternarMudo, alternarMusica, estadoSom } from '../nucleo/som.js';
 import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
 import { estadoMapa } from '../visualizacao/tela.js';
@@ -41,7 +42,7 @@ function iniciar() {
   $('msfx').onchange=function(){if(this.checked!==estadoSom.efeitos)alternarEfeitos();somV();};
   $('mmusic').onchange=function(){if(this.checked!==estadoSom.musica)alternarMusica();somV();};
   somV();
-  function somH(){var b=$('msom');b.textContent=estadoSom.mudo?'🔇':'🔊';b.setAttribute('aria-label',estadoSom.mudo?'Som desligado':'Som ligado');b.classList.toggle('mudo',estadoSom.mudo);}
+  function somH(){var b=$('msom');pintarIcone(b,estadoSom.mudo?'mudo':'som');b.setAttribute('aria-label',estadoSom.mudo?'Som desligado':'Som ligado');b.classList.toggle('mudo',estadoSom.mudo);}
   $('msom').onclick=function(){alternarMudo();somH();setStatus(estadoSom.mudo?'🔇 Som desligado':'🔊 Som ligado (a música toca no modo Livre)',2200);};
   somH();
   var marcaNomes=ligarSeg($('mlabels'),estadoMapa.labelMode,function(v){$(v==='c'?'lc':'lp').click();});

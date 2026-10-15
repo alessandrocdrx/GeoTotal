@@ -4,6 +4,7 @@
  * Passeio automático pela rota de países.
  */
 
+import { pintarIcone } from '../nucleo/icones.js';
 import { BRS } from '../dados/estados-brasil.js';
 import { D } from '../dados/paises.js';
 import { spinB } from './botoes.js';
@@ -22,8 +23,8 @@ function tourStart(){
   if(estadoBrasil.statesMode){if(!estadoBrasil.selSt||!estadoBrasil.onS[estadoBrasil.selSt.i])ganchosInterface.selecionarEstado(BRS[f],true);}
   else if(!estadoMapa.selected||!estadoMapa.on[estadoMapa.selected.i])select(D[f],true);
   estadoCartao.passeio=setInterval(function(){step(1);if(estadoCartao.semCartao){card.style.display='none';estadoCartao.cardH=0;}},4200);
-  $('tour').textContent='⏹';$('tour').setAttribute('aria-label','Parar passeio');
-  setStatus('🎬 Passeio: mostro um país a cada 4 segundos. Toque em ⏹ para parar.',3500);
+  pintarIcone($('tour'),'parar');$('tour').setAttribute('aria-label','Parar passeio');
+  setStatus('🎬 Passeio: mostro um país a cada 4 segundos. Toque no quadrado ■ para parar.',3500);
 }
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */

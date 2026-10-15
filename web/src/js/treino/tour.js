@@ -20,11 +20,11 @@ const PASSOS = [
   { alvo: '#qajustb', texto: '⚙️ Ajustes da partida: digitar ou escolher, cronômetro, tamanho da rodada, meta do dia…' },
   { alvo: '#qscore', texto: '⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥.' },
   { alvo: '#qbody', texto: '👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final.' },
-  { alvo: '.tools', texto: '🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países.' },
-  { alvo: '#msom', texto: '🔊 Som: liga e desliga tudo. ☀️ Ao lado, a sombra da noite de verdade no globo.' },
-  { alvo: '#mestilotop', texto: '🛰️ Estilo do mapa: satélite (foto) ou atlas (uma cor por país).' },
-  { alvo: '#camb', texto: '🏷️ O que aparece no mapa: oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais. No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo.' },
-  { alvo: '#mbtn', texto: '⋯ No menu: passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, som e visual, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados.' },
+  { alvo: '.tools', texto: '🌍 Controles do globo: + aproxima, − afasta e o mapa dobrado mostra o mundo plano (o globo volta no mesmo botão). No modo Livre aparecem também a seta circular (giro automático) e o ▶ (passeio pelos países).' },
+  { alvo: '#msom', texto: '🔊 O alto-falante liga e desliga todo o som. Ao lado, o sol amarelo liga a sombra da noite de verdade no globo.' },
+  { alvo: '#mestilotop', texto: '🛰️ Estilo do mapa: a foto (verde) é o satélite; a paleta (laranja) é o atlas, com uma cor por país.' },
+  { alvo: '#camb', texto: '🏷️ As camadas (roxo) escolhem o que aparece no mapa: oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais. No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo.' },
+  { alvo: '#mbtn', texto: '••• No menu dos três pontinhos: passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, som e visual, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados.' },
 ];
 
 let passo = -1;

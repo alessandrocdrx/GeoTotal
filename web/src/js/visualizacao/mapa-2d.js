@@ -4,6 +4,7 @@
  * Mapa 2D (alternativa ao globo 3D), reaproveitando câmera e gestos.
  */
 
+import { pintarIcone } from '../nucleo/icones.js';
 import { LLAT, LLNG } from '../dados/massas-terra.js';
 import { D, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
@@ -175,7 +176,7 @@ function draw2D(){
 function setFlat2D(v){
   estadoCamera.plano2D=v;lsSet('globo.flat2d',v);
   $('flat2d').setAttribute('aria-pressed',v?'true':'false');
-  $('flat2d').textContent=v?'🌐':'🗺️';
+  pintarIcone($('flat2d'),v?'globo':'mapa');
   $('flat2d').setAttribute('aria-label',v?'Ver como globo':'Ver como mapa 2D');
 }
 

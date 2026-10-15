@@ -191,7 +191,7 @@ test('botão 🏷️ e estilo no topo; mudar lugares no meio da rodada avisa e r
     const g = window.__geoTotal, $ = (id) => document.getElementById(id);
     const espera = (ms) => new Promise((ok) => setTimeout(ok, ms));
     $('mestilotop').click();
-    const atlas = g.estadoRender.atlas && $('mestilotop').textContent === '🎨' && document.querySelector('#mestilo [data-v="atlas"]').getAttribute('aria-pressed') === 'true';
+    const atlas = g.estadoRender.atlas && $('mestilotop').dataset.ico === 'atlas' && document.querySelector('#mestilo [data-v="atlas"]').getAttribute('aria-pressed') === 'true';
     $('mestilotop').click();
     /* camadas de nomes */
     $('camb').click();
@@ -424,9 +424,9 @@ test('giro e passeio: escondidos no Treino; no Livre explicam o que fazem', asyn
   assert.match(await pagina.textContent('#status'), /Giro automático desligado/);
   await pagina.click('#tour');
   assert.match(await pagina.textContent('#status'), /Passeio/);
-  assert.equal(await pagina.textContent('#tour'), '⏹');
+  assert.equal(await pagina.getAttribute('#tour', 'data-ico'), 'parar');
   await pagina.click('#tour');
-  assert.equal(await pagina.textContent('#tour'), '🎬');
+  assert.equal(await pagina.getAttribute('#tour', 'data-ico'), 'passeio');
   assert.deepEqual(erros, []);
   await fechar();
 });
@@ -578,8 +578,8 @@ test('dia e noite no topo e no menu ⋯, tema com as três opções à vista', a
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.waitForFunction(() => !document.getElementById('oNight').disabled, null, { timeout: 15000 });
   await pagina.click('#mvisual');
-  const topo = await pagina.evaluate(() => ({ noite: window.__geoTotal.optNight, icone: document.getElementById('mvisual').textContent, chave: document.getElementById('oNight').checked }));
-  assert.deepEqual(topo, { noite: true, icone: '🌗', chave: true }, 'o botão do topo liga o dia e noite e a chave do menu acompanha');
+  const topo = await pagina.evaluate(() => ({ noite: window.__geoTotal.optNight, icone: document.getElementById('mvisual').dataset.ico, chave: document.getElementById('oNight').checked }));
+  assert.deepEqual(topo, { noite: true, icone: 'dia-noite', chave: true }, 'o botão do topo liga o dia e noite e a chave do menu acompanha');
   await pagina.click('#mbtn');
   await pagina.click('[data-p="mp-visual"]');
   await pagina.click('label:has(#oNight)');
@@ -791,13 +791,13 @@ test('cabeçalho: logo, botão de som; começa sempre de dia; tocar num país no
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     const logo = getComputedStyle(document.querySelector('h1 .marca-logo')).backgroundImage.startsWith('url("data:image/png');
-    const noite = g.optNight === false && !document.getElementById('oNight').checked && document.getElementById('mvisual').textContent === '☀️';
+    const noite = g.optNight === false && !document.getElementById('oNight').checked && document.getElementById('mvisual').dataset.ico === 'sol';
     document.getElementById('msom').click();
-    const mudo = g.estadoSom.mudo, icone = document.getElementById('msom').textContent;
+    const mudo = g.estadoSom.mudo, icone = document.getElementById('msom').dataset.ico;
     document.getElementById('msom').click();
     return { logo, noite, mudo, icone, voltou: g.estadoSom.mudo };
   });
-  assert.deepEqual(r, { logo: true, noite: true, mudo: true, icone: '🔇', voltou: false });
+  assert.deepEqual(r, { logo: true, noite: true, mudo: true, icone: 'mudo', voltou: false });
   const sobre = await pagina.evaluate(() => document.querySelector('#mp-sobre').textContent);
   assert.match(sobre, /Criado por alessandrocdrx/);
   assert.match(sobre, /versão \d+\.\d+/);

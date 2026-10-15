@@ -4,6 +4,7 @@
  * Base do cartão: elemento, altura, detalhes extras, fechar e parar o passeio.
  */
 
+import { pintarIcone } from '../nucleo/icones.js';
 import { appendLang, appendRel } from '../dados/linguas.js';
 import { INFO_MIC } from '../dados/micronacoes.js';
 import { $, notaAjuda, setStatus } from '../nucleo/utilitarios.js';
@@ -78,9 +79,9 @@ let card;
 let folha;
 function closeCard(){
   /* durante o passeio, fechar o cartão só esconde o cartão: o passeio continua pelo mapa */
-  if(estadoCartao.passeio&&estadoMapa.selected){card.style.display='none';estadoCartao.cardH=0;estadoCartao.semCartao=true;setStatus('🎬 O passeio continua sem o cartão. Toque em ⏹ para parar.',3000);return;}
+  if(estadoCartao.passeio&&estadoMapa.selected){card.style.display='none';estadoCartao.cardH=0;estadoCartao.semCartao=true;setStatus('🎬 O passeio continua sem o cartão. Toque no quadrado ■ para parar.',3000);return;}
   estadoMapa.selected=null;estadoBrasil.selSt=null;card.style.display='none';estadoCartao.cardH=0;estadoCartao.expandido=false;aplicarCompacto();if(folha)folha.soltar();tourStop();}
-function tourStop(){if(!estadoCartao.passeio)return;clearInterval(estadoCartao.passeio);estadoCartao.passeio=null;estadoCartao.semCartao=false;$('tour').textContent='🎬';$('tour').setAttribute('aria-label','Passeio pelos países');}
+function tourStop(){if(!estadoCartao.passeio)return;clearInterval(estadoCartao.passeio);estadoCartao.passeio=null;estadoCartao.semCartao=false;pintarIcone($('tour'),'passeio');$('tour').setAttribute('aria-label','Passeio pelos países');}
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   card = document.getElementById('card');

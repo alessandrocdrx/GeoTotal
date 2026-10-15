@@ -39,6 +39,15 @@ function openStats(){
   $('htabR').setAttribute('aria-pressed',histTab==='r'?'true':'false');
   if(histTab==='c')openHistCountries();else openRegionStats();
 }
+/* histórico vazio: convite para jogar em vez de uma linha cinza */
+function vazioConvite(texto){
+  var v=document.createElement('div');v.className='vazio';
+  var i=document.createElement('div');i.className='vazioico';i.textContent='🌍';
+  var t=document.createElement('p');t.textContent=texto;
+  var b=document.createElement('button');b.className='vaziobtn';b.textContent='🎯 Jogar agora';
+  b.onclick=function(){$('statsheet').style.display='none';$('msheet').style.display='none';if($('qbtn').getAttribute('aria-pressed')!=='true')$('qbtn').click();};
+  v.appendChild(i);v.appendChild(t);v.appendChild(b);return v;
+}
 function openRegionStats(){
   var box=$('statsbody');box.innerHTML='';
   var t=document.createElement('div');t.className='inote';t.style.margin='0 0 10px';
@@ -46,7 +55,7 @@ function openRegionStats(){
   box.appendChild(t);
   var list=computeRegionStats();
   if(!list.length){
-    var e=document.createElement('div');e.className='inote';e.textContent='Ainda não há respostas registradas neste tipo de treino.';box.appendChild(e);
+    box.appendChild(vazioConvite('Responda algumas perguntas deste jogo e o seu desempenho por região aparece aqui.'));
   }else list.forEach(function(g){
     var row=document.createElement('div');row.className='statrow';
     var lab=document.createElement('div');lab.className='statlab';lab.textContent=g.n+' — '+g.acc+'% ('+g.tot+' respostas)';
@@ -105,7 +114,7 @@ function renderHist(){
   rows.sort(by);
   $('histsum').textContent='✔ '+tr+' acertos · ✖ '+tw+' erros · '+seen+' de '+arr.filter(function(o){return (estadoTreino.quizDomain==='br'||avail(o))&&(!histView.scopeOnly||inScopeActive(o));}).length+' '+unitWord(2)+' já respondidos'+(tr+tw?' · '+Math.round(100*tr/(tr+tw))+'% de acerto':'')+'.';
   var list=$('histlist');list.innerHTML='';
-  if(!rows.length){var e=document.createElement('div');e.className='inote';e.textContent=tr+tw?'Nada encontrado.':'Ainda não há respostas registradas aqui.';list.appendChild(e);return;}
+  if(!rows.length){if(tr+tw){var e=document.createElement('div');e.className='inote';e.textContent='Nada encontrado.';list.appendChild(e);}else list.appendChild(vazioConvite('Cada país que você responder aparece aqui, com acertos e erros, para você saber o que revisar.'));return;}
   rows.forEach(function(x){
     var row=document.createElement('div');row.className='hrow';
     var nm=document.createElement('div');nm.className='hname';

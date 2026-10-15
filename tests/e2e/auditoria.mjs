@@ -94,7 +94,7 @@ export function auditarTela({ alvoMin }) {
       const lbl = el.closest('label');
       // rodapé/cabeçalho grudado (sticky) por cima de algo que dá para alcançar rolando é normal
       const grudado = (h) => { for (let e = h; e && e !== document.body; e = e.parentElement) if (getComputedStyle(e).position === 'sticky') return true; return false; };
-      if (hit && !(grudado(hit) && rolavel(el)) && !(el === hit || el.contains(hit) || hit.contains(el) || (lbl && lbl.contains(hit)) || (el.labels && [...el.labels].some((l) => l.contains(hit))))) add('coberto', el, 'por ' + nome(hit));
+      if (hit && !(grudado(hit) && rolavel(el)) && !(el === hit || el.contains(hit) || hit.contains(el) || (lbl && lbl.contains(hit)) || (el.labels && [...el.labels].some((l) => l.contains(hit))))) add('coberto', el, 'por ' + nome(hit) + (hit.parentElement?.closest('[id]') ? ' em #' + hit.parentElement.closest('[id]').id : ''));
     }
     // 5b) rótulo curto quebrado em duas linhas (ex.: "←" numa linha e "Anterior" na outra)
     //     (respostas do treino e nomes da folha de estudo podem ocupar duas linhas de propósito)
@@ -123,5 +123,8 @@ export function auditarTela({ alvoMin }) {
       if (p.right > W + 1) add('texto vaza', el, 'passa da borda da tela');
     }
   }
+  // 7) código cru no lugar de bandeira ou nome (ex.: "[XO] Ossétia do Sul")
+  const cru = (camada.innerText || '').match(/\[[A-Z]{2}\]/);
+  if (cru) problemas.push({ tipo: 'código cru', alvo: cru[0], detalhe: 'texto técnico aparecendo para o jogador' });
   return problemas;
 }
