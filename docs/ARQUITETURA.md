@@ -180,9 +180,31 @@ export { AMERICAS_R, estadoTreino, iniciar, inScope };    // a interface públic
 | `npm test` | testes de dados |
 | `npm run test:e2e` | build + testes de ponta a ponta no Chromium |
 | `npm run test:all` | tudo acima |
+| `npm run test:layout` | build + só a auditoria de layout (tamanhos de tela, toque, textos) |
+| `npm run tela -- saida.png "js"` | captura uma tela como no celular do usuário (Edge 60 Pro) |
 | `npm run icone` | regera o ícone do app e as imagens da Play Store |
 
 Na primeira vez: `npm install` e `npx playwright install chromium`.
+
+### Auditoria de layout (`tests/e2e/layout.test.mjs`)
+
+Abre cada tela do app (Treino, Livre, cartão, filtros, menu e cada página dele, passaporte,
+conquistas, histórico, Distância, folha de estudo, Estados) em celular pequeno (320), comum
+(360), **Edge 60 Pro do usuário** (450x842 no artefato e 450x925 no app, tema escuro), deitado
+(800x360) e tablet, e falha se houver:
+
+- rolagem para o lado; algo tocável fora da tela, coberto por outro elemento ou com menos de
+  32px (caixinha de marcar: 24px); rótulo curto quebrado em duas linhas; botão sem nome;
+  texto cortado; erro de JavaScript.
+
+Tela nova entra em `TELAS_APP`; exceção consciente entra em `PERMITIDOS`, sempre com o motivo.
+
+### Prints iguais aos do celular do usuário
+
+O usuário usa um **Motorola Edge 60 Pro**: 450px CSS de largura, tema escuro e fonte Roboto.
+Toda captura de tela (para conferir layout ou para a Play Store) usa esse perfil
+(`scripts/telas/capturar.mjs`). Para a fonte bater, o Linux precisa ter Roboto como
+`sans-serif`/`system-ui` (fontconfig apontando para Roboto); sem isso sai DejaVu, bem mais larga.
 
 ## Integração contínua e versões
 

@@ -628,3 +628,33 @@ details.ajuda>p,details.ajuda>div{margin:4px 0 0;padding:8px 10px;border-radius:
 .dbmax{font-size:12px;color:var(--muted)}
 .dbmax[hidden]{display:none}
 #dbar .dbtop{align-items:center}
+
+/* ---------- alvos de toque (auditoria automática: tests/e2e/layout.test.mjs) ---------- */
+/* nada tocável com menos de 32px no lado menor; caixinhas de marcar com pelo menos 24px */
+.hsom,#mbtn{min-width:32px!important;min-height:34px}
+@media (max-width:340px){.hbtns{gap:2px}header{padding-left:6px;padding-right:6px}header .modesw button{padding:0 6px!important}}
+.alca{height:32px;margin:-12px -14px 0}
+.dleg .sigla{padding:8px 8px;line-height:16px}
+button.chip,.chips button{min-height:34px}
+.msegrow .aseg button{padding:9px 4px}
+#dbar .closeb{padding:9px 12px!important}
+#dbar .dbmodo button{padding:9px 4px}
+#tree input[type=checkbox]{width:24px;height:24px}
+/* celular deitado e tablet: no Treino o cabeçalho cabe ao lado do painel (o ⋯ ficava por baixo dele) */
+@media (min-aspect-ratio: 5/4) and (min-width: 640px){
+  body.quizing h1.marca{font-size:0}
+  body.quizing h1.marca .marca-logo{margin-right:0}
+  body.quizing .hbtns{gap:3px}
+  /* cartão do país à esquerda, para não cobrir os botões do mapa (que ficam à direita) */
+  #card{right:auto;width:min(440px,54vw);max-height:calc(100% - 20px)}
+}
+details.ajuda>summary{min-height:32px}
+#ajsheet details>summary{min-height:32px;display:flex;align-items:center}
+/* telas baixas: botões do mapa menores para caberem todos (o 🗺️ 2D sumia embaixo) */
+@media (max-height:700px){.tools{gap:4px}.tools button{width:36px;height:36px;font-size:16px}}
+/* rótulos curtos nunca quebram no meio: se não cabem lado a lado, o botão desce para a linha de baixo */
+.row2{flex-wrap:wrap}
+.row2 button{white-space:nowrap;flex:1 1 auto}
+#card .nav button{white-space:nowrap}
+@media (max-width:340px){#card .nav button{font-size:14px;padding:0 6px}}
+.row2 #ubtn{min-height:38px}
