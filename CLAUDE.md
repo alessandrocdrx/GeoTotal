@@ -12,6 +12,7 @@
 
 ## Projeto
 - Arquitetura, regras e comandos: [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md).
+- Visão, escopo, backlog, decisões e riscos: [`docs/projeto.md`](docs/projeto.md) (documento vivo: atualizar a cada versão).
 - Antes de commitar: `npm run test:all` (inclui a auditoria de layout).
 - **Antes de publicar o artefato ou mandar versão**: `npm run test:all` tem que passar inteiro.
   Bug, quebra de layout ou falta de intuitividade se pega no teste, nunca no artefato.
