@@ -1,5 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
 
 // Chave de assinatura de release (upload key da Play Store). Vem das variáveis de ambiente,
@@ -40,7 +44,10 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            // R8 encolhe e otimiza o código (Kotlin + Compose) e tira recursos não usados.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig hasReleaseKey ? signingConfigs.release : signingConfigs.debug
         }
     }
@@ -49,9 +56,27 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
+    buildFeatures {
+        compose true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
 }
 
 dependencies {
+    // Jetpack: Activity com Compose (tela, barras do sistema, Voltar e seletores de arquivo) e
+    // WebViewAssetLoader (serve os assets numa origem https).
+    implementation platform('androidx.compose:compose-bom:2025.12.00')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.activity:activity-compose:1.11.0'
+    implementation 'androidx.webkit:webkit:1.14.0'
+
     // Pedido de avaliação oficial do Google Play, dentro do app (In-App Review). Fala com o app da
     // Play Store pelo próprio aparelho: não precisa de permissão de internet.
     implementation 'com.google.android.play:review:2.0.2'

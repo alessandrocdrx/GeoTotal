@@ -121,6 +121,8 @@ no perfil Edge 60 Pro, artefato atualizado.
   conferidas por `npm run camadas`.
 - D4. Ícones de interface em SVG de traço (`js/nucleo/icones.js`), emoji só em listas e textos.
 - D5. Sem pedir aos testadores que atualizem pela Play (decisão do dono na 1.40).
+- D6. Parte Android em Kotlin + Jetpack Compose (o jogo continua no WebView). Etapa 1: a casca;
+  telas nativas em Compose podem vir depois, uma de cada vez, sem perder a versão web.
 
 ## 9. Riscos
 
@@ -136,3 +138,4 @@ no perfil Edge 60 Pro, artefato atualizado.
 | Versão | Data | O que mudou |
 |---|---|---|
 | v1 | 15/10/2026 | Documento criado a partir do estado da 1.40 e do branch `proxima-versao` |
+| v2 | 22/10/2026 | D6: parte Android passa para Kotlin + Jetpack Compose |

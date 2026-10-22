@@ -50,19 +50,19 @@ web/src/
     ├── treino/             estado do treino, partida, perguntas, toques, dicas, estatísticas, progressão
     └── app/                compatibilidade, memória da última visão e ponto de entrada
 
-android/app/src/main/java/io/github/alessandrocdrx/geototal/
-├── MainActivity.java       ciclo de vida da tela, configuração do WebView, botão Voltar
-├── ShareProvider.java      entrega a imagem do resultado a outros apps (só leitura)
+android/app/src/main/kotlin/io/github/alessandrocdrx/geototal/   (Kotlin + Jetpack Compose)
+├── MainActivity.kt         ciclo de vida da tela, configuração do WebView, botão Voltar, edge-to-edge
+├── ShareProvider.kt        entrega a imagem do resultado a outros apps (só leitura)
 ├── web/
-│   ├── AssetWebViewClient  serve assets/ em https://appassets.androidplatform.net/
-│   ├── FileChooserClient   seletor de arquivos para "Restaurar progresso"
-│   ├── WebBridge           ponte window.AndroidBridge (salvar, compartilhar, imprimir)
+│   ├── AssetWebViewClient  serve assets/ em https://appassets.androidplatform.net/ (WebViewAssetLoader)
+│   ├── FileChooserClient   seletor de arquivos para "Restaurar progresso" (Activity Result API)
+│   ├── WebBridge           ponte window.AndroidBridge (salvar, compartilhar, imprimir, avaliar)
 │   └── MimeTypes           tipo MIME por extensão
 ├── files/
-│   ├── FileSaver           "Salvar como" para exportações
+│   ├── FileSaver           "Salvar como" para exportações (Activity Result API)
 │   └── ImageSharer         compartilhamento da imagem do resultado
 └── ui/
-    └── EdgeToEdge          tela inteira respeitando barras do sistema e teclado
+    └── TelaDoJogo          tela em Compose: o WebView na tela toda, longe das barras e do teclado
 
 scripts/                    build, preparação do Android, gerador de ícone
 tests/unidade/              testes de integridade dos dados (Node, sem navegador)
