@@ -350,6 +350,9 @@ h1.marca{flex:none}
   .streakpill{padding:0 5px!important;font-size:13px!important;gap:1px}
   #mbtn{padding:0 7px!important}
 }
+/* cabeçalho que não cabe na tela (js/interface/botoes.js): estilo do mapa e, se preciso, dia e noite
+   ficam só no menu ⋯ */
+body.cab-apertado #mestilotop,body.cab-apertado2 #mvisual{display:none!important}
 /* telas bem estreitas (abaixo de ~386px): não cabe o nome junto dos botões; fica só a logo */
 @media (max-width:385px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
 /* painel do treino translúcido como o cartão do Livre: o mapa aparece por baixo */

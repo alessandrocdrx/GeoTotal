@@ -685,6 +685,9 @@ h1.marca{flex:none}
   .streakpill{padding:0 5px!important;font-size:13px!important;gap:1px}
   #mbtn{padding:0 7px!important}
 }
+/* cabeçalho que não cabe na tela (js/interface/botoes.js): estilo do mapa e, se preciso, dia e noite
+   ficam só no menu ⋯ */
+body.cab-apertado #mestilotop,body.cab-apertado2 #mvisual{display:none!important}
 /* telas bem estreitas (abaixo de ~386px): não cabe o nome junto dos botões; fica só a logo */
 @media (max-width:385px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
 /* painel do treino translúcido como o cartão do Livre: o mapa aparece por baixo */
@@ -8961,12 +8964,26 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/botoes.js
   var botoes_exports = {};
   __export(botoes_exports, {
+    encaixarCabecalho: () => encaixarCabecalho,
     iniciar: () => iniciar26,
     spinB: () => spinB
   });
   var spinB;
   var lp;
   var lc;
+  function larguraDaTela() {
+    return Math.min(window.innerWidth, screen.width || window.innerWidth);
+  }
+  var APERTOS = ["cab-apertado", "cab-apertado2"];
+  function encaixarCabecalho() {
+    var htop = document.querySelector("header .htop");
+    if (!htop) return;
+    var b = document.body, cs = getComputedStyle(htop.parentNode), pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    APERTOS.forEach(function(c) {
+      b.classList.remove(c);
+    });
+    for (var k = 0; k < APERTOS.length && htop.scrollWidth + pad > larguraDaTela() + 0.5; k++) b.classList.add(APERTOS[k]);
+  }
   function iniciar26() {
     document.getElementById("zin").onclick = function() {
       estadoCamera.target = null;
@@ -8999,6 +9016,16 @@ NAN|Nadi|-17.76|177.44`;
       lc.setAttribute("aria-pressed", "true");
       lp.setAttribute("aria-pressed", "false");
     };
+    var agendado = 0;
+    var agendar = function() {
+      if (!agendado) agendado = requestAnimationFrame(function() {
+        agendado = 0;
+        encaixarCabecalho();
+      });
+    };
+    if (window.ResizeObserver) new ResizeObserver(agendar).observe(document.querySelector("header .hbtns"));
+    window.addEventListener("resize", agendar);
+    encaixarCabecalho();
   }
 
   // web/src/js/interface/filtros-desfazer.js

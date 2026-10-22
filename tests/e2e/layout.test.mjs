@@ -77,3 +77,24 @@ for (const tela of TELAS) {
     assert.deepEqual(problemas, [], `${tela.nome}:\n` + problemas.join('\n'));
   });
 }
+
+// O 🔥 da sequência entra no cabeçalho depois do primeiro dia; com uma fonte larga (DejaVu, comum no
+// Linux e parecida com a de alguns celulares) o cabeçalho passava da tela e o ⋯ sumia para o lado.
+test('cabeçalho com 🔥 da sequência cabe na tela, mesmo com fonte larga', async () => {
+  const problemas = [];
+  for (const largura of [320, 360]) {
+    const ctx = await ambiente.navegador.newContext({ viewport: { width: largura, height: 720 }, isMobile: true, hasTouch: true });
+    const pagina = await ctx.newPage();
+    await pagina.addInitScript(() => { try { localStorage.setItem('globo.bv.v1', 'true'); localStorage.setItem('globo.legenda.vista', 'true'); } catch {} });
+    await pagina.goto(ambiente.url);
+    await pagina.waitForFunction(() => window.__geoTotal && window.__geoTotal.estadoRender.feats, null, { timeout: 15000 });
+    await pagina.addStyleTag({ content: '*{font-family:"DejaVu Sans",Verdana,sans-serif!important}' });
+    await pagina.evaluate(() => { const s = document.getElementById('streakpill'); s.style.display = ''; s.textContent = '🔥 12'; });
+    await pagina.waitForTimeout(300);
+    const r = await pagina.evaluate(() => ({ pagina: document.documentElement.scrollWidth, menu: Math.round(document.getElementById('mbtn').getBoundingClientRect().right) }));
+    if (r.pagina > largura) problemas.push(`${largura}px: página com ${r.pagina}px (rolagem lateral)`);
+    if (r.menu > largura) problemas.push(`${largura}px: botão ⋯ termina em ${r.menu}px, fora da tela`);
+    await ctx.close();
+  }
+  assert.deepEqual(problemas, []);
+});
