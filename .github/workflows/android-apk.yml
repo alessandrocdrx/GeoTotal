@@ -50,8 +50,16 @@ jobs:
       - name: Navegador para os testes de ponta a ponta
         run: npx playwright install --with-deps chromium
 
+      # Se falhar, cada teste quebrado vira uma anotação na página da execução (com as primeiras
+      # linhas do erro), sem precisar abrir o log inteiro.
       - name: Testes de ponta a ponta
-        run: npm run test:e2e
+        run: |
+          set -o pipefail
+          npm run test:e2e 2>&1 | tee e2e.txt || {
+            grep -n -A12 '^ *not ok' e2e.txt | head -60 | sed 's/%/%25/g' | awk 'BEGIN{ORS="%0A"}{print}' | sed 's/^/::error title=Testes de ponta a ponta::/'
+            echo
+            exit 1
+          }
 
   apk:
     needs: testes
