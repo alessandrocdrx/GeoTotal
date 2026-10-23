@@ -512,6 +512,7 @@ h1.marca span{color:var(--marca)}
 #welcome .wlivre{border-color:#4da3ff;background:linear-gradient(135deg,rgba(77,163,255,.18),rgba(77,163,255,.05))}
 /* Treino e Livre com cor própria: verde = treinar, azul = explorar */
 .modesw{border-width:2px}
+.mododica{margin:4px 0 0;font-size:12.5px;font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .modesw #qbtn[aria-pressed="true"]{background:#1fa85a!important;color:#fff!important}
 .modesw #qclose[aria-pressed="true"]{background:#2f80ff!important;color:#fff!important}
 .modesw button{font-weight:800!important}
@@ -993,6 +994,7 @@ details.ajuda>summary{min-height:32px}
       <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
       <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som" data-ico="som"></button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite" data-ico="sol"></button><button id="mestilotop" class="hsom" aria-label="Estilo do mapa: satélite" title="Satélite ou atlas" data-ico="satelite"></button><button id="camb" class="hsom" aria-label="O que aparece no mapa" title="O que aparece no mapa" aria-expanded="false" data-ico="camadas"></button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções" data-ico="mais"></button></div>
     </div>
+    <p class="sub mododica" id="mododica" aria-live="polite"></p>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
   <div class="chips" id="chips"></div>
@@ -12485,6 +12487,7 @@ NAN|Nadi|-17.76|177.44`;
   function syncModeSw() {
     $("qbtn").setAttribute("aria-pressed", quiz.open ? "true" : "false");
     $("qclose").setAttribute("aria-pressed", quiz.open ? "false" : "true");
+    $("mododica").textContent = quiz.open ? "🎯 Treino: responda perguntas" : "🧭 Livre: explore o globo";
   }
   function runRestart() {
     delete estadoPartida.RUNS[runKey()];

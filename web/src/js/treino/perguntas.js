@@ -460,7 +460,8 @@ function quizClose(){
   if(estadoTreino.quizDomain==='br'){estadoBrasil.statesMode=false;estadoBrasil.selSt=null;}
   document.body.classList.remove('quizing');$('quiz').style.display='none';setTimeout(resize,60);pausarMusica(false);
 }
-function syncModeSw(){$('qbtn').setAttribute('aria-pressed',quiz.open?'true':'false');$('qclose').setAttribute('aria-pressed',quiz.open?'false':'true');}
+/* uma frase do que faz o modo ligado (quem chega de primeira não sabe a diferença entre os dois) */
+function syncModeSw(){$('qbtn').setAttribute('aria-pressed',quiz.open?'true':'false');$('qclose').setAttribute('aria-pressed',quiz.open?'false':'true');$('mododica').textContent=quiz.open?'🎯 Treino: responda perguntas':'🧭 Livre: explore o globo';}
 
 function runRestart(){delete estadoPartida.RUNS[runKey()];saveRuns();resetSession();quiz.last=-1;nextQ();renderScore();}
 function showRunDone(){
