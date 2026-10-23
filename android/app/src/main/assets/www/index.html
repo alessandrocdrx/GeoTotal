@@ -560,6 +560,8 @@ h1.marca span{color:var(--marca)}
 /* Treino e Livre com cor própria: verde = treinar, azul = explorar */
 .modesw{border-width:2px}
 .mododica{margin:4px 0 0;font-size:12.5px;font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* celular deitado: pouca altura, a frase sairia de cima dos botões do mapa (o teste de layout confere) */
+@media (max-height:500px){.mododica{display:none}}
 .modesw #qbtn[aria-pressed="true"]{background:#1fa85a!important;color:#fff!important}
 .modesw #qclose[aria-pressed="true"]{background:#2f80ff!important;color:#fff!important}
 .modesw button{font-weight:800!important}
