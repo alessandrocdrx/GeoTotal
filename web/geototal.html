@@ -4464,17 +4464,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     setFlat2D: () => setFlat2D
   });
 
-  // web/src/js/visualizacao/carregamento.js
-  var carregamento_exports = {};
-  __export(carregamento_exports, {
-    fixWind: () => fixWind,
-    idbGet: () => idbGet,
-    idbSet: () => idbSet,
-    startMap: () => startMap,
-    texCanvas: () => texCanvas,
-    trocarMes: () => trocarMes
-  });
-
   // web/src/js/nucleo/eventos.js
   var eventos_exports = {};
   __export(eventos_exports, {
@@ -4490,6 +4479,17 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       fn(dados);
     });
   }
+
+  // web/src/js/visualizacao/carregamento.js
+  var carregamento_exports = {};
+  __export(carregamento_exports, {
+    fixWind: () => fixWind,
+    idbGet: () => idbGet,
+    idbSet: () => idbSet,
+    startMap: () => startMap,
+    texCanvas: () => texCanvas,
+    trocarMes: () => trocarMes
+  });
 
   // web/src/js/visualizacao/textura.js
   var textura_exports = {};
@@ -5022,6 +5022,12 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   function startMap() {
     var okGL = initGL();
     setStatus("Carregando o mapa…");
+    if (!okGL) {
+      emitir("sem-webgl");
+      setTimeout(function() {
+        setStatus("Seu celular não abriu o globo 3D (WebGL). Mostrando o mapa plano.", 12e3);
+      }, 2e3);
+    }
     var pTex = !okGL ? Promise.resolve(false) : idbGet(chaveTex()).then(function(b) {
       if (!b) return false;
       return blobToTexCanvas(b).then(function(c) {
@@ -5044,10 +5050,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }).then(function(m2) {
       emitir("fronteiras-carregadas");
       updateOpts();
-      if (!okGL) {
-        setStatus("Fronteiras carregadas (" + m2 + " países com contorno). Este aparelho não suporta a textura 3D.", 7e3);
-        return;
-      }
+      if (!okGL) return;
       if (estadoRender.useTex) {
         setStatus("Pronto: fronteiras carregadas (" + m2 + " países com contorno).", 3500);
         return;
@@ -5580,6 +5583,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     $("flat2d").setAttribute("aria-label", v ? "Ver como globo" : "Ver como mapa 2D");
   }
   function iniciar16() {
+    ouvir("sem-webgl", function() {
+      setFlat2D(true);
+    });
     estadoCamera.plano2D = lsGet("globo.flat2d", false);
     $("flat2d").onclick = function() {
       setFlat2D(!estadoCamera.plano2D);
