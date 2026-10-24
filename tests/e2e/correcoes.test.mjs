@@ -66,32 +66,38 @@ test('tela 0×0 na abertura (WebView ainda sem tamanho): o mapa aparece quando a
   assert.deepEqual(erros, []);
 });
 
-test('cabeçalho com 🔥 da sequência cabe na tela, mesmo com fonte larga', async () => {
+test('cabeçalho cabe na tela e ocupa a largura, com ou sem 🔥 e fonte larga', async () => {
   const problemas = [];
-  for (const largura of [320, 360, 393, 412]) {
+  for (const [largura, larga] of [320, 360, 393, 412].flatMap((l) => [[l, false], [l, true]])) {
     const ctx = await ambiente.navegador.newContext({ viewport: { width: largura, height: 720 }, isMobile: true, hasTouch: true });
     const pagina = await ctx.newPage();
     await pagina.addInitScript(() => { try { localStorage.setItem('globo.bv.v1', 'true'); localStorage.setItem('globo.legenda.vista', 'true'); } catch {} });
     await pagina.goto(ambiente.url);
     await pagina.waitForFunction(() => window.__geoTotal && window.__geoTotal.estadoRender.feats, null, { timeout: 15000 });
-    await pagina.addStyleTag({ content: '*{font-family:"DejaVu Sans",Verdana,sans-serif!important}' });
-    await pagina.evaluate(() => { const s = document.getElementById('streakpill'); s.style.display = ''; s.textContent = '🔥 12'; });
+    /* fonte larga e 🔥 juntos: o pior caso; sem eles, a fonte normal do Android (Roboto) */
+    if (larga) {
+      await pagina.addStyleTag({ content: '*{font-family:"DejaVu Sans",Verdana,sans-serif!important}' });
+      await pagina.evaluate(() => { const s = document.getElementById('streakpill'); s.style.display = ''; s.textContent = '🔥 12'; });
+    }
     await pagina.waitForTimeout(300);
     const r = await pagina.evaluate(() => ({ pagina: document.documentElement.scrollWidth, menu: Math.round(document.getElementById('mbtn').getBoundingClientRect().right) }));
-    if (r.pagina > largura) problemas.push(`${largura}px: página com ${r.pagina}px (rolagem lateral)`);
-    if (r.menu > largura) problemas.push(`${largura}px: botão ⋯ termina em ${r.menu}px, fora da tela`);
+    if (r.pagina > largura) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: página com ${r.pagina}px (rolagem lateral)`);
+    if (r.menu > largura) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: botão ⋯ termina em ${r.menu}px, fora da tela`);
     /* os atalhos rápidos do topo nunca somem */
     const atalhos = await pagina.evaluate((L) => ['msom', 'mvisual', 'mestilotop', 'camb'].filter((id) => {
       const b = document.getElementById(id).getBoundingClientRect();
       return !(b.width > 20 && b.right <= L);
     }), largura);
-    if (atalhos.length) problemas.push(`${largura}px: atalhos escondidos ou fora da tela: ${atalhos.join(', ')}`);
+    if (atalhos.length) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: atalhos escondidos ou fora da tela: ${atalhos.join(', ')}`);
     const marca = await pagina.evaluate(() => {
       const h = document.querySelector('header h1.marca');
       return { logo: h.querySelector('.marca-logo').getBoundingClientRect().width, fonte: parseFloat(getComputedStyle(h).fontSize), texto: h.textContent.trim(), direita: h.getBoundingClientRect().right };
     });
-    if (!(marca.logo >= 20)) problemas.push(`${largura}px: logo do geoTotal sumiu do cabeçalho`);
-    if (marca.texto !== 'geoTotal' || !(marca.fonte >= 12)) problemas.push(`${largura}px: nome geoTotal sumiu do cabeçalho`);
+    if (!(marca.logo >= 20)) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: logo do geoTotal sumiu do cabeçalho`);
+    if (marca.texto !== 'geoTotal' || !(marca.fonte >= 12)) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: nome geoTotal sumiu do cabeçalho`);
+    /* sem sobra: o ⋯ chega perto da borda direita (ou o cabeçalho já está no tamanho máximo) */
+    const sobra = await pagina.evaluate((L) => ({ px: L - document.getElementById('mbtn').getBoundingClientRect().right, zoom: document.querySelector('header .htop').style.zoom }), largura);
+    if (sobra.px > 16 && sobra.zoom !== '1.2') problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: sobram ${Math.round(sobra.px)}px vazios no cabeçalho`);
     await ctx.close();
   }
   assert.deepEqual(problemas, []);

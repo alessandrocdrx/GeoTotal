@@ -638,8 +638,6 @@ h1.marca{flex:none}
   .streakpill{padding:0 5px!important;font-size:13px!important;gap:1px}
   #mbtn{padding:0 7px!important}
 }
-/* telas bem estreitas (abaixo de ~386px): não cabe o nome junto dos botões; fica só a logo */
-@media (max-width:385px){h1.marca{font-size:0}h1.marca .marca-logo{margin-right:0;width:30px;height:30px}}
 /* painel do treino translúcido como o cartão do Livre: o mapa aparece por baixo */
 #quiz.map .qpanel{background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 
@@ -8885,10 +8883,18 @@ NAN|Nadi|-17.76|177.44`;
     var htop = document.querySelector("header .htop");
     if (!htop) return;
     var b = document.body, cs = getComputedStyle(htop.parentNode), pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    var L = larguraDaTela();
+    htop.style.zoom = "";
     APERTOS.forEach(function(c) {
       b.classList.remove(c);
     });
-    for (var k = 0; k < APERTOS.length && htop.scrollWidth + pad > larguraDaTela() + 0.5; k++) b.classList.add(APERTOS[k]);
+    for (var k = 0; k < APERTOS.length && htop.scrollWidth + pad > L + 0.5; k++) b.classList.add(APERTOS[k]);
+    if (L <= 460) {
+      var h1 = htop.querySelector("h1"), hb = htop.querySelector(".hbtns");
+      var usado = h1.getBoundingClientRect().width + hb.getBoundingClientRect().width + (parseFloat(getComputedStyle(htop).columnGap) || 0);
+      var z = Math.min(1.2, Math.floor((L - pad - 2) / usado * 100) / 100);
+      if (z > 1.01) htop.style.zoom = String(z);
+    }
   }
   function iniciar25() {
     document.getElementById("zin").onclick = function() {
