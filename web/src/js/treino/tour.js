@@ -54,6 +54,9 @@ function mostrarPasso(){
 }
 function iniciarTour(){
   if(!quiz.open)quizOpen();
+  /* guarda o tempo jogado até agora: com o tour aberto o relógio para nele, sem voltar */
+  var r=estadoPartida.RUNS[runKey()],agora=Date.now();
+  if(r&&!r.fin&&r.la){r.at=(r.at||0)+Math.min(60000,Math.max(0,agora-r.la));r.la=agora;}
   var g=$('guia');g.hidden=false;
   passo=0;
   setTimeout(mostrarPasso,450);

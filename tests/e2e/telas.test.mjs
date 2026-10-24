@@ -37,12 +37,16 @@ test('jogos rápidos: nenhum nome sai do cartão', async () => {
 
 test('relógio da partida fica parado durante o tour', async () => {
   const { pagina, fechar } = await abrirApp(ambiente);
+  await pagina.waitForTimeout(2500);
+  const jogado = await pagina.locator('#qtimer').textContent();
   await pagina.evaluate(() => { document.getElementById('mtour').click(); });
   await pagina.waitForFunction(() => !document.getElementById('guia').hidden);
   await pagina.waitForTimeout(1200);
   const antes = await pagina.locator('#qtimer').textContent();
   await pagina.waitForTimeout(3200);
   assert.equal(await pagina.locator('#qtimer').textContent(), antes);
+  /* e não volta: o tempo jogado antes do tour continua no relógio */
+  assert.ok(antes >= jogado, `relógio voltou de ${jogado} para ${antes}`);
   await fechar();
 });
 
