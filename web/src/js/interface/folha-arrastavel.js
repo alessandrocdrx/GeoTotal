@@ -21,7 +21,8 @@ function folhaArrastavel(el,op){
   function altoMax(){var p=el.parentElement;return (p?p.clientHeight:window.innerHeight)*0.9;}
   function aplicar(fr){el.style.maxHeight='none';el.style.height=Math.round(Math.max(180,Math.min(altoMax(),fr*altoMax()/0.9)))+'px';}
   function soltarAltura(){el.style.height='';el.style.maxHeight='';}
-  function abrirGrande(){op.grande();aplicar(lsGet(op.chave,0.62));op.mudou();}
+  /* aberta pelo botão, a folha grande mostra bastante coisa (sem cobrir o mapa todo), mesmo que tenha sido encolhida antes */
+  function abrirGrande(){op.grande();aplicar(Math.max(0.5,lsGet(op.chave,0.72)));op.mudou();}
   function abrirPequeno(){op.pequeno();soltarAltura();op.mudou();}
   alca.addEventListener('pointerdown',function(e){
     arrastando=true;mexeu=0;y0=e.clientY;h0=el.offsetHeight;alca.setPointerCapture(e.pointerId);e.preventDefault();

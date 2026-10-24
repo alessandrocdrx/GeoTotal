@@ -632,3 +632,11 @@ details.ajuda>p,details.ajuda>div{margin:4px 0 0;padding:8px 10px;border-radius:
 /* cabeçalho que não cabe na tela (js/interface/botoes.js): estilo do mapa e, se preciso, dia e noite
    ficam só no menu ⋯ */
 body.cab-apertado #mestilotop,body.cab-apertado2 #mvisual{display:none!important}
+/* jogos rápidos em celular estreito: o nome quebra em duas linhas em vez de sair do cartão */
+.qjr .mcard{overflow:hidden}
+.qjr .mcard b{white-space:normal;line-height:1.2;overflow-wrap:anywhere}
+/* distância em celular estreito: ← Voltar numa linha e a rota embaixo, com a largura toda */
+@media (max-width:420px){
+  #dbar .dbtop{flex-direction:column;align-items:stretch;gap:6px}
+  #dbar .dbtop>.closeb{align-self:flex-start}
+}

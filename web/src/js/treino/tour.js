@@ -6,6 +6,7 @@
 
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { quiz } from './estado.js';
+import { estadoPartida, runKey } from './partida.js';
 import { quizOpen } from './perguntas.js';
 
 /*
@@ -33,6 +34,8 @@ function fecharTour(){
   passo=-1;
   var g=$('guia');if(g)g.hidden=true;
   lsSet('globo.tour.visto',true);
+  /* o tempo lendo o tour não conta no relógio da partida: ele recomeça a contar agora */
+  var r=estadoPartida.RUNS[runKey()];if(r&&!r.fin)r.la=Date.now();
 }
 function mostrarPasso(){
   var p=PASSOS[passo],alvo=p&&document.querySelector(p.alvo);

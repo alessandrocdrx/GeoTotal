@@ -24,7 +24,9 @@ function iniciar() {
     var s=norm(q.value.trim());res.innerHTML='';
     if(!s){res.style.display='none';return;}
     var items=[];
-    if(!estadoBrasil.statesMode)D.filter(function(d){return d.key.indexOf(s)>-1;}).slice(0,5).forEach(function(d){
+    /* quem começa com o que foi digitado vem primeiro ("Bra" → Brasil antes de Montserrat, capital Brades) */
+    var comeca=function(d){return norm(short(d)).indexOf(s)===0?0:1;};
+    if(!estadoBrasil.statesMode)D.filter(function(d){return d.key.indexOf(s)>-1;}).sort(function(a,b){return comeca(a)-comeca(b);}).slice(0,5).forEach(function(d){
       items.push({dot:REG[d.r].c,name:dflag(d)+' '+short(d)+(d.dis?' ⚠':''),sub:capShort(d),fn:function(){select(d,true);}});
     });
     BRS.filter(function(st){return st.key.indexOf(s)>-1;}).slice(0,estadoBrasil.statesMode?7:3).forEach(function(st){
@@ -41,6 +43,12 @@ function iniciar() {
       res.appendChild(b);
     });
     res.style.display='block';
+  });
+  /* Enter (ou "ir" no teclado do celular) abre o primeiro resultado */
+  q.addEventListener('keydown',function(e){
+    if(e.key!=='Enter')return;
+    var b=res.querySelector('button');
+    if(b&&res.style.display!=='none'){e.preventDefault();b.click();}
   });
   document.addEventListener('pointerdown',function(e){if(!res.contains(e.target)&&e.target!==q)res.style.display='none';});
 }

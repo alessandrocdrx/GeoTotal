@@ -83,7 +83,8 @@ function tempoDaPartida(){
   if(quiz.jogoRapido||estadoTreino.desafio||!poolIdx().length)return '';
   var rr=estadoPartida.RUNS[runKey()];if(!rr)return '⏱️ 0:00';
   var t=rr.at||0;
-  if(!rr.fin&&quiz.cur>=0&&!quiz.answered&&$('qbody').querySelector('.qq')&&!$('qbody').querySelector('.retomar'))t+=Math.min(60000,Math.max(0,Date.now()-(rr.la||Date.now())));
+  /* com o tour ou as boas-vindas abertos o relógio fica parado */
+  if(!rr.fin&&quiz.cur>=0&&!quiz.answered&&$('guia').hidden&&$('welcome').hidden&&$('qbody').querySelector('.qq')&&!$('qbody').querySelector('.retomar'))t+=Math.min(60000,Math.max(0,Date.now()-(rr.la||Date.now())));
   return '⏱️ '+fmtRelogio(t);
 }
 let relogioInt = 0;
@@ -232,7 +233,7 @@ function nextQ(){
   var q=document.createElement('div');q.className='qq';
   if(quiz.mode==='cap'){
     q.textContent='Qual é a capital de '+qflag(d)+' '+short(d)+'?';
-    var cbt=document.createElement('button');cbt.className='qcenter';cbt.textContent='⌖ Centralizar';cbt.onclick=function(){showTarget(i);};q.appendChild(cbt);
+    var cbt=document.createElement('button');cbt.className='qcenter';cbt.textContent='📍 Ver no mapa';cbt.onclick=function(){showTarget(i);};q.appendChild(cbt);
     addHintBtn(q,d,false);
     showTarget(i);if(estadoTreino.quizDomain==='world')estadoTreino.qFlash={i:i,kind:'ask'};
   }
@@ -253,7 +254,7 @@ function nextQ(){
     showTarget(i);if(estadoTreino.quizDomain==='world')estadoTreino.qFlash={i:i,kind:'ask'};
   }
   else{q.textContent='Toque no mapa: onde fica '+qflag(d)+' '+short(d)+'?';}
-  /* Centralizar e Dica numa linha só deles, embaixo da pergunta */
+  /* Ver no mapa e Dica numa linha só deles, embaixo da pergunta */
   var acoes=q.querySelectorAll(':scope > .qcenter');
   if(acoes.length){var ac=document.createElement('div');ac.className='qacoes';Array.prototype.forEach.call(acoes,function(b){ac.appendChild(b);});q.appendChild(ac);}
   var qs=document.createElement('div');qs.id='qstat';qs.className='qstat';fillQStat(qs,d);q.appendChild(qs);
