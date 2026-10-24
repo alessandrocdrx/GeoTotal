@@ -181,6 +181,11 @@ function draw(){
 }
 
 function frame(){
+  /* o próximo quadro é pedido antes de desenhar: um quadro com erro não pode parar o mapa para sempre */
+  requestAnimationFrame(frame);
+  /* tela ainda sem tamanho (o app Android abre a página antes de o WebView ir para a tela): espera o resize */
+  if(!(W>0&&H>0))return;
+  if(!isFinite(estadoCamera.cyFrac))estadoCamera.cyFrac=.5;
   if(estadoCamera.target){
     var dl=shortest(estadoCamera.lam,estadoCamera.target.lam),dp=estadoCamera.target.phi-estadoCamera.phi,dz=estadoCamera.target.zoom-estadoCamera.zoom;
     estadoCamera.lam+=dl*.14;estadoCamera.phi+=dp*.14;estadoCamera.zoom+=dz*.14;
@@ -191,7 +196,7 @@ function frame(){
   var wantCy=((estadoMapa.selected||estadoBrasil.selSt||estadoRender.areaSel)&&!ganchos.treinoAberto())?Math.max(.26,Math.min(.5,(H-ganchos.alturaCartao())/(2*H))):(ganchos.treinoAberto()?Math.max(.24,Math.min(.5,(H-ganchos.alturaTreino())/(2*H))):.5);if(ganchos.distanciaAberta())wantCy=Math.max(.5,Math.min(.72,(ganchos.alturaDistancia()+H)/(2*H)));
   estadoCamera.cyFrac+=(wantCy-estadoCamera.cyFrac)*.15;
   if(estadoCamera.lam>PI)estadoCamera.lam-=2*PI;if(estadoCamera.lam<-PI)estadoCamera.lam+=2*PI;
-  draw();requestAnimationFrame(frame);
+  draw();
 }
 
 export { frame };

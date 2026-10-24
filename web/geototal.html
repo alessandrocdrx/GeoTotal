@@ -5849,6 +5849,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ganchos.desenharSeloResposta(R, cx, cy);
   }
   function frame() {
+    requestAnimationFrame(frame);
+    if (!(W > 0 && H > 0)) return;
+    if (!isFinite(estadoCamera.cyFrac)) estadoCamera.cyFrac = 0.5;
     if (estadoCamera.target) {
       var dl2 = shortest(estadoCamera.lam, estadoCamera.target.lam), dp = estadoCamera.target.phi - estadoCamera.phi, dz = estadoCamera.target.zoom - estadoCamera.zoom;
       estadoCamera.lam += dl2 * 0.14;
@@ -5864,7 +5867,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (estadoCamera.lam > PI) estadoCamera.lam -= 2 * PI;
     if (estadoCamera.lam < -PI) estadoCamera.lam += 2 * PI;
     draw();
-    requestAnimationFrame(frame);
   }
 
   // web/src/js/interface/interacao.js

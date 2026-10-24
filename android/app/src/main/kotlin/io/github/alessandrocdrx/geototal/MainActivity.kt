@@ -35,11 +35,13 @@ class MainActivity : ComponentActivity() {
 
         web = WebView(this).apply { isHapticFeedbackEnabled = false }
         configureWebView()
-        if (savedInstanceState == null || web.restoreState(savedInstanceState) == null) {
-            web.loadUrl(AssetWebViewClient.START_URL)
-        }
-
         setContent { TelaDoJogo(web) }
+
+        // A página só abre depois que o WebView está na tela e com tamanho (post roda após ele ser
+        // anexado). Aberta antes, ela começava com a tela 0×0 e o mapa não era desenhado.
+        if (savedInstanceState == null || web.restoreState(savedInstanceState) == null) {
+            web.post { web.loadUrl(AssetWebViewClient.START_URL) }
+        }
 
         // Voltar fecha o painel aberto na página (filtros, treino, cartão...) antes de sair do app.
         onBackPressedDispatcher.addCallback(this) {
