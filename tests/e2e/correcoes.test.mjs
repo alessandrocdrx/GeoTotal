@@ -4,7 +4,8 @@
 // Correções da 1.40 em celulares difíceis: (1) sem WebGL (o WebView de alguns celulares não cria o contexto 3D): o globo
 // não aparece, então o app abre sozinho o mapa plano e avisa o motivo; (2) página aberta antes de o
 // WebView ter tamanho (tela 0×0 por um instante): o mapa tem de aparecer quando a tela crescer;
-// (3) fonte larga com o 🔥 da sequência no cabeçalho: nada pode passar da tela.
+// (3) fonte larga com o 🔥 da sequência no cabeçalho: nada pode passar da tela e os atalhos
+// 🔊 ☀️ 🛰️ 🏷️ continuam no topo.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { iniciarServidor } from './apoio.mjs';
@@ -79,6 +80,12 @@ test('cabeçalho com 🔥 da sequência cabe na tela, mesmo com fonte larga', as
     const r = await pagina.evaluate(() => ({ pagina: document.documentElement.scrollWidth, menu: Math.round(document.getElementById('mbtn').getBoundingClientRect().right) }));
     if (r.pagina > largura) problemas.push(`${largura}px: página com ${r.pagina}px (rolagem lateral)`);
     if (r.menu > largura) problemas.push(`${largura}px: botão ⋯ termina em ${r.menu}px, fora da tela`);
+    /* os atalhos rápidos do topo nunca somem */
+    const atalhos = await pagina.evaluate((L) => ['msom', 'mvisual', 'mestilotop', 'camb'].filter((id) => {
+      const b = document.getElementById(id).getBoundingClientRect();
+      return !(b.width > 20 && b.right <= L);
+    }), largura);
+    if (atalhos.length) problemas.push(`${largura}px: atalhos escondidos ou fora da tela: ${atalhos.join(', ')}`);
     await ctx.close();
   }
   assert.deepEqual(problemas, []);
