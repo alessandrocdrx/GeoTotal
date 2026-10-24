@@ -4,8 +4,8 @@
 // Correções da 1.40 em celulares difíceis: (1) sem WebGL (o WebView de alguns celulares não cria o contexto 3D): o globo
 // não aparece, então o app abre sozinho o mapa plano e avisa o motivo; (2) página aberta antes de o
 // WebView ter tamanho (tela 0×0 por um instante): o mapa tem de aparecer quando a tela crescer;
-// (3) fonte larga com o 🔥 da sequência no cabeçalho: nada pode passar da tela e os atalhos
-// 🔊 ☀️ 🛰️ 🏷️ e a logo continuam no topo.
+// (3) fonte larga com o 🔥 da sequência no cabeçalho: nada pode passar da tela e o nome
+// geoTotal, a logo e os atalhos 🔊 ☀️ 🛰️ 🏷️ continuam no topo.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { iniciarServidor } from './apoio.mjs';
@@ -86,8 +86,12 @@ test('cabeçalho com 🔥 da sequência cabe na tela, mesmo com fonte larga', as
       return !(b.width > 20 && b.right <= L);
     }), largura);
     if (atalhos.length) problemas.push(`${largura}px: atalhos escondidos ou fora da tela: ${atalhos.join(', ')}`);
-    const logo = await pagina.evaluate(() => document.querySelector('header .marca-logo').getBoundingClientRect().width);
-    if (!(logo >= 24)) problemas.push(`${largura}px: logo do geoTotal sumiu do cabeçalho`);
+    const marca = await pagina.evaluate(() => {
+      const h = document.querySelector('header h1.marca');
+      return { logo: h.querySelector('.marca-logo').getBoundingClientRect().width, fonte: parseFloat(getComputedStyle(h).fontSize), texto: h.textContent.trim(), direita: h.getBoundingClientRect().right };
+    });
+    if (!(marca.logo >= 20)) problemas.push(`${largura}px: logo do geoTotal sumiu do cabeçalho`);
+    if (marca.texto !== 'geoTotal' || !(marca.fonte >= 12)) problemas.push(`${largura}px: nome geoTotal sumiu do cabeçalho`);
     await ctx.close();
   }
   assert.deepEqual(problemas, []);

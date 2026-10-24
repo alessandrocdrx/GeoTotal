@@ -15,13 +15,13 @@ let lc;
    cresce junto), então vale a menor das duas */
 function larguraDaTela(){return Math.min(window.innerWidth,screen.width||window.innerWidth);}
 
-/* passos para o cabeçalho caber, nesta ordem (ux.css): botões mais justos, só a logo sem o nome,
-   tudo menor e, por último, o 🔥 da sequência sai do topo */
+/* passos para o cabeçalho caber, nesta ordem (ux.css): botões mais justos, tudo menor, o 🔥 da
+   sequência sai do topo e, por último, nome e atalhos ainda menores; o nome geoTotal nunca sai */
 const APERTOS = ['cab-apertado', 'cab-apertado2', 'cab-apertado3', 'cab-apertado4'];
 
 /**
  * Se o cabeçalho não cabe na tela (fonte larga, 🔥 da sequência aparecendo), aplica os passos de
- * APERTOS só até caber: nenhum atalho some e a logo fica. Sem isso a página ganhava rolagem
+ * APERTOS só até caber: nenhum atalho some e a logo e o nome geoTotal ficam. Sem isso a página ganhava rolagem
  * lateral e o ⋯ ficava fora da tela.
  */
 function encaixarCabecalho(){
