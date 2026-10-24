@@ -628,3 +628,7 @@ details.ajuda>p,details.ajuda>div{margin:4px 0 0;padding:8px 10px;border-radius:
 .dbmax{font-size:12px;color:var(--muted)}
 .dbmax[hidden]{display:none}
 #dbar .dbtop{align-items:center}
+
+/* cabeçalho que não cabe na tela (js/interface/botoes.js): estilo do mapa e, se preciso, dia e noite
+   ficam só no menu ⋯ */
+body.cab-apertado #mestilotop,body.cab-apertado2 #mvisual{display:none!important}

@@ -56,6 +56,12 @@ function loadDM(){
 function startMap(){
   var okGL=initGL();
   setStatus('Carregando o mapa…');
+  /* sem WebGL o globo não aparece: abre o mapa plano (que não usa WebGL) e diz o motivo */
+  if(!okGL){
+    emitir('sem-webgl');
+    /* depois que o Treino abre: a tela de partida limpa a barra de avisos ao abrir */
+    setTimeout(function(){setStatus('Seu celular não mostra o globo 3D. Mostrando o mapa plano.',12000);},2000);
+  }
   var pTex=!okGL?Promise.resolve(false):
     idbGet(chaveTex()).then(function(b){
       if(!b)return false;
@@ -71,7 +77,7 @@ function startMap(){
     });
   }).then(function(m){
     emitir('fronteiras-carregadas');updateOpts();
-    if(!okGL){setStatus('Fronteiras carregadas ('+m+' países com contorno). Este aparelho não suporta a textura 3D.',7000);return;}
+    if(!okGL)return;
     if(estadoRender.useTex){setStatus('Pronto: fronteiras carregadas ('+m+' países com contorno).',3500);return;}
     genTexture();
   },function(){
