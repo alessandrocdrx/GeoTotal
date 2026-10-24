@@ -698,3 +698,19 @@ details.ajuda>summary{min-height:32px}
 .vazio p{margin:0 auto 14px;max-width:320px;color:var(--muted);font-size:14.5px;line-height:1.45}
 .vaziobtn{border:0;border-radius:14px;padding:12px 22px;min-height:44px;font:700 15px inherit;font-family:inherit;background:#1fa85a;color:#fff;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.vazioico{animation:none}}
+
+/* letra mínima de 12px em textos que se leem (teste do usuário leigo: tests/e2e/novato.test.mjs) */
+.qpick small,.mt small,.mgrp,.dfonte,.mcard small,.qjrtit,.carimbo small{font-size:12px!important}
+
+/* ---------- tela simples (padrão) e letra grande: js/interface/simples.js ---------- */
+/* só o essencial à vista; "Mais botões na tela" (⋯ → Personalizar) traz o resto de volta */
+body.simples #mvisual,body.simples #mestilotop,body.simples #camb,
+body.simples #spin,body.simples #tour,body.simples #flat2d,body.simples #fbtn,
+body.simples .qcenter,body.simples #qstat{display:none!important}
+/* letra grande: perguntas, respostas, cartões, menus e folhas de escolha */
+body.letra-grande #quiz .qpanel,body.letra-grande #card,body.letra-grande #msheet,
+body.letra-grande #jogosheet,body.letra-grande #scopesheet,body.letra-grande #ajsheet,
+body.letra-grande #badgesheet,body.letra-grande #passsheet,body.letra-grande #statsheet,
+body.letra-grande #welcome .wbox,body.letra-grande #guiabal{zoom:1.15}
+/* boas-vindas em tela baixa (celular deitado): caixa compacta, tudo à vista sem rolar */
+@media (max-height:500px){#welcome .wlogo{display:none}#welcome .wbox{padding:12px 16px}#welcome h2{margin:0 0 2px;font-size:18px}#welcome .wsub{margin-bottom:8px}#welcome .wmodos{grid-template-columns:1fr 1fr;margin-bottom:8px}}

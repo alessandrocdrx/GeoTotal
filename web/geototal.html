@@ -986,6 +986,22 @@ details.ajuda>summary{min-height:32px}
 .vazio p{margin:0 auto 14px;max-width:320px;color:var(--muted);font-size:14.5px;line-height:1.45}
 .vaziobtn{border:0;border-radius:14px;padding:12px 22px;min-height:44px;font:700 15px inherit;font-family:inherit;background:#1fa85a;color:#fff;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.vazioico{animation:none}}
+
+/* letra mínima de 12px em textos que se leem (teste do usuário leigo: tests/e2e/novato.test.mjs) */
+.qpick small,.mt small,.mgrp,.dfonte,.mcard small,.qjrtit,.carimbo small{font-size:12px!important}
+
+/* ---------- tela simples (padrão) e letra grande: js/interface/simples.js ---------- */
+/* só o essencial à vista; "Mais botões na tela" (⋯ → Personalizar) traz o resto de volta */
+body.simples #mvisual,body.simples #mestilotop,body.simples #camb,
+body.simples #spin,body.simples #tour,body.simples #flat2d,body.simples #fbtn,
+body.simples .qcenter,body.simples #qstat{display:none!important}
+/* letra grande: perguntas, respostas, cartões, menus e folhas de escolha */
+body.letra-grande #quiz .qpanel,body.letra-grande #card,body.letra-grande #msheet,
+body.letra-grande #jogosheet,body.letra-grande #scopesheet,body.letra-grande #ajsheet,
+body.letra-grande #badgesheet,body.letra-grande #passsheet,body.letra-grande #statsheet,
+body.letra-grande #welcome .wbox,body.letra-grande #guiabal{zoom:1.15}
+/* boas-vindas em tela baixa (celular deitado): caixa compacta, tudo à vista sem rolar */
+@media (max-height:500px){#welcome .wlogo{display:none}#welcome .wbox{padding:12px 16px}#welcome h2{margin:0 0 2px;font-size:18px}#welcome .wsub{margin-bottom:8px}#welcome .wmodos{grid-template-columns:1fr 1fr;margin-bottom:8px}}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -1108,7 +1124,7 @@ details.ajuda>summary{min-height:32px}
     <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
 
     <div class="mgrp">⚙️ Configurar</div>
-    <button data-p="mp-visual"><span class="mi">🎨</span><span class="mt"><b>Som e visual</b><small>Efeitos, música, tema, fronteiras e nomes</small></span><span class="mc">›</span></button>
+    <button data-p="mp-visual"><span class="mi">🎨</span><span class="mt"><b>Personalizar</b><small>Letra grande, som, tema e mais botões na tela</small></span><span class="mc">›</span></button>
     <button data-p="mp-lugares"><span class="mi">🗺️</span><span class="mt"><b>Lugares no jogo</b><small>Territórios, lugares disputados e Antártida</small></span><span class="mc">›</span></button>
     <button data-p="mp-dados"><span class="mi">💾</span><span class="mt"><b>Seus dados</b><small>Salvar, restaurar ou zerar o progresso</small></span><span class="mc">›</span></button>
 
@@ -1118,10 +1134,12 @@ details.ajuda>summary{min-height:32px}
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
   </nav>
-  <div class="mpage" id="mp-visual" data-t="Som e visual" hidden>
+  <div class="mpage" id="mp-visual" data-t="Personalizar" hidden>
 <div class="mlist">
+    <label class="mswrow"><span class="mi">🔠</span><span class="mt"><b>Letra grande</b><small>Perguntas, cartões e menus maiores</small></span><input type="checkbox" id="oLetra" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🔔</span><span class="mt"><b>Efeitos sonoros</b></span><input type="checkbox" id="msfx" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🎵</span><span class="mt"><b>Música</b><small>Toca no modo Livre</small></span><input type="checkbox" id="mmusic" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🧰</span><span class="mt"><b>Mais botões na tela</b><small>Dia e noite, estilo e camadas do mapa, giro, passeio e mapa plano</small></span><input type="checkbox" id="oAvancado" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <div class="msegrow"><span class="mi">🗺️</span><span class="mt"><b>Estilo do mapa</b><small>Atlas: uma cor por país</small></span><div class="aseg" id="mestilo"><button data-v="sat">Satélite</button><button data-v="atlas">Atlas</button></div></div>
     <div class="msegrow"><span class="mi">🌓</span><span class="mt"><b>Tema</b></span><div class="aseg" id="mtema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div>
     <label class="mswrow"><span class="mi">🌗</span><span class="mt"><b>Dia e noite de verdade</b><small>Sombra da noite no globo, agora</small></span><input type="checkbox" id="oNight" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
@@ -1198,6 +1216,7 @@ details.ajuda>summary{min-height:32px}
     <button id="wlivre" class="wmodo wlivre"><b>🧭 Livre</b><span>Gire o globo e toque nos países para conhecer.</span></button>
   </div>
   <button id="wtour" class="wall">👀 Fazer um tour rápido (30 segundos)</button>
+  <button id="wletra" class="wall" aria-pressed="false">🔠 Letra maior</button>
 </div></div>
 <div id="inicio" hidden><div class="ibox" role="dialog" aria-labelledby="ititulo">
   <h2 id="ititulo" class="marca">geo<span>Total</span></h2>
@@ -4980,17 +4999,17 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   }
   function genTexture() {
     if (!estadoRender.gl || !estadoRender.feats) return;
-    setStatus("Gerando a textura do globo… 0%");
+    setStatus("Preparando o globo… 0%");
     var chave = chaveTex();
     buildTexture(function(tc) {
       if (setTextureFrom(tc)) {
-        setStatus("Pronto: textura gerada e salva neste aparelho.", 3500);
+        setStatus("");
         tc.toBlob(function(b) {
           if (b) idbSet(chave, b);
         }, "image/jpeg", 0.9);
-      } else setStatus("A textura não pôde ser usada neste aparelho.", 7e3);
+      } else setStatus("");
     }, function(p) {
-      setStatus("Gerando a textura do globo… " + p + "%");
+      setStatus("Preparando o globo… " + p + "%");
     }, mesDoMapa());
   }
   function trocarMes() {
@@ -5025,7 +5044,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (!okGL) {
       emitir("sem-webgl");
       setTimeout(function() {
-        setStatus("Seu celular não abriu o globo 3D (WebGL). Mostrando o mapa plano.", 12e3);
+        setStatus("Seu celular não mostra o globo 3D. Mostrando o mapa plano.", 12e3);
       }, 2e3);
     }
     var pTex = !okGL ? Promise.resolve(false) : idbGet(chaveTex()).then(function(b) {
@@ -5040,25 +5059,24 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     idbDel("borders");
     idbDel("tex-proc");
     for (var m = 0; m < 12; m++) if (m !== mesDoMapa() && m !== (/* @__PURE__ */ new Date()).getMonth()) idbDel("tex-proc-m" + m);
-    pTex.then(function(okTex) {
-      if (okTex) setStatus("Textura carregada do aparelho. Carregando fronteiras…");
+    pTex.then(function() {
       return loadD3Topo().then(function() {
         return loadDM().then(function() {
           return setupGeo();
         });
       });
-    }).then(function(m2) {
+    }).then(function() {
       emitir("fronteiras-carregadas");
       updateOpts();
       if (!okGL) return;
       if (estadoRender.useTex) {
-        setStatus("Pronto: fronteiras carregadas (" + m2 + " países com contorno).", 3500);
+        setStatus("");
         return;
       }
       genTexture();
     }, function() {
       updateOpts();
-      setStatus(estadoRender.useTex ? "Textura carregada, mas não consegui carregar as fronteiras (a biblioteca de mapas não abriu)." : "Não consegui carregar as fronteiras (a biblioteca de mapas não abriu). O globo segue funcionando sem elas.", 9e3);
+      setStatus("O mapa não carregou direito. Feche o app e abra de novo.", 9e3);
     });
   }
   function fixWind(f) {
@@ -5886,7 +5904,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       var p = el2.parentElement;
       return (p ? p.clientHeight : window.innerHeight) * 0.9;
     }
-    function aplicar(fr) {
+    function aplicar2(fr) {
       el2.style.maxHeight = "none";
       el2.style.height = Math.round(Math.max(180, Math.min(altoMax(), fr * altoMax() / 0.9))) + "px";
     }
@@ -5896,7 +5914,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     function abrirGrande() {
       op.grande();
-      aplicar(lsGet(op.chave, 0.62));
+      aplicar2(lsGet(op.chave, 0.62));
       op.mudou();
     }
     function abrirPequeno() {
@@ -11472,7 +11490,8 @@ NAN|Nadi|-17.76|177.44`;
     if (quiz.jogoRapido) renderScore();
     clearTimeout(quiz.autoT);
     if (ok || quiz.jogoRapido === "relampago") {
-      var asked = quiz.sessionAsked, dur = cur ? 3200 : ok ? 1200 : 1800, nx = $("qnext");
+      var devagar = !quiz.jogoRapido && document.body.classList.contains("simples");
+      var asked = quiz.sessionAsked, dur = cur ? 3200 : ok ? devagar ? 2600 : 1200 : 1800, nx = $("qnext");
       nx.style.setProperty("--auto", dur + "ms");
       nx.classList.remove("auto");
       void nx.offsetWidth;
@@ -13751,19 +13770,19 @@ NAN|Nadi|-17.76|177.44`;
     iniciarTour: () => iniciarTour
   });
   var PASSOS = [
-    { alvo: ".modesw", texto: "🔀 Aqui você troca de modo: 🎯 Treino tem perguntas; 🧭 Livre é para explorar o globo à vontade." },
-    { alvo: "#qmodeb", texto: "🎮 Escolha o jogo: capital, bandeira, achar no mapa, vizinhos… ou um jogo rápido (Relâmpago, Misto, Desafio do dia)." },
-    { alvo: "#qscopeb", texto: "📍 Escolha a região: um continente, uma parte dele, os estados do Brasil ou o mundo todo." },
-    { alvo: "#qajustb", texto: "⚙️ Ajustes da partida: digitar ou escolher, cronômetro, tamanho da rodada, meta do dia…" },
-    { alvo: "#qscore", texto: "⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥." },
-    { alvo: "#qbody", texto: "👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final." },
-    { alvo: ".tools", texto: "🌍 Controles do globo: + aproxima, − afasta e o mapa dobrado mostra o mundo plano (o globo volta no mesmo botão). No modo Livre aparecem também a seta circular (giro automático) e o ▶ (passeio pelos países)." },
-    { alvo: "#msom", texto: "🔊 O alto-falante liga e desliga todo o som. Ao lado, o sol amarelo liga a sombra da noite de verdade no globo." },
-    { alvo: "#mestilotop", texto: "🛰️ Estilo do mapa: a foto (verde) é o satélite; a paleta (laranja) é o atlas, com uma cor por país." },
-    { alvo: "#camb", texto: "🏷️ As camadas (roxo) escolhem o que aparece no mapa: oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais. No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo." },
-    { alvo: "#mbtn", texto: "••• No menu dos três pontinhos: passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, som e visual, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados." }
+    { alvo: ".modesw", texto: "🔀 Aqui você escolhe: 🎯 Treino para responder perguntas, ou 🧭 Livre para passear pelo globo." },
+    { alvo: "#qbody", texto: "👆 Leia a pergunta e toque na resposta. Acertou? Ganha pontos e estrelas. Errou? O jogo mostra a certa no mapa." },
+    { alvo: "#qmodeb", texto: "🎮 Quer outro tipo de pergunta? Toque aqui: capital, bandeira, achar no mapa…" },
+    { alvo: "#qscopeb", texto: "📍 Aqui você escolhe o lugar: um continente, o Brasil ou o mundo todo." },
+    { alvo: "#qscore", texto: "⭐ Aqui fica o seu progresso. Acertar várias seguidas acende o foguinho 🔥." },
+    { alvo: ".tools", texto: "🌍 Toque em + para aproximar e em − para afastar. Você também pode girar o globo arrastando o dedo." },
+    { alvo: "#msom", texto: "🔊 Este botão liga e desliga o som." },
+    { alvo: "#mestilotop", texto: "🛰️ Estilo do mapa: a foto (satélite) ou o atlas, com uma cor por país." },
+    { alvo: "#camb", texto: "🏷️ Camadas: escolha o que aparece no mapa, como mares, desertos e florestas." },
+    { alvo: "#mbtn", texto: "⋯ Nos três pontinhos ficam suas medalhas, o passaporte e o Personalizar: letra grande, som, tema e mais botões na tela. Tudo tem um botão ← Voltar." }
   ];
   var passo = -1;
+  var ativos = PASSOS;
   function fecharTour() {
     passo = -1;
     var g = $("guia");
@@ -13771,7 +13790,7 @@ NAN|Nadi|-17.76|177.44`;
     lsSet("globo.tour.visto", true);
   }
   function mostrarPasso() {
-    var p = PASSOS[passo], alvo = p && document.querySelector(p.alvo);
+    var p = ativos[passo], alvo = p && document.querySelector(p.alvo);
     if (!p) {
       fecharTour();
       return;
@@ -13788,8 +13807,8 @@ NAN|Nadi|-17.76|177.44`;
     luz.style.width = r.width + 2 * m + "px";
     luz.style.height = r.height + 2 * m + "px";
     $("guiatxt").textContent = p.texto;
-    $("guiapasso").textContent = passo + 1 + " de " + PASSOS.length;
-    $("guiaprox").textContent = passo === PASSOS.length - 1 ? "Começar! 🚀" : "Próximo →";
+    $("guiapasso").textContent = passo + 1 + " de " + ativos.length;
+    $("guiaprox").textContent = passo === ativos.length - 1 ? "Começar! 🚀" : "Próximo →";
     var H2 = window.innerHeight, emCima = r.bottom + 170 > H2;
     bal.style.top = emCima ? "auto" : r.bottom + m + 12 + "px";
     bal.style.bottom = emCima ? H2 - r.top + m + 12 + "px" : "auto";
@@ -13799,7 +13818,13 @@ NAN|Nadi|-17.76|177.44`;
     var g = $("guia");
     g.hidden = false;
     passo = 0;
-    setTimeout(mostrarPasso, 450);
+    setTimeout(function() {
+      ativos = PASSOS.filter(function(p) {
+        var a = document.querySelector(p.alvo);
+        return a && a.getClientRects().length;
+      });
+      mostrarPasso();
+    }, 450);
   }
   function iniciar49() {
     $("guiaprox").onclick = function() {
@@ -14037,10 +14062,44 @@ NAN|Nadi|-17.76|177.44`;
     });
   }
 
+  // web/src/js/interface/simples.js
+  var simples_exports = {};
+  __export(simples_exports, {
+    iniciar: () => iniciar53
+  });
+  function aplicar() {
+    var grande = !!lsGet("globo.letra", false);
+    document.body.classList.toggle("simples", !lsGet("globo.avancado", false));
+    document.body.classList.toggle("letra-grande", grande);
+    $("oLetra").checked = grande;
+    var w = $("wletra");
+    if (w) {
+      w.setAttribute("aria-pressed", grande ? "true" : "false");
+      w.textContent = grande ? "🔠 Voltar à letra normal" : "🔠 Letra maior";
+    }
+  }
+  function iniciar53() {
+    var av = $("oAvancado"), le = $("oLetra");
+    av.checked = !!lsGet("globo.avancado", false);
+    av.onchange = function() {
+      lsSet("globo.avancado", av.checked);
+      aplicar();
+    };
+    le.onchange = function() {
+      lsSet("globo.letra", le.checked);
+      aplicar();
+    };
+    if ($("wletra")) $("wletra").onclick = function() {
+      lsSet("globo.letra", !lsGet("globo.letra", false));
+      aplicar();
+    };
+    aplicar();
+  }
+
   // web/src/js/recursos/progresso.js
   var progresso_exports = {};
   __export(progresso_exports, {
-    iniciar: () => iniciar53,
+    iniciar: () => iniciar54,
     restaurarDeTexto: () => restaurarDeTexto
   });
   var MARCA = "geoTotal-progresso";
@@ -14076,7 +14135,7 @@ NAN|Nadi|-17.76|177.44`;
     }
     return "";
   }
-  function iniciar53() {
+  function iniciar54() {
     $("msave").onclick = salvarProgresso;
     $("mload").onchange = function() {
       var f = this.files && this.files[0];
@@ -14102,7 +14161,7 @@ NAN|Nadi|-17.76|177.44`;
   var ajustes_exports = {};
   __export(ajustes_exports, {
     abrirAjustes: () => abrirAjustes,
-    iniciar: () => iniciar54
+    iniciar: () => iniciar55
   });
   var LINHAS = [
     [
@@ -14267,7 +14326,7 @@ NAN|Nadi|-17.76|177.44`;
   function fecharAjustes() {
     $("ajsheet").style.display = "none";
   }
-  function iniciar54() {
+  function iniciar55() {
     $("qajustb").onclick = abrirAjustes;
     $("goalgo").onclick = abrirAjustes;
     $("goalgo").title = "Toque para mudar a meta do dia e outros ajustes";
@@ -14279,6 +14338,7 @@ NAN|Nadi|-17.76|177.44`;
   }
 
   // web/src/js/main.js
+  iniciar53();
   iniciar();
   iniciar2();
   iniciar3();
@@ -14328,13 +14388,13 @@ NAN|Nadi|-17.76|177.44`;
   iniciar46();
   iniciar47();
   iniciar49();
-  iniciar54();
+  iniciar55();
   iniciar50();
   iniciar51();
-  iniciar53();
+  iniciar54();
   iniciar52();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, regioes_naturais_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, camadas_exports, cartao_natural_exports, pdf_exports, avaliacao_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, regioes_naturais_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, camadas_exports, cartao_natural_exports, pdf_exports, avaliacao_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, simples_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {

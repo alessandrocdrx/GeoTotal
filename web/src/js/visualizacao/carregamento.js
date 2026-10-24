@@ -29,14 +29,14 @@ function setTextureFrom(c){
 }
 function genTexture(){
   if(!estadoRender.gl||!estadoRender.feats)return;
-  setStatus('Gerando a textura do globo… 0%');
+  setStatus('Preparando o globo… 0%');
   var chave=chaveTex();
   buildTexture(function(tc){
     if(setTextureFrom(tc)){
-      setStatus('Pronto: textura gerada e salva neste aparelho.',3500);
+      setStatus('');
       tc.toBlob(function(b){if(b)idbSet(chave,b);},'image/jpeg',.9);
-    }else setStatus('A textura não pôde ser usada neste aparelho.',7000);
-  },function(p){setStatus('Gerando a textura do globo… '+p+'%');},mesDoMapa());
+    }else setStatus('');
+  },function(p){setStatus('Preparando o globo… '+p+'%');},mesDoMapa());
 }
 /** Troca a textura para o mês do mapa (do aparelho, se já foi feita; senão gera). */
 function trocarMes(){
@@ -60,7 +60,7 @@ function startMap(){
   if(!okGL){
     emitir('sem-webgl');
     /* depois que o Treino abre: a tela de partida limpa a barra de avisos ao abrir */
-    setTimeout(function(){setStatus('Seu celular não abriu o globo 3D (WebGL). Mostrando o mapa plano.',12000);},2000);
+    setTimeout(function(){setStatus('Seu celular não mostra o globo 3D. Mostrando o mapa plano.',12000);},2000);
   }
   var pTex=!okGL?Promise.resolve(false):
     idbGet(chaveTex()).then(function(b){
@@ -70,19 +70,18 @@ function startMap(){
   /* textura e fronteiras importadas por versões antigas (a importação saiu do menu): apaga as sobras */
   idbDel('tex-custom');idbDel('borders');idbDel('tex-proc');
   for(var m=0;m<12;m++)if(m!==mesDoMapa()&&m!==new Date().getMonth())idbDel('tex-proc-m'+m);
-  pTex.then(function(okTex){
-    if(okTex)setStatus('Textura carregada do aparelho. Carregando fronteiras…');
+  pTex.then(function(){
     return loadD3Topo().then(function(){
       return loadDM().then(function(){return setupGeo();});
     });
-  }).then(function(m){
+  }).then(function(){
     emitir('fronteiras-carregadas');updateOpts();
     if(!okGL)return;
-    if(estadoRender.useTex){setStatus('Pronto: fronteiras carregadas ('+m+' países com contorno).',3500);return;}
+    if(estadoRender.useTex){setStatus('');return;}
     genTexture();
   },function(){
     updateOpts();
-    setStatus(estadoRender.useTex?'Textura carregada, mas não consegui carregar as fronteiras (a biblioteca de mapas não abriu).':'Não consegui carregar as fronteiras (a biblioteca de mapas não abriu). O globo segue funcionando sem elas.',9000);
+    setStatus('O mapa não carregou direito. Feche o app e abra de novo.',9000);
   });
 }
 function fixWind(f){

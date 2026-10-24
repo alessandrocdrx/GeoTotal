@@ -17,7 +17,7 @@
     <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
 
     <div class="mgrp">⚙️ Configurar</div>
-    <button data-p="mp-visual"><span class="mi">🎨</span><span class="mt"><b>Som e visual</b><small>Efeitos, música, tema, fronteiras e nomes</small></span><span class="mc">›</span></button>
+    <button data-p="mp-visual"><span class="mi">🎨</span><span class="mt"><b>Personalizar</b><small>Letra grande, som, tema e mais botões na tela</small></span><span class="mc">›</span></button>
     <button data-p="mp-lugares"><span class="mi">🗺️</span><span class="mt"><b>Lugares no jogo</b><small>Territórios, lugares disputados e Antártida</small></span><span class="mc">›</span></button>
     <button data-p="mp-dados"><span class="mi">💾</span><span class="mt"><b>Seus dados</b><small>Salvar, restaurar ou zerar o progresso</small></span><span class="mc">›</span></button>
 
@@ -27,10 +27,12 @@
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
   </nav>
-  <div class="mpage" id="mp-visual" data-t="Som e visual" hidden>
+  <div class="mpage" id="mp-visual" data-t="Personalizar" hidden>
 <div class="mlist">
+    <label class="mswrow"><span class="mi">🔠</span><span class="mt"><b>Letra grande</b><small>Perguntas, cartões e menus maiores</small></span><input type="checkbox" id="oLetra" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🔔</span><span class="mt"><b>Efeitos sonoros</b></span><input type="checkbox" id="msfx" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🎵</span><span class="mt"><b>Música</b><small>Toca no modo Livre</small></span><input type="checkbox" id="mmusic" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🧰</span><span class="mt"><b>Mais botões na tela</b><small>Dia e noite, estilo e camadas do mapa, giro, passeio e mapa plano</small></span><input type="checkbox" id="oAvancado" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <div class="msegrow"><span class="mi">🗺️</span><span class="mt"><b>Estilo do mapa</b><small>Atlas: uma cor por país</small></span><div class="aseg" id="mestilo"><button data-v="sat">Satélite</button><button data-v="atlas">Atlas</button></div></div>
     <div class="msegrow"><span class="mi">🌓</span><span class="mt"><b>Tema</b></span><div class="aseg" id="mtema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div>
     <label class="mswrow"><span class="mi">🌗</span><span class="mt"><b>Dia e noite de verdade</b><small>Sombra da noite no globo, agora</small></span><input type="checkbox" id="oNight" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>

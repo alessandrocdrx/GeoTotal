@@ -199,6 +199,24 @@ conquistas, histórico, Distância, folha de estudo, Estados) em celular pequeno
 
 Tela nova entra em `TELAS_APP`; exceção consciente entra em `PERMITIDOS`, sempre com o motivo.
 
+### Usuário leigo (`tests/e2e/novato.test.mjs`)
+
+Simula quem nunca usou o app e não entende de Android: só toca no que aparece na tela, pelo nome
+escrito no botão. Falha se:
+
+- na primeira vez, um toque não leva a uma pergunta com as respostas à vista;
+- acertar não comemora, errar não mostra a resposta certa ou o jogo não segue;
+- no Livre, tocar num país não abre o cartão com a capital, ou "Fechar" não fecha;
+- alguma tela não tem botão de sair à vista (Voltar/Fechar), ou o Voltar do celular fecharia o app
+  em vez dela, ou ela não volta ao jogo;
+- aparece lixo ("undefined", "NaN"), palavra técnica (WebGL, JSON, API…) ou letra abaixo de 12px;
+- depois de 12 s ainda há aviso de "carregando".
+- a tela simples (padrão) mostra botões extras, "Mais botões na tela" não os traz de volta, a letra
+  grande não aumenta a pergunta, ou o tutorial mostra passos de botões escondidos.
+
+Tela nova que se abre pelo menu entra em `TELAS`; palavra técnica que precisa ficar entra em
+`JARGAO_PERMITIDO`, com a tela e o motivo.
+
 ### Prints iguais aos do celular do usuário
 
 O usuário usa um **Motorola Edge 60 Pro**: 450px CSS de largura, tema escuro e fonte Roboto.

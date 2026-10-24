@@ -123,6 +123,10 @@ no perfil Edge 60 Pro, artefato atualizado.
 - D5. Sem pedir aos testadores que atualizem pela Play (decisão do dono na 1.40).
 - D6. Parte Android em Kotlin + Jetpack Compose (o jogo continua no WebView). Etapa 1: a casca;
   telas nativas em Compose podem vir depois, uma de cada vez, sem perder a versão web.
+- D7. Tela simples por padrão, pensada para quem tem pouca intimidade com tecnologia: no topo só
+  som, Treino/Livre e ⋯; no mapa só + e −. O resto (dia e noite, estilo e camadas do mapa, giro,
+  passeio, mapa plano, filtro do Livre) volta em ⋯ → Personalizar → "Mais botões na tela". Letra
+  grande nas boas-vindas e no Personalizar. Mensagens técnicas de carregamento saíram da tela.
 
 ## 9. Riscos
 
@@ -139,3 +143,4 @@ no perfil Edge 60 Pro, artefato atualizado.
 |---|---|---|
 | v1 | 15/10/2026 | Documento criado a partir do estado da 1.40 e do branch `proxima-versao` |
 | v2 | 22/10/2026 | D6: parte Android passa para Kotlin + Jetpack Compose |
+| v3 | 24/10/2026 | D7: tela simples por padrão, letra grande e teste do usuário leigo |

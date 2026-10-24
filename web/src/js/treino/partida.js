@@ -356,7 +356,9 @@ function finishQ(ok,extra){
   /* acertou: passa sozinho para a próxima (a barrinha no botão mostra o tempo); errou: espera o toque em "Próxima" */
   clearTimeout(quiz.autoT);
   if(ok||quiz.jogoRapido==='relampago'){
-    var asked=quiz.sessionAsked,dur=cur?3200:(ok?1200:1800),nx=$('qnext');
+    /* na tela simples (padrão) dá tempo de ler o "Certo! A capital de… é…" antes de passar */
+    var devagar=!quiz.jogoRapido&&document.body.classList.contains('simples');
+    var asked=quiz.sessionAsked,dur=cur?3200:(ok?(devagar?2600:1200):1800),nx=$('qnext');
     nx.style.setProperty('--auto',dur+'ms');nx.classList.remove('auto');void nx.offsetWidth;nx.classList.add('auto');
     quiz.autoT=setTimeout(function(){
       if(quiz.open&&quiz.answered&&quiz.sessionAsked===asked)$('qnext').click();

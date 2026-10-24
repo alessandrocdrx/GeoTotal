@@ -9,25 +9,27 @@ import { quiz } from './estado.js';
 import { quizOpen } from './perguntas.js';
 
 /*
- * Cada passo escurece a tela, deixa só o alvo aceso e explica em uma frase. "Próximo" avança,
- * "Pular" fecha. Abre o Treino antes, para que os botões do painel existam.
+ * Cada passo escurece a tela, deixa só o alvo aceso e explica em uma frase curta e simples.
+ * "Próximo" avança, "Pular" fecha. Abre o Treino antes, para que os botões do painel existam.
+ * Passos de botões escondidos (tela simples, ⋯ → Personalizar) são pulados sozinhos.
  */
 
 const PASSOS = [
-  { alvo: '.modesw', texto: '🔀 Aqui você troca de modo: 🎯 Treino tem perguntas; 🧭 Livre é para explorar o globo à vontade.' },
-  { alvo: '#qmodeb', texto: '🎮 Escolha o jogo: capital, bandeira, achar no mapa, vizinhos… ou um jogo rápido (Relâmpago, Misto, Desafio do dia).' },
-  { alvo: '#qscopeb', texto: '📍 Escolha a região: um continente, uma parte dele, os estados do Brasil ou o mundo todo.' },
-  { alvo: '#qajustb', texto: '⚙️ Ajustes da partida: digitar ou escolher, cronômetro, tamanho da rodada, meta do dia…' },
-  { alvo: '#qscore', texto: '⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥.' },
-  { alvo: '#qbody', texto: '👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final.' },
-  { alvo: '.tools', texto: '🌍 Controles do globo: + aproxima, − afasta e o mapa dobrado mostra o mundo plano (o globo volta no mesmo botão). No modo Livre aparecem também a seta circular (giro automático) e o ▶ (passeio pelos países).' },
-  { alvo: '#msom', texto: '🔊 O alto-falante liga e desliga todo o som. Ao lado, o sol amarelo liga a sombra da noite de verdade no globo.' },
-  { alvo: '#mestilotop', texto: '🛰️ Estilo do mapa: a foto (verde) é o satélite; a paleta (laranja) é o atlas, com uma cor por país.' },
-  { alvo: '#camb', texto: '🏷️ As camadas (roxo) escolhem o que aparece no mapa: oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais. No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo.' },
-  { alvo: '#mbtn', texto: '••• No menu dos três pontinhos: passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, som e visual, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados.' },
+  { alvo: '.modesw', texto: '🔀 Aqui você escolhe: 🎯 Treino para responder perguntas, ou 🧭 Livre para passear pelo globo.' },
+  { alvo: '#qbody', texto: '👆 Leia a pergunta e toque na resposta. Acertou? Ganha pontos e estrelas. Errou? O jogo mostra a certa no mapa.' },
+  { alvo: '#qmodeb', texto: '🎮 Quer outro tipo de pergunta? Toque aqui: capital, bandeira, achar no mapa…' },
+  { alvo: '#qscopeb', texto: '📍 Aqui você escolhe o lugar: um continente, o Brasil ou o mundo todo.' },
+  { alvo: '#qscore', texto: '⭐ Aqui fica o seu progresso. Acertar várias seguidas acende o foguinho 🔥.' },
+  { alvo: '.tools', texto: '🌍 Toque em + para aproximar e em − para afastar. Você também pode girar o globo arrastando o dedo.' },
+  { alvo: '#msom', texto: '🔊 Este botão liga e desliga o som.' },
+  { alvo: '#mestilotop', texto: '🛰️ Estilo do mapa: a foto (satélite) ou o atlas, com uma cor por país.' },
+  { alvo: '#camb', texto: '🏷️ Camadas: escolha o que aparece no mapa, como mares, desertos e florestas.' },
+  { alvo: '#mbtn', texto: '⋯ Nos três pontinhos ficam suas medalhas, o passaporte e o Personalizar: letra grande, som, tema e mais botões na tela. Tudo tem um botão ← Voltar.' },
 ];
 
 let passo = -1;
+/* passos deste tour: só os de botões que estão na tela agora (a numeração "2 de 7" não pula) */
+let ativos = PASSOS;
 
 function fecharTour(){
   passo=-1;
@@ -35,15 +37,15 @@ function fecharTour(){
   lsSet('globo.tour.visto',true);
 }
 function mostrarPasso(){
-  var p=PASSOS[passo],alvo=p&&document.querySelector(p.alvo);
+  var p=ativos[passo],alvo=p&&document.querySelector(p.alvo);
   if(!p){fecharTour();return;}
   if(!alvo||!alvo.getClientRects().length){passo++;mostrarPasso();return;}
   var r=alvo.getBoundingClientRect(),m=6;
   var luz=$('guialuz'),bal=$('guiabal');
   luz.style.left=(r.left-m)+'px';luz.style.top=(r.top-m)+'px';luz.style.width=(r.width+2*m)+'px';luz.style.height=(r.height+2*m)+'px';
   $('guiatxt').textContent=p.texto;
-  $('guiapasso').textContent=(passo+1)+' de '+PASSOS.length;
-  $('guiaprox').textContent=passo===PASSOS.length-1?'Começar! 🚀':'Próximo →';
+  $('guiapasso').textContent=(passo+1)+' de '+ativos.length;
+  $('guiaprox').textContent=passo===ativos.length-1?'Começar! 🚀':'Próximo →';
   /* balão embaixo do alvo, ou em cima se não couber */
   var H=window.innerHeight,emCima=r.bottom+170>H;
   bal.style.top=emCima?'auto':(r.bottom+m+12)+'px';
@@ -53,7 +55,10 @@ function iniciarTour(){
   if(!quiz.open)quizOpen();
   var g=$('guia');g.hidden=false;
   passo=0;
-  setTimeout(mostrarPasso,450);
+  setTimeout(function(){
+    ativos=PASSOS.filter(function(p){var a=document.querySelector(p.alvo);return a&&a.getClientRects().length;});
+    mostrarPasso();
+  },450);
 }
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */

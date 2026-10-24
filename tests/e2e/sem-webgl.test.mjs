@@ -34,6 +34,6 @@ test('sem WebGL: abre o mapa plano e avisa que o globo 3D não abriu', async () 
   await ctx.close();
   assert.equal(r.plano, true, 'o mapa plano é o que aparece');
   assert.equal(r.botao, 'true', 'o botão 🗺️ mostra que o mapa plano está ligado');
-  assert.match(r.aviso, /não abriu o globo 3D/, 'o aviso aparece na tela');
+  assert.match(r.aviso, /não mostra o globo 3D/, 'o aviso aparece na tela');
   assert.deepEqual(erros, []);
 });

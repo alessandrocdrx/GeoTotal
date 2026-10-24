@@ -14,6 +14,9 @@ before(async () => { ambiente = await iniciarServidor(); });
 after(async () => { await ambiente?.encerrar(); });
 const abrirApp = (opcoes) => abrir(ambiente, opcoes);
 
+/** Liga "Mais botões na tela" (⋯ → Personalizar), como a pessoa faria para ver os botões extras. */
+const maisBotoes = (pagina) => pagina.evaluate(() => { const c = document.getElementById('oAvancado'); if (!c.checked) c.click(); });
+
 test('abre no Treino, sem erros e sem acessar a internet', async () => {
   const { pagina, erros, externos, fechar } = await abrirApp();
   const estado = await pagina.evaluate(() => {
@@ -416,6 +419,7 @@ test('boas-vindas: cartão Livre abre o Livre; tour passa por todos os passos e 
 
 test('giro e passeio: escondidos no Treino; no Livre explicam o que fazem', async () => {
   const { pagina, erros, fechar } = await abrirApp();
+  await maisBotoes(pagina);
   assert.equal(await pagina.isVisible('#tour'), false, 'passeio escondido no Treino');
   assert.equal(await pagina.isVisible('#spin'), false, 'giro escondido no Treino');
   await pagina.click('#qclose');
@@ -433,6 +437,7 @@ test('giro e passeio: escondidos no Treino; no Livre explicam o que fazem', asyn
 
 test('passeio continua ao fechar o cartão; giro funciona no mapa plano', async () => {
   const { pagina, erros, fechar } = await abrirApp();
+  await maisBotoes(pagina);
   await pagina.click('#qclose');
   await pagina.waitForTimeout(400);
   await pagina.click('#tour');
@@ -576,6 +581,7 @@ test('zerar tudo também zera nível e conquistas', async () => {
 
 test('dia e noite no topo e no menu ⋯, tema com as três opções à vista', async () => {
   const { pagina, erros, fechar } = await abrirApp();
+  await maisBotoes(pagina);
   await pagina.waitForFunction(() => !document.getElementById('oNight').disabled, null, { timeout: 15000 });
   await pagina.click('#mvisual');
   const topo = await pagina.evaluate(() => ({ noite: window.__geoTotal.optNight, icone: document.getElementById('mvisual').dataset.ico, chave: document.getElementById('oNight').checked }));
