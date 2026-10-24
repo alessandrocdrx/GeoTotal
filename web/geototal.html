@@ -917,20 +917,23 @@ details.ajuda>p,details.ajuda>div{margin:4px 0 0;padding:8px 10px;border-radius:
 .dbmax[hidden]{display:none}
 #dbar .dbtop{align-items:center}
 
-/* cabeçalho que não cabe na tela (js/interface/botoes.js): estilo do mapa e, se preciso, dia e noite
-   ficam só no menu ⋯ */
-/* cabeçalho apertado (🔥 da sequência, fonte grande do celular): os atalhos 🔊 ☀️ 🛰️ 🏷️ ficam
-   sempre; primeiro tudo fica mais justo, e só no aperto maior a logo sai para dar lugar a eles */
+/* cabeçalho apertado (🔥 da sequência, fonte larga do celular): os atalhos 🔊 ☀️ 🛰️ 🏷️ e a logo
+   ficam sempre. 1º os botões ficam mais justos; 2º o nome "geoTotal" dá lugar só à logo G;
+   3º tudo fica um pouco menor; 4º, só em celular muito estreito, o 🔥 sai do topo (o avanço da
+   sequência continua nas Conquistas) */
 body.cab-apertado .hbtns{gap:2px}
 body.cab-apertado .hsom{width:30px!important;height:32px!important;font-size:15px!important;border-radius:10px}
 body.cab-apertado header .modesw{padding:2px}
-body.cab-apertado header .modesw button{padding:0 6px!important;font-size:12.5px!important}
+body.cab-apertado header .modesw button{padding:0 5px!important;font-size:12.5px!important}
 body.cab-apertado #mbtn{padding:0 7px!important}
 body.cab-apertado .streakpill{padding:0 5px!important;font-size:12px}
-body.cab-apertado2 header h1.marca{display:none}
-body.cab-apertado2 .hsom{width:28px!important;font-size:14px!important}
-body.cab-apertado2 header .modesw button{padding:0 5px!important;font-size:12px!important}
-body.cab-apertado2 .streakpill{padding:0 3px!important;letter-spacing:-.02em}
+body.cab-apertado2 header h1.marca{font-size:0}
+body.cab-apertado2 header h1.marca .marca-logo{margin-right:0}
+body.cab-apertado3 header h1.marca .marca-logo{width:26px;height:26px}
+body.cab-apertado3 .htop{gap:4px}
+body.cab-apertado3 .hsom{width:28px!important;font-size:14px!important}
+body.cab-apertado3 header .modesw button{padding:0 5px!important;font-size:12px!important}
+body.cab-apertado4 .streakpill{display:none!important}
 /* jogos rápidos em celular estreito: o nome quebra em duas linhas em vez de sair do cartão */
 .qjr .mcard{overflow:hidden}
 .qjr .mcard b{white-space:normal;line-height:1.2;overflow-wrap:anywhere}
@@ -8872,7 +8875,7 @@ NAN|Nadi|-17.76|177.44`;
   function larguraDaTela() {
     return Math.min(window.innerWidth, screen.width || window.innerWidth);
   }
-  var APERTOS = ["cab-apertado", "cab-apertado2"];
+  var APERTOS = ["cab-apertado", "cab-apertado2", "cab-apertado3", "cab-apertado4"];
   function encaixarCabecalho() {
     var htop = document.querySelector("header .htop");
     if (!htop) return;

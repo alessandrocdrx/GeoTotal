@@ -15,13 +15,14 @@ let lc;
    cresce junto), então vale a menor das duas */
 function larguraDaTela(){return Math.min(window.innerWidth,screen.width||window.innerWidth);}
 
-/* o que sai do cabeçalho quando falta espaço, nesta ordem; os dois também estão no menu ⋯ */
-const APERTOS = ['cab-apertado', 'cab-apertado2'];
+/* passos para o cabeçalho caber, nesta ordem (ux.css): botões mais justos, só a logo sem o nome,
+   tudo menor e, por último, o 🔥 da sequência sai do topo */
+const APERTOS = ['cab-apertado', 'cab-apertado2', 'cab-apertado3', 'cab-apertado4'];
 
 /**
- * Se os botões do cabeçalho não cabem na tela (fonte larga, 🔥 da sequência aparecendo), sai do
- * cabeçalho o estilo do mapa e, se ainda faltar espaço, o dia e noite: os dois também estão no menu ⋯.
- * Sem isso a página ganhava rolagem lateral e o ⋯ ficava fora da tela.
+ * Se o cabeçalho não cabe na tela (fonte larga, 🔥 da sequência aparecendo), aplica os passos de
+ * APERTOS só até caber: nenhum atalho some e a logo fica. Sem isso a página ganhava rolagem
+ * lateral e o ⋯ ficava fora da tela.
  */
 function encaixarCabecalho(){
   var htop=document.querySelector('header .htop');if(!htop)return;

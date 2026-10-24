@@ -5,7 +5,7 @@
 // não aparece, então o app abre sozinho o mapa plano e avisa o motivo; (2) página aberta antes de o
 // WebView ter tamanho (tela 0×0 por um instante): o mapa tem de aparecer quando a tela crescer;
 // (3) fonte larga com o 🔥 da sequência no cabeçalho: nada pode passar da tela e os atalhos
-// 🔊 ☀️ 🛰️ 🏷️ continuam no topo.
+// 🔊 ☀️ 🛰️ 🏷️ e a logo continuam no topo.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { iniciarServidor } from './apoio.mjs';
@@ -68,7 +68,7 @@ test('tela 0×0 na abertura (WebView ainda sem tamanho): o mapa aparece quando a
 
 test('cabeçalho com 🔥 da sequência cabe na tela, mesmo com fonte larga', async () => {
   const problemas = [];
-  for (const largura of [320, 360]) {
+  for (const largura of [320, 360, 393, 412]) {
     const ctx = await ambiente.navegador.newContext({ viewport: { width: largura, height: 720 }, isMobile: true, hasTouch: true });
     const pagina = await ctx.newPage();
     await pagina.addInitScript(() => { try { localStorage.setItem('globo.bv.v1', 'true'); localStorage.setItem('globo.legenda.vista', 'true'); } catch {} });
@@ -86,6 +86,8 @@ test('cabeçalho com 🔥 da sequência cabe na tela, mesmo com fonte larga', as
       return !(b.width > 20 && b.right <= L);
     }), largura);
     if (atalhos.length) problemas.push(`${largura}px: atalhos escondidos ou fora da tela: ${atalhos.join(', ')}`);
+    const logo = await pagina.evaluate(() => document.querySelector('header .marca-logo').getBoundingClientRect().width);
+    if (!(logo >= 24)) problemas.push(`${largura}px: logo do geoTotal sumiu do cabeçalho`);
     await ctx.close();
   }
   assert.deepEqual(problemas, []);
