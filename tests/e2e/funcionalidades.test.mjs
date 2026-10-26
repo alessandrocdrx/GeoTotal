@@ -45,12 +45,15 @@ const menu = (pagina) => [`abrir página ${pagina} do menu`, (p) => {
   document.querySelector(`[data-p="${p}"]`).click();
 }, pagina];
 
-/** Abre ⚙️ Ajustes da partida e toca na alternativa n da linha com esse título. */
+/** Abre ⚙️ Ajustes da partida e toca na alternativa n da linha com esse título (numa chave, 1 liga). */
 const ajuste = (titulo, n) => [`ajuste ${titulo} → ${n}`, ([t, i]) => {
   document.getElementById('qajustb').click();
+  /* sim ou não é uma chave; o resto, lista com bolinha */
+  const chave = [...document.querySelectorAll('#ajbody label.mswrow')].find((r) => r.querySelector('b').textContent === t);
+  if (chave) { const cb = chave.querySelector('input'); if (cb.checked !== !!i) cb.click(); return; }
   const linha = [...document.querySelectorAll('#ajbody .ajrow')].find((r) => r.querySelector('b').textContent === t);
   if (!linha) throw new Error('sem a linha ' + t);
-  linha.querySelectorAll('.aseg button')[i].click();
+  linha.querySelectorAll('.mradio button')[i].click();
 }, [titulo, n]];
 
 test('treino: todos os tipos de pergunta, respostas, dica, digitação e opções', async () => {

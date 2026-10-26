@@ -13,7 +13,7 @@ let ov = null, aberto = null;
 
 function montar(){
   ov=document.createElement('div');ov.id='escolha';ov.className='escolha';ov.hidden=true;
-  ov.innerHTML='<div class="esbox"><div class="eshead"><b id="estit"></b><button class="closeb" id="esfechar" aria-label="Fechar">✕</button></div>'+
+  ov.innerHTML='<div class="esbox"><div class="eshead"><button class="voltar" id="esfechar" aria-label="Voltar">←</button><b id="estit"></b></div>'+
     '<input id="esq" type="search" autocomplete="off" placeholder="Digite o país, a capital ou a sigla" aria-label="Buscar país">'+
     '<div id="eslista" class="eslista" role="listbox"></div></div>';
   document.body.appendChild(ov);

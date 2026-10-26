@@ -21,7 +21,8 @@ let pilha=[];
 function mShow(id){
   $('mlist').hidden=!!id;
   Array.prototype.forEach.call(document.querySelectorAll('#msheet .mpage'),function(pg){pg.hidden=pg.id!==id;});
-  $('mback').hidden=!id;$('mtitle').textContent=id?$(id).getAttribute('data-t'):'Menu';
+  /* um botão só no canto esquerdo: ✕ na primeira página, ← nas de dentro */
+  $('mback').hidden=!id;$('mclose').hidden=!!id;$('mtitle').textContent=id?$(id).getAttribute('data-t'):'Menu';
   var bx=$('msheet').querySelector('.box');if(bx)bx.scrollTop=0;
 }
 /** Botões lado a lado (.aseg): marca o valor atual e chama definir(valor) ao tocar. */

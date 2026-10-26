@@ -61,21 +61,22 @@ test('filtro por continente e Desfazer funcionam no modo Livre (regressão: "his
   await fechar();
 });
 
-test('⚙️ abre os ajustes da partida com as alternativas à vista e vale na hora', async () => {
+test('⚙️ abre os ajustes da partida em listas com bolinha (sobrevivência é chave) e vale na hora', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.click('#qbtn');
   await pagina.click('#qajustb');
   const linhas = await pagina.evaluate(() => [...document.querySelectorAll('#ajbody .ajrow > b')].map((b) => b.textContent));
-  assert.deepEqual(linhas, ['Nível', 'Responder', 'Meta do dia', 'Perguntas', 'Ordem', 'Tamanho da rodada', 'Cronômetro', 'Sobrevivência']);
+  assert.deepEqual(linhas, ['Nível', 'Responder', 'Meta do dia', 'Perguntas', 'Ordem', 'Tamanho da rodada', 'Cronômetro']);
+  assert.equal(await pagina.locator('#ajbody label.mswrow:has(b:text-is("Sobrevivência")) input[role="switch"]').count(), 1);
   const linha = (t) => `#ajbody .ajrow:has(> b:text-is("${t}"))`;
   await pagina.click('#ajbody .ajmais summary');
-  await pagina.locator(`${linha('Cronômetro')} .aseg button`).nth(2).click();
+  await pagina.locator(`${linha('Cronômetro')} .mradio button`).nth(2).click();
   const r = await pagina.evaluate(() => {
     const achar = (t) => [...document.querySelectorAll('#ajbody .ajrow')].find((x) => x.querySelector('b').textContent === t);
     return {
       tempo: window.__geoTotal.quiz.timerLen,
-      marcado: achar('Cronômetro').querySelectorAll('.aseg button')[2].getAttribute('aria-pressed'),
-      rodada: achar('Tamanho da rodada').querySelector('.aseg button[aria-pressed="true"]').textContent,
+      marcado: achar('Cronômetro').querySelectorAll('.mradio button')[2].getAttribute('aria-pressed'),
+      rodada: achar('Tamanho da rodada').querySelector('.mradio button[aria-pressed="true"]').textContent,
       aberto: document.getElementById('ajsheet').style.display,
     };
   });

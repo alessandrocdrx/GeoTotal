@@ -1,8 +1,8 @@
 /**
  * @arquivo js/treino/ajustes.js
  * Camada: Treino
- * Tela "Ajustes da partida" (botão ⚙️ do painel): cada opção mostra as alternativas lado a lado
- * e vale na hora, sem sair do jogo. Também abre pela meta do dia ("0/10 hoje").
+ * Tela "Ajustes da partida" (botão ⚙️ do painel): cada opção é uma lista com bolinha (sim ou não
+ * vira chave), como o resto do menu, e vale na hora, sem sair do jogo. Também abre pela meta do dia ("0/10 hoje").
  */
 
 import { $, setStatus } from '../nucleo/utilitarios.js';
@@ -19,15 +19,15 @@ const LINHAS = [
     function(){return quiz.nivel||'normal';},definirNivel],
   ['Responder','Vizinhos e Achar no mapa são sempre de tocar.',[['choice','👆 Escolher'],['type','⌨️ Digitar']],
     function(){return quiz.type;},definirResposta],
-  ['Meta do dia','Respostas por dia para manter a sequência 🔥.',[[5,'5'],[10,'10'],[20,'20'],[30,'30']],
+  ['Meta do dia','Respostas por dia para manter a sequência 🔥.',[[5,'5 por dia'],[10,'10 por dia'],[20,'20 por dia'],[30,'30 por dia']],
     metaDoDia,definirMeta],
-  ['Perguntas','',[['mix','Todas'],['new','Só novas'],['wrong','Que errei']],
+  ['Perguntas','',[['mix','Todas'],['new','Só as novas'],['wrong','Só as que errei']],
     function(){return estadoTreino.quizFocus;},definirFoco,true],
   ['Ordem','',[['random','🔀 Aleatória'],['seq','➡️ Em sequência']],
     function(){return quiz.order==='seq'?'seq':'random';},definirOrdem,true],
-  ['Tamanho da rodada','No Mundo. Numa região, a rodada vai até completar a região.',[[0,'Sem fim'],[10,'10'],[20,'20']],
+  ['Tamanho da rodada','No Mundo. Numa região, a rodada vai até completar a região.',[[0,'Sem fim'],[10,'10 perguntas'],[20,'20 perguntas']],
     function(){return quiz.sessionLen;},definirRodada,true],
-  ['Cronômetro','Responda o máximo que der antes do tempo acabar.',[[0,'Sem tempo'],[30,'30 s'],[60,'60 s']],
+  ['Cronômetro','Responda o máximo que der antes do tempo acabar.',[[0,'Sem tempo'],[30,'30 segundos'],[60,'60 segundos']],
     function(){return quiz.timerLen;},definirTempo,true],
   ['Sobrevivência','Errou uma vez, a rodada acaba.',[[false,'Não'],[true,'💀 Sim']],
     function(){return !!quiz.survivalMode;},definirSobrevivencia,true],
@@ -37,13 +37,27 @@ function montarAjustes(){
   var box=$('ajbody');box.innerHTML='';
   /* o que quase ninguém muda fica fechado em "Mais ajustes" (abre se algum deles estiver diferente do normal) */
   var mais=document.createElement('details');mais.className='ajmais';
-  var sm=document.createElement('summary');sm.textContent='Mais ajustes: perguntas, ordem, rodada, cronômetro, sobrevivência';mais.appendChild(sm);
+  var sm=document.createElement('summary');sm.textContent='Mais ajustes';mais.appendChild(sm);
   mais.open=!!(estadoTreino.quizFocus!=='mix'||quiz.order==='seq'||quiz.sessionLen||quiz.timerLen||quiz.survivalMode||abrirMais);
   LINHAS.forEach(function(l){
     var row=document.createElement('div');row.className='ajrow';
-    var t=document.createElement('b');t.textContent=l[0];row.appendChild(t);
-    var seg=document.createElement('div');seg.className='aseg';
     var atual=l[3]();
+    /* sim ou não: uma chave, como no menu */
+    if(typeof l[2][0][0]==='boolean'){
+      var sw=document.createElement('label');sw.className='mswrow';
+      var tx=document.createElement('span');tx.className='mt';
+      var tb=document.createElement('b');tb.textContent=l[0];tx.appendChild(tb);
+      if(l[1]){var ds=document.createElement('small');ds.textContent=l[1];tx.appendChild(ds);}
+      var cb=document.createElement('input');cb.type='checkbox';cb.setAttribute('role','switch');cb.checked=!!atual;
+      cb.onchange=function(){l[4](cb.checked);montarAjustes();};
+      var mk=document.createElement('i');mk.className='msw';mk.setAttribute('aria-hidden','true');
+      sw.appendChild(tx);sw.appendChild(cb);sw.appendChild(mk);
+      (l[5]?mais:box).appendChild(sw);
+      return;
+    }
+    var t=document.createElement('b');t.textContent=l[0];row.appendChild(t);
+    if(l[1]){var d=document.createElement('small');d.textContent=l[1];row.appendChild(d);}
+    var seg=document.createElement('div');seg.className='mradio';
     l[2].forEach(function(op){
       var b=document.createElement('button');b.textContent=op[1];
       b.setAttribute('aria-pressed',op[0]===atual?'true':'false');
@@ -52,7 +66,6 @@ function montarAjustes(){
       seg.appendChild(b);
     });
     row.appendChild(seg);
-    if(l[1]){var d=document.createElement('small');d.textContent=l[1];row.appendChild(d);}
     (l[5]?mais:box).appendChild(row);
   });
   mais.ontoggle=function(){abrirMais=mais.open;};

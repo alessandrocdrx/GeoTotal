@@ -987,11 +987,8 @@ body.cab-apertado4 #mbtn{padding:0 5px!important}
 /* jogos rápidos em celular estreito: o nome quebra em duas linhas em vez de sair do cartão */
 .qjr .mcard{overflow:hidden}
 .qjr .mcard b{white-space:normal;line-height:1.2;overflow-wrap:anywhere}
-/* distância em celular estreito: ← Voltar numa linha e a rota embaixo, com a largura toda */
-@media (max-width:420px){
-  #dbar .dbtop{flex-direction:column;align-items:stretch;gap:6px}
-  #dbar .dbtop>.closeb{align-self:flex-start}
-}
+/* distância: o ← à esquerda do título da rota */
+#dbar .dbtop{flex-direction:row;align-items:flex-start;gap:10px}
 
 /* ---------- 1.42: topo limpo (logo, Treino/Livre e ☰); dia e noite e o mapa na coluna do mapa;
    som e satélite/atlas nos atalhos do menu ---------- */
@@ -1077,6 +1074,25 @@ body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
 /* ---------- 1.42: busca do Livre arredondada, como a do Google Maps ---------- */
 .searchrow #q{border-radius:24px;padding-left:40px;background:var(--chip) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238fa0bd'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 13px center/20px}
 .searchrow #fbtn{border-radius:24px}
+
+/* ---------- 1.42: toda tela com o mesmo topo: um botão redondo à esquerda (← volta, ✕ fecha
+   a primeira página do menu) e o título ao lado, como nos apps Android ---------- */
+.shead,.escolha .eshead{justify-content:flex-start;gap:12px;min-height:48px}
+.shead b,.escolha .eshead b{font-size:19px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+button.voltar,.shead button.voltar{flex:none;order:-1;width:44px;height:44px;padding:0!important;border-radius:50%!important;border:1px solid var(--border)!important;background:var(--chip)!important;color:var(--fg)!important;font-size:22px!important;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit}
+button.voltar[hidden]{display:none}
+.shead .voltar~*{margin-right:0}
+#dbar button.voltar{width:40px;height:40px;font-size:20px!important}
+
+/* ---------- 1.42: ajustes da partida no formato do menu ---------- */
+#ajbody .ajrow>b{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:4px 2px 2px}
+#ajbody .ajrow>small{margin:0 2px 4px}
+#ajbody .mradio button{padding-left:10px}
+#ajbody .mswrow{padding:12px 2px}
+#ajbody .ajmais summary{list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:50px;font-size:15px;color:var(--fg);padding:6px 4px}
+#ajbody .ajmais summary::-webkit-details-marker{display:none}
+#ajbody .ajmais summary::after{content:"›";font-size:22px;color:var(--muted);transition:transform .15s}
+#ajbody .ajmais[open] summary::after{transform:rotate(90deg)}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -1101,7 +1117,7 @@ body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
     <div id="status"></div>
     <div id="pick"></div>
     <div id="dbar">
-      <div class="dbtop"><button id="dexit" class="closeb voltar" aria-label="Voltar">← Voltar</button><div class="dbtxt"><b id="dbtit"></b><span id="dbtot"></span><details id="dbinfo" class="ajuda"><summary aria-label="Como a rota é calculada"><i>i</i>De onde vem esta rota</summary><p id="dbnota"></p></details></div></div>
+      <div class="dbtop"><button id="dexit" class="voltar" aria-label="Voltar">←</button><div class="dbtxt"><b id="dbtit"></b><span id="dbtot"></span><details id="dbinfo" class="ajuda"><summary aria-label="Como a rota é calculada"><i>i</i>De onde vem esta rota</summary><p id="dbnota"></p></details></div></div>
       <div id="dbmodo" class="aseg dbmodo"></div>
       <div id="dblegs"></div>
       <div class="dbacoes"><select id="dbadd" class="dbadd" aria-label="Adicionar parada"></select><small id="dbmax" class="dbmax" hidden></small></div>
@@ -1159,7 +1175,7 @@ body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
 </div>
 
 <div id="sheet"><div class="box">
-  <div class="shead"><button id="sclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>Filtros</b></div>
+  <div class="shead"><button id="sclose" class="voltar" aria-label="Voltar">←</button><b>Filtros</b></div>
   <div class="inote" id="sheetcount" style="margin-top:-4px"></div>
   <div class="row2"><button id="allon">Ligar todos</button><button id="alloff">Desligar todos</button><button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶ Desfazer</button></div>
   <div class="nbbox">
@@ -1170,7 +1186,7 @@ body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
   <div id="tree"></div>
 </div></div>
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
-  <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Menu</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><button id="mclose" class="voltar" aria-label="Fechar">✕</button><button id="mback" class="voltar" aria-label="Voltar" hidden>←</button><b id="mtitle">Menu</b></div>
   <nav id="mlist" class="mlist">
     <div class="mgrp">⚡ Rápido</div>
     <button id="msom" class="mswbtn" role="switch" aria-checked="true"><span class="mi">🔊</span><span class="mt"><b>Som</b><small>Efeitos e música</small></span><i class="msw" aria-hidden="true"></i></button>
@@ -1315,7 +1331,7 @@ body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
   </div>
 </div>
 <div id="scopesheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><button id="scopeclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>Onde você quer treinar?</b></div>
+  <div class="shead"><button id="scopeclose" class="voltar" aria-label="Voltar">←</button><b>Onde você quer treinar?</b></div>
   <button id="qscopeback" class="qbackrow" hidden></button>
   <button id="qrestart" class="restartrow" hidden></button>
   <div id="scopetiles" class="scopetiles"></div>
@@ -1326,22 +1342,22 @@ body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
   </details>
 </div></div>
 <div id="jogosheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><button id="jogoclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>🎮 Escolha o jogo</b></div>
+  <div class="shead"><button id="jogoclose" class="voltar" aria-label="Voltar">←</button><b>🎮 Escolha o jogo</b></div>
   <div id="qmodes" class="qseg"></div>
 </div></div>
 <div id="ajsheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><button id="ajclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>⚙️ Ajustes da partida</b></div>
+  <div class="shead"><button id="ajclose" class="voltar" aria-label="Voltar">←</button><b>⚙️ Ajustes da partida</b></div>
   <div id="ajbody"></div>
   <button id="ajok" class="scopeapplybtn">Pronto, jogar</button>
 </div></div>
 <div id="statsheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><button id="statsclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>📊 Seu histórico</b></div>
+  <div class="shead"><button id="statsclose" class="voltar" aria-label="Voltar">←</button><b>📊 Seu histórico</b></div>
   <div class="htabs" role="tablist"><button id="htabC" aria-pressed="true">Por país</button><button id="htabR" aria-pressed="false">Por região</button></div>
   <div id="statsbody"></div>
 </div></div>
 
 <div id="sharesheet" class="ov" style="z-index:90"><div class="box">
-  <div class="shead"><button id="shareclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>Compartilhar resultado</b></div>
+  <div class="shead"><button id="shareclose" class="voltar" aria-label="Voltar">←</button><b>Compartilhar resultado</b></div>
   <img id="shareimg" alt="Imagem do resultado" style="width:100%;border-radius:14px;display:block">
   <div class="inote">Para salvar a imagem, toque e segure nela. O texto abaixo pode ser colado em qualquer conversa.</div>
   <textarea id="sharetxt" readonly style="width:100%;height:84px;margin-top:8px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--fg);font-size:13px;padding:8px;font-family:inherit"></textarea>
@@ -1349,22 +1365,22 @@ body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
 </div></div>
 
 <div id="badgesheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><button id="badgesclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b id="badgeshead">Conquistas</b></div>
+  <div class="shead"><button id="badgesclose" class="voltar" aria-label="Voltar">←</button><b id="badgeshead">Conquistas</b></div>
   <div id="badgesbody"></div>
 </div></div>
 
 <div id="passsheet" class="ov" style="z-index:85"><div class="box">
-  <div class="shead"><button id="passclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b id="passhead">🛂 Passaporte</b></div>
+  <div class="shead"><button id="passclose" class="voltar" aria-label="Voltar">←</button><b id="passhead">🛂 Passaporte</b></div>
   <div id="passbody"></div>
 </div></div>
 <div id="study" class="ov"><div class="box">
-  <div class="shead"><button id="studyclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b>Folha de estudo</b></div>
+  <div class="shead"><button id="studyclose" class="voltar" aria-label="Voltar">←</button><b>Folha de estudo</b></div>
   <button id="studyprint" class="cstreinar">🖨️ Imprimir ou salvar em PDF</button>
   <div id="studybody"></div>
 </div></div>
 
 <div id="txtd" class="ov"><div class="box">
-  <div class="shead"><button id="txtclose" class="closeb voltar" aria-label="Voltar">← Voltar</button><b id="txtname">Arquivo</b></div>
+  <div class="shead"><button id="txtclose" class="voltar" aria-label="Voltar">←</button><b id="txtname">Arquivo</b></div>
   <div class="inote">O download direto não está disponível aqui. Copie o texto abaixo e cole em um arquivo .csv.</div>
   <textarea id="txta" readonly></textarea>
   <div class="row2"><button id="txtcopy">Copiar tudo</button></div>
@@ -6488,7 +6504,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     ov.id = "escolha";
     ov.className = "escolha";
     ov.hidden = true;
-    ov.innerHTML = '<div class="esbox"><div class="eshead"><b id="estit"></b><button class="closeb" id="esfechar" aria-label="Fechar">✕</button></div><input id="esq" type="search" autocomplete="off" placeholder="Digite o país, a capital ou a sigla" aria-label="Buscar país"><div id="eslista" class="eslista" role="listbox"></div></div>';
+    ov.innerHTML = '<div class="esbox"><div class="eshead"><button class="voltar" id="esfechar" aria-label="Voltar">←</button><b id="estit"></b></div><input id="esq" type="search" autocomplete="off" placeholder="Digite o país, a capital ou a sigla" aria-label="Buscar país"><div id="eslista" class="eslista" role="listbox"></div></div>';
     document.body.appendChild(ov);
     ov.querySelector("#esfechar").onclick = fechar;
     ov.addEventListener("pointerdown", function(e) {
@@ -13098,6 +13114,7 @@ NAN|Nadi|-17.76|177.44`;
       pg.hidden = pg.id !== id;
     });
     $("mback").hidden = !id;
+    $("mclose").hidden = !!id;
     $("mtitle").textContent = id ? $(id).getAttribute("data-t") : "Menu";
     var bx = $("msheet").querySelector(".box");
     if (bx) bx.scrollTop = 0;
@@ -14214,14 +14231,14 @@ NAN|Nadi|-17.76|177.44`;
     [
       "Meta do dia",
       "Respostas por dia para manter a sequência 🔥.",
-      [[5, "5"], [10, "10"], [20, "20"], [30, "30"]],
+      [[5, "5 por dia"], [10, "10 por dia"], [20, "20 por dia"], [30, "30 por dia"]],
       metaDoDia,
       definirMeta
     ],
     [
       "Perguntas",
       "",
-      [["mix", "Todas"], ["new", "Só novas"], ["wrong", "Que errei"]],
+      [["mix", "Todas"], ["new", "Só as novas"], ["wrong", "Só as que errei"]],
       function() {
         return estadoTreino.quizFocus;
       },
@@ -14241,7 +14258,7 @@ NAN|Nadi|-17.76|177.44`;
     [
       "Tamanho da rodada",
       "No Mundo. Numa região, a rodada vai até completar a região.",
-      [[0, "Sem fim"], [10, "10"], [20, "20"]],
+      [[0, "Sem fim"], [10, "10 perguntas"], [20, "20 perguntas"]],
       function() {
         return quiz.sessionLen;
       },
@@ -14251,7 +14268,7 @@ NAN|Nadi|-17.76|177.44`;
     [
       "Cronômetro",
       "Responda o máximo que der antes do tempo acabar.",
-      [[0, "Sem tempo"], [30, "30 s"], [60, "60 s"]],
+      [[0, "Sem tempo"], [30, "30 segundos"], [60, "60 segundos"]],
       function() {
         return quiz.timerLen;
       },
@@ -14275,18 +14292,53 @@ NAN|Nadi|-17.76|177.44`;
     var mais = document.createElement("details");
     mais.className = "ajmais";
     var sm2 = document.createElement("summary");
-    sm2.textContent = "Mais ajustes: perguntas, ordem, rodada, cronômetro, sobrevivência";
+    sm2.textContent = "Mais ajustes";
     mais.appendChild(sm2);
     mais.open = !!(estadoTreino.quizFocus !== "mix" || quiz.order === "seq" || quiz.sessionLen || quiz.timerLen || quiz.survivalMode || abrirMais);
     LINHAS.forEach(function(l) {
       var row = document.createElement("div");
       row.className = "ajrow";
+      var atual = l[3]();
+      if (typeof l[2][0][0] === "boolean") {
+        var sw2 = document.createElement("label");
+        sw2.className = "mswrow";
+        var tx = document.createElement("span");
+        tx.className = "mt";
+        var tb = document.createElement("b");
+        tb.textContent = l[0];
+        tx.appendChild(tb);
+        if (l[1]) {
+          var ds = document.createElement("small");
+          ds.textContent = l[1];
+          tx.appendChild(ds);
+        }
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.setAttribute("role", "switch");
+        cb.checked = !!atual;
+        cb.onchange = function() {
+          l[4](cb.checked);
+          montarAjustes();
+        };
+        var mk = document.createElement("i");
+        mk.className = "msw";
+        mk.setAttribute("aria-hidden", "true");
+        sw2.appendChild(tx);
+        sw2.appendChild(cb);
+        sw2.appendChild(mk);
+        (l[5] ? mais : box).appendChild(sw2);
+        return;
+      }
       var t = document.createElement("b");
       t.textContent = l[0];
       row.appendChild(t);
+      if (l[1]) {
+        var d = document.createElement("small");
+        d.textContent = l[1];
+        row.appendChild(d);
+      }
       var seg = document.createElement("div");
-      seg.className = "aseg";
-      var atual = l[3]();
+      seg.className = "mradio";
       l[2].forEach(function(op) {
         var b = document.createElement("button");
         b.textContent = op[1];
@@ -14300,11 +14352,6 @@ NAN|Nadi|-17.76|177.44`;
         seg.appendChild(b);
       });
       row.appendChild(seg);
-      if (l[1]) {
-        var d = document.createElement("small");
-        d.textContent = l[1];
-        row.appendChild(d);
-      }
       (l[5] ? mais : box).appendChild(row);
     });
     mais.ontoggle = function() {
