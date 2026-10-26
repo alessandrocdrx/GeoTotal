@@ -11,9 +11,6 @@ let spinB;
 let lp;
 let lc;
 
-/* largura de verdade da tela: no celular, um cabeçalho largo demais alarga a página toda (innerWidth
-   cresce junto), então vale a menor das duas */
-function larguraDaTela(){return Math.min(window.innerWidth,screen.width||window.innerWidth);}
 
 /* passos para o cabeçalho caber, nesta ordem (ux.css): botões mais justos, tudo menor, o 🔥 da
    sequência sai do topo e, por último, nome e atalhos ainda menores; o nome geoTotal nunca sai */
@@ -26,8 +23,10 @@ const APERTOS = ['cab-apertado', 'cab-apertado2', 'cab-apertado3', 'cab-apertado
  */
 function encaixarCabecalho(){
   var htop=document.querySelector('header .htop');if(!htop)return;
-  var b=document.body,cs=getComputedStyle(htop.parentNode),pad=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight);
-  var L=larguraDaTela();
+  /* mede o próprio cabeçalho: a largura que ele tem de verdade na tela, sem depender de como o
+     WebView informa o tamanho da tela (screen.width e innerWidth variam de aparelho para aparelho) */
+  var b=document.body,cab=htop.parentNode,cs=getComputedStyle(cab),pad=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight);
+  var L=cab.clientWidth;
   htop.style.zoom='';
   APERTOS.forEach(function(c){b.classList.remove(c);});
   for(var k=0;k<APERTOS.length&&htop.scrollWidth+pad>L+0.5;k++)b.classList.add(APERTOS[k]);
@@ -57,7 +56,7 @@ function iniciar() {
   /* ---------- Cabeçalho que cabe na tela ---------- */
   var agendado=0;
   var agendar=function(){if(!agendado)agendado=requestAnimationFrame(function(){agendado=0;encaixarCabecalho();});};
-  if(window.ResizeObserver)new ResizeObserver(agendar).observe(document.querySelector('header .hbtns'));
+  if(window.ResizeObserver){var ro=new ResizeObserver(agendar);ro.observe(document.querySelector('header .hbtns'));ro.observe(document.querySelector('header'));}
   window.addEventListener('resize',agendar);
   encaixarCabecalho();
 }

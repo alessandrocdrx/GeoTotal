@@ -8922,15 +8922,12 @@ NAN|Nadi|-17.76|177.44`;
   var spinB;
   var lp;
   var lc;
-  function larguraDaTela() {
-    return Math.min(window.innerWidth, screen.width || window.innerWidth);
-  }
   var APERTOS = ["cab-apertado", "cab-apertado2", "cab-apertado3", "cab-apertado4"];
   function encaixarCabecalho() {
     var htop = document.querySelector("header .htop");
     if (!htop) return;
-    var b = document.body, cs = getComputedStyle(htop.parentNode), pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-    var L = larguraDaTela();
+    var b = document.body, cab = htop.parentNode, cs = getComputedStyle(cab), pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    var L = cab.clientWidth;
     htop.style.zoom = "";
     APERTOS.forEach(function(c) {
       b.classList.remove(c);
@@ -8982,7 +8979,11 @@ NAN|Nadi|-17.76|177.44`;
         encaixarCabecalho();
       });
     };
-    if (window.ResizeObserver) new ResizeObserver(agendar).observe(document.querySelector("header .hbtns"));
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(agendar);
+      ro.observe(document.querySelector("header .hbtns"));
+      ro.observe(document.querySelector("header"));
+    }
     window.addEventListener("resize", agendar);
     encaixarCabecalho();
   }
