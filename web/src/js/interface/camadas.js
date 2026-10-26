@@ -1,8 +1,8 @@
 /**
  * @arquivo js/interface/camadas.js
  * Camada: Interface
- * Página "Mapa" do menu: o que aparece no mapa (oceanos, mares, zonas climáticas, desertos,
- * florestas, cordilheiras) e a época do ano. Os lugares do jogo ficam na página "Lugares no jogo".
+ * Parte "Mapa" do menu ☰: o que aparece no mapa (oceanos e mares, zonas climáticas e natureza,
+ * que junta desertos, florestas e cordilheiras) e a época do ano.
  */
 
 import { ouvir } from '../nucleo/eventos.js';
@@ -14,17 +14,19 @@ import { estadoRender } from '../visualizacao/projecao.js';
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 /* estação no hemisfério sul (Brasil) */
 const ESTACAO = ['verão','verão','outono','outono','outono','inverno','inverno','inverno','primavera','primavera','primavera','verão'];
-const CHAVES = [['cOce','oceanos'],['cMar','mares'],['cZon','zonas'],['cDes','desertos'],['cFlo','florestas'],['cMon','montanhas']];
+/* uma chave pode ligar várias camadas juntas (Natureza = desertos, florestas e relevo) */
+const CHAVES = [['cOceMar',['oceanos','mares']],['cZon',['zonas']],['cNat',['desertos','florestas','montanhas']]];
+const CAMADAS = ['oceanos','mares','zonas','desertos','florestas','montanhas'];
 
 function mostrar(){
-  CHAVES.forEach(function(c){$(c[0]).checked=estadoRender.camadas[c[1]];});
+  CHAVES.forEach(function(c){$(c[0]).checked=c[1].every(function(k){return estadoRender.camadas[k];});});
 }
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
-  CHAVES.forEach(function(c){estadoRender.camadas[c[1]]=lsGet('globo.cam.'+c[1],estadoRender.camadas[c[1]])===true;});
+  CAMADAS.forEach(function(k){estadoRender.camadas[k]=lsGet('globo.cam.'+k,estadoRender.camadas[k])===true;});
   CHAVES.forEach(function(c){
-    $(c[0]).onchange=function(){estadoRender.camadas[c[1]]=this.checked;lsSet('globo.cam.'+c[1],this.checked);};
+    $(c[0]).onchange=function(){var v=this.checked;c[1].forEach(function(k){estadoRender.camadas[k]=v;lsSet('globo.cam.'+k,v);});};
   });
   /* época do ano: a neve do globo muda com o mês (no Brasil, as estações ao contrário do norte);
      lista com bolinha, como as outras escolhas do menu */
@@ -41,7 +43,7 @@ function iniciar() {
     b.onclick=function(){
       estadoRender.mesMapa=b.dataset.v===''?null:+b.dataset.v;lsSet('globo.mes',estadoRender.mesMapa);
       marca();
-      if(estadoRender.atlas)setStatus('A neve aparece na foto de satélite (Mapa › Foto de satélite).',3000);
+      if(estadoRender.atlas)setStatus('A neve aparece na foto de satélite (menu ☰ › Foto de satélite).',3000);
       trocarMes();
     };
   });

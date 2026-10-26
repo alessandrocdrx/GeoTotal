@@ -66,6 +66,10 @@ function updateProgUI(){
   }
   var gt=$('qgoaltxt'),stk=displayStreak();if(gt)gt.textContent=Math.min(PROG.dailyCount,PROG.dailyGoal)+'/'+PROG.dailyGoal+' hoje'+(stk>0?' · 🔥'+stk:'');
   updateStreakPill();
+  /* cartão do nível no alto do menu ☰ */
+  var mp=$('mpnv');
+  if(mp){mp.textContent='Nv '+lv;$('mptit').textContent=tituloDe(lv);$('mpxp').style.width=into+'%';
+    $('mpinfo').textContent=(stk>0?'🔥 '+stk+(stk===1?' dia':' dias')+' · ':'')+Math.min(PROG.dailyCount,PROG.dailyGoal)+' de '+PROG.dailyGoal+' hoje · '+into+'/100 XP';}
 }
 const toastQ = [];
 function celebrate(msg){

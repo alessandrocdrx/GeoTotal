@@ -120,19 +120,26 @@ function iniciar() {
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
   oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
   oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
-  /* a noite só aparece na foto de satélite: ligar a noite no mapa colorido volta para a foto */
-  $('oNight').addEventListener('change',function(){
-    if(this.checked&&estadoRender.atlas)definirAtlas(false);
-    if(this.checked){estadoRender.optTex=true;oTex.checked=estadoRender.useTex;}
-  });
-  /* estilo do mapa: foto de satélite (relevo, neve, noite) ou mapa colorido (uma cor por país) */
+  /* como o globo aparece (menu ☰ › Mapa): foto de satélite, mapa colorido ou satélite com a
+     noite de agora. Uma escolha só, com bolinha: a noite só existe na foto de satélite */
   estadoRender.atlas=lsGet('globo.atlas',false)===true;
+  var noite=$('oNight');
+  function estiloAtual(){return estadoRender.atlas?'atlas':noite.checked?'noite':'sat';}
   function estiloMostra(){
-    $('cSat').checked=!estadoRender.atlas;
-    $('cSatTxt').textContent=estadoRender.atlas?'Desligada: mapa colorido, uma cor por país':'Ligada: relevo, neve e noite';
+    var v=estiloAtual();
+    Array.prototype.forEach.call($('mEstilo').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',b.dataset.v===v?'true':'false');});
   }
-  function definirAtlas(v){estadoRender.atlas=v;lsSet('globo.atlas',v);estiloMostra();}
-  $('cSat').onchange=function(){definirAtlas(!this.checked);};
+  function definirAtlas(v){estadoRender.atlas=v;lsSet('globo.atlas',v);}
+  function definirNoite(v){if(noite.checked!==v){noite.checked=v;noite.dispatchEvent(new Event('change'));}}
+  Array.prototype.forEach.call($('mEstilo').querySelectorAll('button'),function(b){
+    b.onclick=function(){
+      var v=b.dataset.v;
+      definirAtlas(v==='atlas');definirNoite(v==='noite');
+      if(v!=='atlas'){estadoRender.optTex=true;oTex.checked=estadoRender.useTex;}
+      estiloMostra();
+    };
+  });
+  noite.addEventListener('change',estiloMostra);
   estiloMostra();
 }
 

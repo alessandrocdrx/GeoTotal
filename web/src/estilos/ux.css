@@ -752,3 +752,31 @@ button.voltar[hidden]{display:none}
 #ajbody .ajmais summary::-webkit-details-marker{display:none}
 #ajbody .ajmais summary::after{content:"›";font-size:22px;color:var(--muted);transition:transform .15s}
 #ajbody .ajmais[open] summary::after{transform:rotate(90deg)}
+
+/* ---------- 1.42: menu ☰ numa página só ---------- */
+#msheet .box{scroll-padding-top:70px}
+#msheet .shead{position:sticky;top:-14px;z-index:3;background:var(--card);margin:-14px -14px 6px;padding:14px 14px 8px}
+.mguia{margin-left:auto;flex:none;height:40px;padding:0 14px;border-radius:20px;border:1px solid #3a4866;background:var(--chip);color:var(--fg);font:700 13.5px inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+.mguia[hidden]{display:none}
+/* cartão do nível */
+.mlist button.mperfil{gap:12px;padding:12px;border:1px solid #3b4f86!important;border-radius:16px;background:linear-gradient(135deg,rgba(47,111,224,.32),rgba(124,92,255,.22))}
+.mpav{flex:none;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#2f6fe0,#7c5cff);border:2px solid #ffc83c;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff}
+.mpt{flex:1;min-width:0;display:flex;flex-direction:column}
+.mpt b{font-size:17px}.mpt small{font-size:12.5px;color:var(--muted);margin-top:1px}
+.mpbar{display:block;height:7px;border-radius:4px;background:rgba(127,140,170,.3);margin-top:7px;overflow:hidden}
+.mpbar i{display:block;height:100%;width:0;background:#2fd67f;border-radius:4px}
+/* cinco atalhos do mesmo tamanho, que sempre cabem */
+.matal{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0 2px}
+.mlist .matal button{flex-direction:column;justify-content:center;gap:3px;min-width:0;height:60px;padding:4px 2px;border:1px solid #3a4866;border-radius:14px;background:var(--chip);font-size:11.5px;font-weight:700;text-align:center;white-space:nowrap;overflow:hidden}
+.mlist .matal button:first-child{border-top:1px solid #3a4866}
+.mlist .matal button i{font-style:normal;font-size:20px;line-height:1}
+.mlist .matal button.at{background:#2f6fe0;border-color:#2f6fe0;color:#fff}
+/* fotos do próprio globo nas escolhas do mapa */
+.mfoto{flex:none;width:44px;height:44px;border-radius:50%;background-size:cover;background-position:center;box-shadow:0 0 0 1px var(--border)}
+.mradio.mfotos button{padding-left:4px;justify-content:flex-start}
+.mradio.mfotos button::after{margin-left:auto}
+.mradio.mfotos .mt{display:flex;flex-direction:column;min-width:0}
+.mradio.mfotos .mt b{font-size:15px}.mradio.mfotos .mt small{font-size:12.5px;font-weight:400;color:var(--muted)}
+.mswrow .mfoto{width:30px;height:30px}
+/* os atalhos ficam presos no alto enquanto a página rola, com a parte atual acesa */
+#msheet .matal{position:sticky;top:48px;z-index:2;background:var(--card);padding:6px 0;margin-top:6px}

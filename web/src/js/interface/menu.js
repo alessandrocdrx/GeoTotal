@@ -1,8 +1,8 @@
 /**
  * @arquivo js/interface/menu.js
  * Camada: Interface
- * Menu ☰: chave do som e a página Mapa no alto, depois progresso, explorar, configurar e ajuda.
- * Só três tipos de linha: chave, linha com › (abre página, ← volta) e lista com bolinha.
+ * Menu ☰: uma página só, com o seu nível e atalhos no alto; mapa, som e tela, lugares, progresso,
+ * explorar e ajuda. Três tipos de linha: chave, lista com bolinha e linha com › (abre uma tela).
  */
 
 import { alternarEfeitos, alternarMudo, alternarMusica, estadoSom } from '../nucleo/som.js';
@@ -22,7 +22,7 @@ function mShow(id){
   $('mlist').hidden=!!id;
   Array.prototype.forEach.call(document.querySelectorAll('#msheet .mpage'),function(pg){pg.hidden=pg.id!==id;});
   /* um botão só no canto esquerdo: ✕ na primeira página, ← nas de dentro */
-  $('mback').hidden=!id;$('mclose').hidden=!!id;$('mtitle').textContent=id?$(id).getAttribute('data-t'):'Menu';
+  $('mback').hidden=!id;$('mclose').hidden=!!id;$('mguia').hidden=!!id;$('mtitle').textContent=id?$(id).getAttribute('data-t'):'Menu';
   var bx=$('msheet').querySelector('.box');if(bx)bx.scrollTop=0;
 }
 /** Botões lado a lado (.aseg): marca o valor atual e chama definir(valor) ao tocar. */
@@ -53,6 +53,25 @@ function iniciar() {
   $('msom').onclick=function(){alternarMudo();somH();};
   somH();
   var marcaNomes=ligarSeg($('mlabels'),estadoMapa.labelMode,function(v){$(v==='c'?'lc':'lp').click();});
+  /* atalhos do alto: pulam para a parte certa da página */
+  Array.prototype.forEach.call(document.querySelectorAll('#msheet .matal button'),function(b){
+    b.onclick=function(){
+      var alvo=$(b.dataset.ir),bx=$('msheet').querySelector('.box');
+      Array.prototype.forEach.call(document.querySelectorAll('#msheet .matal button'),function(x){x.classList.toggle('at',x===b);});
+      bx.scrollTo({top:alvo.offsetTop-bx.querySelector('.shead').offsetHeight-8,behavior:'smooth'});
+    };
+  });
+  /* ao rolar, acende o atalho da parte que está na tela */
+  var caixa=$('msheet').querySelector('.box');
+  caixa.addEventListener('scroll',function(){
+    if(!$('mlist').offsetParent)return;
+    var bts=document.querySelectorAll('#msheet .matal button'),lim=caixa.scrollTop+140,atual=null;
+    Array.prototype.forEach.call(bts,function(b){if($(b.dataset.ir).offsetTop<=lim)atual=b;});
+    Array.prototype.forEach.call(bts,function(b){b.classList.toggle('at',b===atual);});
+  },{passive:true});
+  /* o guia "Como jogar" sempre à mão no alto do menu; o seu nível leva às conquistas */
+  $('mguia').onclick=function(){$('mtour').click();};
+  $('mperfil').onclick=function(){$('mbadges').click();};
   function abrirMenu(pg){marcaNomes(estadoMapa.labelMode);somV();pilha=[];mShow(pg||null);$('msheet').style.display='block';}
   $('mbtn').onclick=function(){abrirMenu(null);};
   $('mclose').onclick=function(){$('msheet').style.display='none';};
