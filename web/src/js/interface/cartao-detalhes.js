@@ -69,7 +69,7 @@ function fillInfo(d){
 function aplicarCompacto(){
   card.classList.toggle('compacto',!estadoCartao.expandido);
   $('cinfo').hidden=!estadoCartao.expandido;
-  var b=$('cexpandir');b.textContent=estadoCartao.expandido?'▴ Menos informações':'ℹ️ Mais informações';
+  var b=$('cexpandir');b.textContent=estadoCartao.expandido?'▴ Menos':'ℹ️ Saber mais';
   b.setAttribute('aria-expanded',estadoCartao.expandido?'true':'false');
 }
 function measureCard(){estadoCartao.cardH=card.style.display==='block'?card.offsetHeight+10:0;}
@@ -85,7 +85,7 @@ function tourStop(){if(!estadoCartao.passeio)return;clearInterval(estadoCartao.p
 function iniciar() {
   card = document.getElementById('card');
   ganchos.alturaCartao = function(){return estadoCartao.cardH;};
-  /* alça para arrastar o cartão; "Mais informações" faz o mesmo que puxar para cima */
+  /* alça para arrastar o cartão; "Saber mais" faz o mesmo que puxar para cima */
   folha=folhaArrastavel(card,{chave:'globo.cartao.altura',
     grande:function(){estadoCartao.expandido=true;aplicarCompacto();},
     pequeno:function(){estadoCartao.expandido=false;aplicarCompacto();card.scrollTop=0;},

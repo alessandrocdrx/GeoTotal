@@ -3,7 +3,7 @@
 //
 // Revisão das telas num celular estreito (360 px): a busca abre o país com Enter, os jogos
 // rápidos cabem nos cartões, o relógio da partida não anda enquanto o tour está aberto e o
-// cartão do país cresce de verdade em "Mais informações".
+// cartão do país cresce de verdade em "Saber mais".
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { iniciarServidor, abrirApp } from './apoio.mjs';
@@ -50,7 +50,7 @@ test('relógio da partida fica parado durante o tour', async () => {
   await fechar();
 });
 
-test('cartão do país: "Mais informações" deixa o cartão bem maior', async () => {
+test('cartão do país: "Saber mais" deixa o cartão bem maior', async () => {
   const { pagina, fechar } = await abrirApp(ambiente);
   await pagina.locator('#qclose').click();
   await pagina.locator('#q').fill('Brasil');

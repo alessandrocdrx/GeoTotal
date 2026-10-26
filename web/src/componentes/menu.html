@@ -2,8 +2,14 @@
      Menu "⋯": atalhos do progresso, explorar e ajuda à vista; som e visual, lugares no jogo e seus
      dados ficam em páginas internas (mais curto de ler). -->
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
-  <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Mais</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Menu</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <nav id="mlist" class="mlist">
+    <div class="matalhos" aria-label="Atalhos">
+      <button id="msom" class="matalho" aria-label="Som ligado"></button>
+      <button id="matdia" class="matalho" aria-label="Dia e noite"></button>
+      <button id="mestilotop" class="matalho" aria-label="Estilo do mapa: satélite"></button>
+      <button id="matmapa" class="matalho" aria-label="Mapa: estilo e camadas"><span class="mi">🗺️</span><b>Mapa</b><small>Camadas…</small></button>
+    </div>
     <div class="mtiles">
       <button class="mtile" id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Carimbos dos países que você domina</small></span></button>
       <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos</small></span></button>

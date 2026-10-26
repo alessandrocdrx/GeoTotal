@@ -120,8 +120,11 @@ function iniciar() {
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
   oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
   oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
-  /* botão do topo, junto do som: alterna entre dia e noite reais e sempre de dia (a mesma chave do menu ⋯) */
-  function visMostra(){var n=$('oNight').checked;$('mvisual').textContent=n?'🌗':'☀️';$('mvisual').setAttribute('aria-pressed',n?'true':'false');}
+  /* botão ☀️ da coluna do mapa (e o atalho do menu): alterna entre dia e noite reais e sempre de dia (a mesma chave do menu ⋯) */
+  function visMostra(){
+    var n=$('oNight').checked;$('mvisual').textContent=n?'🌗':'☀️';$('mvisual').setAttribute('aria-pressed',n?'true':'false');
+    Array.prototype.forEach.call($('cLuz').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',(b.dataset.v==='real')===n?'true':'false');});
+  }
   $('mvisual').onclick=function(){
     var noite=$('oNight'),v=!noite.checked;
     /* dia e noite só existe no satélite: no atlas, o botão volta para o satélite */
@@ -135,14 +138,27 @@ function iniciar() {
   estadoRender.atlas=lsGet('globo.atlas',false)===true;
   function estiloMostra(){
     Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',(b.dataset.v==='atlas')===estadoRender.atlas?'true':'false');});
-    var t=$('mestilotop');t.textContent=estadoRender.atlas?'🎨':'🛰️';
-    t.setAttribute('aria-label','Estilo do mapa: '+(estadoRender.atlas?'atlas':'satélite'));t.setAttribute('aria-pressed',estadoRender.atlas?'true':'false');
+    Array.prototype.forEach.call($('cEstilo').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',(b.dataset.v==='atlas')===estadoRender.atlas?'true':'false');});
+    /* atalho do menu: ícone, nome e o que o toque faz */
+    var t=$('mestilotop');t.innerHTML='';
+    [['span','mi',estadoRender.atlas?'🗺️':'🌍'],['b','',estadoRender.atlas?'Atlas':'Satélite'],['small','','Estilo']].forEach(function(p){var e=document.createElement(p[0]);if(p[1])e.className=p[1];e.textContent=p[2];t.appendChild(e);});
+    t.setAttribute('aria-label','Estilo do mapa: '+(estadoRender.atlas?'atlas':'satélite'));
   }
   function definirAtlas(v){estadoRender.atlas=v;lsSet('globo.atlas',v);estiloMostra();}
-  Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){
+  Array.prototype.forEach.call(document.querySelectorAll('#mestilo button,#cEstilo button'),function(b){
     b.onclick=function(){definirAtlas(b.dataset.v==='atlas');};
   });
-  /* botão do topo, ao lado do dia e noite: alterna satélite e atlas */
+  /* painel do mapa: luz do globo (o mesmo que o botão ☀️) */
+  Array.prototype.forEach.call($('cLuz').querySelectorAll('button'),function(b){
+    b.onclick=function(){
+      var noite=$('oNight'),v=b.dataset.v==='real';
+      if(estadoRender.atlas)definirAtlas(false);
+      estadoRender.optTex=true;oTex.checked=estadoRender.useTex;
+      if(noite.checked!==v){noite.checked=v;noite.dispatchEvent(new Event('change'));}
+      visMostra();
+    };
+  });
+  /* atalho do menu: alterna satélite e atlas */
   $('mestilotop').onclick=function(){
     definirAtlas(!estadoRender.atlas);
     setStatus(estadoRender.atlas?'🎨 Mapa atlas: uma cor por país':'🛰️ Mapa de satélite',2200);

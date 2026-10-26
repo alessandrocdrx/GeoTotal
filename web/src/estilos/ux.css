@@ -657,3 +657,91 @@ body.cab-apertado4 #mbtn{padding:0 5px!important}
   #dbar .dbtop{flex-direction:column;align-items:stretch;gap:6px}
   #dbar .dbtop>.closeb{align-self:flex-start}
 }
+
+/* ---------- 1.42: topo limpo (logo, Treino/Livre e ☰); dia e noite e o mapa na coluna do mapa;
+   som e satélite/atlas nos atalhos do menu ---------- */
+header .htop{gap:10px}
+header .hbtns{flex:1 1 auto;min-width:0;gap:8px}
+header .streakpill{display:none!important}
+header .modesw{flex:1 1 auto;height:46px;padding:3px}
+header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;padding:0 6px!important}
+#mbtn{flex:none;width:46px;height:46px;padding:0!important;display:inline-flex;align-items:center;justify-content:center;border-radius:14px}
+.ham{display:flex;flex-direction:column;gap:4px}
+.ham i{display:block;width:20px;height:2.5px;border-radius:2px;background:currentColor}
+.tools #camb svg{width:22px;height:22px;fill:currentColor;display:block;margin:auto}
+.tools #mvisual[aria-pressed="true"]{border-color:#c9a23a}
+/* painel do mapa: estilo com miniaturas e luz lado a lado */
+.camestilo{display:flex;gap:8px;margin:4px 0 2px}
+.camestilo button{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px;border-radius:14px;border:2px solid var(--border);background:var(--chip);color:var(--fg);font:700 13px inherit;font-family:inherit;cursor:pointer}
+.camestilo button[aria-pressed="true"]{border-color:#4da3ff;background:rgba(77,163,255,.14)}
+.camestilo .cth{display:block;width:100%;height:46px;border-radius:10px}
+.cth.sat{background:radial-gradient(circle at 35% 35%,#4f8f5e,#28563f 45%,#173a66 70%,#0d2348)}
+.cth.atl{background:radial-gradient(circle at 35% 35%,#e9d9b2,#d7b98a 45%,#c9a0b8 70%,#8fb6d6)}
+.camadas .camluz{display:flex;margin:4px 0 2px}
+.camadas .camluz button{flex:1;font-size:12.5px}
+/* atalhos no topo do menu: grandes, com nome e o estado */
+.matalhos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:2px 0 12px}
+.mlist .matalhos button.matalho{flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:10px 4px;border:1px solid var(--border);border-radius:14px;background:var(--chip);text-align:center;min-height:86px}
+.mlist .matalhos button.matalho:first-child{border-top:1px solid var(--border)}
+.mlist .matalho .mi{font-size:24px;width:auto;text-align:center}
+.mlist .matalho b{font-size:13px;line-height:1.15}
+.mlist .matalho small{font-size:11px;color:var(--muted);line-height:1.2}
+.mlist .matalho.on{border-color:#4da3ff;background:rgba(77,163,255,.18)}
+
+/* ---------- 1.42: treino com a pergunta em primeiro lugar ---------- */
+/* jogo e região em chips arredondados (o jeito Android de filtro), só com o que está escolhido */
+.qhead2{align-items:center}
+.qhead2 .qpick{display:flex!important;align-items:center;gap:6px;flex:0 1 auto;min-width:0;height:42px;padding:0 12px 0 14px!important;border-radius:21px!important;border:1px solid #3a4866!important;background:var(--chip)!important}
+.qhead2 .qpick small[hidden]{display:none}
+.qhead2 .qpick span{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.qhead2 .qpick i{background:none!important;padding:0!important;color:#8fa3c6!important;font-size:12px}
+.qhead2 .qajust{width:42px;height:42px;border-radius:21px;margin-left:auto;font-size:18px;border:1px solid #3a4866}
+/* uma linha de progresso: quantos já foram, a barra, o relógio e a meta do dia */
+#quiz .qscore,#quiz.map .qscore{display:flex;align-items:center;gap:10px;margin:10px 2px 2px}
+#quiz .qscore .qstrip{display:contents}
+#quiz .qscore #qruntxt{order:1;font-weight:700;color:var(--fg)}
+#quiz .qscore .runbar{order:2;height:8px;flex:1}
+#quiz .qscore #qtimer{order:3;white-space:nowrap}
+#quiz .qscore .qgoalmini{order:4;flex:none;min-height:28px;padding:0 9px;border-radius:14px;font-size:11.5px}
+#quiz .qscore .qcomb{order:5}
+#quiz .qscore #qlevel[hidden]{display:none}
+/* a pergunta: começo pequeno e o lugar grande */
+#quiz .qq .qqini{display:block;font-size:14.5px;font-weight:500;color:var(--muted);margin-bottom:2px}
+#quiz .qq .qqalvo{display:block;font-size:23px;font-weight:800;line-height:1.2}
+#quiz.map .qq{margin:10px 0 10px}
+/* respostas altas, fáceis para o polegar */
+#quiz.map .qopts{gap:10px}
+#quiz.map .qopts button{min-height:56px;font-size:16.5px;font-weight:700;border-radius:16px}
+/* dica e ver no mapa: links discretos, um em cada canto, para não competir com as respostas */
+#quiz .qacoes{justify-content:space-between;margin-top:4px}
+#quiz .qacoes .qcenter{border:0;background:none;color:#8fc1ff;min-height:36px;padding:4px 6px;font-size:14px;font-weight:700}
+
+/* ---------- 1.42: escolher jogo e região em lista, com a bolinha do escolhido ---------- */
+#qmodes{display:block}
+#qmodes .qjlista,.scopetiles{display:flex;flex-direction:column;gap:4px;margin:4px 0 8px}
+#qmodes .qjlista .mcard,.scopetiles .stile{display:grid!important;grid-template-columns:44px 1fr 24px;grid-template-rows:auto auto;column-gap:14px;row-gap:1px;align-items:center;width:100%;min-height:62px;padding:8px 10px!important;border:0!important;border-radius:14px!important;background:none!important;box-shadow:none!important;color:var(--fg)!important;text-align:left;outline:0}
+#qmodes .qjlista .mcard .mcic,.scopetiles .stile .stico{grid-column:1;grid-row:1/3;width:44px;height:44px;border-radius:14px;background:var(--chip);display:flex;align-items:center;justify-content:center;font-size:22px}
+#qmodes .qjlista .mcard b,.scopetiles .stile b{grid-column:2;grid-row:1;align-self:end;font-size:16px;margin:0}
+#qmodes .qjlista .mcard small,.scopetiles .stile small{grid-column:2;grid-row:2;align-self:start;font-size:13px;color:var(--muted)!important;opacity:1}
+#qmodes .qjlista .mcard::after,.scopetiles .stile::after{content:"";grid-column:3;grid-row:1/3;width:22px;height:22px;border-radius:50%;border:2px solid #6c7a96;box-sizing:border-box}
+#qmodes .qjlista .mcard[aria-pressed="true"],.scopetiles .stile.on{background:rgba(77,163,255,.13)!important}
+#qmodes .qjlista .mcard[aria-pressed="true"]::after,.scopetiles .stile.on::after{border-color:#4da3ff;background:#4da3ff;box-shadow:inset 0 0 0 4px var(--card)}
+.scopetiles .stile .stico{background:color-mix(in srgb,var(--cor) 22%,var(--chip))}
+/* desafio do dia em destaque */
+#qmodes .qjdest .mcard{display:grid!important;grid-template-columns:1fr auto;width:100%;padding:14px!important;border:0!important;border-radius:18px!important;background:linear-gradient(135deg,#2f6fe0,#7c5cff)!important;color:#fff!important;text-align:left;outline:0;margin:2px 0 6px}
+#qmodes .qjdest .mcard b{font-size:17px}
+#qmodes .qjdest .mcard small{grid-column:1;color:#fff!important;opacity:.9;font-size:12.5px}
+#qmodes .qjdest .mcard::after{content:"Jogar";grid-column:2;grid-row:1/3;align-self:center;background:#fff;color:#1b2a55;font-weight:800;font-size:14px;border-radius:18px;padding:9px 14px}
+/* jogos rápidos lado a lado */
+#qmodes .qjr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#qmodes .qjrtit{margin:10px 4px 4px}
+
+/* ---------- 1.42: cartão do país mais limpo (Livre) ---------- */
+/* no cartão curto: bandeira, nome, região e capital; a explicação da capital fica em "Saber mais" */
+#card.compacto .capnote{display:none}
+#card .capbox{background:none;border:0;padding:6px 2px 2px}
+#card .cexpandir{border-radius:24px;min-height:48px}
+
+/* ---------- 1.42: busca do Livre arredondada, como a do Google Maps ---------- */
+.searchrow #q{border-radius:24px;padding-left:40px;background:var(--chip) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238fa0bd'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 13px center/20px}
+.searchrow #fbtn{border-radius:24px}

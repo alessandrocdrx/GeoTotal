@@ -992,6 +992,94 @@ body.cab-apertado4 #mbtn{padding:0 5px!important}
   #dbar .dbtop{flex-direction:column;align-items:stretch;gap:6px}
   #dbar .dbtop>.closeb{align-self:flex-start}
 }
+
+/* ---------- 1.42: topo limpo (logo, Treino/Livre e ☰); dia e noite e o mapa na coluna do mapa;
+   som e satélite/atlas nos atalhos do menu ---------- */
+header .htop{gap:10px}
+header .hbtns{flex:1 1 auto;min-width:0;gap:8px}
+header .streakpill{display:none!important}
+header .modesw{flex:1 1 auto;height:46px;padding:3px}
+header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;padding:0 6px!important}
+#mbtn{flex:none;width:46px;height:46px;padding:0!important;display:inline-flex;align-items:center;justify-content:center;border-radius:14px}
+.ham{display:flex;flex-direction:column;gap:4px}
+.ham i{display:block;width:20px;height:2.5px;border-radius:2px;background:currentColor}
+.tools #camb svg{width:22px;height:22px;fill:currentColor;display:block;margin:auto}
+.tools #mvisual[aria-pressed="true"]{border-color:#c9a23a}
+/* painel do mapa: estilo com miniaturas e luz lado a lado */
+.camestilo{display:flex;gap:8px;margin:4px 0 2px}
+.camestilo button{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px;border-radius:14px;border:2px solid var(--border);background:var(--chip);color:var(--fg);font:700 13px inherit;font-family:inherit;cursor:pointer}
+.camestilo button[aria-pressed="true"]{border-color:#4da3ff;background:rgba(77,163,255,.14)}
+.camestilo .cth{display:block;width:100%;height:46px;border-radius:10px}
+.cth.sat{background:radial-gradient(circle at 35% 35%,#4f8f5e,#28563f 45%,#173a66 70%,#0d2348)}
+.cth.atl{background:radial-gradient(circle at 35% 35%,#e9d9b2,#d7b98a 45%,#c9a0b8 70%,#8fb6d6)}
+.camadas .camluz{display:flex;margin:4px 0 2px}
+.camadas .camluz button{flex:1;font-size:12.5px}
+/* atalhos no topo do menu: grandes, com nome e o estado */
+.matalhos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:2px 0 12px}
+.mlist .matalhos button.matalho{flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:10px 4px;border:1px solid var(--border);border-radius:14px;background:var(--chip);text-align:center;min-height:86px}
+.mlist .matalhos button.matalho:first-child{border-top:1px solid var(--border)}
+.mlist .matalho .mi{font-size:24px;width:auto;text-align:center}
+.mlist .matalho b{font-size:13px;line-height:1.15}
+.mlist .matalho small{font-size:11px;color:var(--muted);line-height:1.2}
+.mlist .matalho.on{border-color:#4da3ff;background:rgba(77,163,255,.18)}
+
+/* ---------- 1.42: treino com a pergunta em primeiro lugar ---------- */
+/* jogo e região em chips arredondados (o jeito Android de filtro), só com o que está escolhido */
+.qhead2{align-items:center}
+.qhead2 .qpick{display:flex!important;align-items:center;gap:6px;flex:0 1 auto;min-width:0;height:42px;padding:0 12px 0 14px!important;border-radius:21px!important;border:1px solid #3a4866!important;background:var(--chip)!important}
+.qhead2 .qpick small[hidden]{display:none}
+.qhead2 .qpick span{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.qhead2 .qpick i{background:none!important;padding:0!important;color:#8fa3c6!important;font-size:12px}
+.qhead2 .qajust{width:42px;height:42px;border-radius:21px;margin-left:auto;font-size:18px;border:1px solid #3a4866}
+/* uma linha de progresso: quantos já foram, a barra, o relógio e a meta do dia */
+#quiz .qscore,#quiz.map .qscore{display:flex;align-items:center;gap:10px;margin:10px 2px 2px}
+#quiz .qscore .qstrip{display:contents}
+#quiz .qscore #qruntxt{order:1;font-weight:700;color:var(--fg)}
+#quiz .qscore .runbar{order:2;height:8px;flex:1}
+#quiz .qscore #qtimer{order:3;white-space:nowrap}
+#quiz .qscore .qgoalmini{order:4;flex:none;min-height:28px;padding:0 9px;border-radius:14px;font-size:11.5px}
+#quiz .qscore .qcomb{order:5}
+#quiz .qscore #qlevel[hidden]{display:none}
+/* a pergunta: começo pequeno e o lugar grande */
+#quiz .qq .qqini{display:block;font-size:14.5px;font-weight:500;color:var(--muted);margin-bottom:2px}
+#quiz .qq .qqalvo{display:block;font-size:23px;font-weight:800;line-height:1.2}
+#quiz.map .qq{margin:10px 0 10px}
+/* respostas altas, fáceis para o polegar */
+#quiz.map .qopts{gap:10px}
+#quiz.map .qopts button{min-height:56px;font-size:16.5px;font-weight:700;border-radius:16px}
+/* dica e ver no mapa: links discretos, um em cada canto, para não competir com as respostas */
+#quiz .qacoes{justify-content:space-between;margin-top:4px}
+#quiz .qacoes .qcenter{border:0;background:none;color:#8fc1ff;min-height:36px;padding:4px 6px;font-size:14px;font-weight:700}
+
+/* ---------- 1.42: escolher jogo e região em lista, com a bolinha do escolhido ---------- */
+#qmodes{display:block}
+#qmodes .qjlista,.scopetiles{display:flex;flex-direction:column;gap:4px;margin:4px 0 8px}
+#qmodes .qjlista .mcard,.scopetiles .stile{display:grid!important;grid-template-columns:44px 1fr 24px;grid-template-rows:auto auto;column-gap:14px;row-gap:1px;align-items:center;width:100%;min-height:62px;padding:8px 10px!important;border:0!important;border-radius:14px!important;background:none!important;box-shadow:none!important;color:var(--fg)!important;text-align:left;outline:0}
+#qmodes .qjlista .mcard .mcic,.scopetiles .stile .stico{grid-column:1;grid-row:1/3;width:44px;height:44px;border-radius:14px;background:var(--chip);display:flex;align-items:center;justify-content:center;font-size:22px}
+#qmodes .qjlista .mcard b,.scopetiles .stile b{grid-column:2;grid-row:1;align-self:end;font-size:16px;margin:0}
+#qmodes .qjlista .mcard small,.scopetiles .stile small{grid-column:2;grid-row:2;align-self:start;font-size:13px;color:var(--muted)!important;opacity:1}
+#qmodes .qjlista .mcard::after,.scopetiles .stile::after{content:"";grid-column:3;grid-row:1/3;width:22px;height:22px;border-radius:50%;border:2px solid #6c7a96;box-sizing:border-box}
+#qmodes .qjlista .mcard[aria-pressed="true"],.scopetiles .stile.on{background:rgba(77,163,255,.13)!important}
+#qmodes .qjlista .mcard[aria-pressed="true"]::after,.scopetiles .stile.on::after{border-color:#4da3ff;background:#4da3ff;box-shadow:inset 0 0 0 4px var(--card)}
+.scopetiles .stile .stico{background:color-mix(in srgb,var(--cor) 22%,var(--chip))}
+/* desafio do dia em destaque */
+#qmodes .qjdest .mcard{display:grid!important;grid-template-columns:1fr auto;width:100%;padding:14px!important;border:0!important;border-radius:18px!important;background:linear-gradient(135deg,#2f6fe0,#7c5cff)!important;color:#fff!important;text-align:left;outline:0;margin:2px 0 6px}
+#qmodes .qjdest .mcard b{font-size:17px}
+#qmodes .qjdest .mcard small{grid-column:1;color:#fff!important;opacity:.9;font-size:12.5px}
+#qmodes .qjdest .mcard::after{content:"Jogar";grid-column:2;grid-row:1/3;align-self:center;background:#fff;color:#1b2a55;font-weight:800;font-size:14px;border-radius:18px;padding:9px 14px}
+/* jogos rápidos lado a lado */
+#qmodes .qjr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#qmodes .qjrtit{margin:10px 4px 4px}
+
+/* ---------- 1.42: cartão do país mais limpo (Livre) ---------- */
+/* no cartão curto: bandeira, nome, região e capital; a explicação da capital fica em "Saber mais" */
+#card.compacto .capnote{display:none}
+#card .capbox{background:none;border:0;padding:6px 2px 2px}
+#card .cexpandir{border-radius:24px;min-height:48px}
+
+/* ---------- 1.42: busca do Livre arredondada, como a do Google Maps ---------- */
+.searchrow #q{border-radius:24px;padding-left:40px;background:var(--chip) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238fa0bd'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 13px center/20px}
+.searchrow #fbtn{border-radius:24px}
 .marca-logo{background-image:url(data:image/png;base64,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)}
 </style>
 </head>
@@ -1000,7 +1088,7 @@ body.cab-apertado4 #mbtn{padding:0 5px!important}
   <header>
     <div class="htop">
       <h1 class="marca"><i class="marca-logo" aria-hidden="true"></i>geo<span>Total</span></h1>
-      <div class="hbtns"><button id="msom" class="hsom" aria-label="Som ligado" title="Som">🔊</button><button id="mvisual" class="hsom" aria-label="Dia e noite" title="Dia e noite">☀️</button><button id="mestilotop" class="hsom" aria-label="Estilo do mapa: satélite" title="Satélite ou atlas">🛰️</button><button id="camb" class="hsom" aria-label="O que aparece no mapa" title="O que aparece no mapa" aria-expanded="false">🏷️</button><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Mais opções">⋯</button></div>
+      <div class="hbtns"><button id="streakpill" class="streakpill" style="display:none" aria-label="Sequência de dias"></button><div class="modesw" role="group" aria-label="Modo"><button id="qbtn" aria-pressed="false">Treino</button><button id="qclose" aria-pressed="true">Livre</button></div><button id="mbtn" aria-label="Menu"><span class="ham" aria-hidden="true"><i></i><i></i><i></i></span></button></div>
     </div>
     <div class="sub" hidden>Países do Mundo: Nomes e Capitais por Região · <span id="count"></span> países e territórios</div>
   </header>
@@ -1037,12 +1125,19 @@ body.cab-apertado4 #mbtn{padding:0 5px!important}
     <div class="tools">
       <button id="zin" aria-label="Aproximar">+</button>
       <button id="zout" aria-label="Afastar">−</button>
+      <button id="mvisual" aria-label="Dia e noite" title="Dia e noite">☀️</button>
+      <button id="camb" class="camb" aria-label="Mapa: estilo e camadas" title="Mapa: estilo e camadas" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg></button>
       <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true">🔄</button>
       <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países">🎬</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
     </div>
     <div id="camadas" class="camadas" hidden>
-      <div class="camtit"><b>O que aparece no mapa</b><button id="camfechar" class="closeb" aria-label="Fechar">✕</button></div>
+      <div class="camtit"><b>Mapa</b><button id="camfechar" class="closeb" aria-label="Fechar">✕</button></div>
+      <div class="camsep">Estilo</div>
+      <div class="camestilo" id="cEstilo"><button data-v="sat"><i class="cth sat"></i>Satélite</button><button data-v="atlas"><i class="cth atl"></i>Atlas</button></div>
+      <div class="camsep">Luz</div>
+      <div class="aseg camluz" id="cLuz"><button data-v="dia">☀️ Sempre de dia</button><button data-v="real">🌗 Dia e noite reais</button></div>
+      <div class="camsep">O que aparece</div>
       <label class="mswrow"><span class="mi">🌊</span><span class="mt"><b>Oceanos</b></span><input type="checkbox" id="cOce" role="switch"><i class="msw" aria-hidden="true"></i></label>
       <label class="mswrow"><span class="mi">⛵</span><span class="mt"><b>Mares e golfos</b><small>Os menores aparecem ao aproximar</small></span><input type="checkbox" id="cMar" role="switch"><i class="msw" aria-hidden="true"></i></label>
       <label class="mswrow"><span class="mi">🌡️</span><span class="mt"><b>Zonas climáticas</b><small>Tropical, temperadas e polares; Equador e Trópicos</small></span><input type="checkbox" id="cZon" role="switch"><i class="msw" aria-hidden="true"></i></label>
@@ -1068,7 +1163,7 @@ body.cab-apertado4 #mbtn{padding:0 5px!important}
         <button class="x" id="close" aria-label="Fechar">✕</button>
       </div>
       <div class="capbox"><span class="lab">🏛️ Capital</span><b id="ccap"></b><div class="capnote" id="ccapnote"></div></div>
-      <button class="cexpandir" id="cexpandir" aria-expanded="false">ℹ️ Mais informações</button>
+      <button class="cexpandir" id="cexpandir" aria-expanded="false">ℹ️ Saber mais</button>
       <div class="cstat" id="cstat"></div>
       <div id="cbody">
       <div class="facts" id="cfacts"></div>
@@ -1098,8 +1193,14 @@ body.cab-apertado4 #mbtn{padding:0 5px!important}
   <div id="tree"></div>
 </div></div>
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
-  <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Mais</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
+  <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Menu</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <nav id="mlist" class="mlist">
+    <div class="matalhos" aria-label="Atalhos">
+      <button id="msom" class="matalho" aria-label="Som ligado"></button>
+      <button id="matdia" class="matalho" aria-label="Dia e noite"></button>
+      <button id="mestilotop" class="matalho" aria-label="Estilo do mapa: satélite"></button>
+      <button id="matmapa" class="matalho" aria-label="Mapa: estilo e camadas"><span class="mi">🗺️</span><b>Mapa</b><small>Camadas…</small></button>
+    </div>
     <div class="mtiles">
       <button class="mtile" id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Carimbos dos países que você domina</small></span></button>
       <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos</small></span></button>
@@ -1182,11 +1283,11 @@ body.cab-apertado4 #mbtn{padding:0 5px!important}
 </div></div>
 <div id="quiz"><div class="qpanel">
   <div class="qhead2">
-    <button id="qmodeb" class="qpick" aria-expanded="false"><small id="qmodel">🎮 Jogo</small><span id="qmodev">País → Capital</span><i>▾</i></button>
-    <button id="qscopeb" class="qpick"><small>🗺️ Região</small><span id="qscopev">📍 Mundo</span><i>▾</i></button>
+    <button id="qmodeb" class="qpick" aria-expanded="false"><small id="qmodel" hidden>🎮 Jogo</small><span id="qmodev">País → Capital</span><i>▾</i></button>
+    <button id="qscopeb" class="qpick"><small hidden>🗺️ Região</small><span id="qscopev">📍 Mundo</span><i>▾</i></button>
     <button id="qajustb" class="qajust" aria-label="Ajustes da partida" title="Ajustes da partida">⚙️</button>
   </div>
-  <div id="qscore" class="qscore"><div class="qstrip"><span id="qruntxt"></span><span id="qcomb" class="qcomb" hidden></span><span id="qtimer"></span><button id="goalgo" class="qgoalmini" title="Toque para mudar a meta diária"><span id="qlevel">Nível 1</span> · <span id="qgoaltxt">0/10 hoje</span></button></div><span class="runbar" id="qrunbar"><i id="qrunfill"></i></span></div>
+  <div id="qscore" class="qscore"><div class="qstrip"><span id="qruntxt"></span><span id="qcomb" class="qcomb" hidden></span><span id="qtimer"></span><button id="goalgo" class="qgoalmini" title="Toque para mudar a meta diária"><span id="qlevel" hidden>Nível 1</span><span id="qgoaltxt">0/10 hoje</span></button></div><span class="runbar" id="qrunbar"><i id="qrunfill"></i></span></div>
   <div hidden><div id="qxpbar"></div><div id="qxptxt"></div><svg><circle id="qgoalring"/></svg></div>
   <div id="qpool" class="inote"></div>
   <div id="qbody"></div>
@@ -4698,6 +4799,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       var n = $("oNight").checked;
       $("mvisual").textContent = n ? "🌗" : "☀️";
       $("mvisual").setAttribute("aria-pressed", n ? "true" : "false");
+      Array.prototype.forEach.call($("cLuz").querySelectorAll("button"), function(b) {
+        b.setAttribute("aria-pressed", b.dataset.v === "real" === n ? "true" : "false");
+      });
     }
     $("mvisual").onclick = function() {
       var noite = $("oNight"), v = !noite.checked;
@@ -4716,19 +4820,40 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       Array.prototype.forEach.call($("mestilo").querySelectorAll("button"), function(b) {
         b.setAttribute("aria-pressed", b.dataset.v === "atlas" === estadoRender.atlas ? "true" : "false");
       });
+      Array.prototype.forEach.call($("cEstilo").querySelectorAll("button"), function(b) {
+        b.setAttribute("aria-pressed", b.dataset.v === "atlas" === estadoRender.atlas ? "true" : "false");
+      });
       var t = $("mestilotop");
-      t.textContent = estadoRender.atlas ? "🎨" : "🛰️";
+      t.innerHTML = "";
+      [["span", "mi", estadoRender.atlas ? "🗺️" : "🌍"], ["b", "", estadoRender.atlas ? "Atlas" : "Satélite"], ["small", "", "Estilo"]].forEach(function(p) {
+        var e = document.createElement(p[0]);
+        if (p[1]) e.className = p[1];
+        e.textContent = p[2];
+        t.appendChild(e);
+      });
       t.setAttribute("aria-label", "Estilo do mapa: " + (estadoRender.atlas ? "atlas" : "satélite"));
-      t.setAttribute("aria-pressed", estadoRender.atlas ? "true" : "false");
     }
     function definirAtlas(v) {
       estadoRender.atlas = v;
       lsSet("globo.atlas", v);
       estiloMostra();
     }
-    Array.prototype.forEach.call($("mestilo").querySelectorAll("button"), function(b) {
+    Array.prototype.forEach.call(document.querySelectorAll("#mestilo button,#cEstilo button"), function(b) {
       b.onclick = function() {
         definirAtlas(b.dataset.v === "atlas");
+      };
+    });
+    Array.prototype.forEach.call($("cLuz").querySelectorAll("button"), function(b) {
+      b.onclick = function() {
+        var noite = $("oNight"), v = b.dataset.v === "real";
+        if (estadoRender.atlas) definirAtlas(false);
+        estadoRender.optTex = true;
+        oTex.checked = estadoRender.useTex;
+        if (noite.checked !== v) {
+          noite.checked = v;
+          noite.dispatchEvent(new Event("change"));
+        }
+        visMostra();
       };
     });
     $("mestilotop").onclick = function() {
@@ -6029,7 +6154,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     card.classList.toggle("compacto", !estadoCartao.expandido);
     $("cinfo").hidden = !estadoCartao.expandido;
     var b = $("cexpandir");
-    b.textContent = estadoCartao.expandido ? "▴ Menos informações" : "ℹ️ Mais informações";
+    b.textContent = estadoCartao.expandido ? "▴ Menos" : "ℹ️ Saber mais";
     b.setAttribute("aria-expanded", estadoCartao.expandido ? "true" : "false");
   }
   function measureCard() {
@@ -12003,6 +12128,16 @@ NAN|Nadi|-17.76|177.44`;
     resetSession();
     nextQ();
   }
+  function pergunta(q2, inicio, alvo) {
+    var a = document.createElement("small");
+    a.className = "qqini";
+    a.textContent = inicio + " ";
+    var b = document.createElement("b");
+    b.className = "qqalvo";
+    b.textContent = alvo;
+    q2.appendChild(a);
+    q2.appendChild(b);
+  }
   function nextQ() {
     if (quiz.jogoRapido) {
       var lm = MODOS_MISTO[estadoTreino.quizDomain] || MODOS_MISTO.world;
@@ -12057,7 +12192,7 @@ NAN|Nadi|-17.76|177.44`;
     var q2 = document.createElement("div");
     q2.className = "qq";
     if (quiz.mode === "cap") {
-      q2.textContent = "Qual é a capital de " + qflag(d) + " " + short(d) + "?";
+      pergunta(q2, "Qual é a capital de", qflag(d) + " " + short(d) + "?");
       var cbt = document.createElement("button");
       cbt.className = "qcenter";
       cbt.textContent = "📍 Ver no mapa";
@@ -12069,7 +12204,7 @@ NAN|Nadi|-17.76|177.44`;
       showTarget(i);
       if (estadoTreino.quizDomain === "world") estadoTreino.qFlash = { i, kind: "ask" };
     } else if (quiz.mode === "pais") {
-      q2.textContent = "Qual " + (estadoTreino.quizDomain === "br" ? "estado" : "país") + " tem como capital " + qcapD(d) + "?";
+      pergunta(q2, "Qual " + (estadoTreino.quizDomain === "br" ? "estado" : "país") + " tem como capital", qcapD(d) + "?");
       addHintBtn(q2, d, false);
       if (estadoTreino.quizDomain === "world") {
         estadoTreino.qPino = i;
@@ -12087,18 +12222,18 @@ NAN|Nadi|-17.76|177.44`;
       q2.appendChild(t2);
       addHintBtn(q2, d, false);
     } else if (quiz.mode === "code") {
-      q2.textContent = "Qual é a sigla de " + qflag(d) + " " + short(d) + "?";
+      pergunta(q2, "Qual é a sigla de", qflag(d) + " " + short(d) + "?");
       scopeView();
       addHintBtn(q2, d, false);
     } else if (isNeighbor) {
       var nbIdxs = estadoTreino.quizDomain === "br" ? d.nb : NB[i];
       quiz.nbAnswer = nbIdxs[Math.floor(Math.random() * nbIdxs.length)];
-      q2.textContent = "Qual destes " + unitWord(2) + " faz fronteira com " + qflag(d) + " " + short(d) + "?";
+      pergunta(q2, "Qual destes " + unitWord(2) + " faz fronteira com", qflag(d) + " " + short(d) + "?");
       addHintBtn(q2, arr[quiz.nbAnswer], false);
       showTarget(i);
       if (estadoTreino.quizDomain === "world") estadoTreino.qFlash = { i, kind: "ask" };
     } else {
-      q2.textContent = "Toque no mapa: onde fica " + qflag(d) + " " + short(d) + "?";
+      pergunta(q2, "Toque no mapa: onde fica", qflag(d) + " " + short(d) + "?");
     }
     var acoes = q2.querySelectorAll(":scope > .qcenter");
     if (acoes.length) {
@@ -12361,25 +12496,39 @@ NAN|Nadi|-17.76|177.44`;
     $("qmodev").textContent = modeName(quiz.mode);
     $("qmodel").textContent = "🎮 Jogo";
     var defs = estadoTreino.quizDomain === "br" ? [["cap", "🏛️", "Estado → Capital", "Qual é a capital da Bahia?"], ["pais", "🏙️", "Capital → Estado", "Salvador é capital de qual estado?"], ["neighbor", "🤝", "Vizinhos", "Quem faz divisa com a Bahia?"], ["code", "🔤", "Siglas", "Qual é a sigla da Bahia?"], ["map", "📍", "Achar no mapa", "Toque onde fica a Bahia"]] : [["cap", "🏛️", "País → Capital", "Qual é a capital do Japão?"], ["pais", "🏙️", "Capital → País", "Londres é capital de qual país?"], ["flag", "🚩", "Bandeiras", "De quem é esta bandeira?"], ["neighbor", "🤝", "Vizinhos", "Quem faz fronteira com a China?"], ["map", "📍", "Achar no mapa", "Toque onde fica o Egito"]];
+    var dest = document.createElement("div");
+    dest.className = "qjdest";
+    box.appendChild(dest);
+    var tj = document.createElement("div");
+    tj.className = "qjrtit";
+    tj.textContent = "Jogos";
+    box.appendChild(tj);
+    var lista = document.createElement("div");
+    lista.className = "qjlista";
+    box.appendChild(lista);
     defs.forEach(function(m) {
       var b = document.createElement("button");
       b.className = "mcard";
       b.setAttribute("aria-pressed", !quiz.jogoRapido && !estadoTreino.desafio && quiz.mode === m[0] ? "true" : "false");
+      var ic = document.createElement("span");
+      ic.className = "mcic";
+      ic.textContent = m[1];
       var t = document.createElement("b");
-      t.textContent = m[1] + " " + m[2];
+      t.textContent = m[2];
       var ex = document.createElement("small");
       ex.textContent = m[3];
+      b.appendChild(ic);
       b.appendChild(t);
       b.appendChild(ex);
       b.onclick = function() {
         quizSetMode(m[0]);
       };
-      box.appendChild(b);
+      lista.appendChild(b);
     });
     var jr = document.createElement("div");
     jr.className = "qjr";
     var rc = recordeRelampago();
-    [["relampago", "⚡ Relâmpago", "Quantas você acerta em 60 s?" + (rc ? " Recorde: " + rc : "")], ["misto", "🎲 Misto", "10 perguntas de tipos variados"], ["desafio", "🗓️ Desafio do dia", "10 capitais, iguais para todos, 1 vez por dia"]].forEach(function(j) {
+    [["relampago", "⚡ Relâmpago", "Quantas você acerta em 60 s?" + (rc ? " Recorde: " + rc : "")], ["misto", "🎲 Misto", "10 perguntas de tipos variados"], ["desafio", "🗓️ Desafio do dia", "10 capitais, iguais para todos · 1 vez por dia"]].forEach(function(j) {
       var b = document.createElement("button");
       b.className = "mcard";
       b.id = "jr-" + j[0];
@@ -12395,7 +12544,7 @@ NAN|Nadi|-17.76|177.44`;
         if (j[0] === "desafio") emitir("abrir-desafio");
         else iniciarJogoRapido(j[0]);
       };
-      jr.appendChild(b);
+      (j[0] === "desafio" ? dest : jr).appendChild(b);
     });
     var jt = document.createElement("div");
     jt.className = "qjrtit";
@@ -12988,6 +13137,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
+    atalho: () => atalho,
     iniciar: () => iniciar40,
     ligarSeg: () => ligarSeg
   });
@@ -13003,9 +13153,19 @@ NAN|Nadi|-17.76|177.44`;
       pg.hidden = pg.id !== id;
     });
     $("mback").hidden = !id;
-    $("mtitle").textContent = id ? $(id).getAttribute("data-t") : "Mais";
+    $("mtitle").textContent = id ? $(id).getAttribute("data-t") : "Menu";
     var bx = $("msheet").querySelector(".box");
     if (bx) bx.scrollTop = 0;
+  }
+  function atalho(b, icone, nome, estado, ligado) {
+    b.innerHTML = "";
+    [["span", "mi", icone], ["b", "", nome], ["small", "", estado]].forEach(function(p) {
+      var e = document.createElement(p[0]);
+      if (p[1]) e.className = p[1];
+      e.textContent = p[2];
+      b.appendChild(e);
+    });
+    b.classList.toggle("on", !!ligado);
   }
   function ligarSeg(box, atual, definir) {
     function marca(v) {
@@ -13054,9 +13214,8 @@ NAN|Nadi|-17.76|177.44`;
     somV();
     function somH() {
       var b = $("msom");
-      b.textContent = estadoSom.mudo ? "🔇" : "🔊";
+      atalho(b, estadoSom.mudo ? "🔇" : "🔊", "Som", estadoSom.mudo ? "Desligado" : "Ligado", !estadoSom.mudo);
       b.setAttribute("aria-label", estadoSom.mudo ? "Som desligado" : "Som ligado");
-      b.classList.toggle("mudo", estadoSom.mudo);
     }
     $("msom").onclick = function() {
       alternarMudo();
@@ -13064,6 +13223,20 @@ NAN|Nadi|-17.76|177.44`;
       setStatus(estadoSom.mudo ? "🔇 Som desligado" : "🔊 Som ligado (a música toca no modo Livre)", 2200);
     };
     somH();
+    function diaH() {
+      var n = $("oNight").checked;
+      atalho($("matdia"), n ? "🌗" : "☀️", n ? "Dia e noite" : "Dia", n ? "Reais" : "Sem noite", n);
+    }
+    $("matdia").onclick = function() {
+      $("mvisual").click();
+      diaH();
+    };
+    $("oNight").addEventListener("change", diaH);
+    diaH();
+    $("matmapa").onclick = function() {
+      $("msheet").style.display = "none";
+      abrir2(true);
+    };
     var marcaNomes = ligarSeg($("mlabels"), estadoMapa.labelMode, function(v) {
       $(v === "c" ? "lc" : "lp").click();
     });
@@ -13731,13 +13904,12 @@ NAN|Nadi|-17.76|177.44`;
     { alvo: "#qmodeb", texto: "🎮 Escolha o jogo: capital, bandeira, achar no mapa, vizinhos… ou um jogo rápido (Relâmpago, Misto, Desafio do dia)." },
     { alvo: "#qscopeb", texto: "📍 Escolha a região: um continente, uma parte dele, os estados do Brasil ou o mundo todo." },
     { alvo: "#qajustb", texto: "⚙️ Ajustes da partida: digitar ou escolher, cronômetro, tamanho da rodada, meta do dia…" },
-    { alvo: "#qscore", texto: "⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥." },
+    { alvo: "#qscore", texto: "⭐ Seu progresso: quantos você já acertou na região, o relógio e a meta do dia. Acertos seguidos viram combo 🔥." },
     { alvo: "#qbody", texto: "👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final." },
     { alvo: ".tools", texto: "🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países." },
-    { alvo: "#msom", texto: "🔊 Som: liga e desliga tudo. ☀️ Ao lado, a sombra da noite de verdade no globo." },
-    { alvo: "#mestilotop", texto: "🛰️ Estilo do mapa: satélite (foto) ou atlas (uma cor por país)." },
-    { alvo: "#camb", texto: "🏷️ O que aparece no mapa: oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais. No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo." },
-    { alvo: "#mbtn", texto: "⋯ No menu: passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, som e visual, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados." }
+    { alvo: "#mvisual", texto: "☀️ Dia e noite: a sombra da noite de verdade no globo, ou sempre de dia." },
+    { alvo: "#camb", texto: "🗺️ Mapa: satélite ou atlas, dia e noite, e o que aparece (oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais). No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo." },
+    { alvo: "#mbtn", texto: "☰ No menu: atalhos de som, dia e noite, satélite ou atlas e mapa; passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados." }
   ];
   var passo = -1;
   function fecharTour() {

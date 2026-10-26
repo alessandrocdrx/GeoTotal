@@ -82,20 +82,22 @@ test('cabeçalho cabe na tela e ocupa a largura, com ou sem 🔥 e fonte larga',
     await pagina.waitForTimeout(300);
     const r = await pagina.evaluate(() => ({ pagina: document.documentElement.scrollWidth, menu: Math.round(document.getElementById('mbtn').getBoundingClientRect().right) }));
     if (r.pagina > largura) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: página com ${r.pagina}px (rolagem lateral)`);
-    if (r.menu > largura) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: botão ⋯ termina em ${r.menu}px, fora da tela`);
-    /* os atalhos rápidos do topo nunca somem */
-    const atalhos = await pagina.evaluate((L) => ['msom', 'mvisual', 'mestilotop', 'camb'].filter((id) => {
-      const b = document.getElementById(id).getBoundingClientRect();
-      return !(b.width > 20 && b.right <= L);
-    }), largura);
-    if (atalhos.length) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: atalhos escondidos ou fora da tela: ${atalhos.join(', ')}`);
+    if (r.menu > largura) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: botão ☰ termina em ${r.menu}px, fora da tela`);
+    /* topo limpo: Treino e Livre largos; dia e noite e o mapa ficam à vista na coluna do mapa */
+    const faltam = await pagina.evaluate((L) => {
+      const f = [];
+      ['qbtn', 'qclose'].forEach((id) => { const b = document.getElementById(id).getBoundingClientRect(); if (!(b.width >= 60 && b.right <= L)) f.push(id); });
+      ['mvisual', 'camb'].forEach((id) => { const b = document.getElementById(id).getBoundingClientRect(); if (!(b.width >= 36 && b.right <= L)) f.push(id); });
+      return f;
+    }, largura);
+    if (faltam.length) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: botões apertados ou fora da tela: ${faltam.join(', ')}`);
     const marca = await pagina.evaluate(() => {
       const h = document.querySelector('header h1.marca');
       return { logo: h.querySelector('.marca-logo').getBoundingClientRect().width, fonte: parseFloat(getComputedStyle(h).fontSize), texto: h.textContent.trim(), direita: h.getBoundingClientRect().right };
     });
     if (!(marca.logo >= 20)) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: logo do geoTotal sumiu do cabeçalho`);
     if (marca.texto !== 'geoTotal' || !(marca.fonte >= 12)) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: nome geoTotal sumiu do cabeçalho`);
-    /* sem sobra: o ⋯ chega perto da borda direita (ou o cabeçalho já está no tamanho máximo) */
+    /* sem sobra: o ☰ chega perto da borda direita (ou o cabeçalho já está no tamanho máximo) */
     const sobra = await pagina.evaluate((L) => ({ px: L - document.getElementById('mbtn').getBoundingClientRect().right, zoom: document.querySelector('header .htop').style.zoom }), largura);
     if (sobra.px > 16 && sobra.zoom !== '1.2') problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: sobram ${Math.round(sobra.px)}px vazios no cabeçalho`);
     await ctx.close();
