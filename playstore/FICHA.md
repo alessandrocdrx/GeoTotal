@@ -11,11 +11,11 @@ quatro primeiras são as que aparecem na busca, então mostram o jogo e o modo L
 
 - **Nome do app** (até 30): `geoTotal: Países e Capitais`
 - **Descrição curta** (até 80):
-  `Adivinhe capitais e bandeiras num globo 3D. Grátis, sem anúncios e sem internet.`
+  `Aprenda capitais e bandeiras jogando num globo 3D. Grátis, sem anúncios.`
 - **Descrição completa** (até 4000):
 
 ```
-Adivinhe capitais e bandeiras do mundo todo num globo 3D que você gira com o dedo. Rodadas rápidas, combos e medalhas: estudar geografia vira jogo.
+Aprenda capitais e bandeiras do mundo todo jogando, num globo 3D que você gira com o dedo. Rodadas rápidas, combos e medalhas: estudar geografia vira jogo.
 
 🎯 COMO SE JOGA
 Aparece um país, você escolhe a capital. Acertou, o globo mostra onde fica e você ganha XP. Errou, o jogo mostra a resposta certa no mapa. Em poucos minutos você já sabe mais do que sabia.
@@ -32,7 +32,10 @@ Aparece um país, você escolhe a capital. Acertou, o globo mostra onde fica e v
 Acerte em sequência e o combo cresce. Resposta rápida vale bônus, e de vez em quando aparece uma surpresa. Errou pelo país vizinho? O jogo avisa: "Quase!".
 
 🗓️ DESAFIO DO DIA
-10 países por dia, os mesmos para todo mundo. Compare o resultado 🟩🟥 com os amigos sem entregar as respostas.
+10 capitais por dia, as mesmas para todo mundo. Compare o resultado 🟩🟥 com os amigos sem entregar as respostas.
+
+🌍 MODO LIVRE: EXPLORE O MUNDO
+Toque em qualquer país para ver capital, população, idioma, moeda, hora local e curiosidades. Veja o globo como foto de satélite, mapa colorido ou com a noite de agora. Ligue desertos, florestas, cordilheiras, mares e zonas climáticas. Tem ainda distância entre capitais, comparação de países e lugares especiais como Liberland.
 
 🏆 SUA EVOLUÇÃO
 Suba de Turista a Lenda do Mapa. Ganhe medalhas em cada continente, conquistas e um passaporte com carimbos. Mantenha a sequência de dias.
@@ -40,13 +43,23 @@ Suba de Turista a Lenda do Mapa. Ganhe medalhas em cada continente, conquistas e
 🇧🇷 ESTADOS DO BRASIL
 Os 27 estados e suas capitais, com mapa e vizinhos.
 
-🌍 E QUANDO QUISER SÓ EXPLORAR
-No modo Livre, toque em qualquer país para ver capital, população, idiomas, moeda e curiosidades. Tem ainda mares, desertos e florestas, distância entre capitais e lugares especiais como Liberland.
+✨ FÁCIL DE USAR
+Menu simples, numa página só, e o guia "Como jogar" sempre à mão.
 
 📴 SEM INTERNET, SEM ANÚNCIOS
 Grátis, sem cadastro, sem compras e sem coleta de dados. Funciona offline, no celular e no tablet.
 
 Código aberto (Apache 2.0), criado por alessandrocdrx: github.com/alessandrocdrx/GeoTotal
+```
+
+## Novidades da versão 1.42 (até 500)
+
+```
+• Menu novo, mais simples: tudo numa página só, com seu nível no alto
+• Escolha como o globo aparece: satélite, mapa colorido ou com a noite
+• Treino mais limpo, com perguntas e respostas maiores
+• Guia "Como jogar" sempre no menu
+• Correções e melhorias
 ```
 
 ## Configurações da loja
