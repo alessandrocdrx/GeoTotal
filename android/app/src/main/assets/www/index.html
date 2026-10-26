@@ -647,7 +647,6 @@ h1.marca{flex:none}
 .catultra{font-style:normal;margin-left:6px;padding:1px 7px;border-radius:999px;background:rgba(77,163,255,.18);color:#6aa8ff;font-size:11px;font-weight:800}
 /* atalhos do cabeçalho mais visíveis */
 .hsom{background:linear-gradient(140deg,rgba(77,163,255,.25),rgba(77,163,255,.08));border-color:rgba(77,163,255,.5)}
-#mvisual{background:linear-gradient(140deg,rgba(255,201,60,.25),rgba(255,201,60,.08));border-color:rgba(255,201,60,.5)}
 /* seletores do treino com cara de escolha: título e "Trocar" em cima, valor inteiro embaixo */
 .qpick{display:grid!important;grid-template-columns:1fr auto;grid-template-rows:auto auto;align-items:center;column-gap:6px;row-gap:2px;text-align:left;padding:7px 10px!important;border-width:1.5px!important;border-color:rgba(77,163,255,.45)!important}
 .qpick small{grid-column:1;grid-row:1;font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1000,11 +999,6 @@ header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;
 #mbtn{flex:none;width:46px;height:46px;padding:0!important;display:inline-flex;align-items:center;justify-content:center;border-radius:14px}
 .ham{display:flex;flex-direction:column;gap:4px}
 .ham i{display:block;width:20px;height:2.5px;border-radius:2px;background:currentColor}
-.tools #camb svg{width:22px;height:22px;fill:currentColor;display:block;margin:auto}
-/* no Treino a coluna do mapa fica só com + e −: noite e Mapa são do Livre (e estão no menu) */
-body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
-.tools #mvisual{background:var(--card);border-color:var(--border);opacity:.7}
-.tools #mvisual[aria-pressed="true"]{background:linear-gradient(140deg,rgba(255,201,60,.3),rgba(255,201,60,.1));border-color:#c9a23a;opacity:1}
 /* menu: três tipos de linha só. Chave (liga e desliga), linha com › (abre página) e lista com
    bolinha (escolhe uma opção) */
 .mlist button.mswbtn .msw{margin-left:auto}
@@ -1138,8 +1132,6 @@ button.voltar[hidden]{display:none}
     <div class="tools">
       <button id="zin" aria-label="Aproximar">+</button>
       <button id="zout" aria-label="Afastar">−</button>
-      <button id="mvisual" aria-label="Noite no globo" title="Noite no globo" aria-pressed="false">🌙</button>
-      <button id="camb" class="camb" aria-label="Mapa: satélite, noite e o que aparece" title="Mapa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg></button>
       <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true">🔄</button>
       <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países">🎬</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
@@ -4804,25 +4796,13 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     oFill.onchange = function() {
       estadoRender.optFill = oFill.checked;
     };
-    function visMostra() {
-      var n = $("oNight").checked;
-      $("mvisual").setAttribute("aria-pressed", n ? "true" : "false");
-    }
-    $("mvisual").onclick = function() {
-      var noite = $("oNight");
-      noite.checked = !noite.checked;
-      noite.dispatchEvent(new Event("change"));
-      setStatus(noite.checked ? "🌙 Noite no globo ligada" : "🌙 Noite no globo desligada", 2200);
-    };
     $("oNight").addEventListener("change", function() {
       if (this.checked && estadoRender.atlas) definirAtlas(false);
       if (this.checked) {
         estadoRender.optTex = true;
         oTex.checked = estadoRender.useTex;
       }
-      visMostra();
     });
-    oTex.addEventListener("change", visMostra);
     estadoRender.atlas = lsGet("globo.atlas", false) === true;
     function estiloMostra() {
       $("cSat").checked = !estadoRender.atlas;
@@ -4837,7 +4817,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       definirAtlas(!this.checked);
     };
     estiloMostra();
-    setTimeout(visMostra, 0);
   }
 
   // web/src/js/visualizacao/webgl.js
@@ -13180,9 +13159,6 @@ NAN|Nadi|-17.76|177.44`;
       somH();
     };
     somH();
-    $("camb").onclick = function() {
-      abrirMenu("mp-mapa");
-    };
     var marcaNomes = ligarSeg($("mlabels"), estadoMapa.labelMode, function(v) {
       $(v === "c" ? "lc" : "lp").click();
     });
@@ -13857,9 +13833,7 @@ NAN|Nadi|-17.76|177.44`;
     { alvo: "#qscore", texto: "⭐ Seu progresso: quantos você já acertou na região, o relógio e a meta do dia. Acertos seguidos viram combo 🔥." },
     { alvo: "#qbody", texto: "👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final." },
     { alvo: ".tools", texto: "🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países." },
-    { alvo: "#mvisual", texto: "☀️ Dia e noite: a sombra da noite de verdade no globo, ou sempre de dia." },
-    { alvo: "#camb", texto: "🗺️ Mapa: satélite ou atlas, dia e noite, e o que aparece (oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais). No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo." },
-    { alvo: "#mbtn", texto: "☰ No menu: atalhos de som, dia e noite, satélite ou atlas e mapa; passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados." }
+    { alvo: "#mbtn", texto: "☰ No menu: som e Mapa (satélite, noite e o que aparece no mapa); passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados." }
   ];
   var passo = -1;
   function fecharTour() {

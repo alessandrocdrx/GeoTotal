@@ -4,7 +4,7 @@
  * Textura procedural com aparência de satélite (não é foto real), com a neve da estação do ano.
  */
 
-import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
+import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { estadoRender } from './projecao.js';
 import { PI } from './tela.js';
 
@@ -120,19 +120,11 @@ function iniciar() {
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
   oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
   oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
-  /* noite no globo: a chave da página Mapa e o botão 🌙 da coluna do mapa (só no Livre) */
-  function visMostra(){var n=$('oNight').checked;$('mvisual').setAttribute('aria-pressed',n?'true':'false');}
-  $('mvisual').onclick=function(){
-    var noite=$('oNight');noite.checked=!noite.checked;noite.dispatchEvent(new Event('change'));
-    setStatus(noite.checked?'🌙 Noite no globo ligada':'🌙 Noite no globo desligada',2200);
-  };
   /* a noite só aparece na foto de satélite: ligar a noite no mapa colorido volta para a foto */
   $('oNight').addEventListener('change',function(){
     if(this.checked&&estadoRender.atlas)definirAtlas(false);
     if(this.checked){estadoRender.optTex=true;oTex.checked=estadoRender.useTex;}
-    visMostra();
   });
-  oTex.addEventListener('change',visMostra);
   /* estilo do mapa: foto de satélite (relevo, neve, noite) ou mapa colorido (uma cor por país) */
   estadoRender.atlas=lsGet('globo.atlas',false)===true;
   function estiloMostra(){
@@ -142,7 +134,6 @@ function iniciar() {
   function definirAtlas(v){estadoRender.atlas=v;lsSet('globo.atlas',v);estiloMostra();}
   $('cSat').onchange=function(){definirAtlas(!this.checked);};
   estiloMostra();
-  setTimeout(visMostra,0);
 }
 
 export { buildTexture, iniciar, updateOpts };

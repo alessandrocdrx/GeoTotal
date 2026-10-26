@@ -312,7 +312,6 @@ h1.marca{flex:none}
 .catultra{font-style:normal;margin-left:6px;padding:1px 7px;border-radius:999px;background:rgba(77,163,255,.18);color:#6aa8ff;font-size:11px;font-weight:800}
 /* atalhos do cabeçalho mais visíveis */
 .hsom{background:linear-gradient(140deg,rgba(77,163,255,.25),rgba(77,163,255,.08));border-color:rgba(77,163,255,.5)}
-#mvisual{background:linear-gradient(140deg,rgba(255,201,60,.25),rgba(255,201,60,.08));border-color:rgba(255,201,60,.5)}
 /* seletores do treino com cara de escolha: título e "Trocar" em cima, valor inteiro embaixo */
 .qpick{display:grid!important;grid-template-columns:1fr auto;grid-template-rows:auto auto;align-items:center;column-gap:6px;row-gap:2px;text-align:left;padding:7px 10px!important;border-width:1.5px!important;border-color:rgba(77,163,255,.45)!important}
 .qpick small{grid-column:1;grid-row:1;font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -665,11 +664,6 @@ header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;
 #mbtn{flex:none;width:46px;height:46px;padding:0!important;display:inline-flex;align-items:center;justify-content:center;border-radius:14px}
 .ham{display:flex;flex-direction:column;gap:4px}
 .ham i{display:block;width:20px;height:2.5px;border-radius:2px;background:currentColor}
-.tools #camb svg{width:22px;height:22px;fill:currentColor;display:block;margin:auto}
-/* no Treino a coluna do mapa fica só com + e −: noite e Mapa são do Livre (e estão no menu) */
-body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
-.tools #mvisual{background:var(--card);border-color:var(--border);opacity:.7}
-.tools #mvisual[aria-pressed="true"]{background:linear-gradient(140deg,rgba(255,201,60,.3),rgba(255,201,60,.1));border-color:#c9a23a;opacity:1}
 /* menu: três tipos de linha só. Chave (liga e desliga), linha com › (abre página) e lista com
    bolinha (escolhe uma opção) */
 .mlist button.mswbtn .msw{margin-left:auto}

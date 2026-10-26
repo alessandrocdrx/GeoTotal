@@ -52,8 +52,6 @@ function iniciar() {
   function somH(){var b=$('msom'),lig=!estadoSom.mudo;b.setAttribute('aria-checked',lig?'true':'false');b.querySelector('.mi').textContent=lig?'🔊':'🔇';b.setAttribute('aria-label',lig?'Som ligado':'Som desligado');}
   $('msom').onclick=function(){alternarMudo();somH();};
   somH();
-  /* o botão Mapa da coluna do mapa (Livre) abre direto a página Mapa do menu */
-  $('camb').onclick=function(){abrirMenu('mp-mapa');};
   var marcaNomes=ligarSeg($('mlabels'),estadoMapa.labelMode,function(v){$(v==='c'?'lc':'lp').click();});
   function abrirMenu(pg){marcaNomes(estadoMapa.labelMode);somV();pilha=[];mShow(pg||null);$('msheet').style.display='block';}
   $('mbtn').onclick=function(){abrirMenu(null);};

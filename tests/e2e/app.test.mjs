@@ -586,21 +586,19 @@ test('zerar tudo também zera nível e conquistas', async () => {
   await fechar();
 });
 
-test('noite no globo: botão 🌙 do Livre e chave da página Mapa; tema numa lista com bolinha', async () => {
+test('noite no globo pela página Mapa do menu; coluna do mapa igual no Treino e no Livre; tema numa lista', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.waitForFunction(() => !document.getElementById('oNight').disabled, null, { timeout: 15000 });
-  const noTreino = await pagina.evaluate(() => document.getElementById('mvisual').getClientRects().length);
-  assert.equal(noTreino, 0, 'no treino a coluna do mapa não mostra o 🌙');
+  const botoes = () => pagina.evaluate(() => [...document.querySelectorAll('.tools button')].filter((b) => b.getClientRects().length).map((b) => b.id));
+  const noTreino = await botoes();
   await pagina.click('#qclose');
-  await pagina.click('#mvisual');
-  const topo = await pagina.evaluate(() => ({ noite: window.__geoTotal.optNight, aceso: document.getElementById('mvisual').getAttribute('aria-pressed'), chave: document.getElementById('oNight').checked }));
-  assert.deepEqual(topo, { noite: true, aceso: 'true', chave: true }, 'o 🌙 liga a noite e a chave do menu acompanha');
-  await pagina.click('#camb');
-  const pagina1 = await pagina.evaluate(() => document.getElementById('mtitle').textContent);
-  assert.equal(pagina1, 'Mapa', 'o botão Mapa abre a página Mapa do menu');
+  const noLivre = (await botoes()).filter((id) => id !== 'spin' && id !== 'tour');
+  assert.deepEqual(noLivre, noTreino, 'a coluna do mapa tem os mesmos botões nos dois modos (giro e passeio só no Livre)');
+  await pagina.click('#mbtn');
+  await pagina.click('#mmapa');
   await pagina.click('label:has(#oNight)');
+  const noite = await pagina.evaluate(() => window.__geoTotal.optNight && document.getElementById('oNight').checked);
   await pagina.click('label:has(#oNight)');
-  const noite = await pagina.evaluate(() => window.__geoTotal.optNight);
   await pagina.click('#mback');
   await pagina.click('[data-p="mp-visual"]');
   await pagina.click('#mtema [data-v="dark"]');
@@ -809,7 +807,7 @@ test('cabeçalho: logo; atalho de som no menu; começa sempre de dia; tocar num 
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     const logo = getComputedStyle(document.querySelector('h1 .marca-logo')).backgroundImage.startsWith('url("data:image/png');
-    const noite = g.optNight === false && !document.getElementById('oNight').checked && document.getElementById('mvisual').getAttribute('aria-pressed') === 'false';
+    const noite = g.optNight === false && !document.getElementById('oNight').checked;
     document.getElementById('msom').click();
     const mudo = g.estadoSom.mudo && document.getElementById('msom').getAttribute('aria-checked') === 'false', icone = document.getElementById('msom').querySelector('.mi').textContent;
     document.getElementById('msom').click();
