@@ -1,9 +1,11 @@
 # geoTotal — ficha da Play Store
 
 Tudo o que o Play Console pede, pronto para copiar. As imagens (ícone 512×512, gráfico de
-recursos 1024×500 e as 6 capturas 1080×1920) não ficam no repositório: são entregues à parte e
-enviadas direto no Play Console, nesta ordem: 1 Adivinhe a capital, 2 Combo, 3 Bandeira,
-4 Ache no globo, 5 Desafio do dia, 6 Estados do Brasil. Só o jogo, sem voos nem camadas.
+recursos 1024×500 e as 8 capturas 1080×1920 de celular) não ficam no repositório: são entregues
+à parte e enviadas direto no Play Console, nesta ordem: 1 Aprenda as capitais jogando, 2 Combo,
+3 Toque em qualquer país (Livre), 4 Explore o mundo de verdade (Livre, natureza), 5 Bandeira,
+6 Ache no globo, 7 Desafio do dia, 8 Estados do Brasil. Cada uma tem uma frase em cima: as
+quatro primeiras são as que aparecem na busca, então mostram o jogo e o modo Livre.
 
 ## Detalhes do app
 
