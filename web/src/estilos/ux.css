@@ -780,3 +780,7 @@ button.voltar[hidden]{display:none}
 .mswrow .mfoto{width:30px;height:30px}
 /* os atalhos ficam presos no alto enquanto a página rola, com a parte atual acesa */
 #msheet .matal{position:sticky;top:48px;z-index:2;background:var(--card);padding:6px 0;margin-top:6px}
+/* chips de jogo e região dividem a largura por igual; nome longo quebra em duas linhas em vez de
+   sumir com "…" (celulares de 360 px) */
+.qhead2 .qpick{flex:1 1 0!important;height:auto!important;min-height:42px;padding:4px 10px 4px 12px!important}
+.qhead2 .qpick span{white-space:normal!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.15;font-size:13.5px!important}
