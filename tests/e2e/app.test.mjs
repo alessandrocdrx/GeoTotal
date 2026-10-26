@@ -185,22 +185,27 @@ test('toques e categorias passam pelos ganchos da interface', async () => {
   await fechar();
 });
 
-test('painel do mapa: estilo, luz e camadas; atalho de estilo no menu; mudar lugares no meio da rodada avisa e recomeça', async () => {
+test('página Mapa: foto de satélite, noite e camadas; época em lista; mudar lugares no meio da rodada avisa e recomeça', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(async () => {
     const g = window.__geoTotal, $ = (id) => document.getElementById(id);
     const espera = (ms) => new Promise((ok) => setTimeout(ok, ms));
-    $('mestilotop').click();
-    const atlas = g.estadoRender.atlas && $('mestilotop').querySelector('b').textContent === 'Atlas' && document.querySelector('#mestilo [data-v="atlas"]').getAttribute('aria-pressed') === 'true' && document.querySelector('#cEstilo [data-v="atlas"]').getAttribute('aria-pressed') === 'true';
-    $('mestilotop').click();
-    /* luz pelo painel do mapa: dia e noite reais e de volta a sempre de dia */
-    document.querySelector('#cLuz [data-v="real"]').click();
-    const luz = $('oNight').checked && $('mvisual').textContent === '🌗';
-    document.querySelector('#cLuz [data-v="dia"]').click();
-    const dia = !$('oNight').checked && !g.estadoRender.atlas;
+    $('mbtn').click();$('mmapa').click();
+    const aberto = $('mtitle').textContent === 'Mapa';
+    $('cSat').click();
+    const atlas = g.estadoRender.atlas && !$('cSat').checked;
+    /* ligar a noite no mapa colorido volta para a foto de satélite */
+    $('oNight').disabled = false;$('oNight').click();
+    const luz = $('oNight').checked && !g.estadoRender.atlas && $('cSat').checked;
+    $('oNight').click();
+    const dia = !$('oNight').checked;
+    document.querySelector('[data-p="mp-epoca"]').click();
+    document.querySelector('#cMes [data-v="6"]').click();
+    const epoca = g.estadoRender.mesMapa === 6 && $('cMesV').textContent.startsWith('Julho');
+    document.querySelector('#cMes [data-v=""]').click();
+    $('mback').click();
+    const voltou = $('mtitle').textContent === 'Mapa';
     /* camadas de nomes */
-    $('camb').click();
-    const aberto = !$('camadas').hidden;
     $('cMar').click();
     const semMares = g.estadoRender.camadas.mares === false;
     $('cMar').click();
@@ -209,20 +214,21 @@ test('painel do mapa: estilo, luz e camadas; atalho de estilo no menu; mudar lug
     const natureza = c.zonas && c.desertos && c.florestas && c.montanhas;
     $('flat2d').click();await espera(200);$('flat2d').click();
     /* treino com uma resposta dada: mudar territórios pergunta antes */
+    $('mclose').click();
     $('qbtn').click();await espera(300);
     g.quiz.answered = false;g.finishQ(true);g.nextQ();
     const dep = g.estadoMapa.includeDep;
-    $('cDep').click();
+    $('oDep').click();
     const aviso = document.querySelector('.avisolug');
     const naoMudouAinda = g.estadoMapa.includeDep === dep;
     aviso.querySelector('button:not(.avsim)').click();
     const cancelou = !document.querySelector('.avisolug') && g.estadoMapa.includeDep === dep;
-    $('cDep').click();
+    $('oDep').click();
     document.querySelector('.avisolug .avsim').click();
     const n = g.poolIdx().length, feitos = n - g.runPool().length;
-    return { atlas, luz, dia, aberto, semMares, natureza, aviso: !!aviso, naoMudouAinda, cancelou, mudou: g.estadoMapa.includeDep === !dep, zerou: feitos === 0 && $('oDep').checked === !dep };
+    return { aberto, atlas, luz, dia, epoca, voltou, semMares, natureza, aviso: !!aviso, naoMudouAinda, cancelou, mudou: g.estadoMapa.includeDep === !dep, zerou: feitos === 0 && $('oDep').checked === !dep };
   });
-  assert.deepEqual(r, { atlas: true, luz: true, dia: true, aberto: true, semMares: true, natureza: true, aviso: true, naoMudouAinda: true, cancelou: true, mudou: true, zerou: true });
+  assert.deepEqual(r, { aberto: true, atlas: true, luz: true, dia: true, epoca: true, voltou: true, semMares: true, natureza: true, aviso: true, naoMudouAinda: true, cancelou: true, mudou: true, zerou: true });
   assert.deepEqual(erros, []);
   await fechar();
 });
@@ -579,24 +585,30 @@ test('zerar tudo também zera nível e conquistas', async () => {
   await fechar();
 });
 
-test('dia e noite no topo e no menu ⋯, tema com as três opções à vista', async () => {
+test('noite no globo: botão 🌙 do Livre e chave da página Mapa; tema numa lista com bolinha', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.waitForFunction(() => !document.getElementById('oNight').disabled, null, { timeout: 15000 });
+  const noTreino = await pagina.evaluate(() => document.getElementById('mvisual').getClientRects().length);
+  assert.equal(noTreino, 0, 'no treino a coluna do mapa não mostra o 🌙');
+  await pagina.click('#qclose');
   await pagina.click('#mvisual');
-  const topo = await pagina.evaluate(() => ({ noite: window.__geoTotal.optNight, icone: document.getElementById('mvisual').textContent, chave: document.getElementById('oNight').checked }));
-  assert.deepEqual(topo, { noite: true, icone: '🌗', chave: true }, 'o botão do topo liga o dia e noite e a chave do menu acompanha');
-  await pagina.click('#mbtn');
-  await pagina.click('[data-p="mp-visual"]');
+  const topo = await pagina.evaluate(() => ({ noite: window.__geoTotal.optNight, aceso: document.getElementById('mvisual').getAttribute('aria-pressed'), chave: document.getElementById('oNight').checked }));
+  assert.deepEqual(topo, { noite: true, aceso: 'true', chave: true }, 'o 🌙 liga a noite e a chave do menu acompanha');
+  await pagina.click('#camb');
+  const pagina1 = await pagina.evaluate(() => document.getElementById('mtitle').textContent);
+  assert.equal(pagina1, 'Mapa', 'o botão Mapa abre a página Mapa do menu');
   await pagina.click('label:has(#oNight)');
   await pagina.click('label:has(#oNight)');
   const noite = await pagina.evaluate(() => window.__geoTotal.optNight);
+  await pagina.click('#mback');
+  await pagina.click('[data-p="mp-visual"]');
   await pagina.click('#mtema [data-v="dark"]');
   const r = await pagina.evaluate(() => ({
     tema: document.documentElement.getAttribute('data-theme'),
     marcado: document.querySelector('#mtema [aria-pressed="true"]').textContent,
     guardado: localStorage.getItem('globo.theme'),
   }));
-  assert.equal(noite, true, 'a chave liga o dia e noite');
+  assert.equal(noite, true, 'a chave liga a noite');
   assert.deepEqual(r, { tema: 'dark', marcado: 'Escuro', guardado: '"dark"' });
   assert.deepEqual(erros, []);
   await fechar();
@@ -796,9 +808,9 @@ test('cabeçalho: logo; atalho de som no menu; começa sempre de dia; tocar num 
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     const logo = getComputedStyle(document.querySelector('h1 .marca-logo')).backgroundImage.startsWith('url("data:image/png');
-    const noite = g.optNight === false && !document.getElementById('oNight').checked && document.getElementById('mvisual').textContent === '☀️';
+    const noite = g.optNight === false && !document.getElementById('oNight').checked && document.getElementById('mvisual').getAttribute('aria-pressed') === 'false';
     document.getElementById('msom').click();
-    const mudo = g.estadoSom.mudo, icone = document.getElementById('msom').querySelector('.mi').textContent;
+    const mudo = g.estadoSom.mudo && document.getElementById('msom').getAttribute('aria-checked') === 'false', icone = document.getElementById('msom').querySelector('.mi').textContent;
     document.getElementById('msom').click();
     return { logo, noite, mudo, icone, voltou: g.estadoSom.mudo };
   });

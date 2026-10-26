@@ -669,24 +669,21 @@ header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;
 .ham{display:flex;flex-direction:column;gap:4px}
 .ham i{display:block;width:20px;height:2.5px;border-radius:2px;background:currentColor}
 .tools #camb svg{width:22px;height:22px;fill:currentColor;display:block;margin:auto}
-.tools #mvisual[aria-pressed="true"]{border-color:#c9a23a}
-/* painel do mapa: estilo com miniaturas e luz lado a lado */
-.camestilo{display:flex;gap:8px;margin:4px 0 2px}
-.camestilo button{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px;border-radius:14px;border:2px solid var(--border);background:var(--chip);color:var(--fg);font:700 13px inherit;font-family:inherit;cursor:pointer}
-.camestilo button[aria-pressed="true"]{border-color:#4da3ff;background:rgba(77,163,255,.14)}
-.camestilo .cth{display:block;width:100%;height:46px;border-radius:10px}
-.cth.sat{background:radial-gradient(circle at 35% 35%,#4f8f5e,#28563f 45%,#173a66 70%,#0d2348)}
-.cth.atl{background:radial-gradient(circle at 35% 35%,#e9d9b2,#d7b98a 45%,#c9a0b8 70%,#8fb6d6)}
-.camadas .camluz{display:flex;margin:4px 0 2px}
-.camadas .camluz button{flex:1;font-size:12.5px}
-/* atalhos no topo do menu: grandes, com nome e o estado */
-.matalhos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:2px 0 12px}
-.mlist .matalhos button.matalho{flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:10px 4px;border:1px solid var(--border);border-radius:14px;background:var(--chip);text-align:center;min-height:86px}
-.mlist .matalhos button.matalho:first-child{border-top:1px solid var(--border)}
-.mlist .matalho .mi{font-size:24px;width:auto;text-align:center}
-.mlist .matalho b{font-size:13px;line-height:1.15}
-.mlist .matalho small{font-size:11px;color:var(--muted);line-height:1.2}
-.mlist .matalho.on{border-color:#4da3ff;background:rgba(77,163,255,.18)}
+/* no Treino a coluna do mapa fica só com + e −: noite e Mapa são do Livre (e estão no menu) */
+body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
+.tools #mvisual{background:var(--card);border-color:var(--border);opacity:.7}
+.tools #mvisual[aria-pressed="true"]{background:linear-gradient(140deg,rgba(255,201,60,.3),rgba(255,201,60,.1));border-color:#c9a23a;opacity:1}
+/* menu: três tipos de linha só. Chave (liga e desliga), linha com › (abre página) e lista com
+   bolinha (escolhe uma opção) */
+.mlist button.mswbtn .msw{margin-left:auto}
+.mlist button.mswbtn[aria-checked="true"] .msw{background:#2f9e5b}
+.mlist button.mswbtn[aria-checked="true"] .msw::after{transform:translateX(18px)}
+.mradio{display:flex;flex-direction:column;margin:0 0 6px}
+.mradio button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:50px;padding:10px 6px 10px 46px;border:0;border-top:1px solid var(--border);background:none;color:var(--fg);font:600 15px inherit;font-family:inherit;text-align:left;cursor:pointer}
+.mradio button:first-child{border-top:0}
+.mradio button::after{content:"";flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #6c7a96;box-sizing:border-box}
+.mradio button[aria-pressed="true"]::after{border-color:#4da3ff;background:#4da3ff;box-shadow:inset 0 0 0 4px var(--card)}
+#mp-epoca .mradio button{padding-left:10px}
 
 /* ---------- 1.42: treino com a pergunta em primeiro lugar ---------- */
 /* jogo e região em chips arredondados (o jeito Android de filtro), só com o que está escolhido */

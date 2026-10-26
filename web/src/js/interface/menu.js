@@ -1,14 +1,13 @@
 /**
  * @arquivo js/interface/menu.js
  * Camada: Interface
- * Menu ☰: atalhos (som, dia e noite, satélite ou atlas, mapa) no topo e as escolhas à vista; só
- * "Explorar" e "Configurar" abrem páginas internas.
+ * Menu ☰: chave do som e a página Mapa no alto, depois progresso, explorar, configurar e ajuda.
+ * Só três tipos de linha: chave, linha com › (abre página, ← volta) e lista com bolinha.
  */
 
 import { alternarEfeitos, alternarMudo, alternarMusica, estadoSom } from '../nucleo/som.js';
-import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
+import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { estadoMapa } from '../visualizacao/tela.js';
-import { abrir as abrirMapa } from './camadas.js';
 
 /* ---------- menu Mais ---------- */
 let themeMode;
@@ -17,17 +16,13 @@ function applyTheme(){
   if(themeMode==='light')document.documentElement.setAttribute('data-theme','light');
   else if(themeMode==='dark')document.documentElement.setAttribute('data-theme','dark');
 }
+/* páginas dentro de páginas (Mapa › Época do ano): o ← volta para a anterior */
+let pilha=[];
 function mShow(id){
   $('mlist').hidden=!!id;
   Array.prototype.forEach.call(document.querySelectorAll('#msheet .mpage'),function(pg){pg.hidden=pg.id!==id;});
   $('mback').hidden=!id;$('mtitle').textContent=id?$(id).getAttribute('data-t'):'Menu';
   var bx=$('msheet').querySelector('.box');if(bx)bx.scrollTop=0;
-}
-/** Atalho do menu: ícone, nome e estado; aceso quando ligado. */
-function atalho(b,icone,nome,estado,ligado){
-  b.innerHTML='';
-  [['span','mi',icone],['b','',nome],['small','',estado]].forEach(function(p){var e=document.createElement(p[0]);if(p[1])e.className=p[1];e.textContent=p[2];b.appendChild(e);});
-  b.classList.toggle('on',!!ligado);
 }
 /** Botões lado a lado (.aseg): marca o valor atual e chama definir(valor) ao tocar. */
 function ligarSeg(box,atual,definir){
@@ -42,23 +37,25 @@ function iniciar() {
   themeMode = lsGet('globo.theme','auto');
   applyTheme();
   ligarSeg($('mtema'),themeMode,function(v){themeMode=v;lsSet('globo.theme',v);applyTheme();});
-  Array.prototype.forEach.call(document.querySelectorAll('#mlist [data-p]'),function(b){b.onclick=function(){mShow(b.getAttribute('data-p'));};});
-  $('mback').onclick=function(){mShow(null);};
+  Array.prototype.forEach.call(document.querySelectorAll('#msheet [data-p]'),function(b){b.onclick=function(){
+    var atual=null;Array.prototype.forEach.call(document.querySelectorAll('#msheet .mpage'),function(p){if(!p.hidden)atual=p.id;});
+    pilha.push(atual);mShow(b.getAttribute('data-p'));
+  };});
+  $('mback').onclick=function(){mShow(pilha.length?pilha.pop():null);};
   /* som: o 🔊 do topo é o mudo geral; no menu, efeitos e música têm cada um sua chave */
   function somV(){$('msfx').checked=estadoSom.efeitos;$('mmusic').checked=estadoSom.musica;}
   $('msfx').onchange=function(){if(this.checked!==estadoSom.efeitos)alternarEfeitos();somV();};
   $('mmusic').onchange=function(){if(this.checked!==estadoSom.musica)alternarMusica();somV();};
   somV();
-  function somH(){var b=$('msom');atalho(b,estadoSom.mudo?'🔇':'🔊','Som',estadoSom.mudo?'Desligado':'Ligado',!estadoSom.mudo);b.setAttribute('aria-label',estadoSom.mudo?'Som desligado':'Som ligado');}
-  $('msom').onclick=function(){alternarMudo();somH();setStatus(estadoSom.mudo?'🔇 Som desligado':'🔊 Som ligado (a música toca no modo Livre)',2200);};
+  /* som: chave geral (mudo); no menu Som e tela, efeitos e música têm cada um a sua */
+  function somH(){var b=$('msom'),lig=!estadoSom.mudo;b.setAttribute('aria-checked',lig?'true':'false');b.querySelector('.mi').textContent=lig?'🔊':'🔇';b.setAttribute('aria-label',lig?'Som ligado':'Som desligado');}
+  $('msom').onclick=function(){alternarMudo();somH();};
   somH();
-  /* dia e noite: o mesmo botão ☀️ da coluna do mapa */
-  function diaH(){var n=$('oNight').checked;atalho($('matdia'),n?'🌗':'☀️',n?'Dia e noite':'Dia',n?'Reais':'Sem noite',n);}
-  $('matdia').onclick=function(){$('mvisual').click();diaH();};
-  $('oNight').addEventListener('change',diaH);diaH();
-  $('matmapa').onclick=function(){$('msheet').style.display='none';abrirMapa(true);};
+  /* o botão Mapa da coluna do mapa (Livre) abre direto a página Mapa do menu */
+  $('camb').onclick=function(){abrirMenu('mp-mapa');};
   var marcaNomes=ligarSeg($('mlabels'),estadoMapa.labelMode,function(v){$(v==='c'?'lc':'lp').click();});
-  $('mbtn').onclick=function(){marcaNomes(estadoMapa.labelMode);somV();mShow(null);$('msheet').style.display='block';};
+  function abrirMenu(pg){marcaNomes(estadoMapa.labelMode);somV();pilha=[];mShow(pg||null);$('msheet').style.display='block';}
+  $('mbtn').onclick=function(){abrirMenu(null);};
   $('mclose').onclick=function(){$('msheet').style.display='none';};
   $('msheet').addEventListener('pointerdown',function(e){if(e.target===$('msheet'))$('msheet').style.display='none';});
   $('txtd').addEventListener('pointerdown',function(e){if(e.target===$('txtd'))$('txtd').style.display='none';});
@@ -84,4 +81,4 @@ function iniciar() {
   });
 }
 
-export { atalho, iniciar, ligarSeg };
+export { iniciar, ligarSeg };

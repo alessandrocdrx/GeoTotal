@@ -41,31 +41,11 @@
     <div class="tools">
       <button id="zin" aria-label="Aproximar">+</button>
       <button id="zout" aria-label="Afastar">−</button>
-      <button id="mvisual" aria-label="Dia e noite" title="Dia e noite">☀️</button>
-      <button id="camb" class="camb" aria-label="Mapa: estilo e camadas" title="Mapa: estilo e camadas" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg></button>
+      <button id="mvisual" aria-label="Noite no globo" title="Noite no globo" aria-pressed="false">🌙</button>
+      <button id="camb" class="camb" aria-label="Mapa: satélite, noite e o que aparece" title="Mapa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg></button>
       <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true">🔄</button>
       <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países">🎬</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
-    </div>
-    <div id="camadas" class="camadas" hidden>
-      <div class="camtit"><b>Mapa</b><button id="camfechar" class="closeb" aria-label="Fechar">✕</button></div>
-      <div class="camsep">Estilo</div>
-      <div class="camestilo" id="cEstilo"><button data-v="sat"><i class="cth sat"></i>Satélite</button><button data-v="atlas"><i class="cth atl"></i>Atlas</button></div>
-      <div class="camsep">Luz</div>
-      <div class="aseg camluz" id="cLuz"><button data-v="dia">☀️ Sempre de dia</button><button data-v="real">🌗 Dia e noite reais</button></div>
-      <div class="camsep">O que aparece</div>
-      <label class="mswrow"><span class="mi">🌊</span><span class="mt"><b>Oceanos</b></span><input type="checkbox" id="cOce" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">⛵</span><span class="mt"><b>Mares e golfos</b><small>Os menores aparecem ao aproximar</small></span><input type="checkbox" id="cMar" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">🌡️</span><span class="mt"><b>Zonas climáticas</b><small>Tropical, temperadas e polares; Equador e Trópicos</small></span><input type="checkbox" id="cZon" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">🏜️</span><span class="mt"><b>Desertos</b></span><input type="checkbox" id="cDes" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">🌳</span><span class="mt"><b>Florestas</b><small>Contorno aproximado</small></span><input type="checkbox" id="cFlo" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">⛰️</span><span class="mt"><b>Relevo</b><small>Cordilheiras e planaltos</small></span><input type="checkbox" id="cMon" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <div class="msegrow"><span class="mi">📅</span><span class="mt"><b>Época do ano</b><small>Neve no globo de satélite</small></span><select id="cMes" class="cmes" aria-label="Época do ano"></select></div>
-      <div class="camsep">Lugares (valem também no treino)</div>
-      <label class="mswrow"><span class="mi">⚠️</span><span class="mt"><b>Não reconhecidos pela ONU</b><small>Kosovo, Somalilândia…</small></span><input type="checkbox" id="cDis" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">🏴</span><span class="mt"><b>Micronações</b><small>Liberland, Sealand…</small></span><input type="checkbox" id="cMic" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">◇</span><span class="mt"><b>Territórios dependentes</b><small>Porto Rico, Groenlândia…</small></span><input type="checkbox" id="cDep" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">❄️</span><span class="mt"><b>Desabitados e Antártida</b></span><input type="checkbox" id="cUni" role="switch"><i class="msw" aria-hidden="true"></i></label>
     </div>
     <div id="legenda" class="legenda" hidden><b>Cada forma é um continente</b><div id="legitens" class="legitens"></div><button id="legok" class="legok">Entendi</button></div>
     <div class="hint" id="hint">Arraste para girar · toque num país para ver os detalhes</div>

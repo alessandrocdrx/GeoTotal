@@ -1,20 +1,18 @@
 <!-- @arquivo componentes/menu.html · Camada: Interface
-     Menu "⋯": atalhos do progresso, explorar e ajuda à vista; som e visual, lugares no jogo e seus
-     dados ficam em páginas internas (mais curto de ler). -->
+     Menu ☰: tudo em três tipos de linha só: chave (liga e desliga), linha com › (abre uma página,
+     com ← para voltar) e lista com bolinha (escolhe uma opção). O botão Mapa do modo Livre abre
+     direto a página "Mapa". -->
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
   <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Menu</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <nav id="mlist" class="mlist">
-    <div class="matalhos" aria-label="Atalhos">
-      <button id="msom" class="matalho" aria-label="Som ligado"></button>
-      <button id="matdia" class="matalho" aria-label="Dia e noite"></button>
-      <button id="mestilotop" class="matalho" aria-label="Estilo do mapa: satélite"></button>
-      <button id="matmapa" class="matalho" aria-label="Mapa: estilo e camadas"><span class="mi">🗺️</span><b>Mapa</b><small>Camadas…</small></button>
-    </div>
-    <div class="mtiles">
-      <button class="mtile" id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Carimbos dos países que você domina</small></span></button>
-      <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos</small></span></button>
-      <button class="mtile" id="mhist"><span class="mi">📊</span><span class="mt"><b>Histórico</b><small>Acertos e erros</small></span></button>
-    </div>
+    <div class="mgrp">⚡ Rápido</div>
+    <button id="msom" class="mswbtn" role="switch" aria-checked="true"><span class="mi">🔊</span><span class="mt"><b>Som</b><small>Efeitos e música</small></span><i class="msw" aria-hidden="true"></i></button>
+    <button data-p="mp-mapa" id="mmapa"><span class="mi">🗺️</span><span class="mt"><b>Mapa</b><small>Satélite, noite e o que aparece</small></span><span class="mc">›</span></button>
+
+    <div class="mgrp">⭐ Seu progresso</div>
+    <button id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Carimbos dos países que você domina</small></span><span class="mc">›</span></button>
+    <button id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos</small></span><span class="mc">›</span></button>
+    <button id="mhist"><span class="mi">📊</span><span class="mt"><b>Histórico</b><small>Acertos e erros</small></span><span class="mc">›</span></button>
 
     <div class="mgrp">🧭 Explorar</div>
     <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
@@ -23,7 +21,7 @@
     <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
 
     <div class="mgrp">⚙️ Configurar</div>
-    <button data-p="mp-visual"><span class="mi">🎨</span><span class="mt"><b>Som e visual</b><small>Efeitos, música, tema, fronteiras e nomes</small></span><span class="mc">›</span></button>
+    <button data-p="mp-visual"><span class="mi">🎨</span><span class="mt"><b>Som e tela</b><small>Efeitos, música, tema, fronteiras e nomes</small></span><span class="mc">›</span></button>
     <button data-p="mp-lugares"><span class="mi">🗺️</span><span class="mt"><b>Lugares no jogo</b><small>Territórios, lugares disputados e Antártida</small></span><span class="mc">›</span></button>
     <button data-p="mp-dados"><span class="mi">💾</span><span class="mt"><b>Seus dados</b><small>Salvar, restaurar ou zerar o progresso</small></span><span class="mc">›</span></button>
 
@@ -33,19 +31,38 @@
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
   </nav>
-  <div class="mpage" id="mp-visual" data-t="Som e visual" hidden>
+  <div class="mpage" id="mp-visual" data-t="Som e tela" hidden>
 <div class="mlist">
     <label class="mswrow"><span class="mi">🔔</span><span class="mt"><b>Efeitos sonoros</b></span><input type="checkbox" id="msfx" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🎵</span><span class="mt"><b>Música</b><small>Toca no modo Livre</small></span><input type="checkbox" id="mmusic" role="switch"><i class="msw" aria-hidden="true"></i></label>
-    <div class="msegrow"><span class="mi">🗺️</span><span class="mt"><b>Estilo do mapa</b><small>Atlas: uma cor por país</small></span><div class="aseg" id="mestilo"><button data-v="sat">Satélite</button><button data-v="atlas">Atlas</button></div></div>
-    <div class="msegrow"><span class="mi">🌓</span><span class="mt"><b>Tema</b></span><div class="aseg" id="mtema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div>
-    <label class="mswrow"><span class="mi">🌗</span><span class="mt"><b>Dia e noite de verdade</b><small>Sombra da noite no globo, agora</small></span><input type="checkbox" id="oNight" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">〰️</span><span class="mt"><b>Fronteiras dos países</b></span><input type="checkbox" id="oBor" role="switch" checked disabled><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🖍️</span><span class="mt"><b>Colorir por região</b></span><input type="checkbox" id="oFill" role="switch" checked disabled><i class="msw" aria-hidden="true"></i></label>
     <input type="checkbox" id="oTex" checked disabled hidden>
-    <div class="msegrow"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b></span><div class="aseg" id="mlabels"><button data-v="p">Países</button><button data-v="c">Capitais</button></div></div>
+    <div class="mgrp">🏷️ Nomes no mapa</div>
+    <div class="mradio" id="mlabels"><button data-v="p">Nomes dos países</button><button data-v="c">Nomes das capitais</button></div>
+    <div class="mgrp">🌓 Tema</div>
+    <div class="mradio" id="mtema"><button data-v="auto">Igual ao celular</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div>
 
 </div>
+  </div>
+  <div class="mpage" id="mp-mapa" data-t="Mapa" hidden>
+<div class="mlist">
+    <label class="mswrow"><span class="mi">🛰️</span><span class="mt"><b>Foto de satélite</b><small id="cSatTxt">Desligada: mapa colorido, uma cor por país</small></span><input type="checkbox" id="cSat" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🌙</span><span class="mt"><b>Noite no globo</b><small>Escurece onde é noite agora (só na foto de satélite)</small></span><input type="checkbox" id="oNight" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
+    <div class="mgrp">👁️ O que aparece</div>
+    <label class="mswrow"><span class="mi">🌊</span><span class="mt"><b>Oceanos</b></span><input type="checkbox" id="cOce" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">⛵</span><span class="mt"><b>Mares e golfos</b><small>Os menores aparecem ao aproximar</small></span><input type="checkbox" id="cMar" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🌡️</span><span class="mt"><b>Zonas climáticas</b><small>Tropical, temperadas e polares</small></span><input type="checkbox" id="cZon" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🏜️</span><span class="mt"><b>Desertos</b></span><input type="checkbox" id="cDes" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🌳</span><span class="mt"><b>Florestas</b></span><input type="checkbox" id="cFlo" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">⛰️</span><span class="mt"><b>Relevo</b><small>Cordilheiras e planaltos</small></span><input type="checkbox" id="cMon" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <button data-p="mp-epoca"><span class="mi">📅</span><span class="mt"><b>Época do ano</b><small id="cMesV">Agora</small></span><span class="mc">›</span></button>
+    <button data-p="mp-lugares"><span class="mi">🏴</span><span class="mt"><b>Lugares no jogo</b><small>Territórios, lugares disputados e Antártida</small></span><span class="mc">›</span></button>
+</div>
+  </div>
+  <div class="mpage" id="mp-epoca" data-t="Época do ano" hidden>
+    <p class="mdesc">A neve na foto de satélite muda com o mês.</p>
+    <div class="mradio" id="cMes"></div>
   </div>
   <div class="mpage" id="mp-lugares" data-t="Lugares no jogo" hidden>
 <div class="mlist">

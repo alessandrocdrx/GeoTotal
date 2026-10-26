@@ -83,11 +83,11 @@ test('cabeçalho cabe na tela e ocupa a largura, com ou sem 🔥 e fonte larga',
     const r = await pagina.evaluate(() => ({ pagina: document.documentElement.scrollWidth, menu: Math.round(document.getElementById('mbtn').getBoundingClientRect().right) }));
     if (r.pagina > largura) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: página com ${r.pagina}px (rolagem lateral)`);
     if (r.menu > largura) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: botão ☰ termina em ${r.menu}px, fora da tela`);
-    /* topo limpo: Treino e Livre largos; dia e noite e o mapa ficam à vista na coluna do mapa */
+    /* topo limpo: Treino e Livre largos; no Livre, a noite e o mapa ficam na coluna do mapa */
     const faltam = await pagina.evaluate((L) => {
       const f = [];
       ['qbtn', 'qclose'].forEach((id) => { const b = document.getElementById(id).getBoundingClientRect(); if (!(b.width >= 60 && b.right <= L)) f.push(id); });
-      ['mvisual', 'camb'].forEach((id) => { const b = document.getElementById(id).getBoundingClientRect(); if (!(b.width >= 36 && b.right <= L)) f.push(id); });
+      ['mvisual', 'camb'].forEach((id) => { const b = document.getElementById(id).getBoundingClientRect(); if (b.width && b.right > L) f.push(id); });
       return f;
     }, largura);
     if (faltam.length) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: botões apertados ou fora da tela: ${faltam.join(', ')}`);

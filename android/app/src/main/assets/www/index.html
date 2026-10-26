@@ -1004,24 +1004,21 @@ header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;
 .ham{display:flex;flex-direction:column;gap:4px}
 .ham i{display:block;width:20px;height:2.5px;border-radius:2px;background:currentColor}
 .tools #camb svg{width:22px;height:22px;fill:currentColor;display:block;margin:auto}
-.tools #mvisual[aria-pressed="true"]{border-color:#c9a23a}
-/* painel do mapa: estilo com miniaturas e luz lado a lado */
-.camestilo{display:flex;gap:8px;margin:4px 0 2px}
-.camestilo button{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px;border-radius:14px;border:2px solid var(--border);background:var(--chip);color:var(--fg);font:700 13px inherit;font-family:inherit;cursor:pointer}
-.camestilo button[aria-pressed="true"]{border-color:#4da3ff;background:rgba(77,163,255,.14)}
-.camestilo .cth{display:block;width:100%;height:46px;border-radius:10px}
-.cth.sat{background:radial-gradient(circle at 35% 35%,#4f8f5e,#28563f 45%,#173a66 70%,#0d2348)}
-.cth.atl{background:radial-gradient(circle at 35% 35%,#e9d9b2,#d7b98a 45%,#c9a0b8 70%,#8fb6d6)}
-.camadas .camluz{display:flex;margin:4px 0 2px}
-.camadas .camluz button{flex:1;font-size:12.5px}
-/* atalhos no topo do menu: grandes, com nome e o estado */
-.matalhos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:2px 0 12px}
-.mlist .matalhos button.matalho{flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:10px 4px;border:1px solid var(--border);border-radius:14px;background:var(--chip);text-align:center;min-height:86px}
-.mlist .matalhos button.matalho:first-child{border-top:1px solid var(--border)}
-.mlist .matalho .mi{font-size:24px;width:auto;text-align:center}
-.mlist .matalho b{font-size:13px;line-height:1.15}
-.mlist .matalho small{font-size:11px;color:var(--muted);line-height:1.2}
-.mlist .matalho.on{border-color:#4da3ff;background:rgba(77,163,255,.18)}
+/* no Treino a coluna do mapa fica só com + e −: noite e Mapa são do Livre (e estão no menu) */
+body.quizing .tools #mvisual,body.quizing .tools #camb{display:none}
+.tools #mvisual{background:var(--card);border-color:var(--border);opacity:.7}
+.tools #mvisual[aria-pressed="true"]{background:linear-gradient(140deg,rgba(255,201,60,.3),rgba(255,201,60,.1));border-color:#c9a23a;opacity:1}
+/* menu: três tipos de linha só. Chave (liga e desliga), linha com › (abre página) e lista com
+   bolinha (escolhe uma opção) */
+.mlist button.mswbtn .msw{margin-left:auto}
+.mlist button.mswbtn[aria-checked="true"] .msw{background:#2f9e5b}
+.mlist button.mswbtn[aria-checked="true"] .msw::after{transform:translateX(18px)}
+.mradio{display:flex;flex-direction:column;margin:0 0 6px}
+.mradio button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:50px;padding:10px 6px 10px 46px;border:0;border-top:1px solid var(--border);background:none;color:var(--fg);font:600 15px inherit;font-family:inherit;text-align:left;cursor:pointer}
+.mradio button:first-child{border-top:0}
+.mradio button::after{content:"";flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #6c7a96;box-sizing:border-box}
+.mradio button[aria-pressed="true"]::after{border-color:#4da3ff;background:#4da3ff;box-shadow:inset 0 0 0 4px var(--card)}
+#mp-epoca .mradio button{padding-left:10px}
 
 /* ---------- 1.42: treino com a pergunta em primeiro lugar ---------- */
 /* jogo e região em chips arredondados (o jeito Android de filtro), só com o que está escolhido */
@@ -1125,31 +1122,11 @@ header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;
     <div class="tools">
       <button id="zin" aria-label="Aproximar">+</button>
       <button id="zout" aria-label="Afastar">−</button>
-      <button id="mvisual" aria-label="Dia e noite" title="Dia e noite">☀️</button>
-      <button id="camb" class="camb" aria-label="Mapa: estilo e camadas" title="Mapa: estilo e camadas" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg></button>
+      <button id="mvisual" aria-label="Noite no globo" title="Noite no globo" aria-pressed="false">🌙</button>
+      <button id="camb" class="camb" aria-label="Mapa: satélite, noite e o que aparece" title="Mapa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/></svg></button>
       <button id="spin" aria-label="Giro automático" title="Giro automático" aria-pressed="true">🔄</button>
       <button id="tour" aria-label="Passeio pelos países" title="Passeio pelos países">🎬</button>
       <button id="flat2d" aria-label="Ver como mapa 2D" aria-pressed="false">🗺️</button>
-    </div>
-    <div id="camadas" class="camadas" hidden>
-      <div class="camtit"><b>Mapa</b><button id="camfechar" class="closeb" aria-label="Fechar">✕</button></div>
-      <div class="camsep">Estilo</div>
-      <div class="camestilo" id="cEstilo"><button data-v="sat"><i class="cth sat"></i>Satélite</button><button data-v="atlas"><i class="cth atl"></i>Atlas</button></div>
-      <div class="camsep">Luz</div>
-      <div class="aseg camluz" id="cLuz"><button data-v="dia">☀️ Sempre de dia</button><button data-v="real">🌗 Dia e noite reais</button></div>
-      <div class="camsep">O que aparece</div>
-      <label class="mswrow"><span class="mi">🌊</span><span class="mt"><b>Oceanos</b></span><input type="checkbox" id="cOce" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">⛵</span><span class="mt"><b>Mares e golfos</b><small>Os menores aparecem ao aproximar</small></span><input type="checkbox" id="cMar" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">🌡️</span><span class="mt"><b>Zonas climáticas</b><small>Tropical, temperadas e polares; Equador e Trópicos</small></span><input type="checkbox" id="cZon" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">🏜️</span><span class="mt"><b>Desertos</b></span><input type="checkbox" id="cDes" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">🌳</span><span class="mt"><b>Florestas</b><small>Contorno aproximado</small></span><input type="checkbox" id="cFlo" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">⛰️</span><span class="mt"><b>Relevo</b><small>Cordilheiras e planaltos</small></span><input type="checkbox" id="cMon" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <div class="msegrow"><span class="mi">📅</span><span class="mt"><b>Época do ano</b><small>Neve no globo de satélite</small></span><select id="cMes" class="cmes" aria-label="Época do ano"></select></div>
-      <div class="camsep">Lugares (valem também no treino)</div>
-      <label class="mswrow"><span class="mi">⚠️</span><span class="mt"><b>Não reconhecidos pela ONU</b><small>Kosovo, Somalilândia…</small></span><input type="checkbox" id="cDis" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">🏴</span><span class="mt"><b>Micronações</b><small>Liberland, Sealand…</small></span><input type="checkbox" id="cMic" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">◇</span><span class="mt"><b>Territórios dependentes</b><small>Porto Rico, Groenlândia…</small></span><input type="checkbox" id="cDep" role="switch"><i class="msw" aria-hidden="true"></i></label>
-      <label class="mswrow"><span class="mi">❄️</span><span class="mt"><b>Desabitados e Antártida</b></span><input type="checkbox" id="cUni" role="switch"><i class="msw" aria-hidden="true"></i></label>
     </div>
     <div id="legenda" class="legenda" hidden><b>Cada forma é um continente</b><div id="legitens" class="legitens"></div><button id="legok" class="legok">Entendi</button></div>
     <div class="hint" id="hint">Arraste para girar · toque num país para ver os detalhes</div>
@@ -1195,17 +1172,14 @@ header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
   <div class="shead"><span class="mhead"><button id="mback" class="mback" aria-label="Voltar" hidden>←</button><b id="mtitle">Menu</b></span><button id="mclose" class="closeb" aria-label="Fechar">✕ Fechar</button></div>
   <nav id="mlist" class="mlist">
-    <div class="matalhos" aria-label="Atalhos">
-      <button id="msom" class="matalho" aria-label="Som ligado"></button>
-      <button id="matdia" class="matalho" aria-label="Dia e noite"></button>
-      <button id="mestilotop" class="matalho" aria-label="Estilo do mapa: satélite"></button>
-      <button id="matmapa" class="matalho" aria-label="Mapa: estilo e camadas"><span class="mi">🗺️</span><b>Mapa</b><small>Camadas…</small></button>
-    </div>
-    <div class="mtiles">
-      <button class="mtile" id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Carimbos dos países que você domina</small></span></button>
-      <button class="mtile" id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos</small></span></button>
-      <button class="mtile" id="mhist"><span class="mi">📊</span><span class="mt"><b>Histórico</b><small>Acertos e erros</small></span></button>
-    </div>
+    <div class="mgrp">⚡ Rápido</div>
+    <button id="msom" class="mswbtn" role="switch" aria-checked="true"><span class="mi">🔊</span><span class="mt"><b>Som</b><small>Efeitos e música</small></span><i class="msw" aria-hidden="true"></i></button>
+    <button data-p="mp-mapa" id="mmapa"><span class="mi">🗺️</span><span class="mt"><b>Mapa</b><small>Satélite, noite e o que aparece</small></span><span class="mc">›</span></button>
+
+    <div class="mgrp">⭐ Seu progresso</div>
+    <button id="mpassaporte"><span class="mi">🛂</span><span class="mt"><b>Passaporte</b><small>Carimbos dos países que você domina</small></span><span class="mc">›</span></button>
+    <button id="mbadges"><span class="mi">🏆</span><span class="mt"><b>Conquistas</b><small>Medalhas e marcos</small></span><span class="mc">›</span></button>
+    <button id="mhist"><span class="mi">📊</span><span class="mt"><b>Histórico</b><small>Acertos e erros</small></span><span class="mc">›</span></button>
 
     <div class="mgrp">🧭 Explorar</div>
     <button data-p="mp-br"><span class="mi">🇧🇷</span><span class="mt"><b>Estados do Brasil</b><small>Os 27 estados e suas capitais</small></span><span class="mc">›</span></button>
@@ -1214,7 +1188,7 @@ header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;
     <button id="expStudy"><span class="mi">📄</span><span class="mt"><b>Folha de estudo</b><small>Países e capitais para imprimir</small></span><span class="mc">›</span></button>
 
     <div class="mgrp">⚙️ Configurar</div>
-    <button data-p="mp-visual"><span class="mi">🎨</span><span class="mt"><b>Som e visual</b><small>Efeitos, música, tema, fronteiras e nomes</small></span><span class="mc">›</span></button>
+    <button data-p="mp-visual"><span class="mi">🎨</span><span class="mt"><b>Som e tela</b><small>Efeitos, música, tema, fronteiras e nomes</small></span><span class="mc">›</span></button>
     <button data-p="mp-lugares"><span class="mi">🗺️</span><span class="mt"><b>Lugares no jogo</b><small>Territórios, lugares disputados e Antártida</small></span><span class="mc">›</span></button>
     <button data-p="mp-dados"><span class="mi">💾</span><span class="mt"><b>Seus dados</b><small>Salvar, restaurar ou zerar o progresso</small></span><span class="mc">›</span></button>
 
@@ -1224,19 +1198,38 @@ header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;
     <a id="mreport" class="mrowlink" href="https://github.com/alessandrocdrx/GeoTotal/issues/new" target="_blank" rel="noopener"><span class="mi">💬</span><span class="mt"><b>Relatar problema ou sugestão</b><small>Abre a página do projeto</small></span><span class="mc">↗</span></a>
     <button data-p="mp-sobre"><span class="mi">ℹ️</span><span class="mt"><b>Sobre o geoTotal</b><small>Versão, autor e créditos</small></span><span class="mc">›</span></button>
   </nav>
-  <div class="mpage" id="mp-visual" data-t="Som e visual" hidden>
+  <div class="mpage" id="mp-visual" data-t="Som e tela" hidden>
 <div class="mlist">
     <label class="mswrow"><span class="mi">🔔</span><span class="mt"><b>Efeitos sonoros</b></span><input type="checkbox" id="msfx" role="switch"><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🎵</span><span class="mt"><b>Música</b><small>Toca no modo Livre</small></span><input type="checkbox" id="mmusic" role="switch"><i class="msw" aria-hidden="true"></i></label>
-    <div class="msegrow"><span class="mi">🗺️</span><span class="mt"><b>Estilo do mapa</b><small>Atlas: uma cor por país</small></span><div class="aseg" id="mestilo"><button data-v="sat">Satélite</button><button data-v="atlas">Atlas</button></div></div>
-    <div class="msegrow"><span class="mi">🌓</span><span class="mt"><b>Tema</b></span><div class="aseg" id="mtema"><button data-v="auto">Auto</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div></div>
-    <label class="mswrow"><span class="mi">🌗</span><span class="mt"><b>Dia e noite de verdade</b><small>Sombra da noite no globo, agora</small></span><input type="checkbox" id="oNight" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">〰️</span><span class="mt"><b>Fronteiras dos países</b></span><input type="checkbox" id="oBor" role="switch" checked disabled><i class="msw" aria-hidden="true"></i></label>
     <label class="mswrow"><span class="mi">🖍️</span><span class="mt"><b>Colorir por região</b></span><input type="checkbox" id="oFill" role="switch" checked disabled><i class="msw" aria-hidden="true"></i></label>
     <input type="checkbox" id="oTex" checked disabled hidden>
-    <div class="msegrow"><span class="mi">🏷️</span><span class="mt"><b>Nomes no mapa</b></span><div class="aseg" id="mlabels"><button data-v="p">Países</button><button data-v="c">Capitais</button></div></div>
+    <div class="mgrp">🏷️ Nomes no mapa</div>
+    <div class="mradio" id="mlabels"><button data-v="p">Nomes dos países</button><button data-v="c">Nomes das capitais</button></div>
+    <div class="mgrp">🌓 Tema</div>
+    <div class="mradio" id="mtema"><button data-v="auto">Igual ao celular</button><button data-v="light">Claro</button><button data-v="dark">Escuro</button></div>
 
 </div>
+  </div>
+  <div class="mpage" id="mp-mapa" data-t="Mapa" hidden>
+<div class="mlist">
+    <label class="mswrow"><span class="mi">🛰️</span><span class="mt"><b>Foto de satélite</b><small id="cSatTxt">Desligada: mapa colorido, uma cor por país</small></span><input type="checkbox" id="cSat" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🌙</span><span class="mt"><b>Noite no globo</b><small>Escurece onde é noite agora (só na foto de satélite)</small></span><input type="checkbox" id="oNight" role="switch" disabled><i class="msw" aria-hidden="true"></i></label>
+    <div class="mgrp">👁️ O que aparece</div>
+    <label class="mswrow"><span class="mi">🌊</span><span class="mt"><b>Oceanos</b></span><input type="checkbox" id="cOce" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">⛵</span><span class="mt"><b>Mares e golfos</b><small>Os menores aparecem ao aproximar</small></span><input type="checkbox" id="cMar" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🌡️</span><span class="mt"><b>Zonas climáticas</b><small>Tropical, temperadas e polares</small></span><input type="checkbox" id="cZon" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🏜️</span><span class="mt"><b>Desertos</b></span><input type="checkbox" id="cDes" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">🌳</span><span class="mt"><b>Florestas</b></span><input type="checkbox" id="cFlo" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <label class="mswrow"><span class="mi">⛰️</span><span class="mt"><b>Relevo</b><small>Cordilheiras e planaltos</small></span><input type="checkbox" id="cMon" role="switch"><i class="msw" aria-hidden="true"></i></label>
+    <button data-p="mp-epoca"><span class="mi">📅</span><span class="mt"><b>Época do ano</b><small id="cMesV">Agora</small></span><span class="mc">›</span></button>
+    <button data-p="mp-lugares"><span class="mi">🏴</span><span class="mt"><b>Lugares no jogo</b><small>Territórios, lugares disputados e Antártida</small></span><span class="mc">›</span></button>
+</div>
+  </div>
+  <div class="mpage" id="mp-epoca" data-t="Época do ano" hidden>
+    <p class="mdesc">A neve na foto de satélite muda com o mês.</p>
+    <div class="mradio" id="cMes"></div>
   </div>
   <div class="mpage" id="mp-lugares" data-t="Lugares no jogo" hidden>
 <div class="mlist">
@@ -4797,68 +4790,35 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     };
     function visMostra() {
       var n = $("oNight").checked;
-      $("mvisual").textContent = n ? "🌗" : "☀️";
       $("mvisual").setAttribute("aria-pressed", n ? "true" : "false");
-      Array.prototype.forEach.call($("cLuz").querySelectorAll("button"), function(b) {
-        b.setAttribute("aria-pressed", b.dataset.v === "real" === n ? "true" : "false");
-      });
     }
     $("mvisual").onclick = function() {
-      var noite = $("oNight"), v = !noite.checked;
-      if (estadoRender.atlas) definirAtlas(false);
-      estadoRender.optTex = true;
-      oTex.checked = estadoRender.useTex;
-      noite.checked = v;
+      var noite = $("oNight");
+      noite.checked = !noite.checked;
       noite.dispatchEvent(new Event("change"));
-      visMostra();
-      setStatus(v ? "🌗 Globo com dia e noite de verdade" : "☀️ Globo sempre de dia", 2200);
+      setStatus(noite.checked ? "🌙 Noite no globo ligada" : "🌙 Noite no globo desligada", 2200);
     };
-    $("oNight").addEventListener("change", visMostra);
+    $("oNight").addEventListener("change", function() {
+      if (this.checked && estadoRender.atlas) definirAtlas(false);
+      if (this.checked) {
+        estadoRender.optTex = true;
+        oTex.checked = estadoRender.useTex;
+      }
+      visMostra();
+    });
     oTex.addEventListener("change", visMostra);
     estadoRender.atlas = lsGet("globo.atlas", false) === true;
     function estiloMostra() {
-      Array.prototype.forEach.call($("mestilo").querySelectorAll("button"), function(b) {
-        b.setAttribute("aria-pressed", b.dataset.v === "atlas" === estadoRender.atlas ? "true" : "false");
-      });
-      Array.prototype.forEach.call($("cEstilo").querySelectorAll("button"), function(b) {
-        b.setAttribute("aria-pressed", b.dataset.v === "atlas" === estadoRender.atlas ? "true" : "false");
-      });
-      var t = $("mestilotop");
-      t.innerHTML = "";
-      [["span", "mi", estadoRender.atlas ? "🗺️" : "🌍"], ["b", "", estadoRender.atlas ? "Atlas" : "Satélite"], ["small", "", "Estilo"]].forEach(function(p) {
-        var e = document.createElement(p[0]);
-        if (p[1]) e.className = p[1];
-        e.textContent = p[2];
-        t.appendChild(e);
-      });
-      t.setAttribute("aria-label", "Estilo do mapa: " + (estadoRender.atlas ? "atlas" : "satélite"));
+      $("cSat").checked = !estadoRender.atlas;
+      $("cSatTxt").textContent = estadoRender.atlas ? "Desligada: mapa colorido, uma cor por país" : "Ligada: relevo, neve e noite";
     }
     function definirAtlas(v) {
       estadoRender.atlas = v;
       lsSet("globo.atlas", v);
       estiloMostra();
     }
-    Array.prototype.forEach.call(document.querySelectorAll("#mestilo button,#cEstilo button"), function(b) {
-      b.onclick = function() {
-        definirAtlas(b.dataset.v === "atlas");
-      };
-    });
-    Array.prototype.forEach.call($("cLuz").querySelectorAll("button"), function(b) {
-      b.onclick = function() {
-        var noite = $("oNight"), v = b.dataset.v === "real";
-        if (estadoRender.atlas) definirAtlas(false);
-        estadoRender.optTex = true;
-        oTex.checked = estadoRender.useTex;
-        if (noite.checked !== v) {
-          noite.checked = v;
-          noite.dispatchEvent(new Event("change"));
-        }
-        visMostra();
-      };
-    });
-    $("mestilotop").onclick = function() {
-      definirAtlas(!estadoRender.atlas);
-      setStatus(estadoRender.atlas ? "🎨 Mapa atlas: uma cor por país" : "🛰️ Mapa de satélite", 2200);
+    $("cSat").onchange = function() {
+      definirAtlas(!this.checked);
     };
     estiloMostra();
     setTimeout(visMostra, 0);
@@ -9339,7 +9299,6 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/camadas.js
   var camadas_exports = {};
   __export(camadas_exports, {
-    abrir: () => abrir2,
     iniciar: () => iniciar29
   });
   var MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -9349,19 +9308,6 @@ NAN|Nadi|-17.76|177.44`;
     CHAVES.forEach(function(c) {
       $(c[0]).checked = estadoRender.camadas[c[1]];
     });
-    $("cDis").checked = estadoMapa.includeDisputed;
-    $("cDep").checked = estadoMapa.includeDep;
-    $("cUni").checked = estadoMapa.includeUni;
-    $("cMic").checked = estadoMapa.includeMic;
-  }
-  function abrir2(v) {
-    var cx = $("camadas");
-    cx.hidden = !v;
-    $("camb").setAttribute("aria-expanded", v ? "true" : "false");
-    if (!v) return;
-    mostrar();
-    var st = $("stage").getBoundingClientRect(), livre = ganchos.treinoAberto() ? ganchos.alturaTreino() : 0;
-    cx.style.maxHeight = Math.max(160, st.height - livre - 16) + "px";
   }
   function iniciar29() {
     CHAVES.forEach(function(c) {
@@ -9373,39 +9319,38 @@ NAN|Nadi|-17.76|177.44`;
         lsSet("globo.cam." + c[1], this.checked);
       };
     });
-    ligarLugar($("cDis"), setIncludeDisputed);
-    ligarLugar($("cDep"), setIncludeDep);
-    ligarLugar($("cUni"), setIncludeUni);
-    ligarLugar($("cMic"), setIncludeMic);
-    ouvir("categorias-mudaram", mostrar);
-    var sel2 = $("cMes"), hoje2 = (/* @__PURE__ */ new Date()).getMonth(), agora = document.createElement("option");
-    agora.value = "";
-    agora.textContent = "Agora (" + MESES[hoje2] + ")";
-    sel2.appendChild(agora);
-    MESES.forEach(function(m, k) {
-      var o = document.createElement("option");
-      o.value = k;
-      o.textContent = m + " · " + ESTACAO[k];
-      sel2.appendChild(o);
+    var box = $("cMes"), hoje2 = (/* @__PURE__ */ new Date()).getMonth();
+    var opcoes = [["", "Agora (" + MESES[hoje2] + ")"]].concat(MESES.map(function(m, k) {
+      return [String(k), m + " · " + ESTACAO[k]];
+    }));
+    opcoes.forEach(function(o) {
+      var b = document.createElement("button");
+      b.dataset.v = o[0];
+      b.textContent = o[1];
+      box.appendChild(b);
     });
     var salvo = lsGet("globo.mes", null);
     estadoRender.mesMapa = salvo === null || salvo === "" ? null : +salvo;
-    sel2.value = estadoRender.mesMapa == null ? "" : String(estadoRender.mesMapa);
-    sel2.onchange = function() {
-      estadoRender.mesMapa = sel2.value === "" ? null : +sel2.value;
-      lsSet("globo.mes", sel2.value === "" ? null : +sel2.value);
-      if (estadoRender.atlas) setStatus("A neve aparece no mapa de satélite (🛰️).", 3e3);
-      trocarMes();
-    };
-    $("camb").onclick = function() {
-      abrir2($("camadas").hidden);
-    };
-    $("camfechar").onclick = function() {
-      abrir2(false);
-    };
-    document.addEventListener("pointerdown", function(e) {
-      if (!$("camadas").hidden && !$("camadas").contains(e.target) && e.target !== $("camb")) abrir2(false);
-    }, true);
+    function marca() {
+      var v = estadoRender.mesMapa == null ? "" : String(estadoRender.mesMapa);
+      Array.prototype.forEach.call(box.querySelectorAll("button"), function(b) {
+        b.setAttribute("aria-pressed", b.dataset.v === v ? "true" : "false");
+      });
+      $("cMesV").textContent = opcoes.filter(function(o) {
+        return o[0] === v;
+      })[0][1];
+    }
+    Array.prototype.forEach.call(box.querySelectorAll("button"), function(b) {
+      b.onclick = function() {
+        estadoRender.mesMapa = b.dataset.v === "" ? null : +b.dataset.v;
+        lsSet("globo.mes", estadoRender.mesMapa);
+        marca();
+        if (estadoRender.atlas) setStatus("A neve aparece na foto de satélite (Mapa › Foto de satélite).", 3e3);
+        trocarMes();
+      };
+    });
+    marca();
+    ouvir("categorias-mudaram", mostrar);
     mostrar();
   }
 
@@ -13137,7 +13082,6 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
-    atalho: () => atalho,
     iniciar: () => iniciar40,
     ligarSeg: () => ligarSeg
   });
@@ -13147,6 +13091,7 @@ NAN|Nadi|-17.76|177.44`;
     if (themeMode === "light") document.documentElement.setAttribute("data-theme", "light");
     else if (themeMode === "dark") document.documentElement.setAttribute("data-theme", "dark");
   }
+  var pilha = [];
   function mShow(id) {
     $("mlist").hidden = !!id;
     Array.prototype.forEach.call(document.querySelectorAll("#msheet .mpage"), function(pg) {
@@ -13156,16 +13101,6 @@ NAN|Nadi|-17.76|177.44`;
     $("mtitle").textContent = id ? $(id).getAttribute("data-t") : "Menu";
     var bx = $("msheet").querySelector(".box");
     if (bx) bx.scrollTop = 0;
-  }
-  function atalho(b, icone, nome, estado, ligado) {
-    b.innerHTML = "";
-    [["span", "mi", icone], ["b", "", nome], ["small", "", estado]].forEach(function(p) {
-      var e = document.createElement(p[0]);
-      if (p[1]) e.className = p[1];
-      e.textContent = p[2];
-      b.appendChild(e);
-    });
-    b.classList.toggle("on", !!ligado);
   }
   function ligarSeg(box, atual, definir) {
     function marca(v) {
@@ -13191,13 +13126,18 @@ NAN|Nadi|-17.76|177.44`;
       lsSet("globo.theme", v);
       applyTheme();
     });
-    Array.prototype.forEach.call(document.querySelectorAll("#mlist [data-p]"), function(b) {
+    Array.prototype.forEach.call(document.querySelectorAll("#msheet [data-p]"), function(b) {
       b.onclick = function() {
+        var atual = null;
+        Array.prototype.forEach.call(document.querySelectorAll("#msheet .mpage"), function(p) {
+          if (!p.hidden) atual = p.id;
+        });
+        pilha.push(atual);
         mShow(b.getAttribute("data-p"));
       };
     });
     $("mback").onclick = function() {
-      mShow(null);
+      mShow(pilha.length ? pilha.pop() : null);
     };
     function somV() {
       $("msfx").checked = estadoSom.efeitos;
@@ -13213,38 +13153,31 @@ NAN|Nadi|-17.76|177.44`;
     };
     somV();
     function somH() {
-      var b = $("msom");
-      atalho(b, estadoSom.mudo ? "🔇" : "🔊", "Som", estadoSom.mudo ? "Desligado" : "Ligado", !estadoSom.mudo);
-      b.setAttribute("aria-label", estadoSom.mudo ? "Som desligado" : "Som ligado");
+      var b = $("msom"), lig = !estadoSom.mudo;
+      b.setAttribute("aria-checked", lig ? "true" : "false");
+      b.querySelector(".mi").textContent = lig ? "🔊" : "🔇";
+      b.setAttribute("aria-label", lig ? "Som ligado" : "Som desligado");
     }
     $("msom").onclick = function() {
       alternarMudo();
       somH();
-      setStatus(estadoSom.mudo ? "🔇 Som desligado" : "🔊 Som ligado (a música toca no modo Livre)", 2200);
     };
     somH();
-    function diaH() {
-      var n = $("oNight").checked;
-      atalho($("matdia"), n ? "🌗" : "☀️", n ? "Dia e noite" : "Dia", n ? "Reais" : "Sem noite", n);
-    }
-    $("matdia").onclick = function() {
-      $("mvisual").click();
-      diaH();
-    };
-    $("oNight").addEventListener("change", diaH);
-    diaH();
-    $("matmapa").onclick = function() {
-      $("msheet").style.display = "none";
-      abrir2(true);
+    $("camb").onclick = function() {
+      abrirMenu("mp-mapa");
     };
     var marcaNomes = ligarSeg($("mlabels"), estadoMapa.labelMode, function(v) {
       $(v === "c" ? "lc" : "lp").click();
     });
-    $("mbtn").onclick = function() {
+    function abrirMenu(pg) {
       marcaNomes(estadoMapa.labelMode);
       somV();
-      mShow(null);
+      pilha = [];
+      mShow(pg || null);
       $("msheet").style.display = "block";
+    }
+    $("mbtn").onclick = function() {
+      abrirMenu(null);
     };
     $("mclose").onclick = function() {
       $("msheet").style.display = "none";
