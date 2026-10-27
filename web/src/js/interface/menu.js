@@ -67,6 +67,8 @@ function iniciar() {
     if(!$('mlist').offsetParent)return;
     var bts=document.querySelectorAll('#msheet .matal button'),lim=caixa.scrollTop+140,atual=null;
     Array.prototype.forEach.call(bts,function(b){if($(b.dataset.ir).offsetTop<=lim)atual=b;});
+    /* no fim da página a última parte pode nem chegar ao alto: chegou ao fim, acende o último atalho */
+    if(caixa.scrollTop+caixa.clientHeight>=caixa.scrollHeight-4)atual=bts[bts.length-1];
     Array.prototype.forEach.call(bts,function(b){b.classList.toggle('at',b===atual);});
   },{passive:true});
   /* o guia "Como jogar" sempre à mão no alto do menu; o seu nível leva às conquistas */

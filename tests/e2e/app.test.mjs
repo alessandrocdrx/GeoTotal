@@ -44,19 +44,30 @@ test('troca entre Treino e Livre pelo cabeçalho', async () => {
   await fechar();
 });
 
-test('filtro por continente e Desfazer funcionam no modo Livre (regressão: "hist.push")', async () => {
+test('Livre sem tela de filtros: busca na largura toda, filtro antigo salvo é ignorado e "Só vizinhos" volta a mostrar todos', async () => {
   const { pagina, erros, fechar } = await abrirApp();
+  /* um filtro salvo por versões antigas (só o Brasil ligado) não pode esconder países */
+  await pagina.evaluate(() => localStorage.setItem('globo.lastview', JSON.stringify({ on: ['BR'], cc: 'BR' })));
+  await pagina.reload();
+  await pagina.waitForFunction(() => window.__geoTotal && window.__geoTotal.estadoRender.feats, null, { timeout: 15000 });
   await pagina.click('#qclose');
-  const ligados = () => pagina.evaluate(() => {
-    const g = window.__geoTotal;
-    return g.D.filter((d) => g.estadoMapa.on[d.i]).length;
+  const ligados = () => pagina.evaluate(() => { const g = window.__geoTotal; return g.D.filter((d) => g.estadoMapa.on[d.i]).length; });
+  const r = await pagina.evaluate(() => {
+    const q = document.getElementById('q').getBoundingClientRect(), row = document.querySelector('.searchrow').getBoundingClientRect();
+    return { semBotao: !document.getElementById('fbtn') && !document.getElementById('sheet'), largura: q.width / row.width };
   });
+  assert.equal(r.semBotao, true, 'sem o botão "Todas" e sem a tela de Filtros');
+  assert.ok(r.largura > 0.85, 'a busca ocupa a largura toda');
   const total = await ligados();
-  await pagina.evaluate(() => document.querySelectorAll('#chips button')[2].click());
-  const umContinente = await ligados();
-  assert.ok(umContinente > 0 && umContinente < total, 'filtrar por continente reduz a lista');
-  await pagina.evaluate(() => document.getElementById('ubtn').click());
-  assert.equal(await ligados(), total, 'Desfazer volta ao filtro anterior');
+  assert.ok(total > 150, 'o globo abre com todos os países');
+  await pagina.evaluate(() => { const g = window.__geoTotal; g.select(g.D.find((d) => d.cc === 'BR'), true); });
+  /* "Só vizinhos no mapa" fica no cartão aberto ("Saber mais") */
+  await pagina.click('#cexpandir');
+  await pagina.click('#nbtn');
+  const vizinhos = await ligados();
+  assert.ok(vizinhos > 1 && vizinhos < 20, 'Só vizinhos mostra o Brasil e os vizinhos');
+  await pagina.click('#nbtn');
+  assert.equal(await ligados(), total, 'Mostrar todos volta ao mundo inteiro');
   assert.deepEqual(erros, []);
   await fechar();
 });

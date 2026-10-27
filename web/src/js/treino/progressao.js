@@ -6,7 +6,7 @@
 
 import { BRS } from '../dados/estados-brasil.js';
 import { D, N_BASE, REG } from '../dados/paises.js';
-import { afterFilter, buildTree } from '../interface/filtros.js';
+import { afterFilter } from '../interface/filtros.js';
 import { tocar } from '../nucleo/som.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { estadoTreino, quiz, scopeLabel } from './estado.js';
@@ -224,7 +224,7 @@ function iniciar() {
   })();
 
   updateStreakPill();
-  buildTree();afterFilter();resize();
+  afterFilter();resize();
   requestAnimationFrame(frame);
   startMap();
 }

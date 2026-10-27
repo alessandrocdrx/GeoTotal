@@ -1,13 +1,13 @@
 /**
  * @arquivo js/interface/filtros.js
  * Camada: Interface
- * Filtros de países (chips, árvore, vizinhança), categorias de territórios e histórico para o Desfazer.
+ * Quais países aparecem no globo: "Só vizinhos no mapa" do cartão, os chips dos estados do Brasil e as
+ * categorias de lugares (não reconhecidos, micronações, territórios, desabitados).
  */
 
-import { D, dflag, N_DEP, N_MIC, N_UNI, norm, REG } from '../dados/paises.js';
-import { byName, capShort, NB, short } from '../dados/vizinhos.js';
+import { D, N_DEP, N_MIC, N_UNI, REG } from '../dados/paises.js';
+import { NB } from '../dados/vizinhos.js';
 import { closeCard, tourStop } from './cartao-detalhes.js';
-import { buscaNoSelect } from './escolha-pais.js';
 import { ganchosInterface } from './ganchos.js';
 import { emitir, ouvir } from '../nucleo/eventos.js';
 import { $, lsSet } from '../nucleo/utilitarios.js';
@@ -33,13 +33,12 @@ function updateNbBtn(){
 function toggleNb(){
   if(estadoBrasil.statesMode){ganchosInterface.alternarVizinhosEstado();return;}
   if(estadoFiltros.nbSaved){
-    snap();estadoMapa.on=estadoFiltros.nbSaved.slice();estadoFiltros.nbSaved=null;afterFilter();
+    estadoMapa.on=estadoFiltros.nbSaved.slice();estadoFiltros.nbSaved=null;afterFilter();
     var vis=[];estadoMapa.on.forEach(function(v,k){if(v)vis.push(k);});
     if(allOn())flyTo(estadoCamera.phi*180/PI,estadoCamera.lam*180/PI,1);else fitTo(vis);
     return;
   }
   if(!estadoMapa.selected)return;
-  snap();
   var i=estadoMapa.selected.i,keep=estadoMapa.on.slice(),idxs=[i].concat(NB[i]);
   estadoMapa.on=D.map(function(){return 0;});idxs.forEach(function(k){estadoMapa.on[k]=1;});
   estadoFiltros.nbSaved=keep;afterFilter();fitTo(idxs);
@@ -49,25 +48,11 @@ function afterFilter(){
   tourStop();
   D.forEach(function(d){if(!avail(d)&&(!estadoMapa.selected||d.i!==estadoMapa.selected.i))estadoMapa.on[d.i]=0;});
   if(estadoBrasil.statesMode){buildChips();updateNbBtn();return;}
-  buildChips();refreshTree();
-  var nA=availCount(),nOn=D.filter(function(d){return estadoMapa.on[d.i]&&avail(d);}).length;
-  document.getElementById('fbtn').textContent='🌍 '+(nOn>=nA?'Todas':nOn===0?'Nenhum':nOn+'/'+nA)+(nOn>0&&nOn<nA?' países':'');
-  $('sheetcount').textContent=nA+' países e territórios disponíveis.';
+  buildChips();
   updateNbBtn();
   if(estadoMapa.selected&&!estadoMapa.on[estadoMapa.selected.i])closeCard();
   emitir('visao-mudou');
 }
-function setOn(idxs,val){snap();estadoFiltros.nbSaved=null;idxs.forEach(function(i){estadoMapa.on[i]=val?1:0;});afterFilter();}
-function neighborsOf(i,add){
-  snap();estadoFiltros.nbSaved=null;
-  var idxs=[i].concat(NB[i]);
-  if(!add)estadoMapa.on=D.map(function(){return 0;});
-  idxs.forEach(function(k){estadoMapa.on[k]=1;});
-  afterFilter();
-  var vis=[];estadoMapa.on.forEach(function(v,k){if(v)vis.push(k);});
-  fitTo(add?vis:idxs);
-}
-
 let chips;
 function mkChip(label,color,val,count){
   var b=document.createElement('button');b.className='chip';
@@ -75,7 +60,7 @@ function mkChip(label,color,val,count){
   if(color){var s=document.createElement('span');s.className='dot';s.style.background=color;b.appendChild(s);}
   b.appendChild(document.createTextNode(label+' ('+count+')'));
   b.onclick=function(){
-    snap();estadoFiltros.nbSaved=null;
+    estadoFiltros.nbSaved=null;
     if(val<0||soloOf(val)){estadoMapa.on=D.map(function(d){return avail(d)?1:0;});afterFilter();flyTo(estadoCamera.phi*180/PI,estadoCamera.lam*180/PI,1);}
     else{estadoMapa.on=D.map(function(d){return d.r===val&&avail(d)?1:0;});afterFilter();var g=REG[val];flyTo(g.lat,g.lng,g.z);}
   };
@@ -87,60 +72,6 @@ function buildChips(){
   chips.appendChild(mkChip('Todas',null,-1,availCount()));
   for(var r=0;r<REG.length;r++){var nr=D.filter(function(d){return d.r===r&&avail(d);}).length;if(nr)chips.appendChild(mkChip(REG[r].n,REG[r].c,r,nr));}
 }
-
-/* painel de filtros: continente > sub-região > país */
-let boxes = [];
-function mkBox(idx){
-  var cb=document.createElement('input');cb.type='checkbox';
-  cb.addEventListener('click',function(e){e.stopPropagation();setOn(idx,cb.checked);});
-  boxes.push({cb:cb,idx:idx});return cb;
-}
-function buildTree(){
-  var tree=document.getElementById('tree');tree.innerHTML='';boxes=[];
-  REG.forEach(function(rg,ri){
-    if(!D.some(function(d){return d.r===ri&&avail(d);}))return;
-    var subs=[];
-    D.forEach(function(d){
-      if(d.r!==ri)return;
-      var s=null;for(var q=0;q<subs.length;q++)if(subs[q].n===d.sub)s=subs[q];
-      if(!s){s={n:d.sub,idx:[]};subs.push(s);}
-      s.idx.push(d.i);
-    });
-    var all=[];subs.forEach(function(s){all=all.concat(s.idx);});
-    var det=document.createElement('details'),sm=document.createElement('summary');
-    sm.appendChild(mkBox(all));
-    var dot=document.createElement('span');dot.className='dotc';dot.style.background=rg.c;sm.appendChild(dot);
-    var nm=document.createElement('span');nm.textContent=rg.n;sm.appendChild(nm);
-    var ct=document.createElement('small');ct.textContent=all.length;sm.appendChild(ct);
-    det.appendChild(sm);
-    subs.forEach(function(s){
-      var d2=document.createElement('details');d2.className='sub2';
-      var s2=document.createElement('summary');
-      s2.appendChild(mkBox(s.idx));
-      var n2=document.createElement('span');n2.textContent=s.n;s2.appendChild(n2);
-      var c2=document.createElement('small');c2.textContent=s.idx.length;s2.appendChild(c2);
-      d2.appendChild(s2);
-      var cl=document.createElement('div');cl.className='cl';
-      s.idx.forEach(function(i){
-        var lb=document.createElement('label');
-        lb.appendChild(mkBox([i]));
-        var t=document.createElement('span');t.textContent=dflag(D[i])+' '+short(D[i])+' — '+capShort(D[i])+(D[i].dis?' ⚠':'')+(D[i].dep?' ◇':'')+(D[i].uni?' ❄':'');lb.appendChild(t);
-        cl.appendChild(lb);
-      });
-      d2.appendChild(cl);det.appendChild(d2);
-    });
-    tree.appendChild(det);
-  });
-}
-function refreshTree(){
-  boxes.forEach(function(b){
-    var n=0;b.idx.forEach(function(i){n+=estadoMapa.on[i];});
-    b.cb.checked=n===b.idx.length;
-    b.cb.indeterminate=n>0&&n<b.idx.length;
-  });
-}
-let sel;
-let sheet;
 
 function setIncludeDisputed(v){
   estadoMapa.includeDisputed=v;lsSet('globo.includeDisputed',v);
@@ -167,7 +98,7 @@ function setIncludeUni(v){
   estadoMapa.includeUni=v;lsSet('globo.includeUni',v);
   $('oUni').checked=v;
   if(v)D.forEach(function(d){if(d.uni)estadoMapa.on[d.i]=1;});
-  buildTree();afterFilter();
+  afterFilter();
   emitir('categorias-mudaram',{placar:true});
 }
 /** Chave de um tipo de lugar (menu ⋯ ou botão 🏷️): no meio de uma rodada do treino, pergunta antes. */
@@ -194,26 +125,11 @@ function buildCatList(){
   grupo('◇ Territórios dependentes',D.filter(function(d){return d.dep;}));
   grupo('❄️ Desabitados e Antártida',D.filter(function(d){return d.uni;}));
 }
-const hist = [];
-function updateUndo(){var b=$('ubtn');b.disabled=!hist.length;b.style.opacity=hist.length?1:.4;}
-function snap(){hist.push(estadoMapa.on.slice());if(hist.length>30)hist.shift();updateUndo();}
+
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
   ouvir('fronteiras-carregadas',afterFilter);
   chips = document.getElementById('chips');
-  sel = document.getElementById('nbsel');
-  D.slice().sort(function(a,b){return short(a).localeCompare(short(b),'pt');}).forEach(function(d){
-    var o=document.createElement('option');o.value=d.i;o.textContent=d.flag+' '+short(d);sel.appendChild(o);
-  });
-  sel.value=byName[norm('Brasil')];buscaNoSelect(sel,'País da vizinhança');
-  sheet = document.getElementById('sheet');
-  document.getElementById('fbtn').onclick=function(){sheet.style.display='block';};
-  document.getElementById('sclose').onclick=function(){sheet.style.display='none';};
-  sheet.addEventListener('pointerdown',function(e){if(e.target===sheet)sheet.style.display='none';});
-  document.getElementById('allon').onclick=function(){snap();estadoFiltros.nbSaved=null;estadoMapa.on=D.map(function(d){return avail(d)?1:0;});afterFilter();};
-  document.getElementById('alloff').onclick=function(){snap();estadoFiltros.nbSaved=null;estadoMapa.on=D.map(function(){return 0;});afterFilter();};
-  document.getElementById('nbsolo').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,false);};
-  document.getElementById('nbadd').onclick=function(){sheet.style.display='none';neighborsOf(+sel.value,true);};
   /* lugares especiais (menu ⋯ → Lugares no jogo e no mapa): valem para o Livre e para o treino */
   $('catlista').addEventListener('toggle',buildCatList);
   $('nDis').textContent='('+D.filter(function(d){return d.dis&&!d.mic;}).length+')';$('nMic').textContent='('+N_MIC+')';$('nDep').textContent='('+N_DEP+')';$('nUni').textContent='('+N_UNI+')';
@@ -224,4 +140,4 @@ function iniciar() {
   ligarLugar($('oDisputed'),setIncludeDisputed);ligarLugar($('oUni'),setIncludeUni);ligarLugar($('oDep'),setIncludeDep);ligarLugar($('oMic'),setIncludeMic);
 }
 
-export { afterFilter, ligarLugar, setIncludeMic, buildChips, buildTree, chips, estadoFiltros, hist, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, snap, toggleNb, updateNbBtn, updateUndo };
+export { afterFilter, ligarLugar, setIncludeMic, buildChips, chips, estadoFiltros, iniciar, setIncludeDep, setIncludeDisputed, setIncludeUni, toggleNb, updateNbBtn };

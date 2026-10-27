@@ -113,7 +113,7 @@ test('treino: todos os tipos de pergunta, respostas, dica, digitação e opçõe
   await fechar();
 });
 
-test('modo Livre: cartão, filtros, busca, globo, 2D, Brasil e ferramentas', async () => {
+test('modo Livre: cartão, busca, globo, 2D, Brasil e ferramentas', async () => {
   const { pagina, erros, fechar } = await abrirApp(ambiente);
   const passos = [
     ['ir para Livre', CLICAR, 'qclose'],
@@ -124,13 +124,6 @@ test('modo Livre: cartão, filtros, busca, globo, 2D, Brasil e ferramentas', asy
     ['próximo país', CLICAR, 'next'],
     ['país anterior', CLICAR, 'prev'],
     ['fechar cartão', CLICAR, 'close'],
-    ['filtros: abrir painel', CLICAR, 'fbtn'],
-    ['filtros: desligar todos', CLICAR, 'alloff'],
-    ['filtros: ligar todos', CLICAR, 'allon'],
-    ['filtros: só país e vizinhos', CLICAR, 'nbsolo'],
-    ['filtros: somar vizinhos', CLICAR, 'nbadd'],
-    ['filtros: fechar', CLICAR, 'sclose'],
-    ['desfazer', CLICAR, 'ubtn'],
     ['chip de continente', () => document.querySelectorAll('#chips button')[4].click()],
     ['chip Todas', () => document.querySelectorAll('#chips button')[0].click()],
     ['zoom +', CLICAR, 'zin'],

@@ -20,27 +20,12 @@
 #card .nav button{font-size:13px;padding:10px 6px}
 #card .nb{font-size:12.5px;color:var(--fg);margin-top:6px;line-height:1.4}
 #card .nb b{color:var(--muted);font-weight:600}
-#sheet{position:fixed;inset:0;display:none;z-index:50;background:rgba(0,0,0,.45)}
-#sheet .box{position:absolute;left:0;right:0;bottom:0;max-height:84%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + var(--sab));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
 .shead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .shead b{font-size:17px}
 .shead button,.row2 button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:9px 12px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer}
 .row2{display:flex;gap:8px;margin:8px 0}
 .row2 button{flex:1}
-.nbbox{border:1px solid var(--border);border-radius:12px;padding:10px;margin:10px 0}
-.nbbox .lab{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
 #nbsel{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:16px;font-family:inherit}
-#tree details{border-top:1px solid var(--border)}
-#tree summary{list-style:none;display:flex;align-items:center;gap:10px;padding:11px 0;cursor:pointer;font-weight:600;font-size:15px}
-#tree summary::-webkit-details-marker{display:none}
-#tree summary::before{content:"▸";color:var(--muted);width:12px;transition:transform .15s}
-#tree details[open]>summary::before{transform:rotate(90deg)}
-#tree summary small{margin-left:auto;color:var(--muted);font-weight:500}
-#tree .sub2{margin-left:18px}
-#tree .sub2 summary{font-weight:500;font-size:14.5px}
-#tree .cl{margin-left:22px;display:flex;flex-direction:column}
-#tree .cl label{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px}
-#tree input[type=checkbox]{width:20px;height:20px;accent-color:#5b9dff;flex:none}
 .dotc{width:10px;height:10px;border-radius:50%;flex:none}
 .flag{font-size:34px;line-height:1;flex:none;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
 #gl{pointer-events:none}
@@ -52,7 +37,6 @@
 .htop{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .hbtns{display:flex;gap:6px;flex:none}
 .hbtns button{border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:12px;height:38px;padding:0 12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
-#ubtn{padding:0 12px;font-size:18px}
 [hidden]{display:none!important}
 #card{max-height:60%;overflow:auto;touch-action:pan-y}
 #card h2{padding-right:76px}

@@ -94,7 +94,6 @@ h1{font-size:18px;line-height:1.2;margin:0;font-weight:700;letter-spacing:-.01em
 .chip .dot{width:9px;height:9px;border-radius:50%}
 .chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-fg);border-color:var(--chip-on)}
 .searchrow{position:relative;padding:0 14px 8px;display:flex;gap:8px}
-#fbtn,#ubtn{flex:none;border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:12px;padding:0 14px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap}
 #q{flex:1;min-width:0;border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:12px;padding:11px 14px;font-size:16px;font-family:inherit;outline:none}
 #q:focus{border-color:var(--fg)}
 #results{position:absolute;left:14px;right:14px;top:46px;background:var(--card);border:1px solid var(--border);border-radius:12px;z-index:20;overflow:hidden;display:none;box-shadow:0 8px 24px rgba(0,0,0,.25)}
@@ -127,27 +126,12 @@ canvas:active{cursor:grabbing}
 #card .nav button{font-size:13px;padding:10px 6px}
 #card .nb{font-size:12.5px;color:var(--fg);margin-top:6px;line-height:1.4}
 #card .nb b{color:var(--muted);font-weight:600}
-#sheet{position:fixed;inset:0;display:none;z-index:50;background:rgba(0,0,0,.45)}
-#sheet .box{position:absolute;left:0;right:0;bottom:0;max-height:84%;overflow:auto;background:var(--card);border-radius:18px 18px 0 0;padding:14px 14px calc(16px + var(--sab));border-top:1px solid var(--border);max-width:900px;margin:0 auto}
 .shead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .shead b{font-size:17px}
 .shead button,.row2 button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:9px 12px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer}
 .row2{display:flex;gap:8px;margin:8px 0}
 .row2 button{flex:1}
-.nbbox{border:1px solid var(--border);border-radius:12px;padding:10px;margin:10px 0}
-.nbbox .lab{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:6px}
 #nbsel{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--fg);font-size:16px;font-family:inherit}
-#tree details{border-top:1px solid var(--border)}
-#tree summary{list-style:none;display:flex;align-items:center;gap:10px;padding:11px 0;cursor:pointer;font-weight:600;font-size:15px}
-#tree summary::-webkit-details-marker{display:none}
-#tree summary::before{content:"▸";color:var(--muted);width:12px;transition:transform .15s}
-#tree details[open]>summary::before{transform:rotate(90deg)}
-#tree summary small{margin-left:auto;color:var(--muted);font-weight:500}
-#tree .sub2{margin-left:18px}
-#tree .sub2 summary{font-weight:500;font-size:14.5px}
-#tree .cl{margin-left:22px;display:flex;flex-direction:column}
-#tree .cl label{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:14px}
-#tree input[type=checkbox]{width:20px;height:20px;accent-color:#5b9dff;flex:none}
 .dotc{width:10px;height:10px;border-radius:50%;flex:none}
 .flag{font-size:34px;line-height:1;flex:none;font-family:'Apple Color Emoji','Noto Color Emoji','Segoe UI Emoji',sans-serif}
 #gl{pointer-events:none}
@@ -159,7 +143,6 @@ canvas:active{cursor:grabbing}
 .htop{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .hbtns{display:flex;gap:6px;flex:none}
 .hbtns button{border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:12px;height:38px;padding:0 12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
-#ubtn{padding:0 12px;font-size:18px}
 [hidden]{display:none!important}
 #card{max-height:60%;overflow:auto;touch-action:pan-y}
 #card h2{padding-right:76px}
@@ -257,7 +240,6 @@ body.quizing .chips,body.quizing .searchrow,body.quizing .seg,body.quizing .seg2
 body.states #stbar{display:flex}
 #stbar button{border:1px solid var(--border);background:var(--chip);color:var(--fg);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
 body.states .seg,body.states .seg2{display:none}
-body.states #fbtn,body.states #ubtn{opacity:.4;pointer-events:none}
 .flag.sig{font-family:inherit;font-size:20px;font-weight:800;border-radius:10px;padding:5px 9px;background:var(--chip);letter-spacing:.02em}
 #card .stbtn{display:none;width:100%;margin-top:8px;border:1px solid #4da3ff;background:rgba(77,163,255,.12);color:var(--fg);border-radius:12px;padding:11px 12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;text-align:left}
 .near{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -1067,7 +1049,6 @@ header .modesw button{flex:1 1 0;height:38px!important;font-size:16px!important;
 
 /* ---------- 1.42: busca do Livre arredondada, como a do Google Maps ---------- */
 .searchrow #q{border-radius:24px;padding-left:40px;background:var(--chip) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238fa0bd'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 13px center/20px}
-.searchrow #fbtn{border-radius:24px}
 
 /* ---------- 1.42: toda tela com o mesmo topo: um botão redondo à esquerda (← volta, ✕ fecha
    a primeira página do menu) e o título ao lado, como nos apps Android ---------- */
@@ -1139,7 +1120,6 @@ button.voltar[hidden]{display:none}
   <div class="chips" id="chips"></div>
   <div class="searchrow">
     <input id="q" type="search" enterkeyhint="search" placeholder="Buscar país ou capital" autocomplete="off" aria-label="Buscar país ou capital">
-    <button id="fbtn">🌍 Filtrar</button>
     <div id="results"></div>
   </div>
   <div id="stage">
@@ -1203,17 +1183,6 @@ button.voltar[hidden]{display:none}
   </div>
 </div>
 
-<div id="sheet"><div class="box">
-  <div class="shead"><button id="sclose" class="voltar" aria-label="Voltar">←</button><b>Filtros</b></div>
-  <div class="inote" id="sheetcount" style="margin-top:-4px"></div>
-  <div class="row2"><button id="allon">Ligar todos</button><button id="alloff">Desligar todos</button><button id="ubtn" aria-label="Desfazer filtro" title="Desfazer filtro" disabled>↶ Desfazer</button></div>
-  <div class="nbbox">
-    <div class="lab">Por vizinhança (fronteira terrestre)</div>
-    <select id="nbsel" aria-label="País"></select>
-    <div class="row2"><button id="nbsolo">Só o país e vizinhos</button><button id="nbadd">Somar vizinhos</button></div>
-  </div>
-  <div id="tree"></div>
-</div></div>
 <div id="msheet" class="ov" style="z-index:80"><div class="box">
   <div class="shead"><button id="mclose" class="voltar" aria-label="Fechar">✕</button><button id="mback" class="voltar" aria-label="Voltar" hidden>←</button><b id="mtitle">Menu</b><button id="mguia" class="mguia" aria-label="Como jogar">❓ Como jogar</button></div>
   <nav id="mlist" class="mlist">
@@ -1284,7 +1253,7 @@ button.voltar[hidden]{display:none}
     <div class="sobre">
       <i class="marca-logo grande" aria-hidden="true"></i>
       <h3 class="marca">geo<span>Total</span></h3>
-      <p class="sobrev">Países e Capitais · versão 1.42</p>
+      <p class="sobrev">Países e Capitais · versão 1.43</p>
       <p>Criado por <b>alessandrocdrx</b>.</p>
       <p>Gratuito, sem anúncios, funciona sem internet e não pede nenhuma permissão.</p>
       <p class="sobrecred"><b>Créditos:</b> D3.js (BSD), TopoJSON (BSD), DataMaps (MIT) e mapa dos estados do Brasil da amCharts (licença incluída no app), desertos, florestas, relevo e mares do Natural Earth (domínio público) e rotas de voo do OpenFlights (ODbL). Dados de países aproximados, de fontes públicas.</p>
@@ -3934,8 +3903,8 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     for (i = 0; !hideMk && i < vs.length; i++) {
       st = vs[i];
-      var sel2 = st === estadoBrasil.selSt, rr = sel2 ? mr * 1.9 : mr;
-      if (sel2) {
+      var sel = st === estadoBrasil.selSt, rr = sel ? mr * 1.9 : mr;
+      if (sel) {
         ctx.beginPath();
         ctx.arc(st.sx, st.sy, rr + 5, 0, 7);
         ctx.fillStyle = "rgba(255,255,255,.22)";
@@ -3945,7 +3914,7 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       shapePath(st.sx, st.sy, rr, STSHAPES[st.reg]);
       ctx.fillStyle = BRREG[st.reg].c;
       ctx.fill();
-      ctx.lineWidth = sel2 ? 2.2 : 1.2;
+      ctx.lineWidth = sel ? 2.2 : 1.2;
       ctx.strokeStyle = "#fff";
       ctx.stroke();
     }
@@ -5359,11 +5328,11 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       ctx.stroke();
       ctx.restore();
     });
-    var sel2 = estadoRender.areaSel;
-    if (sel2 && sel2.geometry) {
+    var sel = estadoRender.areaSel;
+    if (sel && sel.geometry) {
       ctx.save();
       ctx.beginPath();
-      tracar(sel2);
+      tracar(sel);
       ctx.fillStyle = "rgba(255,224,102,.22)";
       ctx.fill();
       ctx.lineJoin = "round";
@@ -6496,134 +6465,17 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
   __export(filtros_exports, {
     afterFilter: () => afterFilter,
     buildChips: () => buildChips,
-    buildTree: () => buildTree,
     chips: () => chips,
     estadoFiltros: () => estadoFiltros,
-    hist: () => hist,
     iniciar: () => iniciar18,
     ligarLugar: () => ligarLugar,
     setIncludeDep: () => setIncludeDep,
     setIncludeDisputed: () => setIncludeDisputed,
     setIncludeMic: () => setIncludeMic,
     setIncludeUni: () => setIncludeUni,
-    snap: () => snap,
     toggleNb: () => toggleNb,
-    updateNbBtn: () => updateNbBtn,
-    updateUndo: () => updateUndo
+    updateNbBtn: () => updateNbBtn
   });
-
-  // web/src/js/interface/escolha-pais.js
-  var ov = null;
-  var aberto = null;
-  function montar() {
-    ov = document.createElement("div");
-    ov.id = "escolha";
-    ov.className = "escolha";
-    ov.hidden = true;
-    ov.innerHTML = '<div class="esbox"><div class="eshead"><button class="voltar" id="esfechar" aria-label="Voltar">←</button><b id="estit"></b></div><input id="esq" type="search" autocomplete="off" placeholder="Digite o país, a capital ou a sigla" aria-label="Buscar país"><div id="eslista" class="eslista" role="listbox"></div></div>';
-    document.body.appendChild(ov);
-    ov.querySelector("#esfechar").onclick = fechar;
-    ov.addEventListener("pointerdown", function(e) {
-      if (e.target === ov) fechar();
-    });
-    ov.querySelector("#esq").addEventListener("input", function() {
-      listar(this.value);
-    });
-    ov.querySelector("#esq").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        var b = ov.querySelector("#eslista button");
-        if (b) {
-          e.preventDefault();
-          b.click();
-        }
-      }
-      if (e.key === "Escape") fechar();
-    });
-  }
-  function fechar() {
-    if (ov) ov.hidden = true;
-    aberto = null;
-  }
-  function listar(q2) {
-    var box = ov.querySelector("#eslista");
-    box.innerHTML = "";
-    var t = norm((q2 || "").trim()), ops = [];
-    Array.prototype.forEach.call(aberto.options, function(o) {
-      if (o.value === "") return;
-      var d = D[+o.value];
-      if (!d) return;
-      var nome = norm(short(d)), pos = -1;
-      if (!t) pos = 0;
-      else if (nome.indexOf(t) === 0) pos = 0;
-      else if (nome.indexOf(t) > 0 || norm(d.name).indexOf(t) >= 0) pos = 1;
-      else if (norm(d.cap).indexOf(t) >= 0) pos = 2;
-      else if (t.length === 2 && d.cc.toLowerCase() === t) pos = 0;
-      if (pos >= 0) ops.push({ o, d, pos });
-    });
-    ops.sort(function(a, b) {
-      return a.pos - b.pos;
-    });
-    ops.slice(0, 80).forEach(function(x) {
-      var b = document.createElement("button");
-      b.className = "esitem";
-      b.setAttribute("role", "option");
-      if (String(x.o.value) === String(aberto.value)) b.classList.add("on");
-      var f = document.createElement("span");
-      f.className = "esflag";
-      f.textContent = x.d.flag;
-      var n = document.createElement("span");
-      n.className = "esnome";
-      n.textContent = short(x.d);
-      var c = document.createElement("small");
-      c.textContent = capShort(x.d);
-      n.appendChild(c);
-      b.appendChild(f);
-      b.appendChild(n);
-      b.onclick = function() {
-        var s = aberto;
-        fechar();
-        s.value = x.o.value;
-        s.dispatchEvent(new Event("change", { bubbles: true }));
-      };
-      box.appendChild(b);
-    });
-    if (!ops.length) {
-      var v = document.createElement("div");
-      v.className = "esvazio";
-      v.textContent = "Nenhum país com esse nome.";
-      box.appendChild(v);
-    }
-  }
-  function abrir(sel2, titulo) {
-    if (!ov) montar();
-    aberto = sel2;
-    ov.querySelector("#estit").textContent = titulo || sel2.dataset.titulo || sel2.getAttribute("aria-label") || "Escolha um país";
-    var q2 = ov.querySelector("#esq");
-    q2.value = "";
-    listar("");
-    ov.hidden = false;
-    setTimeout(function() {
-      q2.focus();
-    }, 60);
-  }
-  function buscaNoSelect(sel2, titulo) {
-    if (sel2.dataset.busca) return;
-    sel2.dataset.busca = "1";
-    function interceptar(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      abrir(sel2, titulo);
-    }
-    sel2.addEventListener("mousedown", interceptar);
-    sel2.addEventListener("touchend", function(e) {
-      if (e.cancelable) interceptar(e);
-    });
-    sel2.addEventListener("keydown", function(e) {
-      if (e.key === "Enter" || e.key === " ") {
-        interceptar(e);
-      }
-    });
-  }
 
   // web/src/js/interface/ganchos.js
   var ganchos_exports2 = {};
@@ -6697,7 +6549,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       return;
     }
     if (estadoFiltros.nbSaved) {
-      snap();
       estadoMapa.on = estadoFiltros.nbSaved.slice();
       estadoFiltros.nbSaved = null;
       afterFilter();
@@ -6710,7 +6561,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       return;
     }
     if (!estadoMapa.selected) return;
-    snap();
     var i = estadoMapa.selected.i, keep = estadoMapa.on.slice(), idxs = [i].concat(NB[i]);
     estadoMapa.on = D.map(function() {
       return 0;
@@ -6738,40 +6588,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       return;
     }
     buildChips();
-    refreshTree();
-    var nA = availCount(), nOn = D.filter(function(d) {
-      return estadoMapa.on[d.i] && avail(d);
-    }).length;
-    document.getElementById("fbtn").textContent = "🌍 " + (nOn >= nA ? "Todas" : nOn === 0 ? "Nenhum" : nOn + "/" + nA) + (nOn > 0 && nOn < nA ? " países" : "");
-    $("sheetcount").textContent = nA + " países e territórios disponíveis.";
     updateNbBtn();
     if (estadoMapa.selected && !estadoMapa.on[estadoMapa.selected.i]) closeCard();
     emitir("visao-mudou");
-  }
-  function setOn(idxs, val) {
-    snap();
-    estadoFiltros.nbSaved = null;
-    idxs.forEach(function(i) {
-      estadoMapa.on[i] = val ? 1 : 0;
-    });
-    afterFilter();
-  }
-  function neighborsOf(i, add) {
-    snap();
-    estadoFiltros.nbSaved = null;
-    var idxs = [i].concat(NB[i]);
-    if (!add) estadoMapa.on = D.map(function() {
-      return 0;
-    });
-    idxs.forEach(function(k) {
-      estadoMapa.on[k] = 1;
-    });
-    afterFilter();
-    var vis = [];
-    estadoMapa.on.forEach(function(v, k) {
-      if (v) vis.push(k);
-    });
-    fitTo(add ? vis : idxs);
   }
   var chips;
   function mkChip(label, color, val, count) {
@@ -6786,7 +6605,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     }
     b.appendChild(document.createTextNode(label + " (" + count + ")"));
     b.onclick = function() {
-      snap();
       estadoFiltros.nbSaved = null;
       if (val < 0 || soloOf(val)) {
         estadoMapa.on = D.map(function(d) {
@@ -6819,93 +6637,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       if (nr) chips.appendChild(mkChip(REG[r].n, REG[r].c, r, nr));
     }
   }
-  var boxes = [];
-  function mkBox(idx) {
-    var cb = document.createElement("input");
-    cb.type = "checkbox";
-    cb.addEventListener("click", function(e) {
-      e.stopPropagation();
-      setOn(idx, cb.checked);
-    });
-    boxes.push({ cb, idx });
-    return cb;
-  }
-  function buildTree() {
-    var tree = document.getElementById("tree");
-    tree.innerHTML = "";
-    boxes = [];
-    REG.forEach(function(rg, ri) {
-      if (!D.some(function(d) {
-        return d.r === ri && avail(d);
-      })) return;
-      var subs = [];
-      D.forEach(function(d) {
-        if (d.r !== ri) return;
-        var s = null;
-        for (var q2 = 0; q2 < subs.length; q2++) if (subs[q2].n === d.sub) s = subs[q2];
-        if (!s) {
-          s = { n: d.sub, idx: [] };
-          subs.push(s);
-        }
-        s.idx.push(d.i);
-      });
-      var all = [];
-      subs.forEach(function(s) {
-        all = all.concat(s.idx);
-      });
-      var det = document.createElement("details"), sm2 = document.createElement("summary");
-      sm2.appendChild(mkBox(all));
-      var dot = document.createElement("span");
-      dot.className = "dotc";
-      dot.style.background = rg.c;
-      sm2.appendChild(dot);
-      var nm = document.createElement("span");
-      nm.textContent = rg.n;
-      sm2.appendChild(nm);
-      var ct = document.createElement("small");
-      ct.textContent = all.length;
-      sm2.appendChild(ct);
-      det.appendChild(sm2);
-      subs.forEach(function(s) {
-        var d2 = document.createElement("details");
-        d2.className = "sub2";
-        var s2 = document.createElement("summary");
-        s2.appendChild(mkBox(s.idx));
-        var n2 = document.createElement("span");
-        n2.textContent = s.n;
-        s2.appendChild(n2);
-        var c2 = document.createElement("small");
-        c2.textContent = s.idx.length;
-        s2.appendChild(c2);
-        d2.appendChild(s2);
-        var cl = document.createElement("div");
-        cl.className = "cl";
-        s.idx.forEach(function(i) {
-          var lb = document.createElement("label");
-          lb.appendChild(mkBox([i]));
-          var t = document.createElement("span");
-          t.textContent = dflag(D[i]) + " " + short(D[i]) + " — " + capShort(D[i]) + (D[i].dis ? " ⚠" : "") + (D[i].dep ? " ◇" : "") + (D[i].uni ? " ❄" : "");
-          lb.appendChild(t);
-          cl.appendChild(lb);
-        });
-        d2.appendChild(cl);
-        det.appendChild(d2);
-      });
-      tree.appendChild(det);
-    });
-  }
-  function refreshTree() {
-    boxes.forEach(function(b) {
-      var n = 0;
-      b.idx.forEach(function(i) {
-        n += estadoMapa.on[i];
-      });
-      b.cb.checked = n === b.idx.length;
-      b.cb.indeterminate = n > 0 && n < b.idx.length;
-    });
-  }
-  var sel;
-  var sheet;
   function setIncludeDisputed(v) {
     estadoMapa.includeDisputed = v;
     lsSet("globo.includeDisputed", v);
@@ -6943,7 +6674,6 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
     if (v) D.forEach(function(d) {
       if (d.uni) estadoMapa.on[d.i] = 1;
     });
-    buildTree();
     afterFilter();
     emitir("categorias-mudaram", { placar: true });
   }
@@ -7003,65 +6733,9 @@ RO|Rondônia|Porto Velho|-8.76|-63.90|4|237754|1581196|11|-10.9|-62.8|4|AC,AM,MT
       return d.uni;
     }));
   }
-  var hist = [];
-  function updateUndo() {
-    var b = $("ubtn");
-    b.disabled = !hist.length;
-    b.style.opacity = hist.length ? 1 : 0.4;
-  }
-  function snap() {
-    hist.push(estadoMapa.on.slice());
-    if (hist.length > 30) hist.shift();
-    updateUndo();
-  }
   function iniciar18() {
     ouvir("fronteiras-carregadas", afterFilter);
     chips = document.getElementById("chips");
-    sel = document.getElementById("nbsel");
-    D.slice().sort(function(a, b) {
-      return short(a).localeCompare(short(b), "pt");
-    }).forEach(function(d) {
-      var o = document.createElement("option");
-      o.value = d.i;
-      o.textContent = d.flag + " " + short(d);
-      sel.appendChild(o);
-    });
-    sel.value = byName[norm("Brasil")];
-    buscaNoSelect(sel, "País da vizinhança");
-    sheet = document.getElementById("sheet");
-    document.getElementById("fbtn").onclick = function() {
-      sheet.style.display = "block";
-    };
-    document.getElementById("sclose").onclick = function() {
-      sheet.style.display = "none";
-    };
-    sheet.addEventListener("pointerdown", function(e) {
-      if (e.target === sheet) sheet.style.display = "none";
-    });
-    document.getElementById("allon").onclick = function() {
-      snap();
-      estadoFiltros.nbSaved = null;
-      estadoMapa.on = D.map(function(d) {
-        return avail(d) ? 1 : 0;
-      });
-      afterFilter();
-    };
-    document.getElementById("alloff").onclick = function() {
-      snap();
-      estadoFiltros.nbSaved = null;
-      estadoMapa.on = D.map(function() {
-        return 0;
-      });
-      afterFilter();
-    };
-    document.getElementById("nbsolo").onclick = function() {
-      sheet.style.display = "none";
-      neighborsOf(+sel.value, false);
-    };
-    document.getElementById("nbadd").onclick = function() {
-      sheet.style.display = "none";
-      neighborsOf(+sel.value, true);
-    };
     $("catlista").addEventListener("toggle", buildCatList);
     $("nDis").textContent = "(" + D.filter(function(d) {
       return d.dis && !d.mic;
@@ -8295,6 +7969,119 @@ NAN|Nadi|-17.76|177.44`;
     return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(h)));
   }
 
+  // web/src/js/interface/escolha-pais.js
+  var ov = null;
+  var aberto = null;
+  function montar() {
+    ov = document.createElement("div");
+    ov.id = "escolha";
+    ov.className = "escolha";
+    ov.hidden = true;
+    ov.innerHTML = '<div class="esbox"><div class="eshead"><button class="voltar" id="esfechar" aria-label="Voltar">←</button><b id="estit"></b></div><input id="esq" type="search" autocomplete="off" placeholder="Digite o país, a capital ou a sigla" aria-label="Buscar país"><div id="eslista" class="eslista" role="listbox"></div></div>';
+    document.body.appendChild(ov);
+    ov.querySelector("#esfechar").onclick = fechar;
+    ov.addEventListener("pointerdown", function(e) {
+      if (e.target === ov) fechar();
+    });
+    ov.querySelector("#esq").addEventListener("input", function() {
+      listar(this.value);
+    });
+    ov.querySelector("#esq").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        var b = ov.querySelector("#eslista button");
+        if (b) {
+          e.preventDefault();
+          b.click();
+        }
+      }
+      if (e.key === "Escape") fechar();
+    });
+  }
+  function fechar() {
+    if (ov) ov.hidden = true;
+    aberto = null;
+  }
+  function listar(q2) {
+    var box = ov.querySelector("#eslista");
+    box.innerHTML = "";
+    var t = norm((q2 || "").trim()), ops = [];
+    Array.prototype.forEach.call(aberto.options, function(o) {
+      if (o.value === "") return;
+      var d = D[+o.value];
+      if (!d) return;
+      var nome = norm(short(d)), pos = -1;
+      if (!t) pos = 0;
+      else if (nome.indexOf(t) === 0) pos = 0;
+      else if (nome.indexOf(t) > 0 || norm(d.name).indexOf(t) >= 0) pos = 1;
+      else if (norm(d.cap).indexOf(t) >= 0) pos = 2;
+      else if (t.length === 2 && d.cc.toLowerCase() === t) pos = 0;
+      if (pos >= 0) ops.push({ o, d, pos });
+    });
+    ops.sort(function(a, b) {
+      return a.pos - b.pos;
+    });
+    ops.slice(0, 80).forEach(function(x) {
+      var b = document.createElement("button");
+      b.className = "esitem";
+      b.setAttribute("role", "option");
+      if (String(x.o.value) === String(aberto.value)) b.classList.add("on");
+      var f = document.createElement("span");
+      f.className = "esflag";
+      f.textContent = x.d.flag;
+      var n = document.createElement("span");
+      n.className = "esnome";
+      n.textContent = short(x.d);
+      var c = document.createElement("small");
+      c.textContent = capShort(x.d);
+      n.appendChild(c);
+      b.appendChild(f);
+      b.appendChild(n);
+      b.onclick = function() {
+        var s = aberto;
+        fechar();
+        s.value = x.o.value;
+        s.dispatchEvent(new Event("change", { bubbles: true }));
+      };
+      box.appendChild(b);
+    });
+    if (!ops.length) {
+      var v = document.createElement("div");
+      v.className = "esvazio";
+      v.textContent = "Nenhum país com esse nome.";
+      box.appendChild(v);
+    }
+  }
+  function abrir(sel, titulo) {
+    if (!ov) montar();
+    aberto = sel;
+    ov.querySelector("#estit").textContent = titulo || sel.dataset.titulo || sel.getAttribute("aria-label") || "Escolha um país";
+    var q2 = ov.querySelector("#esq");
+    q2.value = "";
+    listar("");
+    ov.hidden = false;
+    setTimeout(function() {
+      q2.focus();
+    }, 60);
+  }
+  function buscaNoSelect(sel, titulo) {
+    if (sel.dataset.busca) return;
+    sel.dataset.busca = "1";
+    function interceptar(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      abrir(sel, titulo);
+    }
+    sel.addEventListener("mousedown", interceptar);
+    sel.addEventListener("touchend", function(e) {
+      if (e.cancelable) interceptar(e);
+    });
+    sel.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" || e.key === " ") {
+        interceptar(e);
+      }
+    });
+  }
+
   // web/src/js/interface/distancia.js
   var estadoDistancia = {
     /** Linha desenhada: { pts (pontos 3D), pontos (índices em D), quiz?, aviao? }. O Treino usa uma com quiz: true. */
@@ -8450,17 +8237,17 @@ NAN|Nadi|-17.76|177.44`;
     ctx.stroke();
     ctx.restore();
   }
-  function fillCountrySelect(sel2, first) {
+  function fillCountrySelect(sel, first) {
     D.slice().sort(function(a, b) {
       return short(a).localeCompare(short(b), "pt");
     }).forEach(function(d) {
       var o = document.createElement("option");
       o.value = d.i;
       o.textContent = d.flag + " " + short(d);
-      sel2.appendChild(o);
+      sel.appendChild(o);
     });
-    sel2.value = byName[norm(first)];
-    buscaNoSelect(sel2);
+    sel.value = byName[norm(first)];
+    buscaNoSelect(sel);
   }
   function fmtKm(km3) {
     return Math.round(km3).toLocaleString("pt-BR") + " km";
@@ -8669,15 +8456,15 @@ NAN|Nadi|-17.76|177.44`;
       var l = document.createElement("b");
       l.textContent = letra(n);
       row.appendChild(l);
-      var sel2 = document.createElement("select");
-      sel2.setAttribute("aria-label", "Parada " + letra(n));
-      fillCountrySelect(sel2, "Brasil");
-      sel2.value = i;
-      sel2.onchange = function() {
-        paradas[n] = +sel2.value;
+      var sel = document.createElement("select");
+      sel.setAttribute("aria-label", "Parada " + letra(n));
+      fillCountrySelect(sel, "Brasil");
+      sel.value = i;
+      sel.onchange = function() {
+        paradas[n] = +sel.value;
         mostrarDistancia();
       };
-      row.appendChild(sel2);
+      row.appendChild(sel);
       if (lista.length > 2) {
         var x = document.createElement("button");
         x.textContent = "✕";
@@ -9105,31 +8892,10 @@ NAN|Nadi|-17.76|177.44`;
     encaixarCabecalho();
   }
 
-  // web/src/js/interface/filtros-desfazer.js
-  var filtros_desfazer_exports = {};
-  __export(filtros_desfazer_exports, {
-    iniciar: () => iniciar26
-  });
-  function undo() {
-    if (!hist.length) return;
-    estadoMapa.on = hist.pop();
-    estadoFiltros.nbSaved = null;
-    afterFilter();
-    updateUndo();
-    var v = visIdx();
-    if (v.length === D.length) flyTo(estadoCamera.phi * 180 / PI, estadoCamera.lam * 180 / PI, 1);
-    else if (v.length) fitTo(v);
-    setStatus("Filtro desfeito.", 1800);
-  }
-  function iniciar26() {
-    $("ubtn").onclick = undo;
-    updateUndo();
-  }
-
   // web/src/js/interface/passeio.js
   var passeio_exports = {};
   __export(passeio_exports, {
-    iniciar: () => iniciar27
+    iniciar: () => iniciar26
   });
   function tourStart() {
     if (estadoCartao.passeio) return;
@@ -9152,7 +8918,7 @@ NAN|Nadi|-17.76|177.44`;
     $("tour").setAttribute("aria-label", "Parar passeio");
     setStatus("🎬 Passeio: mostro um país a cada 4 segundos. Toque em ⏹ para parar.", 3500);
   }
-  function iniciar27() {
+  function iniciar26() {
     $("tour").onclick = function() {
       if (estadoCartao.passeio) tourStop();
       else tourStart();
@@ -9163,7 +8929,7 @@ NAN|Nadi|-17.76|177.44`;
   var comparar_exports = {};
   __export(comparar_exports, {
     comparar: () => comparar,
-    iniciar: () => iniciar28
+    iniciar: () => iniciar27
   });
   function el(tag, cls, txt) {
     var e = document.createElement(tag);
@@ -9313,7 +9079,7 @@ NAN|Nadi|-17.76|177.44`;
     $("cmpB").value = b.i;
     comparar();
   }
-  function iniciar28() {
+  function iniciar27() {
     fillCountrySelect($("cmpA"), "Brasil");
     fillCountrySelect($("cmpB"), "Argentina");
     document.querySelector('#mlist [data-p="mp-cmp"]').addEventListener("click", comparar);
@@ -9331,7 +9097,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/camadas.js
   var camadas_exports = {};
   __export(camadas_exports, {
-    iniciar: () => iniciar29
+    iniciar: () => iniciar28
   });
   var MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
   var ESTACAO = ["verão", "verão", "outono", "outono", "outono", "inverno", "inverno", "inverno", "primavera", "primavera", "primavera", "verão"];
@@ -9344,7 +9110,7 @@ NAN|Nadi|-17.76|177.44`;
       });
     });
   }
-  function iniciar29() {
+  function iniciar28() {
     CAMADAS.forEach(function(k) {
       estadoRender.camadas[k] = lsGet("globo.cam." + k, estadoRender.camadas[k]) === true;
     });
@@ -9530,7 +9296,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/avaliacao.js
   var avaliacao_exports = {};
   __export(avaliacao_exports, {
-    iniciar: () => iniciar30
+    iniciar: () => iniciar29
   });
   var LOJA = "https://play.google.com/store/apps/details?id=io.github.alessandrocdrx.geototal";
   var DIAS_MINIMOS = 3;
@@ -9554,7 +9320,7 @@ NAN|Nadi|-17.76|177.44`;
   function momentoBom() {
     if (podePedir()) setTimeout(pedir, 2500);
   }
-  function iniciar30() {
+  function iniciar29() {
     var dias = lsGet("globo.dias.uso", []);
     if (dias.indexOf(hoje()) < 0) {
       dias.push(hoje());
@@ -9579,7 +9345,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/exportar.js
   var exportar_exports = {};
   __export(exportar_exports, {
-    iniciar: () => iniciar31,
+    iniciar: () => iniciar30,
     offerFile: () => offerFile
   });
   var dlNS = null;
@@ -9667,7 +9433,7 @@ NAN|Nadi|-17.76|177.44`;
       setStatus("Não consegui gerar o PDF.", 4e3);
     });
   }
-  function iniciar31() {
+  function iniciar30() {
     setTimeout(function() {
       try {
         if (window.claude && claude.use) claude.use("downloads").then(function(n) {
@@ -9716,7 +9482,7 @@ NAN|Nadi|-17.76|177.44`;
     estadoTreino: () => estadoTreino,
     freshQS: () => freshQS,
     inScope: () => inScope,
-    iniciar: () => iniciar32,
+    iniciar: () => iniciar31,
     matches: () => matches,
     measureQ: () => measureQ,
     qHide: () => qHide,
@@ -9834,7 +9600,7 @@ NAN|Nadi|-17.76|177.44`;
       quiz.timerInt = null;
     }
   }
-  function iniciar32() {
+  function iniciar31() {
     ganchos.treinoAberto = function() {
       return quiz.open;
     };
@@ -10170,7 +9936,7 @@ NAN|Nadi|-17.76|177.44`;
     finishQ: () => finishQ,
     fmtRelogio: () => fmtRelogio,
     fmtTime: () => fmtTime,
-    iniciar: () => iniciar35,
+    iniciar: () => iniciar34,
     makeNeighborOptions: () => makeNeighborOptions,
     makeOptions: () => makeOptions,
     medalFor: () => medalFor,
@@ -10192,7 +9958,7 @@ NAN|Nadi|-17.76|177.44`;
   var estatisticas_exports = {};
   __export(estatisticas_exports, {
     fillQStat: () => fillQStat,
-    iniciar: () => iniciar33,
+    iniciar: () => iniciar32,
     modeName: () => modeName,
     openHistory: () => openHistory
   });
@@ -10490,7 +10256,7 @@ NAN|Nadi|-17.76|177.44`;
     el2.hidden = !(r + w);
     el2.textContent = r + w ? "📊 Neste país: " + r + (r === 1 ? " acerto" : " acertos") + " · " + w + (w === 1 ? " erro" : " erros") : "";
   }
-  function iniciar33() {
+  function iniciar32() {
     ganchosInterface.mostrarDesempenho = renderCardStat;
     $("htabC").onclick = function() {
       histTab = "c";
@@ -10537,7 +10303,7 @@ NAN|Nadi|-17.76|177.44`;
     celebrate: () => celebrate,
     definirMeta: () => definirMeta,
     displayStreak: () => displayStreak,
-    iniciar: () => iniciar34,
+    iniciar: () => iniciar33,
     levelOf: () => levelOf,
     metaDoDia: () => metaDoDia,
     recordProgress: () => recordProgress,
@@ -10907,7 +10673,7 @@ NAN|Nadi|-17.76|177.44`;
     $("badgeshead").textContent = "Conquistas (" + n + "/" + tot + ")";
     $("badgesheet").style.display = "block";
   }
-  function iniciar34() {
+  function iniciar33() {
     PROG = lsGet("globo.prog.v1", progNovo());
     $("streakpill").onclick = function() {
       var n = displayStreak(), f = PROG.freezes || 0;
@@ -10939,7 +10705,6 @@ NAN|Nadi|-17.76|177.44`;
       }, 4200);
     })();
     updateStreakPill();
-    buildTree();
     afterFilter();
     resize();
     requestAnimationFrame(frame);
@@ -11650,7 +11415,7 @@ NAN|Nadi|-17.76|177.44`;
     ctx.fillStyle = "#fff";
     ctx.fillText(name, bx + 44, by + bh / 2 + 1);
   }
-  function iniciar35() {
+  function iniciar34() {
     ganchos.desenharSeloResposta = drawBadge;
     estadoPartida.RUNS = lsGet("globo.runs.v1", {});
     estadoPartida.RECS = lsGet("globo.recs.v1", {});
@@ -11735,7 +11500,7 @@ NAN|Nadi|-17.76|177.44`;
     definirRodada: () => definirRodada,
     definirSobrevivencia: () => definirSobrevivencia,
     definirTempo: () => definirTempo,
-    iniciar: () => iniciar37,
+    iniciar: () => iniciar36,
     iniciarJogoRapido: () => iniciarJogoRapido,
     mostrarIntro: () => mostrarIntro,
     nextQ: () => nextQ,
@@ -11754,7 +11519,7 @@ NAN|Nadi|-17.76|177.44`;
   var modo_estados_exports = {};
   __export(modo_estados_exports, {
     exitStates: () => exitStates,
-    iniciar: () => iniciar36,
+    iniciar: () => iniciar35,
     updateStBtn: () => updateStBtn
   });
   function updateStBtn() {
@@ -11773,7 +11538,7 @@ NAN|Nadi|-17.76|177.44`;
     afterFilter();
     if (goBrazil !== false) select(D[byName[norm("Brasil")]], true);
   }
-  function iniciar36() {
+  function iniciar35() {
     ganchosInterface.atualizarBotaoEstados = updateStBtn;
     $("stexit").onclick = function() {
       exitStates(true);
@@ -12783,7 +12548,7 @@ NAN|Nadi|-17.76|177.44`;
       }
     }, 1e3);
   }
-  function iniciar37() {
+  function iniciar36() {
     ouvir("modo-estados-abriu", function() {
       if (quiz.open) quizClose();
     });
@@ -12826,7 +12591,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(destaque_escopo_exports, {
     drawScopePulse: () => drawScopePulse,
     firePulseForScope: () => firePulseForScope,
-    iniciar: () => iniciar38
+    iniciar: () => iniciar37
   });
   var scopePulse = null;
   function firePulse(pts) {
@@ -12860,7 +12625,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     ctx.restore();
   }
-  function iniciar38() {
+  function iniciar37() {
     ganchos.desenharPulsoEscopo = drawScopePulse;
   }
 
@@ -12869,7 +12634,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(escopo_exports, {
     applyScopeChange: () => applyScopeChange,
     definirFoco: () => definirFoco,
-    iniciar: () => iniciar39
+    iniciar: () => iniciar38
   });
   function applyScopeChange(newScope) {
     sairJogoRapido();
@@ -13069,7 +12834,7 @@ NAN|Nadi|-17.76|177.44`;
     ov2.appendChild(bx);
     document.body.appendChild(ov2);
   }
-  function iniciar39() {
+  function iniciar38() {
     ganchosInterface.antesDeMudarLugares = antesDeMudarLugares;
     ouvir("treinar-regiao", function(o) {
       if (!quiz.open) quizOpen();
@@ -13127,7 +12892,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/menu.js
   var menu_exports = {};
   __export(menu_exports, {
-    iniciar: () => iniciar40,
+    iniciar: () => iniciar39,
     ligarSeg: () => ligarSeg
   });
   var themeMode;
@@ -13165,7 +12930,7 @@ NAN|Nadi|-17.76|177.44`;
     marca(atual);
     return marca;
   }
-  function iniciar40() {
+  function iniciar39() {
     themeMode = lsGet("globo.theme", "auto");
     applyTheme();
     ligarSeg($("mtema"), themeMode, function(v) {
@@ -13229,6 +12994,7 @@ NAN|Nadi|-17.76|177.44`;
       Array.prototype.forEach.call(bts, function(b) {
         if ($(b.dataset.ir).offsetTop <= lim) atual = b;
       });
+      if (caixa.scrollTop + caixa.clientHeight >= caixa.scrollHeight - 4) atual = bts[bts.length - 1];
       Array.prototype.forEach.call(bts, function(b) {
         b.classList.toggle("at", b === atual);
       });
@@ -13296,7 +13062,7 @@ NAN|Nadi|-17.76|177.44`;
   var cartao_estado_exports = {};
   __export(cartao_estado_exports, {
     enterStates: () => enterStates,
-    iniciar: () => iniciar41
+    iniciar: () => iniciar40
   });
   function fillInfoSt(st) {
     var box = $("cinfo");
@@ -13468,7 +13234,7 @@ NAN|Nadi|-17.76|177.44`;
     selectSt(st || BRS[0], true);
     ensureStateShapes();
   }
-  function iniciar41() {
+  function iniciar40() {
     ganchosInterface.passoEstado = stepSt;
     ganchosInterface.alternarVizinhosEstado = toggleNbSt;
     ganchosInterface.selecionarEstado = selectSt;
@@ -13486,7 +13252,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/brasil/filtros.js
   var filtros_exports2 = {};
   __export(filtros_exports2, {
-    iniciar: () => iniciar42
+    iniciar: () => iniciar41
   });
   function mkChipSt(label, color, val, count) {
     var b = document.createElement("button");
@@ -13535,16 +13301,16 @@ NAN|Nadi|-17.76|177.44`;
       }).length));
     });
   }
-  function iniciar42() {
+  function iniciar41() {
     ganchosInterface.montarChipsEstados = buildChipsSt;
   }
 
   // web/src/js/brasil/menu.js
   var menu_exports2 = {};
   __export(menu_exports2, {
-    iniciar: () => iniciar43
+    iniciar: () => iniciar42
   });
-  function iniciar43() {
+  function iniciar42() {
     BRS.forEach(function(s) {
       var o = document.createElement("option");
       o.value = s.i;
@@ -13571,29 +13337,18 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/app/ultima-visao.js
   var ultima_visao_exports = {};
   __export(ultima_visao_exports, {
-    iniciar: () => iniciar44
+    iniciar: () => iniciar43
   });
   function saveLastView() {
     if (quiz.open || estadoBrasil.statesMode) return;
     try {
-      var codes = [];
-      D.forEach(function(d) {
-        if (estadoMapa.on[d.i]) codes.push(d.cc);
-      });
-      lsSet("globo.lastview", { on: codes, cc: estadoMapa.selected ? estadoMapa.selected.cc : null });
+      lsSet("globo.lastview", { cc: estadoMapa.selected ? estadoMapa.selected.cc : null });
     } catch (e) {
     }
   }
   function restoreLastView() {
     var v = lsGet("globo.lastview", null);
-    if (!v || !v.on || !v.on.length) return;
-    var set = {};
-    v.on.forEach(function(c) {
-      set[c] = 1;
-    });
-    estadoMapa.on = D.map(function(d) {
-      return set[d.cc] ? 1 : 0;
-    });
+    if (!v) return;
     if (v.cc) {
       var i = D.findIndex(function(d) {
         return d.cc === v.cc;
@@ -13601,7 +13356,7 @@ NAN|Nadi|-17.76|177.44`;
       if (i >= 0 && estadoMapa.on[i]) select(D[i], false);
     }
   }
-  function iniciar44() {
+  function iniciar43() {
     ouvir("visao-mudou", saveLastView);
     restoreLastView();
   }
@@ -13611,7 +13366,7 @@ NAN|Nadi|-17.76|177.44`;
   __export(passaporte_exports, {
     abrirPassaporte: () => abrirPassaporte,
     contarCarimbos: () => contarCarimbos,
-    iniciar: () => iniciar45
+    iniciar: () => iniciar44
   });
   function carimbado(d) {
     var e = (estadoTreino.QS.m.cap || {})[d.cc];
@@ -13708,7 +13463,7 @@ NAN|Nadi|-17.76|177.44`;
     box.appendChild(ga);
     $("passsheet").style.display = "block";
   }
-  function iniciar45() {
+  function iniciar44() {
     $("mpassaporte").onclick = abrirPassaporte;
     $("passclose").onclick = function() {
       $("passsheet").style.display = "none";
@@ -13718,7 +13473,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/app/inicio.js
   var inicio_exports = {};
   __export(inicio_exports, {
-    iniciar: () => iniciar46,
+    iniciar: () => iniciar45,
     mostrarInicio: () => mostrarInicio
   });
   var AUSENCIA = 30 * 6e4;
@@ -13752,7 +13507,7 @@ NAN|Nadi|-17.76|177.44`;
     z.textContent = "↺ Começar " + scopeLabel() + " do zero";
     $("inicio").hidden = false;
   }
-  function iniciar46() {
+  function iniciar45() {
     quizOpen();
     var ultima = lsGet("globo.ultima.visita", 0), saiu = 0;
     lsSet("globo.ultima.visita", Date.now());
@@ -13801,7 +13556,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/toques.js
   var toques_exports = {};
   __export(toques_exports, {
-    iniciar: () => iniciar47
+    iniciar: () => iniciar46
   });
   function paisNoPonto(x, y) {
     if (!estadoCamera.plano2D) return countryAt(x, y);
@@ -13884,7 +13639,7 @@ NAN|Nadi|-17.76|177.44`;
     quizMapAnswer(cand.length ? cand[0].d : poly);
     return true;
   }
-  function iniciar47() {
+  function iniciar46() {
     ganchosInterface.toqueAntes = toqueAntes;
     ganchosInterface.toqueNoGlobo = toqueNoGlobo;
     ganchosInterface.toqueNoMapa2D = toqueNoMapa2D;
@@ -13893,13 +13648,13 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/boas-vindas.js
   var boas_vindas_exports = {};
   __export(boas_vindas_exports, {
-    iniciar: () => iniciar49
+    iniciar: () => iniciar48
   });
 
   // web/src/js/treino/tour.js
   var tour_exports = {};
   __export(tour_exports, {
-    iniciar: () => iniciar48,
+    iniciar: () => iniciar47,
     iniciarTour: () => iniciarTour
   });
   var PASSOS = [
@@ -13957,7 +13712,7 @@ NAN|Nadi|-17.76|177.44`;
     passo = 0;
     setTimeout(mostrarPasso, 450);
   }
-  function iniciar48() {
+  function iniciar47() {
     $("guiaprox").onclick = function() {
       passo++;
       mostrarPasso();
@@ -13978,7 +13733,7 @@ NAN|Nadi|-17.76|177.44`;
   }
 
   // web/src/js/treino/boas-vindas.js
-  function iniciar49() {
+  function iniciar48() {
     if (lsGet("globo.bv.v1", false)) return;
     lsSet("globo.bv.v1", true);
     var m = estadoTreino.QS.m || {}, jaJogou = Object.keys(m).some(function(k) {
@@ -14015,7 +13770,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/treino/desafio.js
   var desafio_exports = {};
   __export(desafio_exports, {
-    iniciar: () => iniciar50
+    iniciar: () => iniciar49
   });
   var INICIO = Date.UTC(2026, 9, 1);
   function hojeStr2() {
@@ -14145,7 +13900,7 @@ NAN|Nadi|-17.76|177.44`;
       if (mais) mais.insertBefore(b, mais.firstChild);
     }
   }
-  function iniciar50() {
+  function iniciar49() {
     ouvir("rodada-terminou", aoTerminarRodada);
     ouvir("abrir-desafio", iniciarDesafio);
   }
@@ -14153,7 +13908,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/interface/legenda.js
   var legenda_exports = {};
   __export(legenda_exports, {
-    iniciar: () => iniciar51
+    iniciar: () => iniciar50
   });
   var SIMBOLO = { c: "●", d: "◆", s: "■", t: "▲" };
   function mostrarLegenda() {
@@ -14174,7 +13929,7 @@ NAN|Nadi|-17.76|177.44`;
     });
     $("legenda").hidden = false;
   }
-  function iniciar51() {
+  function iniciar50() {
     $("legok").onclick = function() {
       lsSet("globo.legenda.vista", true);
       $("legenda").hidden = true;
@@ -14196,7 +13951,7 @@ NAN|Nadi|-17.76|177.44`;
   // web/src/js/recursos/progresso.js
   var progresso_exports = {};
   __export(progresso_exports, {
-    iniciar: () => iniciar52,
+    iniciar: () => iniciar51,
     restaurarDeTexto: () => restaurarDeTexto
   });
   var MARCA = "geoTotal-progresso";
@@ -14232,7 +13987,7 @@ NAN|Nadi|-17.76|177.44`;
     }
     return "";
   }
-  function iniciar52() {
+  function iniciar51() {
     $("msave").onclick = salvarProgresso;
     $("mload").onchange = function() {
       var f = this.files && this.files[0];
@@ -14258,7 +14013,7 @@ NAN|Nadi|-17.76|177.44`;
   var ajustes_exports = {};
   __export(ajustes_exports, {
     abrirAjustes: () => abrirAjustes,
-    iniciar: () => iniciar53
+    iniciar: () => iniciar52
   });
   var LINHAS = [
     [
@@ -14453,7 +14208,7 @@ NAN|Nadi|-17.76|177.44`;
   function fecharAjustes() {
     $("ajsheet").style.display = "none";
   }
-  function iniciar53() {
+  function iniciar52() {
     $("qajustb").onclick = abrirAjustes;
     $("goalgo").onclick = abrirAjustes;
     $("goalgo").title = "Toque para mudar a meta do dia e outros ajustes";
@@ -14483,43 +14238,42 @@ NAN|Nadi|-17.76|177.44`;
   iniciar25();
   iniciar12();
   iniciar13();
-  iniciar26();
   iniciar20();
-  iniciar27();
+  iniciar26();
   iniciar22();
+  iniciar27();
   iniciar28();
-  iniciar29();
   iniciar17();
-  iniciar30();
+  iniciar29();
   iniciar14();
+  iniciar30();
   iniciar31();
+  iniciar34();
+  iniciar36();
+  iniciar46();
   iniciar32();
-  iniciar35();
   iniciar37();
-  iniciar47();
-  iniciar33();
   iniciar38();
   iniciar39();
-  iniciar40();
   iniciar10();
   iniciar11();
-  iniciar36();
+  iniciar35();
+  iniciar40();
   iniciar41();
   iniciar42();
   iniciar43();
-  iniciar44();
   iniciar15();
-  iniciar34();
+  iniciar33();
+  iniciar44();
   iniciar45();
-  iniciar46();
-  iniciar48();
-  iniciar53();
-  iniciar49();
-  iniciar50();
+  iniciar47();
   iniciar52();
+  iniciar48();
+  iniciar49();
   iniciar51();
+  iniciar50();
   window.setStatus = void 0;
-  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, regioes_naturais_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, filtros_desfazer_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, camadas_exports, cartao_natural_exports, pdf_exports, avaliacao_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
+  var modulos = [compat_emoji_exports, paises_exports, info_paises_exports, religioes_exports, linguas_exports, massas_terra_exports, vizinhos_exports, oceanos_polos_exports, regioes_naturais_exports, globo_exports, animacao_exports, interacao_exports, cartao_pais_exports, filtros_exports, busca_exports, botoes_exports, fronteiras_exports, webgl_exports, textura_exports, utilitarios_exports, marcadores_exports, cartao_detalhes_exports, lista_proximos_exports, passeio_exports, distancia_exports, comparar_exports, camadas_exports, cartao_natural_exports, pdf_exports, avaliacao_exports, dia_noite_exports, carregamento_exports, exportar_exports, estado_exports, dominio_exports, partida_exports, dica_exports, perguntas_exports, estatisticas_exports, destaque_escopo_exports, escopo_exports, menu_exports, estados_brasil_exports, modo_estados_exports, cartao_estado_exports, filtros_exports2, importar_contornos_exports, menu_exports2, ultima_visao_exports, mapa_2d_exports, progressao_exports, passaporte_exports, inicio_exports, geo_exports, enquadramento_exports, estados_exports, ganchos_exports, selo_exports, ganchos_exports2, eventos_exports, toques_exports, projecao_exports, tela_exports, som_exports, boas_vindas_exports, desafio_exports, legenda_exports, progresso_exports, tour_exports, ajustes_exports, hora_exports];
   var api = {};
   for (const mod of modulos) {
     for (const nome of Object.keys(mod)) {
