@@ -4,7 +4,7 @@
  * Textura procedural com aparência de satélite (não é foto real), com a neve da estação do ano.
  */
 
-import { $, lsGet, lsSet, setStatus } from '../nucleo/utilitarios.js';
+import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { estadoRender } from './projecao.js';
 import { PI } from './tela.js';
 
@@ -120,35 +120,27 @@ function iniciar() {
   oTex.onchange=function(){estadoRender.optTex=oTex.checked;};
   oBor.onchange=function(){estadoRender.optBor=oBor.checked;};
   oFill.onchange=function(){estadoRender.optFill=oFill.checked;};
-  /* botão do topo, junto do som: alterna entre dia e noite reais e sempre de dia (a mesma chave do menu ⋯) */
-  function visMostra(){var n=$('oNight').checked;$('mvisual').textContent=n?'🌗':'☀️';$('mvisual').setAttribute('aria-pressed',n?'true':'false');}
-  $('mvisual').onclick=function(){
-    var noite=$('oNight'),v=!noite.checked;
-    /* dia e noite só existe no satélite: no atlas, o botão volta para o satélite */
-    if(estadoRender.atlas)definirAtlas(false);
-    estadoRender.optTex=true;oTex.checked=estadoRender.useTex;
-    noite.checked=v;noite.dispatchEvent(new Event('change'));
-    visMostra();setStatus(v?'🌗 Globo com dia e noite de verdade':'☀️ Globo sempre de dia',2200);
-  };
-  $('oNight').addEventListener('change',visMostra);oTex.addEventListener('change',visMostra);
-  /* estilo do mapa: satélite (textura com relevo, dia e noite) ou atlas escolar (uma cor por país) */
+  /* como o globo aparece (menu ☰ › Mapa): foto de satélite, mapa colorido ou satélite com a
+     noite de agora. Uma escolha só, com bolinha: a noite só existe na foto de satélite */
   estadoRender.atlas=lsGet('globo.atlas',false)===true;
+  var noite=$('oNight');
+  function estiloAtual(){return estadoRender.atlas?'atlas':noite.checked?'noite':'sat';}
   function estiloMostra(){
-    Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',(b.dataset.v==='atlas')===estadoRender.atlas?'true':'false');});
-    var t=$('mestilotop');t.textContent=estadoRender.atlas?'🎨':'🛰️';
-    t.setAttribute('aria-label','Estilo do mapa: '+(estadoRender.atlas?'atlas':'satélite'));t.setAttribute('aria-pressed',estadoRender.atlas?'true':'false');
+    var v=estiloAtual();
+    Array.prototype.forEach.call($('mEstilo').querySelectorAll('button'),function(b){b.setAttribute('aria-pressed',b.dataset.v===v?'true':'false');});
   }
-  function definirAtlas(v){estadoRender.atlas=v;lsSet('globo.atlas',v);estiloMostra();}
-  Array.prototype.forEach.call($('mestilo').querySelectorAll('button'),function(b){
-    b.onclick=function(){definirAtlas(b.dataset.v==='atlas');};
+  function definirAtlas(v){estadoRender.atlas=v;lsSet('globo.atlas',v);}
+  function definirNoite(v){if(noite.checked!==v){noite.checked=v;noite.dispatchEvent(new Event('change'));}}
+  Array.prototype.forEach.call($('mEstilo').querySelectorAll('button'),function(b){
+    b.onclick=function(){
+      var v=b.dataset.v;
+      definirAtlas(v==='atlas');definirNoite(v==='noite');
+      if(v!=='atlas'){estadoRender.optTex=true;oTex.checked=estadoRender.useTex;}
+      estiloMostra();
+    };
   });
-  /* botão do topo, ao lado do dia e noite: alterna satélite e atlas */
-  $('mestilotop').onclick=function(){
-    definirAtlas(!estadoRender.atlas);
-    setStatus(estadoRender.atlas?'🎨 Mapa atlas: uma cor por país':'🛰️ Mapa de satélite',2200);
-  };
+  noite.addEventListener('change',estiloMostra);
   estiloMostra();
-  setTimeout(visMostra,0);
 }
 
 export { buildTexture, iniciar, updateOpts };

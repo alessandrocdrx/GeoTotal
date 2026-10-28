@@ -1,7 +1,7 @@
 /**
  * @arquivo js/interface/botoes.js
  * Camada: Interface
- * Botões de ferramentas do globo (zoom, giro, rótulos).
+ * Botões de ferramentas do globo (zoom, giro, rótulos) e o encaixe dos botões do cabeçalho.
  */
 
 import { setStatus } from '../nucleo/utilitarios.js';
@@ -10,6 +10,35 @@ import { estadoCamera, estadoMapa } from '../visualizacao/tela.js';
 let spinB;
 let lp;
 let lc;
+
+
+/* passos para o cabeçalho caber, nesta ordem (ux.css): botões mais justos, tudo menor, o 🔥 da
+   sequência sai do topo e, por último, nome e atalhos ainda menores; o nome geoTotal nunca sai */
+const APERTOS = ['cab-apertado', 'cab-apertado2', 'cab-apertado3', 'cab-apertado4'];
+
+/**
+ * Cabeçalho sob medida para a largura do celular. Se não cabe (fonte larga, 🔥 da sequência
+ * aparecendo), aplica os passos de APERTOS só até caber: nenhum atalho some e a logo e o nome
+ * geoTotal ficam. Sem isso a página ganhava rolagem lateral e o ⋯ ficava fora da tela.
+ */
+function encaixarCabecalho(){
+  var htop=document.querySelector('header .htop');if(!htop)return;
+  /* mede o próprio cabeçalho: a largura que ele tem de verdade na tela, sem depender de como o
+     WebView informa o tamanho da tela (screen.width e innerWidth variam de aparelho para aparelho) */
+  var b=document.body,cab=htop.parentNode,cs=getComputedStyle(cab),pad=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight);
+  var L=cab.clientWidth;
+  htop.style.zoom='';
+  APERTOS.forEach(function(c){b.classList.remove(c);});
+  for(var k=0;k<APERTOS.length&&htop.scrollWidth+pad>L+0.5;k++)b.classList.add(APERTOS[k]);
+  /* no celular, se sobrar espaço (também depois dos passos), o cabeçalho inteiro cresce por igual
+     (logo, nome e atalhos) até ocupar a largura, no máximo 20% maior */
+  if(L<=460){
+    var h1=htop.querySelector('h1'),hb=htop.querySelector('.hbtns');
+    var usado=h1.getBoundingClientRect().width+hb.getBoundingClientRect().width+(parseFloat(getComputedStyle(htop).columnGap)||0);
+    var z=Math.min(1.2,Math.floor((L-pad-2)/usado*100)/100);
+    if(z>1.01)htop.style.zoom=String(z);
+  }
+}
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
@@ -24,6 +53,12 @@ function iniciar() {
   lc = document.getElementById('lc');
   lp.onclick=function(){estadoMapa.labelMode='p';lp.setAttribute('aria-pressed','true');lc.setAttribute('aria-pressed','false');};
   lc.onclick=function(){estadoMapa.labelMode='c';lc.setAttribute('aria-pressed','true');lp.setAttribute('aria-pressed','false');};
+  /* ---------- Cabeçalho que cabe na tela ---------- */
+  var agendado=0;
+  var agendar=function(){if(!agendado)agendado=requestAnimationFrame(function(){agendado=0;encaixarCabecalho();});};
+  if(window.ResizeObserver){var ro=new ResizeObserver(agendar);ro.observe(document.querySelector('header .hbtns'));ro.observe(document.querySelector('header'));}
+  window.addEventListener('resize',agendar);
+  encaixarCabecalho();
 }
 
-export { iniciar, spinB };
+export { encaixarCabecalho, iniciar, spinB };

@@ -44,38 +44,50 @@ test('troca entre Treino e Livre pelo cabeçalho', async () => {
   await fechar();
 });
 
-test('filtro por continente e Desfazer funcionam no modo Livre (regressão: "hist.push")', async () => {
+test('Livre sem tela de filtros: busca na largura toda, filtro antigo salvo é ignorado e "Só vizinhos" volta a mostrar todos', async () => {
   const { pagina, erros, fechar } = await abrirApp();
+  /* um filtro salvo por versões antigas (só o Brasil ligado) não pode esconder países */
+  await pagina.evaluate(() => localStorage.setItem('globo.lastview', JSON.stringify({ on: ['BR'], cc: 'BR' })));
+  await pagina.reload();
+  await pagina.waitForFunction(() => window.__geoTotal && window.__geoTotal.estadoRender.feats, null, { timeout: 15000 });
   await pagina.click('#qclose');
-  const ligados = () => pagina.evaluate(() => {
-    const g = window.__geoTotal;
-    return g.D.filter((d) => g.estadoMapa.on[d.i]).length;
+  const ligados = () => pagina.evaluate(() => { const g = window.__geoTotal; return g.D.filter((d) => g.estadoMapa.on[d.i]).length; });
+  const r = await pagina.evaluate(() => {
+    const q = document.getElementById('q').getBoundingClientRect(), row = document.querySelector('.searchrow').getBoundingClientRect();
+    return { semBotao: !document.getElementById('fbtn') && !document.getElementById('sheet'), largura: q.width / row.width };
   });
+  assert.equal(r.semBotao, true, 'sem o botão "Todas" e sem a tela de Filtros');
+  assert.ok(r.largura > 0.85, 'a busca ocupa a largura toda');
   const total = await ligados();
-  await pagina.evaluate(() => document.querySelectorAll('#chips button')[2].click());
-  const umContinente = await ligados();
-  assert.ok(umContinente > 0 && umContinente < total, 'filtrar por continente reduz a lista');
-  await pagina.evaluate(() => document.getElementById('ubtn').click());
-  assert.equal(await ligados(), total, 'Desfazer volta ao filtro anterior');
+  assert.ok(total > 150, 'o globo abre com todos os países');
+  await pagina.evaluate(() => { const g = window.__geoTotal; g.select(g.D.find((d) => d.cc === 'BR'), true); });
+  /* "Só vizinhos no mapa" fica no cartão aberto ("Saber mais") */
+  await pagina.click('#cexpandir');
+  await pagina.click('#nbtn');
+  const vizinhos = await ligados();
+  assert.ok(vizinhos > 1 && vizinhos < 20, 'Só vizinhos mostra o Brasil e os vizinhos');
+  await pagina.click('#nbtn');
+  assert.equal(await ligados(), total, 'Mostrar todos volta ao mundo inteiro');
   assert.deepEqual(erros, []);
   await fechar();
 });
 
-test('⚙️ abre os ajustes da partida com as alternativas à vista e vale na hora', async () => {
+test('⚙️ abre os ajustes da partida em listas com bolinha (sobrevivência é chave) e vale na hora', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.click('#qbtn');
   await pagina.click('#qajustb');
   const linhas = await pagina.evaluate(() => [...document.querySelectorAll('#ajbody .ajrow > b')].map((b) => b.textContent));
-  assert.deepEqual(linhas, ['Nível', 'Responder', 'Meta do dia', 'Perguntas', 'Ordem', 'Tamanho da rodada', 'Cronômetro', 'Sobrevivência']);
+  assert.deepEqual(linhas, ['Nível', 'Responder', 'Meta do dia', 'Perguntas', 'Ordem', 'Tamanho da rodada', 'Cronômetro']);
+  assert.equal(await pagina.locator('#ajbody label.mswrow:has(b:text-is("Sobrevivência")) input[role="switch"]').count(), 1);
   const linha = (t) => `#ajbody .ajrow:has(> b:text-is("${t}"))`;
   await pagina.click('#ajbody .ajmais summary');
-  await pagina.locator(`${linha('Cronômetro')} .aseg button`).nth(2).click();
+  await pagina.locator(`${linha('Cronômetro')} .mradio button`).nth(2).click();
   const r = await pagina.evaluate(() => {
     const achar = (t) => [...document.querySelectorAll('#ajbody .ajrow')].find((x) => x.querySelector('b').textContent === t);
     return {
       tempo: window.__geoTotal.quiz.timerLen,
-      marcado: achar('Cronômetro').querySelectorAll('.aseg button')[2].getAttribute('aria-pressed'),
-      rodada: achar('Tamanho da rodada').querySelector('.aseg button[aria-pressed="true"]').textContent,
+      marcado: achar('Cronômetro').querySelectorAll('.mradio button')[2].getAttribute('aria-pressed'),
+      rodada: achar('Tamanho da rodada').querySelector('.mradio button[aria-pressed="true"]').textContent,
       aberto: document.getElementById('ajsheet').style.display,
     };
   });
@@ -185,39 +197,51 @@ test('toques e categorias passam pelos ganchos da interface', async () => {
   await fechar();
 });
 
-test('botão 🏷️ e estilo no topo; mudar lugares no meio da rodada avisa e recomeça', async () => {
+test('menu numa página só: como o globo aparece, o que mostrar, época em lista; mudar lugares no meio da rodada avisa e recomeça', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(async () => {
     const g = window.__geoTotal, $ = (id) => document.getElementById(id);
     const espera = (ms) => new Promise((ok) => setTimeout(ok, ms));
-    $('mestilotop').click();
-    const atlas = g.estadoRender.atlas && $('mestilotop').textContent === '🎨' && document.querySelector('#mestilo [data-v="atlas"]').getAttribute('aria-pressed') === 'true';
-    $('mestilotop').click();
-    /* camadas de nomes */
-    $('camb').click();
-    const aberto = !$('camadas').hidden;
-    $('cMar').click();
-    const semMares = g.estadoRender.camadas.mares === false;
-    $('cMar').click();
-    ['cZon', 'cDes', 'cFlo', 'cMon'].forEach((i) => $(i).click());
+    const estilo = (v) => document.querySelector(`#mEstilo [data-v="${v}"]`);
+    $('mbtn').click();
+    const aberto = $('mtitle').textContent === 'Menu' && !$('mlist').hidden && !$('mguia').hidden;
+    estilo('atlas').click();
+    const atlas = g.estadoRender.atlas && estilo('atlas').getAttribute('aria-pressed') === 'true';
+    /* a noite é um jeito do satélite: escolher "com a noite" sai do mapa colorido */
+    estilo('noite').click();
+    const luz = $('oNight').checked && !g.estadoRender.atlas && estilo('noite').getAttribute('aria-pressed') === 'true';
+    estilo('sat').click();
+    const dia = !$('oNight').checked && !g.estadoRender.atlas;
+    document.querySelector('[data-p="mp-epoca"]').click();
+    document.querySelector('#cMes [data-v="6"]').click();
+    const epoca = g.estadoRender.mesMapa === 6 && $('cMesV').textContent.startsWith('Julho');
+    document.querySelector('#cMes [data-v=""]').click();
+    $('mback').click();
+    const voltou = $('mtitle').textContent === 'Menu' && !$('mlist').hidden;
+    /* chaves que ligam várias camadas juntas */
+    $('cOceMar').click();
+    const semMares = g.estadoRender.camadas.mares === false && g.estadoRender.camadas.oceanos === false;
+    $('cOceMar').click();
+    ['cZon', 'cNat'].forEach((i) => $(i).click());
     const c = g.estadoRender.camadas;
     const natureza = c.zonas && c.desertos && c.florestas && c.montanhas;
     $('flat2d').click();await espera(200);$('flat2d').click();
     /* treino com uma resposta dada: mudar territórios pergunta antes */
+    $('mclose').click();
     $('qbtn').click();await espera(300);
     g.quiz.answered = false;g.finishQ(true);g.nextQ();
     const dep = g.estadoMapa.includeDep;
-    $('cDep').click();
+    $('oDep').click();
     const aviso = document.querySelector('.avisolug');
     const naoMudouAinda = g.estadoMapa.includeDep === dep;
     aviso.querySelector('button:not(.avsim)').click();
     const cancelou = !document.querySelector('.avisolug') && g.estadoMapa.includeDep === dep;
-    $('cDep').click();
+    $('oDep').click();
     document.querySelector('.avisolug .avsim').click();
     const n = g.poolIdx().length, feitos = n - g.runPool().length;
-    return { atlas, aberto, semMares, natureza, aviso: !!aviso, naoMudouAinda, cancelou, mudou: g.estadoMapa.includeDep === !dep, zerou: feitos === 0 && $('oDep').checked === !dep };
+    return { aberto, atlas, luz, dia, epoca, voltou, semMares, natureza, aviso: !!aviso, naoMudouAinda, cancelou, mudou: g.estadoMapa.includeDep === !dep, zerou: feitos === 0 && $('oDep').checked === !dep };
   });
-  assert.deepEqual(r, { atlas: true, aberto: true, semMares: true, natureza: true, aviso: true, naoMudouAinda: true, cancelou: true, mudou: true, zerou: true });
+  assert.deepEqual(r, { aberto: true, atlas: true, luz: true, dia: true, epoca: true, voltou: true, semMares: true, natureza: true, aviso: true, naoMudouAinda: true, cancelou: true, mudou: true, zerou: true });
   assert.deepEqual(erros, []);
   await fechar();
 });
@@ -225,7 +249,7 @@ test('botão 🏷️ e estilo no topo; mudar lugares no meio da rodada avisa e r
 test('som: efeitos e música ligam e desligam pelo menu, sem erros', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.click('#mbtn');
-  await pagina.click('[data-p="mp-visual"]');
+  await pagina.click('.matal [data-ir="ms-som"]');
   const antes = await pagina.evaluate(() => ({ e: document.getElementById('msfx').checked, m: document.getElementById('mmusic').checked }));
   await pagina.click('label:has(#mmusic)');
   await pagina.evaluate(() => { const g = window.__geoTotal; ['acerto', 'erro', 'toque', 'nivel', 'meta', 'conquista'].forEach(g.tocar); });
@@ -574,25 +598,29 @@ test('zerar tudo também zera nível e conquistas', async () => {
   await fechar();
 });
 
-test('dia e noite no topo e no menu ⋯, tema com as três opções à vista', async () => {
+test('noite no globo pelo menu (satélite com a noite); coluna do mapa igual no Treino e no Livre; tema numa lista', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   await pagina.waitForFunction(() => !document.getElementById('oNight').disabled, null, { timeout: 15000 });
-  await pagina.click('#mvisual');
-  const topo = await pagina.evaluate(() => ({ noite: window.__geoTotal.optNight, icone: document.getElementById('mvisual').textContent, chave: document.getElementById('oNight').checked }));
-  assert.deepEqual(topo, { noite: true, icone: '🌗', chave: true }, 'o botão do topo liga o dia e noite e a chave do menu acompanha');
+  const botoes = () => pagina.evaluate(() => [...document.querySelectorAll('.tools button')].filter((b) => b.getClientRects().length).map((b) => b.id));
+  const noTreino = await botoes();
+  await pagina.click('#qclose');
+  const noLivre = (await botoes()).filter((id) => id !== 'spin' && id !== 'tour');
+  assert.deepEqual(noLivre, noTreino, 'a coluna do mapa tem os mesmos botões nos dois modos (giro e passeio só no Livre)');
   await pagina.click('#mbtn');
-  await pagina.click('[data-p="mp-visual"]');
-  await pagina.click('label:has(#oNight)');
-  await pagina.click('label:has(#oNight)');
-  const noite = await pagina.evaluate(() => window.__geoTotal.optNight);
+  await pagina.click('#mEstilo [data-v="noite"]');
+  const noite = await pagina.evaluate(() => window.__geoTotal.optNight && document.getElementById('oNight').checked);
+  await pagina.click('#mEstilo [data-v="sat"]');
   await pagina.click('#mtema [data-v="dark"]');
   const r = await pagina.evaluate(() => ({
     tema: document.documentElement.getAttribute('data-theme'),
     marcado: document.querySelector('#mtema [aria-pressed="true"]').textContent,
     guardado: localStorage.getItem('globo.theme'),
   }));
-  assert.equal(noite, true, 'a chave liga o dia e noite');
+  assert.equal(noite, true, 'a chave liga a noite');
   assert.deepEqual(r, { tema: 'dark', marcado: 'Escuro', guardado: '"dark"' });
+  /* o guia fica sempre no alto do menu */
+  await pagina.click('#mguia');
+  await pagina.waitForSelector('#guia:not([hidden])', { timeout: 3000 });
   assert.deepEqual(erros, []);
   await fechar();
 });
@@ -786,14 +814,14 @@ test('numa região a rodada não corta em 10: vai até zerar', async () => {
   await fechar();
 });
 
-test('cabeçalho: logo, botão de som; começa sempre de dia; tocar num país no treino mostra só o nome', async () => {
+test('cabeçalho: logo; atalho de som no menu; começa sempre de dia; tocar num país no treino mostra só o nome', async () => {
   const { pagina, erros, fechar } = await abrirApp();
   const r = await pagina.evaluate(() => {
     const g = window.__geoTotal;
     const logo = getComputedStyle(document.querySelector('h1 .marca-logo')).backgroundImage.startsWith('url("data:image/png');
-    const noite = g.optNight === false && !document.getElementById('oNight').checked && document.getElementById('mvisual').textContent === '☀️';
+    const noite = g.optNight === false && !document.getElementById('oNight').checked;
     document.getElementById('msom').click();
-    const mudo = g.estadoSom.mudo, icone = document.getElementById('msom').textContent;
+    const mudo = g.estadoSom.mudo && document.getElementById('msom').getAttribute('aria-checked') === 'false', icone = document.getElementById('msom').querySelector('.mi').textContent;
     document.getElementById('msom').click();
     return { logo, noite, mudo, icone, voltou: g.estadoSom.mudo };
   });

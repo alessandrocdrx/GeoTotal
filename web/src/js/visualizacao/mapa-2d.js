@@ -7,6 +7,7 @@
 import { LLAT, LLNG } from '../dados/massas-terra.js';
 import { D, REG } from '../dados/paises.js';
 import { capShort, short } from '../dados/vizinhos.js';
+import { ouvir } from '../nucleo/eventos.js';
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { desenharAguas } from './aguas.js';
 import { BORDA, corAtlas, OCEANO, PALETA, SEM_PAIS } from './atlas.js';
@@ -181,6 +182,8 @@ function setFlat2D(v){
 
 /** Executa a parte deste módulo na inicialização do app (chamada por js/main.js, na ordem). */
 function iniciar() {
+  /* sem WebGL (carregamento.js avisa): o mapa plano não precisa dele */
+  ouvir('sem-webgl',function(){setFlat2D(true);});
   estadoCamera.plano2D = lsGet('globo.flat2d',false);
   $('flat2d').onclick=function(){setFlat2D(!estadoCamera.plano2D);};
   setFlat2D(estadoCamera.plano2D);

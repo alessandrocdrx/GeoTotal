@@ -1,55 +1,65 @@
 # geoTotal — ficha da Play Store
 
 Tudo o que o Play Console pede, pronto para copiar. As imagens (ícone 512×512, gráfico de
-recursos 1024×500 e as 8 capturas 1080×1920) não ficam no repositório: são entregues à parte e
-enviadas direto no Play Console.
+recursos 1024×500 e as 8 capturas 1080×1920 de celular) não ficam no repositório: são entregues
+à parte e enviadas direto no Play Console, nesta ordem: 1 Aprenda as capitais jogando, 2 Combo,
+3 Toque em qualquer país (Livre), 4 Explore o mundo de verdade (Livre, natureza), 5 Bandeira,
+6 Ache no globo, 7 Desafio do dia, 8 Estados do Brasil. Cada uma tem uma frase em cima: as
+quatro primeiras são as que aparecem na busca, então mostram o jogo e o modo Livre.
 
 ## Detalhes do app
 
 - **Nome do app** (até 30): `geoTotal: Países e Capitais`
 - **Descrição curta** (até 80):
-  `Jogo de geografia num globo 3D: países, capitais e bandeiras. Até sem internet.`
+  `Aprenda capitais e bandeiras jogando num globo 3D. Grátis, sem anúncios.`
 - **Descrição completa** (até 4000):
 
 ```
-Aprenda os países, as capitais e as bandeiras do mundo jogando, num globo 3D que você gira com o dedo.
+Aprenda capitais e bandeiras do mundo todo jogando, num globo 3D que você gira com o dedo. Rodadas rápidas, combos e medalhas: estudar geografia vira jogo.
 
-🎯 TREINO QUE VICIA (DO JEITO BOM)
-Rodadas rápidas com estrelas no final, combo 🔥 de acertos seguidos, bônus por resposta rápida e surpresas pelo caminho. Erre pelo país vizinho e o jogo avisa: "Quase!". Perguntas de capital, bandeira, vizinhos e "ache no mapa", com dica que elimina duas opções erradas. O globo se mexe junto: mostra a capital, o continente da bandeira e o país da resposta.
+🎯 COMO SE JOGA
+Aparece um país, você escolhe a capital. Acertou, o globo mostra onde fica e você ganha XP. Errou, o jogo mostra a resposta certa no mapa. Em poucos minutos você já sabe mais do que sabia.
+
+🎮 VÁRIOS JOGOS
+• Qual é a capital?
+• De quem é a bandeira?
+• Ache o país no globo
+• Quem faz fronteira com quem
+• Relâmpago, contra o relógio
+• Níveis Fácil, Normal e Difícil
+
+🔥 COMBOS E SURPRESAS
+Acerte em sequência e o combo cresce. Resposta rápida vale bônus, e de vez em quando aparece uma surpresa. Errou pelo país vizinho? O jogo avisa: "Quase!".
 
 🗓️ DESAFIO DO DIA
-Os mesmos 10 países para todo mundo, uma vez por dia. Compare o resultado 🟩🟥 com os amigos.
+10 capitais por dia, as mesmas para todo mundo. Compare o resultado 🟩🟥 com os amigos sem entregar as respostas.
+
+🌍 MODO LIVRE: EXPLORE O MUNDO
+Toque em qualquer país para ver capital, população, idioma, moeda, hora local e curiosidades. Veja o globo como foto de satélite, mapa colorido ou com a noite de agora. Ligue desertos, florestas, cordilheiras, mares e zonas climáticas. Tem ainda distância entre capitais, comparação de países e lugares especiais como Liberland.
 
 🏆 SUA EVOLUÇÃO
-Suba de Turista a Lenda do Mapa, ganhe medalha de ouro, prata ou bronze em cada região que você zerar, conquistas com barra de progresso e uma sequência de dias com congelador para não perder nada. Os países que você domina ficam dourados no globo.
-
-🌍 EXPLORE O MUNDO
-Toque em qualquer país e veja capital, bandeira, população, área, idiomas, moeda, a hora agora (comparada com Brasília) e curiosidades. Globo realista com relevo e dia e noite em tempo real (ou sempre de dia), e mapa plano. Passeio automático pelos países.
-
-🗺️ MAPA CHEIO DE CAMADAS
-Satélite ou atlas com um toque. Ligue oceanos, 104 mares, zonas climáticas, desertos, florestas e cordilheiras, cada um com cartão de tamanho, países e curiosidades. Escolha o mês e veja a neve do globo mudar com a estação.
-
-✈️ DISTÂNCIA E ROTAS DE VOO
-Distância entre capitais em linha reta ou de avião, com escalas reais dos dados abertos do OpenFlights e até 6 paradas.
-
-🏴 LUGARES ESPECIAIS
-Países não reconhecidos e micronações como Liberland e Sealand, com história, curiosidades e um passaporte alternativo para colecionar.
+Suba de Turista a Lenda do Mapa. Ganhe medalhas em cada continente, conquistas e um passaporte com carimbos. Mantenha a sequência de dias.
 
 🇧🇷 ESTADOS DO BRASIL
-Os 27 estados e suas capitais, com contornos, fusos horários e estados vizinhos.
+Os 27 estados e suas capitais, com mapa e vizinhos.
 
-🎵 SOM E MÚSICA
-Efeitos sonoros e música ambiente gerados pelo próprio app, que você liga ou desliga com um toque.
-
-👋 FÁCIL DE COMEÇAR
-Tour rápido de 30 segundos e começo pela América do Sul. Funciona em celular e tablet, deitado ou em pé.
+✨ FÁCIL DE USAR
+Menu simples, numa página só, e o guia "Como jogar" sempre à mão.
 
 📴 SEM INTERNET, SEM ANÚNCIOS
-Tudo vai dentro do app. Sem cadastro, sem anúncios, sem compras e sem coleta de dados. O progresso volta sozinho ao trocar de celular (backup do Android) ou por arquivo.
-
-204 países e territórios, mais 45 territórios dependentes opcionais (como Porto Rico, Groenlândia e Hong Kong), com selo de ultramarino, 15 ilhas remotas e bases da Antártida, e 5 micronações.
+Grátis, sem cadastro, sem compras e sem coleta de dados. Funciona offline, no celular e no tablet.
 
 Código aberto (Apache 2.0), criado por alessandrocdrx: github.com/alessandrocdrx/GeoTotal
+```
+
+## Novidades da versão 1.42 (até 500)
+
+```
+• Menu novo, mais simples: tudo numa página só, com seu nível no alto
+• Escolha como o globo aparece: satélite, mapa colorido ou com a noite
+• Treino mais limpo, com perguntas e respostas maiores
+• Guia "Como jogar" sempre no menu
+• Correções e melhorias
 ```
 
 ## Configurações da loja

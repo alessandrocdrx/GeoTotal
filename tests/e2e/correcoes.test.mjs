@@ -1,0 +1,105 @@
+// geoTotal — Copyright 2026 alessandrocdrx
+// SPDX-License-Identifier: Apache-2.0
+//
+// Correções da 1.40 em celulares difíceis: (1) sem WebGL (o WebView de alguns celulares não cria o contexto 3D): o globo
+// não aparece, então o app abre sozinho o mapa plano e avisa o motivo; (2) página aberta antes de o
+// WebView ter tamanho (tela 0×0 por um instante): o mapa tem de aparecer quando a tela crescer;
+// (3) fonte larga com o 🔥 da sequência no cabeçalho: nada pode passar da tela e o nome
+// geoTotal, a logo e os atalhos 🔊 ☀️ 🛰️ 🏷️ continuam no topo.
+import { test, before, after } from 'node:test';
+import assert from 'node:assert/strict';
+import { iniciarServidor } from './apoio.mjs';
+
+let ambiente;
+before(async () => { ambiente = await iniciarServidor(); });
+after(async () => { await ambiente.encerrar(); });
+
+test('sem WebGL: abre o mapa plano e avisa que o globo 3D não abriu', async () => {
+  const ctx = await ambiente.navegador.newContext({ viewport: { width: 360, height: 720 }, isMobile: true, hasTouch: true });
+  const pagina = await ctx.newPage();
+  const erros = [];
+  pagina.on('pageerror', (e) => erros.push(e.message));
+  await pagina.addInitScript(() => {
+    try { localStorage.setItem('globo.bv.v1', 'true'); localStorage.setItem('globo.legenda.vista', 'true'); } catch {}
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (tipo, ...resto) {
+      return /webgl/.test(tipo) ? null : original.call(this, tipo, ...resto);
+    };
+  });
+  await pagina.goto(ambiente.url);
+  await pagina.waitForFunction(() => window.__geoTotal && window.__geoTotal.estadoRender.feats, null, { timeout: 25000 });
+  await pagina.waitForTimeout(3000);
+  const r = await pagina.evaluate(() => ({
+    plano: window.__geoTotal.estadoCamera.plano2D,
+    botao: document.getElementById('flat2d').getAttribute('aria-pressed'),
+    aviso: document.getElementById('status').style.display === 'block' ? document.getElementById('status').textContent : '',
+  }));
+  await ctx.close();
+  assert.equal(r.plano, true, 'o mapa plano é o que aparece');
+  assert.equal(r.botao, 'true', 'o botão 🗺️ mostra que o mapa plano está ligado');
+  assert.match(r.aviso, /não mostra o globo 3D/, 'o aviso aparece na tela');
+  assert.deepEqual(erros, []);
+});
+
+test('tela 0×0 na abertura (WebView ainda sem tamanho): o mapa aparece quando a tela cresce', async () => {
+  const ctx = await ambiente.navegador.newContext({ viewport: { width: 1, height: 1 }, isMobile: true, hasTouch: true });
+  const pagina = await ctx.newPage();
+  const erros = [];
+  pagina.on('pageerror', (e) => erros.push(e.message));
+  await pagina.addInitScript(() => { try { localStorage.setItem('globo.bv.v1', 'true'); localStorage.setItem('globo.legenda.vista', 'true'); } catch {} });
+  await pagina.goto(ambiente.url);
+  await pagina.waitForTimeout(2500);
+  await pagina.setViewportSize({ width: 360, height: 720 });
+  await pagina.waitForFunction(() => window.__geoTotal && window.__geoTotal.estadoRender.feats, null, { timeout: 25000 });
+  await pagina.waitForTimeout(1500);
+  const r = await pagina.evaluate(() => ({ cy: window.__geoTotal.estadoCamera.cyFrac, w: document.getElementById('g').width }));
+  // o mapa continua sendo redesenhado: girar a câmera muda o desenho
+  const quadro = () => pagina.evaluate(() => document.getElementById('g').toDataURL().length);
+  const antes = await quadro();
+  await pagina.evaluate(() => { window.__geoTotal.estadoCamera.lam += 1; });
+  await pagina.waitForTimeout(500);
+  const depois = await quadro();
+  await ctx.close();
+  assert.ok(Number.isFinite(r.cy), `posição do globo é um número (${r.cy})`);
+  assert.ok(r.w > 0, 'o mapa ganhou tamanho');
+  assert.notEqual(antes, depois, 'o mapa continua sendo desenhado');
+  assert.deepEqual(erros, []);
+});
+
+test('cabeçalho cabe na tela e ocupa a largura, com ou sem 🔥 e fonte larga', async () => {
+  const problemas = [];
+  for (const [largura, larga] of [320, 360, 393, 412].flatMap((l) => [[l, false], [l, true]])) {
+    const ctx = await ambiente.navegador.newContext({ viewport: { width: largura, height: 720 }, isMobile: true, hasTouch: true });
+    const pagina = await ctx.newPage();
+    await pagina.addInitScript(() => { try { localStorage.setItem('globo.bv.v1', 'true'); localStorage.setItem('globo.legenda.vista', 'true'); } catch {} });
+    await pagina.goto(ambiente.url);
+    await pagina.waitForFunction(() => window.__geoTotal && window.__geoTotal.estadoRender.feats, null, { timeout: 15000 });
+    /* fonte larga e 🔥 juntos: o pior caso; sem eles, a fonte normal do Android (Roboto) */
+    if (larga) {
+      await pagina.addStyleTag({ content: '*{font-family:"DejaVu Sans",Verdana,sans-serif!important}' });
+      await pagina.evaluate(() => { const s = document.getElementById('streakpill'); s.style.display = ''; s.textContent = '🔥 12'; });
+    }
+    await pagina.waitForTimeout(300);
+    const r = await pagina.evaluate(() => ({ pagina: document.documentElement.scrollWidth, menu: Math.round(document.getElementById('mbtn').getBoundingClientRect().right) }));
+    if (r.pagina > largura) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: página com ${r.pagina}px (rolagem lateral)`);
+    if (r.menu > largura) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: botão ☰ termina em ${r.menu}px, fora da tela`);
+    /* topo limpo: Treino e Livre largos */
+    const faltam = await pagina.evaluate((L) => {
+      const f = [];
+      ['qbtn', 'qclose'].forEach((id) => { const b = document.getElementById(id).getBoundingClientRect(); if (!(b.width >= 60 && b.right <= L)) f.push(id); });
+      return f;
+    }, largura);
+    if (faltam.length) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: botões apertados ou fora da tela: ${faltam.join(', ')}`);
+    const marca = await pagina.evaluate(() => {
+      const h = document.querySelector('header h1.marca');
+      return { logo: h.querySelector('.marca-logo').getBoundingClientRect().width, fonte: parseFloat(getComputedStyle(h).fontSize), texto: h.textContent.trim(), direita: h.getBoundingClientRect().right };
+    });
+    if (!(marca.logo >= 20)) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: logo do geoTotal sumiu do cabeçalho`);
+    if (marca.texto !== 'geoTotal' || !(marca.fonte >= 12)) problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: nome geoTotal sumiu do cabeçalho`);
+    /* sem sobra: o ☰ chega perto da borda direita (ou o cabeçalho já está no tamanho máximo) */
+    const sobra = await pagina.evaluate((L) => ({ px: L - document.getElementById('mbtn').getBoundingClientRect().right, zoom: document.querySelector('header .htop').style.zoom }), largura);
+    if (sobra.px > 16 && sobra.zoom !== '1.2') problemas.push(`${largura}px${larga ? ' (fonte larga, 🔥)' : ''}: sobram ${Math.round(sobra.px)}px vazios no cabeçalho`);
+    await ctx.close();
+  }
+  assert.deepEqual(problemas, []);
+});

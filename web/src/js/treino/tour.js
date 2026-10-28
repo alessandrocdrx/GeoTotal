@@ -6,6 +6,7 @@
 
 import { $, lsGet, lsSet } from '../nucleo/utilitarios.js';
 import { quiz } from './estado.js';
+import { estadoPartida, runKey } from './partida.js';
 import { quizOpen } from './perguntas.js';
 
 /*
@@ -18,13 +19,10 @@ const PASSOS = [
   { alvo: '#qmodeb', texto: '🎮 Escolha o jogo: capital, bandeira, achar no mapa, vizinhos… ou um jogo rápido (Relâmpago, Misto, Desafio do dia).' },
   { alvo: '#qscopeb', texto: '📍 Escolha a região: um continente, uma parte dele, os estados do Brasil ou o mundo todo.' },
   { alvo: '#qajustb', texto: '⚙️ Ajustes da partida: digitar ou escolher, cronômetro, tamanho da rodada, meta do dia…' },
-  { alvo: '#qscore', texto: '⭐ Seu progresso: acertos na região, seu nível e título, e a meta do dia. Acertos seguidos viram combo 🔥.' },
+  { alvo: '#qscore', texto: '⭐ Seu progresso: quantos você já acertou na região, o relógio e a meta do dia. Acertos seguidos viram combo 🔥.' },
   { alvo: '#qbody', texto: '👆 Toque na resposta. Rodadas de 10 perguntas, com estrelas no final.' },
   { alvo: '.tools', texto: '🌍 Controles do globo: aproximar (+), afastar (−) e mapa plano 🗺️. No modo Livre aparecem também 🔄 giro automático e 🎬 passeio pelos países.' },
-  { alvo: '#msom', texto: '🔊 Som: liga e desliga tudo. ☀️ Ao lado, a sombra da noite de verdade no globo.' },
-  { alvo: '#mestilotop', texto: '🛰️ Estilo do mapa: satélite (foto) ou atlas (uma cor por país).' },
-  { alvo: '#camb', texto: '🏷️ O que aparece no mapa: oceanos, mares, zonas climáticas, desertos, florestas, relevo, o mês do ano e os lugares especiais. No Livre, toque num país; toque de novo no mesmo lugar para ver o deserto, a floresta ou o mar que está embaixo.' },
-  { alvo: '#mbtn', texto: '⋯ No menu: passaporte, conquistas, histórico, distância entre capitais, comparar países, folha de estudo, som e visual, salvar progresso e este tour de novo. Tudo o que abre por ele tem ← Voltar, que traz você de volta ao menu. O ícone ⓘ explica de onde vêm os dados.' },
+  { alvo: '#mbtn', texto: '☰ Menu: seu nível, como o globo aparece (satélite, colorido ou com a noite), o que mostrar no mapa, som, lugares, passaporte, conquistas e mais. Tudo numa página só; os atalhos do alto pulam para cada parte. Este guia fica sempre no botão ❓ Como jogar, no alto do menu.' },
 ];
 
 let passo = -1;
@@ -33,6 +31,8 @@ function fecharTour(){
   passo=-1;
   var g=$('guia');if(g)g.hidden=true;
   lsSet('globo.tour.visto',true);
+  /* o tempo lendo o tour não conta no relógio da partida: ele recomeça a contar agora */
+  var r=estadoPartida.RUNS[runKey()];if(r&&!r.fin)r.la=Date.now();
 }
 function mostrarPasso(){
   var p=PASSOS[passo],alvo=p&&document.querySelector(p.alvo);
@@ -51,6 +51,9 @@ function mostrarPasso(){
 }
 function iniciarTour(){
   if(!quiz.open)quizOpen();
+  /* guarda o tempo jogado até agora: com o tour aberto o relógio para nele, sem voltar */
+  var r=estadoPartida.RUNS[runKey()],agora=Date.now();
+  if(r&&!r.fin&&r.la){r.at=(r.at||0)+Math.min(60000,Math.max(0,agora-r.la));r.la=agora;}
   var g=$('guia');g.hidden=false;
   passo=0;
   setTimeout(mostrarPasso,450);

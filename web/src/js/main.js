@@ -26,7 +26,6 @@ import * as VisualizacaoTextura from './visualizacao/textura.js';
 import * as NucleoUtilitarios from './nucleo/utilitarios.js';
 import * as VisualizacaoMarcadores from './visualizacao/marcadores.js';
 import * as InterfaceCartaoDetalhes from './interface/cartao-detalhes.js';
-import * as InterfaceFiltrosDesfazer from './interface/filtros-desfazer.js';
 import * as InterfaceListaProximos from './interface/lista-proximos.js';
 import * as InterfacePasseio from './interface/passeio.js';
 import * as InterfaceDistancia from './interface/distancia.js';
@@ -96,7 +95,6 @@ InterfaceBusca.iniciar();
 InterfaceBotoes.iniciar();
 VisualizacaoFronteiras.iniciar();
 VisualizacaoTextura.iniciar();
-InterfaceFiltrosDesfazer.iniciar();
 InterfaceListaProximos.iniciar();
 InterfacePasseio.iniciar();
 InterfaceDistancia.iniciar();
@@ -136,7 +134,7 @@ InterfaceLegenda.iniciar();
 window.setStatus = VisualizacaoFronteiras.setStatus;
 
 /* Interface de depuração e testes (tests/e2e): window.__geoTotal.nome lê o valor atual. */
-const modulos = [AppCompatEmoji, DadosPaises, DadosInfoPaises, DadosReligioes, DadosLinguas, DadosMassasTerra, DadosVizinhos, DadosOceanosPolos, DadosRegioesNaturais, VisualizacaoGlobo, VisualizacaoAnimacao, InterfaceInteracao, InterfaceCartaoPais, InterfaceFiltros, InterfaceBusca, InterfaceBotoes, VisualizacaoFronteiras, VisualizacaoWebgl, VisualizacaoTextura, NucleoUtilitarios, VisualizacaoMarcadores, InterfaceCartaoDetalhes, InterfaceFiltrosDesfazer, InterfaceListaProximos, InterfacePasseio, InterfaceDistancia, InterfaceComparar, InterfaceCamadas, InterfaceCartaoNatural, RecursosPdf, RecursosAvaliacao, VisualizacaoDiaNoite, VisualizacaoCarregamento, RecursosExportar, TreinoEstado, TreinoDominio, TreinoPartida, TreinoDica, TreinoPerguntas, TreinoEstatisticas, TreinoDestaqueEscopo, TreinoEscopo, InterfaceMenu, DadosEstadosBrasil, BrasilModoEstados, BrasilCartaoEstado, BrasilFiltros, BrasilImportarContornos, BrasilMenu, AppUltimaVisao, VisualizacaoMapa2d, TreinoProgressao, TreinoPassaporte, AppInicio, NucleoGeo, VisualizacaoEnquadramento, VisualizacaoEstados, VisualizacaoGanchos, VisualizacaoSelo, InterfaceGanchos, NucleoEventos, TreinoToques, VisualizacaoProjecao, VisualizacaoTela, NucleoSom, TreinoBoasVindas, TreinoDesafio, InterfaceLegenda, RecursosProgresso, TreinoTour, TreinoAjustes, NucleoHora];
+const modulos = [AppCompatEmoji, DadosPaises, DadosInfoPaises, DadosReligioes, DadosLinguas, DadosMassasTerra, DadosVizinhos, DadosOceanosPolos, DadosRegioesNaturais, VisualizacaoGlobo, VisualizacaoAnimacao, InterfaceInteracao, InterfaceCartaoPais, InterfaceFiltros, InterfaceBusca, InterfaceBotoes, VisualizacaoFronteiras, VisualizacaoWebgl, VisualizacaoTextura, NucleoUtilitarios, VisualizacaoMarcadores, InterfaceCartaoDetalhes, InterfaceListaProximos, InterfacePasseio, InterfaceDistancia, InterfaceComparar, InterfaceCamadas, InterfaceCartaoNatural, RecursosPdf, RecursosAvaliacao, VisualizacaoDiaNoite, VisualizacaoCarregamento, RecursosExportar, TreinoEstado, TreinoDominio, TreinoPartida, TreinoDica, TreinoPerguntas, TreinoEstatisticas, TreinoDestaqueEscopo, TreinoEscopo, InterfaceMenu, DadosEstadosBrasil, BrasilModoEstados, BrasilCartaoEstado, BrasilFiltros, BrasilImportarContornos, BrasilMenu, AppUltimaVisao, VisualizacaoMapa2d, TreinoProgressao, TreinoPassaporte, AppInicio, NucleoGeo, VisualizacaoEnquadramento, VisualizacaoEstados, VisualizacaoGanchos, VisualizacaoSelo, InterfaceGanchos, NucleoEventos, TreinoToques, VisualizacaoProjecao, VisualizacaoTela, NucleoSom, TreinoBoasVindas, TreinoDesafio, InterfaceLegenda, RecursosProgresso, TreinoTour, TreinoAjustes, NucleoHora];
 const api = {};
 for (const mod of modulos) {
   for (const nome of Object.keys(mod)) {

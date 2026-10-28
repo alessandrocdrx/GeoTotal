@@ -21,7 +21,7 @@ const TEXTOS = {
   'Mar do Norte': 'Raso, com uns 95 m de profundidade média. Tem muitas plataformas de petróleo e grandes parques de energia eólica.',
   'Mar Báltico': 'A água é salobra: tem bem menos sal que o oceano, porque recebe muitos rios e troca pouca água com o Atlântico.',
   'Mar de Barents': 'Graças a um ramo da Corrente do Golfo, a parte sul não congela, mesmo acima do Círculo Polar Ártico.',
-  'Golfo do México': 'Recebe o rio Mississippi. Dele sai a Corrente do Golfo, que leva água quente até a Europa e deixa o clima de lá mais ameno.',
+  'Golfo da América': 'Chamado de Golfo do México no Brasil e na maior parte do mundo; os EUA adotaram o nome Golfo da América em 2025. Recebe o rio Mississippi. Dele sai a Corrente do Golfo, que leva água quente até a Europa e deixa o clima de lá mais ameno.',
   'Baía de Hudson': 'Fica congelada boa parte do ano. Ursos-polares esperam o gelo se formar para caçar focas.',
   'Golfo de Bengala': 'A maior baía do mundo. Recebe os rios Ganges e Bramaputra, que formam o maior delta do planeta.',
   'Mar da Arábia': 'Rota de comércio antiga entre a Índia, a Arábia e a África, movida pelos ventos das monções.',

@@ -15,8 +15,8 @@ android {
         applicationId 'io.github.alessandrocdrx.geototal'
         minSdk 26
         targetSdk 36
-        versionCode 46
-        versionName '1.40'
+        versionCode 50
+        versionName '1.44'
     }
 
     signingConfigs {
@@ -40,7 +40,11 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            // R8: encolhe e otimiza o código (recomendação da Play). As regras em proguard-rules.pro
+            // protegem a ponte com o JavaScript, que o WebView chama pelo nome.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig hasReleaseKey ? signingConfigs.release : signingConfigs.debug
         }
     }
@@ -55,4 +59,7 @@ dependencies {
     // Pedido de avaliação oficial do Google Play, dentro do app (In-App Review). Fala com o app da
     // Play Store pelo próprio aparelho: não precisa de permissão de internet.
     implementation 'com.google.android.play:review:2.0.2'
+    // A biblioteca de avaliação traz versões antigas destas duas; a Play pede as atuais.
+    implementation 'androidx.activity:activity:1.13.0'
+    implementation 'androidx.fragment:fragment:1.9.1'
 }

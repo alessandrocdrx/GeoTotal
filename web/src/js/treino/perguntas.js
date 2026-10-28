@@ -83,7 +83,8 @@ function tempoDaPartida(){
   if(quiz.jogoRapido||estadoTreino.desafio||!poolIdx().length)return '';
   var rr=estadoPartida.RUNS[runKey()];if(!rr)return '⏱️ 0:00';
   var t=rr.at||0;
-  if(!rr.fin&&quiz.cur>=0&&!quiz.answered&&$('qbody').querySelector('.qq')&&!$('qbody').querySelector('.retomar'))t+=Math.min(60000,Math.max(0,Date.now()-(rr.la||Date.now())));
+  /* com o tour ou as boas-vindas abertos o relógio fica parado */
+  if(!rr.fin&&quiz.cur>=0&&!quiz.answered&&$('guia').hidden&&$('welcome').hidden&&$('qbody').querySelector('.qq')&&!$('qbody').querySelector('.retomar'))t+=Math.min(60000,Math.max(0,Date.now()-(rr.la||Date.now())));
   return '⏱️ '+fmtRelogio(t);
 }
 let relogioInt = 0;
@@ -208,6 +209,12 @@ function definirNivel(v){
 function definirResposta(v){
   quiz.type=v;buildModeButtons();resetSession();nextQ();
 }
+/** Pergunta em duas linhas: o começo pequeno e o lugar (o que importa) grande, sozinho. */
+function pergunta(q,inicio,alvo){
+  var a=document.createElement('small');a.className='qqini';a.textContent=inicio+' ';
+  var b=document.createElement('b');b.className='qqalvo';b.textContent=alvo;
+  q.appendChild(a);q.appendChild(b);
+}
 function nextQ(){
   if(quiz.jogoRapido){var lm=MODOS_MISTO[estadoTreino.quizDomain]||MODOS_MISTO.world;quiz.mode=lm[Math.floor(Math.random()*lm.length)];estadoTreino.qMap=false;}
   $('qnext').classList.remove('auto');
@@ -231,29 +238,29 @@ function nextQ(){
   $('qpool').textContent=n+' '+unitWord(n)+' em '+scopeLabel()+'.'+(isMap&&estadoTreino.quizDomain==='world'&&!estadoRender.feats?' Sem fronteiras carregadas: os pontos das capitais ficam visíveis.':'')+(isMap&&estadoTreino.quizDomain==='br'&&!estadoBrasil.STFEAT.some(function(f){return f;})?' Sem divisas importadas: os pontos das capitais ficam visíveis.':'');
   var q=document.createElement('div');q.className='qq';
   if(quiz.mode==='cap'){
-    q.textContent='Qual é a capital de '+qflag(d)+' '+short(d)+'?';
-    var cbt=document.createElement('button');cbt.className='qcenter';cbt.textContent='⌖ Centralizar';cbt.onclick=function(){showTarget(i);};q.appendChild(cbt);
+    pergunta(q,'Qual é a capital de',qflag(d)+' '+short(d)+'?');
+    var cbt=document.createElement('button');cbt.className='qcenter';cbt.textContent='📍 Ver no mapa';cbt.onclick=function(){showTarget(i);};q.appendChild(cbt);
     addHintBtn(q,d,false);
     showTarget(i);if(estadoTreino.quizDomain==='world')estadoTreino.qFlash={i:i,kind:'ask'};
   }
   else if(quiz.mode==='pais'){
-    q.textContent='Qual '+(estadoTreino.quizDomain==='br'?'estado':'país')+' tem como capital '+qcapD(d)+'?';addHintBtn(q,d,false);
+    pergunta(q,'Qual '+(estadoTreino.quizDomain==='br'?'estado':'país')+' tem como capital',qcapD(d)+'?');addHintBtn(q,d,false);
     /* o contrário de País → Capital: o globo vai até a cidade e marca só ela; o país você descobre */
     if(estadoTreino.quizDomain==='world'){estadoTreino.qPino=i;flyTo(d.lat,d.lng,Math.max(1.6,REG[d.r].z*1.4));}else scopeView();
   }
   else if(quiz.mode==='flag'){
     /* o globo gira até o continente da bandeira (as opções são do mesmo lugar, então não entrega) */
     if(estadoTreino.quizDomain==='world')flyTo(REG[d.r].lat,REG[d.r].lng,REG[d.r].z);else scopeView();var f2=document.createElement('div');f2.className='qflag big';f2.textContent=d.flag;var t2=document.createElement('div');t2.textContent='De qual país é esta bandeira?';q.appendChild(f2);q.appendChild(t2);addHintBtn(q,d,false);}
-  else if(quiz.mode==='code'){q.textContent='Qual é a sigla de '+qflag(d)+' '+short(d)+'?';scopeView();addHintBtn(q,d,false);}
+  else if(quiz.mode==='code'){pergunta(q,'Qual é a sigla de',qflag(d)+' '+short(d)+'?');scopeView();addHintBtn(q,d,false);}
   else if(isNeighbor){
     var nbIdxs=estadoTreino.quizDomain==='br'?d.nb:NB[i];
     quiz.nbAnswer=nbIdxs[Math.floor(Math.random()*nbIdxs.length)];
-    q.textContent='Qual destes '+unitWord(2)+' faz fronteira com '+qflag(d)+' '+short(d)+'?';
+    pergunta(q,'Qual destes '+unitWord(2)+' faz fronteira com',qflag(d)+' '+short(d)+'?');
     addHintBtn(q,arr[quiz.nbAnswer],false);
     showTarget(i);if(estadoTreino.quizDomain==='world')estadoTreino.qFlash={i:i,kind:'ask'};
   }
-  else{q.textContent='Toque no mapa: onde fica '+qflag(d)+' '+short(d)+'?';}
-  /* Centralizar e Dica numa linha só deles, embaixo da pergunta */
+  else{pergunta(q,'Toque no mapa: onde fica',qflag(d)+' '+short(d)+'?');}
+  /* Ver no mapa e Dica numa linha só deles, embaixo da pergunta */
   var acoes=q.querySelectorAll(':scope > .qcenter');
   if(acoes.length){var ac=document.createElement('div');ac.className='qacoes';Array.prototype.forEach.call(acoes,function(b){ac.appendChild(b);});q.appendChild(ac);}
   var qs=document.createElement('div');qs.id='qstat';qs.className='qstat';fillQStat(qs,d);q.appendChild(qs);
@@ -407,16 +414,22 @@ function buildModeButtons(){
   $('qmodel').textContent='🎮 Jogo';
   var defs=estadoTreino.quizDomain==='br'?[['cap','🏛️','Estado → Capital','Qual é a capital da Bahia?'],['pais','🏙️','Capital → Estado','Salvador é capital de qual estado?'],['neighbor','🤝','Vizinhos','Quem faz divisa com a Bahia?'],['code','🔤','Siglas','Qual é a sigla da Bahia?'],['map','📍','Achar no mapa','Toque onde fica a Bahia']]
     :[['cap','🏛️','País → Capital','Qual é a capital do Japão?'],['pais','🏙️','Capital → País','Londres é capital de qual país?'],['flag','🚩','Bandeiras','De quem é esta bandeira?'],['neighbor','🤝','Vizinhos','Quem faz fronteira com a China?'],['map','📍','Achar no mapa','Toque onde fica o Egito']];
+  /* uma lista numa coluna só, com o escolhido marcado (como as opções do Android); o desafio do dia
+     em destaque no alto e os jogos rápidos numa fileira embaixo */
+  var dest=document.createElement('div');dest.className='qjdest';box.appendChild(dest);
+  var tj=document.createElement('div');tj.className='qjrtit';tj.textContent='Jogos';box.appendChild(tj);
+  var lista=document.createElement('div');lista.className='qjlista';box.appendChild(lista);
   defs.forEach(function(m){
     var b=document.createElement('button');b.className='mcard';b.setAttribute('aria-pressed',!quiz.jogoRapido&&!estadoTreino.desafio&&quiz.mode===m[0]?'true':'false');
-    var t=document.createElement('b');t.textContent=m[1]+' '+m[2];var ex=document.createElement('small');ex.textContent=m[3];
-    b.appendChild(t);b.appendChild(ex);
-    b.onclick=function(){quizSetMode(m[0]);};box.appendChild(b);
+    var ic=document.createElement('span');ic.className='mcic';ic.textContent=m[1];
+    var t=document.createElement('b');t.textContent=m[2];var ex=document.createElement('small');ex.textContent=m[3];
+    b.appendChild(ic);b.appendChild(t);b.appendChild(ex);
+    b.onclick=function(){quizSetMode(m[0]);};lista.appendChild(b);
   });
   /* jogos rápidos: misturam tipos de pergunta; o desafio do dia é o mesmo para todo mundo */
   var jr=document.createElement('div');jr.className='qjr';
   var rc=recordeRelampago();
-  [['relampago','⚡ Relâmpago','Quantas você acerta em 60 s?'+(rc?' Recorde: '+rc:'')],['misto','🎲 Misto','10 perguntas de tipos variados'],['desafio','🗓️ Desafio do dia','10 capitais, iguais para todos, 1 vez por dia']].forEach(function(j){
+  [['relampago','⚡ Relâmpago','Quantas você acerta em 60 s?'+(rc?' Recorde: '+rc:'')],['misto','🎲 Misto','10 perguntas de tipos variados'],['desafio','🗓️ Desafio do dia','10 capitais, iguais para todos · 1 vez por dia']].forEach(function(j){
     var b=document.createElement('button');b.className='mcard';b.id='jr-'+j[0];
     b.setAttribute('aria-pressed',quiz.jogoRapido===j[0]||(j[0]==='desafio'&&estadoTreino.desafio)?'true':'false');
     var t=document.createElement('b');t.textContent=j[1];var ex=document.createElement('small');ex.textContent=j[2];
@@ -425,7 +438,7 @@ function buildModeButtons(){
       fecharJogos();
       if(j[0]==='desafio')emitir('abrir-desafio');else iniciarJogoRapido(j[0]);
     };
-    jr.appendChild(b);
+    (j[0]==='desafio'?dest:jr).appendChild(b);
   });
   var jt=document.createElement('div');jt.className='qjrtit';jt.textContent='Jogos rápidos';
   box.appendChild(jt);box.appendChild(jr);
