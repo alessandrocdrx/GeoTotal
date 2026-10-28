@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- {{DATA}} é trocado pela data do envio no workflow do site (.github/workflows/site.yml) -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://alessandrocdrx.github.io/GeoTotal/</loc><lastmod>{{DATA}}</lastmod></url>
+  <url><loc>https://alessandrocdrx.github.io/GeoTotal/jogar/</loc><lastmod>{{DATA}}</lastmod></url>
+</urlset>

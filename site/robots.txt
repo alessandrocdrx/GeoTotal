@@ -1,0 +1,5 @@
+# geoTotal: o site todo pode ser lido por buscadores e por IAs.
+User-agent: *
+Allow: /
+
+Sitemap: https://alessandrocdrx.github.io/GeoTotal/sitemap.xml
