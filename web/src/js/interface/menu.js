@@ -53,23 +53,32 @@ function iniciar() {
   $('msom').onclick=function(){alternarMudo();somH();};
   somH();
   var marcaNomes=ligarSeg($('mlabels'),estadoMapa.labelMode,function(v){$(v==='c'?'lc':'lp').click();});
-  /* atalhos do alto: pulam para a parte certa da página */
-  Array.prototype.forEach.call(document.querySelectorAll('#msheet .matal button'),function(b){
+  /* atalhos do alto: pulam para a parte certa da página. A posição é medida na tela (não pelo
+     offsetTop, que conta a partir de outra caixa) e desconta o título e os atalhos, que ficam presos
+     no alto e cobririam o começo da parte. */
+  var caixa=$('msheet').querySelector('.box'),travaAtalho=0;
+  function botoesAtalho(){return document.querySelectorAll('#msheet .matal button');}
+  function acender(bt){Array.prototype.forEach.call(botoesAtalho(),function(x){x.classList.toggle('at',x===bt);});}
+  function topoNaCaixa(el){return el.getBoundingClientRect().top-caixa.getBoundingClientRect().top+caixa.scrollTop;}
+  /* altura do que fica preso no alto: o "top" do sticky dos atalhos mais a altura deles (vale mesmo
+     antes de eles grudarem, no começo da página) */
+  function alturaPresa(){var at=caixa.querySelector('.matal');return (parseFloat(getComputedStyle(at).top)||0)+at.offsetHeight;}
+  Array.prototype.forEach.call(botoesAtalho(),function(b){
     b.onclick=function(){
-      var alvo=$(b.dataset.ir),bx=$('msheet').querySelector('.box');
-      Array.prototype.forEach.call(document.querySelectorAll('#msheet .matal button'),function(x){x.classList.toggle('at',x===b);});
-      bx.scrollTo({top:alvo.offsetTop-bx.querySelector('.shead').offsetHeight-8,behavior:'smooth'});
+      acender(b);
+      /* enquanto a página rola até a parte, o atalho tocado fica aceso (sem piscar os do caminho) */
+      travaAtalho=Date.now()+900;
+      caixa.scrollTo({top:Math.max(0,topoNaCaixa($(b.dataset.ir))-alturaPresa()-22),behavior:'smooth'});
     };
   });
-  /* ao rolar, acende o atalho da parte que está na tela */
-  var caixa=$('msheet').querySelector('.box');
+  /* ao rolar, acende o atalho da parte que está logo abaixo dos atalhos */
   caixa.addEventListener('scroll',function(){
-    if(!$('mlist').offsetParent)return;
-    var bts=document.querySelectorAll('#msheet .matal button'),lim=caixa.scrollTop+140,atual=null;
-    Array.prototype.forEach.call(bts,function(b){if($(b.dataset.ir).offsetTop<=lim)atual=b;});
+    if(!$('mlist').offsetParent||Date.now()<travaAtalho)return;
+    var bts=botoesAtalho(),lim=caixa.scrollTop+alturaPresa()+40,atual=null;
+    Array.prototype.forEach.call(bts,function(b){if(topoNaCaixa($(b.dataset.ir))<=lim)atual=b;});
     /* no fim da página a última parte pode nem chegar ao alto: chegou ao fim, acende o último atalho */
     if(caixa.scrollTop+caixa.clientHeight>=caixa.scrollHeight-4)atual=bts[bts.length-1];
-    Array.prototype.forEach.call(bts,function(b){b.classList.toggle('at',b===atual);});
+    acender(atual);
   },{passive:true});
   /* o guia "Como jogar" sempre à mão no alto do menu; o seu nível leva às conquistas */
   $('mguia').onclick=function(){$('mtour').click();};
